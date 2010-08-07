@@ -1,0 +1,19 @@
+Thank you for downloading PHP Draft! PHP Draft allows commissioners to setup web-based real-time drafts for their fantasy sports leagues. If your leagues do "offline" drafts (instead of using your fantasy provider's online drafting tools), PHP Draft is just for you! You log in to PHP Draft, add managers, determine the number of rounds, style of draft (standard or serpentine), the sport and the name, and then when you're ready to begin drafting. Your managers will come to you once they make a selection, and you enter it. As you enter picks, your managers will see real-time the picks being made, in a large, easy-to-read color-coded draft board.
+
+REQUIREMENTS for PHP Draft:
+-Web server with sufficient bandwidth
+-PHP 5 installed
+-MySQL and the ability to add a new database
+-PHPMyAdmin or some other MySQL utility that allows import of large SQL dump files
+
+To install, follow these steps.
+
+1) Upload the entire PHP Draft project to a web server (will most likely be easiest through FTP).
+
+2) In PHPmyAdmin, create a database called scsports_phpdraft (you can rename later). Click on that new database name on the left, and then click the Import tab. Click Browse, and select the newest SQL dump file from /sql_dumps. Click Go.
+
+3) If no errors in PHPmyAdmin, goto the base directory of your PHP Draft install: http://www.yoursite.com/
+
+4) Admin login is: Username: admin_commish Password: password
+
+5) Enjoy! Any bugs, feature requests, comments or questions please send them to us at http://sourceforge.net/projects/phpdraft/
