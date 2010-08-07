@@ -10,8 +10,9 @@ $my_conn;
 $admin_password = "";
 function set_conn() {//Create a connection to MySQL with proper authentication so we can select a DB
     global $my_conn;	//Make sure we're using a global var so other fcns can access it
-
-    $my_conn = mysql_connect("localhost","scsports_phpdraf","77410");
+    $username = "your_username";
+    $password = "your_password";
+    $my_conn = mysql_connect("localhost",$username,$password);
     //$my_conn = mysql_connect("localhost","root","");
     if(!$my_conn) {
 	die('Could not connect: ' . mysql_error());
