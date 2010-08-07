@@ -7,7 +7,7 @@ include_once("libraries/lib_draft.php");
 date_default_timezone_set('America/New_York');
 
 set_conn();
-select_db("scsports_phpdraft");
+
 
 $draft_id = intval($_REQUEST['draft_id']);
 $action = CleanString(trim($_REQUEST['action']));

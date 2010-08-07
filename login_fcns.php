@@ -14,7 +14,7 @@ function isLoggedIn() {
 	return false;
     }
 
-    select_db("scsports_phpdraft");		//Select the PHPDraft database
+    		//Select the PHPDraft database
 
     $user_result = mysql_query("SELECT UserID
 							FROM user_login 

@@ -4,7 +4,7 @@ include_once("dbconn.php");
 include_once("cleanstring.php");
 
 set_conn();
-select_db("scsports_phpdraft");
+
 
 $draft_id = intval($_REQUEST['did']);
 $manager_id = intval($_REQUEST['mid']);

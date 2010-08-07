@@ -16,7 +16,7 @@ $_SESSION['draft_password'] = CleanString($_SESSION['draft_password']);
 $draft_id = intval($_REQUEST['draft_id']);
 
 set_conn();
-select_db("scsports_phpdraft");
+
 
 $draft_result = mysql_query("SELECT * FROM draft WHERE draft_id = '".$draft_id."' LIMIT 1");
 $draft_row = mysql_fetch_array($draft_result);
@@ -32,7 +32,7 @@ if($draft_row['draft_password'] != '' && !isLoggedIn()) {
 	exit(1);
     }
 
-    select_db("scsports_phpdraft");		//Select the database we wish to use
+    		//Select the database we wish to use
 
     if($draft_row['draft_password'] != $_SESSION['draft_password'] || $draft_row['draft_id'] != $_SESSION['draft_id']) {//If we didn't find a match of those credentials, we need to forward them to login
 	header('Location: draft_login.php?draft_id='.$draft_id);

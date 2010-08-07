@@ -17,6 +17,7 @@ function set_conn() {//Create a connection to MySQL with proper authentication s
     if(!$my_conn) {
 	die('Could not connect: ' . mysql_error());
     }
+    select_db("scsports_phpdraft");
 }
 
 function select_db($dbname) {

@@ -8,7 +8,7 @@ $_SESSION['password'] = CleanString($_SESSION['password']);
 set_conn();
 
 if(isset($_SESSION['userid']) && isset($_SESSION['username']) && isset($_SESSION['password']) && isset($_SESSION['security_code'])) {//If one or more of these are set, the user may already be.
-    select_db("scsports_phpdraft");		//Select the database we wish to use
+    		//Select the database we wish to use
 
     $user_result = mysql_query("SELECT UserID
 				FROM user_login
@@ -26,7 +26,7 @@ if(isset($_SESSION['userid']) && isset($_SESSION['username']) && isset($_SESSION
 }elseif($_REQUEST['q'] != 1 || (!isset($_REQUEST['txt_user']) || !isset($_REQUEST['txt_pass']))) //If we haven't submitted a form, then we must show the initial form
     $action = "show_first";
 else {
-    select_db("scsports_phpdraft");	//Select the database
+    	//Select the database
 
     //Clean the form input of any malicious/troublesome characters
     $username = CleanString($_POST['txt_user']);

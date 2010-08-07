@@ -6,7 +6,7 @@ $draft_id = intval($_REQUEST['draft_id']);
 $draft_password = CleanString(trim($_REQUEST['draft_password']));
 
 set_conn();
-select_db("scsports_phpdraft");
+
 
 $draft_result = mysql_query("SELECT * FROM draft WHERE draft_id = '".$draft_id."' LIMIT 1");
 $draft_row = mysql_fetch_array($draft_result);

@@ -3,7 +3,7 @@ require('check_login.php');
 include_once("dbconn.php");
 
 set_conn();
-select_db("scsports_phpdraft");
+
 
 $draft_id = intval($_REQUEST['did']);
 $manager_id = intval($_REQUEST['mid']);

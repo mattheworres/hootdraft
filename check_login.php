@@ -25,7 +25,7 @@ if(!isset($_SESSION['userid']) || !isset($_SESSION['username']) || !isset($_SESS
     exit(1);
 }
 
-select_db("scsports_phpdraft");		//Select the database we wish to use
+		//Select the database we wish to use
 
 $user_result = mysql_query("SELECT UserID
 							FROM user_login 

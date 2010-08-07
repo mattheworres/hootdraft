@@ -51,7 +51,7 @@
 		    $draft_style = CleanString(trim($_POST['draft_style']));
 		    $draft_rounds = intval($_POST['draft_rounds']);
 
-		    select_db("scsports_phpdraft");
+		    
 
 		    $name_result = mysql_query("SELECT draft_id FROM draft WHERE draft_name = '" . $draft_name . "' AND draft_sport = '" . $draft_sport . "'");
 		    $name_count = mysql_num_rows($name_result);

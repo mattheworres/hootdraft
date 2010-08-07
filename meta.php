@@ -1,7 +1,7 @@
 	<?php
 	include_once("dbconn.php");
 	set_conn();
-	select_db("scsports_phpdraft");
+	
 	date_default_timezone_set('America/New_York');
 	$owner = mysql_fetch_array(mysql_query("SELECT Name FROM user_login WHERE UserID = '99999' LIMIT 1"));
 	?><meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />

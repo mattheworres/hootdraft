@@ -5,7 +5,7 @@ include_once("cleanstring.php");
 include_once("libraries/lib_draft.php");
 
 set_conn();
-select_db("scsports_phpdraft");
+
 
 
 $draft_id = intval($_REQUEST['draft_id']);
