@@ -1,0 +1,38 @@
+[16-May-2010 09:11:46] PHP Warning:  mysql_connect() [<a href='function.mysql-connect'>function.mysql-connect</a>]: Access denied for user 'scsports_root'@'localhost' (using password: YES) in /home/scsports/public_html/fosgames/phpdraft/dbconn.php on line 15
+[31-May-2010 13:02:49] PHP Warning:  mysql_fetch_array(): supplied argument is not a valid MySQL result resource in /home/scsports/public_html/fosgames/phpdraft/check_draft_password.php on line 20
+[31-May-2010 13:02:50] PHP Warning:  mysql_fetch_array(): supplied argument is not a valid MySQL result resource in /home/scsports/public_html/fosgames/phpdraft/check_draft_password.php on line 20
+[31-May-2010 13:09:23] PHP Warning:  mysql_fetch_array(): supplied argument is not a valid MySQL result resource in /home/scsports/public_html/fosgames/phpdraft/check_draft_password.php on line 20
+[31-May-2010 13:09:25] PHP Warning:  mysql_fetch_array(): supplied argument is not a valid MySQL result resource in /home/scsports/public_html/fosgames/phpdraft/check_draft_password.php on line 20
+[31-May-2010 13:37:20] PHP Parse error:  syntax error, unexpected $end in /home/scsports/public_html/fosgames/phpdraft/index.php on line 44
+[05-Jun-2010 20:53:58] PHP Warning:  mysql_num_rows(): supplied argument is not a valid MySQL result resource in /home/scsports/public_html/fosgames/phpdraft/draft_teams.php on line 22
+[05-Jun-2010 20:53:58] PHP Warning:  mysql_fetch_array(): supplied argument is not a valid MySQL result resource in /home/scsports/public_html/fosgames/phpdraft/draft_teams.php on line 23
+[05-Jun-2010 20:53:58] PHP Warning:  mysql_num_rows(): supplied argument is not a valid MySQL result resource in /home/scsports/public_html/fosgames/phpdraft/draft_teams.php on line 22
+[05-Jun-2010 20:53:58] PHP Warning:  mysql_fetch_array(): supplied argument is not a valid MySQL result resource in /home/scsports/public_html/fosgames/phpdraft/draft_teams.php on line 23
+[05-Jun-2010 20:54:44] PHP Warning:  mysql_num_rows(): supplied argument is not a valid MySQL result resource in /home/scsports/public_html/fosgames/phpdraft/draft_teams.php on line 22
+[05-Jun-2010 20:54:44] PHP Warning:  mysql_fetch_array(): supplied argument is not a valid MySQL result resource in /home/scsports/public_html/fosgames/phpdraft/draft_teams.php on line 23
+[05-Jun-2010 20:54:44] PHP Warning:  mysql_num_rows(): supplied argument is not a valid MySQL result resource in /home/scsports/public_html/fosgames/phpdraft/draft_teams.php on line 22
+[05-Jun-2010 20:54:44] PHP Warning:  mysql_fetch_array(): supplied argument is not a valid MySQL result resource in /home/scsports/public_html/fosgames/phpdraft/draft_teams.php on line 23
+[08-Jun-2010 20:12:36] PHP Fatal error:  Call to undefined function search_draft() in /home/scsports/public_html/fosgames/phpdraft/draft_search.php on line 49
+[08-Jun-2010 20:15:04] PHP Warning:  mysql_fetch_array(): supplied argument is not a valid MySQL result resource in /home/scsports/public_html/fosgames/phpdraft/draft_search.php on line 62
+[08-Jun-2010 20:15:42] PHP Warning:  mysql_fetch_array(): supplied argument is not a valid MySQL result resource in /home/scsports/public_html/fosgames/phpdraft/draft_search.php on line 62
+[08-Jun-2010 20:23:34] PHP Warning:  mysql_num_rows(): supplied argument is not a valid MySQL result resource in /home/scsports/public_html/fosgames/phpdraft/draft_search.php on line 50
+[08-Jun-2010 20:23:49] PHP Warning:  mysql_num_rows(): supplied argument is not a valid MySQL result resource in /home/scsports/public_html/fosgames/phpdraft/draft_search.php on line 50
+[08-Jun-2010 20:23:50] PHP Warning:  mysql_num_rows(): supplied argument is not a valid MySQL result resource in /home/scsports/public_html/fosgames/phpdraft/draft_search.php on line 50
+[08-Jun-2010 20:23:51] PHP Warning:  mysql_num_rows(): supplied argument is not a valid MySQL result resource in /home/scsports/public_html/fosgames/phpdraft/draft_search.php on line 50
+[09-Jun-2010 19:24:07] PHP Warning:  include(libraries/wkhtmltopdf.php) [<a href='function.include'>function.include</a>]: failed to open stream: No such file or directory in /home/scsports/public_html/fosgames/phpdraft/draft_teams.php on line 87
+[09-Jun-2010 19:24:07] PHP Warning:  include(libraries/wkhtmltopdf.php) [<a href='function.include'>function.include</a>]: failed to open stream: No such file or directory in /home/scsports/public_html/fosgames/phpdraft/draft_teams.php on line 87
+[09-Jun-2010 19:24:07] PHP Warning:  include() [<a href='function.include'>function.include</a>]: Failed opening 'libraries/wkhtmltopdf.php' for inclusion (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/scsports/public_html/fosgames/phpdraft/draft_teams.php on line 87
+[09-Jun-2010 19:24:07] PHP Fatal error:  Class 'WKPDF' not found in /home/scsports/public_html/fosgames/phpdraft/draft_teams.php on line 89
+[09-Jun-2010 19:25:01] PHP Warning:  shell_exec() has been disabled for security reasons in /home/scsports/public_html/fosgames/phpdraft/libraries/lib_wkhtmltopdf.php on line 79
+[09-Jun-2010 19:25:01] PHP Warning:  shell_exec() has been disabled for security reasons in /home/scsports/public_html/fosgames/phpdraft/libraries/lib_wkhtmltopdf.php on line 80
+[09-Jun-2010 19:25:01] PHP Warning:  shell_exec() has been disabled for security reasons in /home/scsports/public_html/fosgames/phpdraft/libraries/lib_wkhtmltopdf.php on line 81
+[09-Jun-2010 19:25:01] PHP Fatal error:  Uncaught exception 'Exception' with message 'WKPDF couldn't determine CPU ("").' in /home/scsports/public_html/fosgames/phpdraft/libraries/lib_wkhtmltopdf.php:81
+Stack trace:
+#0 /home/scsports/public_html/fosgames/phpdraft/libraries/lib_wkhtmltopdf.php(113): WKPDF::_getCPU()
+#1 /home/scsports/public_html/fosgames/phpdraft/draft_teams.php(89): WKPDF->__construct()
+#2 {main}
+  thrown in /home/scsports/public_html/fosgames/phpdraft/libraries/lib_wkhtmltopdf.php on line 81
+[09-Jun-2010 17:28:55] PHP Fatal error:  Call to undefined function php_info() in /home/scsports/public_html/fosgames/phpdraft/TEST.php on line 1
+[12-Jun-2010 19:32:32] PHP Warning:  mysql_fetch_array(): supplied argument is not a valid MySQL result resource in /home/scsports/public_html/fosgames/phpdraft/templates/pick_add.php on line 70
+[12-Jun-2010 19:33:21] PHP Warning:  mysql_fetch_array(): supplied argument is not a valid MySQL result resource in /home/scsports/public_html/fosgames/phpdraft/templates/pick_add.php on line 70
+[12-Jun-2010 19:33:26] PHP Warning:  mysql_fetch_array(): supplied argument is not a valid MySQL result resource in /home/scsports/public_html/fosgames/phpdraft/templates/pick_add.php on line 70
