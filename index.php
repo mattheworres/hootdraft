@@ -11,7 +11,6 @@
 	    <?php require('menu.php');
 	    require_once('dbconn.php');
 	    set_conn();
-	    select_db('scsports_phpdraft');
 
 	    $draft_result = mysql_query("SELECT * FROM draft WHERE draft_status != 'undrafted' ORDER by draft_status DESC");
 	    $number_of_drafts = mysql_num_rows($draft_result);
