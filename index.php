@@ -17,9 +17,9 @@
 	    ?>
 	    <div id="content">
 		<h3>Welcome to PHPDraft!</h3>
-		<div class='featurebox_center'>PHPDraft has moved to a private beta phase!  This private beta phase is an on-going process aimed at improving PHPDraft all around, and is focused on the user experience and ease of use.  All of PHPDraft's core functions have been completed, just some feature/UI tweaking is left!  Contact Matt if you'd like to get involved.</div>
+                <div class='featurebox_center'><strong>PHPDraft is now officially in a public beta phase</strong>!  Private Beta finished with no hiccups or burps, so a public beta was deemed best!  All of the source code that runs this site is publicly available for free at <a href="http://www.sourceforge.net">SourceForge.net</a>, where the project has <a href="http://sourceforge.net/projects/phpdraft">its own project page</a>, complete with source control integration, bug tracking, and forums for feedback and help!  So please, if you have input, need help, or would like to help, please contact Matt on the project page!</div>
 		<p>PHPDraft is a browser-based web application that your commissioner has decided to use to run your fantasy sports draft!  With PHPDraft, you can watch in real time as your commissioner enters draft picks, see breakdowns of the positions most taken, see who in your league is the slowest drafter, and more!  And at the end, everyone can print out their own PDF document or Excel spreadsheet of their team for their records!</p>
-		<p>To get started, go ahead and click on the name of a draft below.  If a lock icon shows up beside a draft, that means you'll have to get the password from your commissioner*</p>
+		<p><strong>To get started, go ahead and click on the name of a draft below.</strong>  If a lock icon shows up beside a draft, that means you'll have to get the password from your commissioner*</p>
 		<table width="100%">
 		    <tr>
 			<th width="16">&nbsp;</th>

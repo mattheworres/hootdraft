@@ -13,7 +13,7 @@ function set_conn() {//Create a connection to MySQL with proper authentication s
     $username = "your_username";
     $password = "your_password";
     $my_conn = mysql_connect("localhost",$username,$password);
-    //$my_conn = mysql_connect("localhost","root","");
+    
     if(!$my_conn) {
 	die('Could not connect: ' . mysql_error());
     }

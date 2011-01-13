@@ -10,12 +10,16 @@ To install, follow these steps.
 
 1) Upload the entire PHP Draft project to a web server (will most likely be easiest through FTP).
 
-2) In PHPmyAdmin, create a database called scsports_phpdraft (you can rename later). Click on that new database name on the left, and then click the Import tab. Click Browse, and select the newest SQL dump file from /sql_dumps. Click Go.
+2) In PHPmyAdmin, create a database called phpdraft (you can rename later). Click on that new database name on the left, and then click the Import tab. Click Browse, and select the newest SQL dump file from /sql_dumps. Click Go.
 
-3) If no errors in PHPmyAdmin, goto the base directory of your PHP Draft install: http://www.yoursite.com/
+3) Open dbconn.php in your favorite IDE or text editor (I use Netbeans PHP).  Change $username and $password (lines 13 and 14) to your MySQL username and password. If you changed your database name from the default ("phpdraft"), make sure you change it a few lines down in the "select_db()" function call on line 20. Save and upload to web server.
 
-4) Open dbconn.php in your favorite IDE or text editor (I use Netbeans PHP).  Change $username and $password to your MySQL username and password. If you changed your database name, make sure you change it a few lines down in the "select_db()" line below. Save and upload to web server.
+4) If no errors in PHPmyAdmin, goto the base directory of your PHP Draft install: http://www.yoursite.com/
 
-5) Admin login is: Username: admin_commish Password: password
+5) To login as PHPDraft admin, use these default credentials:
+Username: admin_commish
+Password: password
 
-6) Enjoy! Any bugs, feature requests, comments or questions please send them to me at http://sourceforge.net/projects/phpdraft/
+6) Once logged in, be sure to change the default administrator by going to the Control Panel tab, and click "Update Your User Profile" under the "User Management" section. From there you can change the password.
+
+7) Enjoy! Any bugs, feature requests, comments or questions please send them to me at http://sourceforge.net/projects/phpdraft/
