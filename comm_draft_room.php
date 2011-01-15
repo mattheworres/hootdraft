@@ -2,7 +2,7 @@
 require('check_login.php');
 include_once("dbconn.php");
 include_once("cleanstring.php");
-include_once("libraries/lib_draft.php");
+include_once("models/draft_model.php");
 
 set_conn();
 

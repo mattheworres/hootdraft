@@ -2,7 +2,7 @@
 require('check_draft_password.php');
 include_once("dbconn.php");
 include_once("cleanstring.php");
-include_once("libraries/lib_draft.php");
+include_once("models/draft_model.php");
 
 date_default_timezone_set('America/New_York');
 

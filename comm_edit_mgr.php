@@ -43,7 +43,7 @@
 		</form>";
 		}
 
-		include_once('libraries/lib_draft.php');
+		include_once('models/draft_model.php');
 
 		$draft_result = mysql_query("SELECT draft_id, draft_status FROM draft WHERE draft_id = '".$draft_id."'");
 		$manager_result = mysql_query("SELECT manager_id FROM managers WHERE manager_id = '".$manager_id."'");

@@ -1,7 +1,7 @@
 <?php
 global $draft_id;		//Use the globally-defined draft_id, which is passed in as a $_REQUEST var
 if(!empty($draft_id)) {
-    include_once('libraries/lib_draft.php');
+    include_once('models/draft_model.php');
     require_once("login_fcns.php");
     ?><div id="right_side">
     <h3>Navigation</h3>

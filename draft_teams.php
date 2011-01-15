@@ -2,7 +2,7 @@
 require('check_draft_password.php');
 include_once("dbconn.php");
 include_once("cleanstring.php");
-include_once("libraries/lib_draft.php");
+include_once("models/draft_model.php");
 
 date_default_timezone_set('America/New_York');
 
@@ -84,7 +84,7 @@ if(empty($draft_id) || $draft_count == 0) {
 	    break;
 
 	case 'load_pdf':
-	    include('libraries/lib_wkhtmltopdf.php');
+	    include('models/lib_wkhtmltopdf.php');
 
 	    $pdf = new WKPDF();
 

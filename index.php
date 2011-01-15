@@ -4,7 +4,7 @@ session_start();
 require_once('dbconn.php');
 set_conn();
 
-require_once('libraries/index_library.php');
+require_once('models/index_model.php');
 
 $drafts = new indexObject();
 $drafts->set_drafts();

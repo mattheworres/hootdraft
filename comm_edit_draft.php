@@ -77,7 +77,7 @@
 		    $draft_style = CleanString($_POST['draft_style']);
 		    $draft_rounds = intval($_POST['draft_rounds']);
 
-		    include_once('libraries/lib_draft.php');
+		    include_once('models/draft_model.php');
 
 		    $draft_result = mysql_query("SELECT draft_id, draft_status FROM draft WHERE draft_name = '" . $draft_name . "' AND draft_sport = '" . $draft_sport . "' AND draft_id != '" . $draft_id . "'");
 		    $draft_row = mysql_fetch_array($draft_result);

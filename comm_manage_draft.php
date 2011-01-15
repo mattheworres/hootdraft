@@ -10,7 +10,7 @@
 
 	    <?php
 	    require_once('cleanstring.php');
-	    require_once('libraries/lib_draft.php');
+	    require_once('models/draft_model.php');
 	    $draft_id = CleanString(trim($_REQUEST['did']));
 	    if(empty($draft_id))
 		require('comm_menu.php');
