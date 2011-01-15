@@ -38,17 +38,17 @@ $pick_row = mysql_fetch_array($pick_result);
 if(empty($draft_id) || $draft_count == 0) {
     $title = "Draft Not Found";
     $msg = "The draft was not found.  Please go back and try again.";
-    require('templates/error_page.php');
+    require('views/error_page.php');
     exit(1);
 }elseif($draft_row['draft_status'] == "undrafted") {
     $title = "Draft Not Ready!";
     $msg = "Your draft is currently not set to draft. Make sure all teams and settings are correct, and then change the draft status to \"In Progress\", and then come back and try again.";
-    require('templates/error_page.php');
+    require('views/error_page.php');
     exit(1);
 }elseif($draft_row['draft_status'] == "complete") {
     $title = "Draft Already Complete!";
     $msg = "You can no longer draft because your draft is complete.";
-    require('templates/error_page.php');
+    require('views/error_page.php');
     exit(1);
 }else {
     switch($action) {
@@ -82,7 +82,7 @@ if(empty($draft_id) || $draft_count == 0) {
 	    if($success == 1)
 		$msg = "Draft pick #".$old_pick." successfully added!";
 
-	    require('templates/pick_add.php');
+	    require('views/pick_add.php');
 	    exit(0);
 	    break;
 
@@ -115,7 +115,7 @@ if(empty($draft_id) || $draft_count == 0) {
 		    $positions = $nba_positions;
 		}
 
-		require('templates/pick_add.php');
+		require('views/pick_add.php');
 		exit(1);
 	    }else {
 		//mktime($hour,$min,$sec,$mon,$day,$year);
@@ -179,7 +179,7 @@ if(empty($draft_id) || $draft_count == 0) {
 	    if($success)
 		$msg = "Draft pick round ".$round.", #".$pick." successfully edited!";
 
-	    require('templates/pick_edit_select.php');
+	    require('views/pick_edit_select.php');
 	    exit(0);
 	    break;
 
@@ -201,7 +201,7 @@ if(empty($draft_id) || $draft_count == 0) {
 		$positions = $nba_positions;
 	    }
 	    
-	    require('templates/pick_edit.php');
+	    require('views/pick_edit.php');
 	    exit(0);
 	    break;
 
@@ -231,7 +231,7 @@ if(empty($draft_id) || $draft_count == 0) {
 		    $positions = $nba_positions;
 		}
 
-		require('templates/pick_edit.php');
+		require('views/pick_edit.php');
 		exit(1);
 	    }else {
 		$sql = "UPDATE players SET ".

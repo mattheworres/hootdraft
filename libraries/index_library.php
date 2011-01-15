@@ -1,0 +1,41 @@
+<?php
+
+class indexObject {
+    public $number_of_drafts;
+    public $draft_objects = array();
+
+    public function set_drafts() {
+        $draft_result = mysql_query("SELECT * FROM draft"/* WHERE draft_status != 'undrafted'*/." ORDER by draft_status DESC");
+        $number_of_drafts = mysql_num_rows($draft_result);
+
+        while($draft_row = mysql_fetch_array($draft_result)) {
+            $draft_object = new indexDraft();
+            $draft_object->draft_id = $draft_row['draft_id'];
+            $draft_object->draft_name = $draft_row['draft_name'];
+            $draft_object->draft_status = $draft_row['draft_status'];
+            $draft_object->draft_sport = $draft_row['draft_sport'];
+
+            $draft_object->visibility = ($draft_row['draft_password'] != '' ? "locked" : "unlocked");
+
+            if($draft_row['draft_status'] == "undrafted")
+                $draft_object->draft_status = "Setting Up";
+            elseif($draft_row['draft_status'] == "in_progress")
+                $draft_object->draft_status = "Currently Drafting";
+            elseif($draft_row['draft_status'] == "complete")
+                $draft_object->draft_status = "Draft Complete";
+
+            $draft_objects[] = $draft_object;
+        }
+    }
+}
+
+//TODO: Break this class off so it can be genericized into a program-wide class
+class indexDraft {
+    public $draft_id;
+    public $draft_name;
+    public $draft_status;
+    public $visibility;
+    public $draft_sport;
+}
+
+?>

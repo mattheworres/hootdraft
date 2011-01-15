@@ -18,12 +18,12 @@ $draft_row = mysql_fetch_array($draft_result);
 if(empty($draft_id) || $draft_count == 0) {
     $title = "Draft Not Found";
     $msg = "The draft was not found.  Please go back and try again.";
-    require('templates/error_page.php');
+    require('views/error_page.php');
     exit(1);
 }elseif($draft_row['draft_status'] == "undrafted") {
     $title = "Draft Not Ready!";
     $msg = "This draft is currently not drafting.  Your commissioner must change the draft to \"in progress\" before you can view the draft board.";
-    require('templates/error_page.php');
+    require('views/error_page.php');
     exit(1);
 }else {
     switch($action) {
@@ -103,7 +103,7 @@ if(empty($draft_id) || $draft_count == 0) {
 			$sort = "ASC";
 		}
 	    }
-	    require('templates/draft_board.php');
+	    require('views/draft_board.php');
 	    exit(0);
 	    break;
     }

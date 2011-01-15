@@ -1,6 +1,6 @@
 <?php
 /*
- * Template File for Draft Room
+ * view File for Draft Room
  *
 */
 ?>

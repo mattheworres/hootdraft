@@ -11,12 +11,12 @@ $manager_id = intval($_REQUEST['mid']);
 if(empty($draft_id)) {
     $title = "Draft Not Found";
     $msg = "The draft that you were attempting to remove a manager from was not found.  Please go back and try again.";
-    require('templates/error_page.php');
+    require('views/error_page.php');
     exit(1);
 }elseif(empty($manager_id)) {
     $title = "Manager Not Found";
     $msg = "The manager you were attempting to remove from the draft was not found.  Please go back and try again.";
-    require('templates/error_page.php');
+    require('views/error_page.php');
     exit(1);
 }else {
     $manager_row = mysql_fetch_array(mysql_query("SELECT draft_order FROM managers WHERE draft_id = '".$draft_id."' AND manager_id = '".$manager_id."'"));
@@ -35,7 +35,7 @@ if(empty($draft_id)) {
     } else {
 	$title = "Manager Not Found";
 	$msg = "The manager you were attempting to remove from the draft could not be deleted.  Please go back and try again.";
-	require('templates/error_page.php');
+	require('views/error_page.php');
 	exit(1);
     }
 }

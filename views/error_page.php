@@ -1,6 +1,6 @@
 <?php
 /*
- * Template File for Errors:
+ * view File for Errors:
  *
  * To be included in a php-only page and have these variables setup already:
  *
