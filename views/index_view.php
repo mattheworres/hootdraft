@@ -21,8 +21,7 @@
 			<th>Sport</th>
 			<th>Draft Status</th>
 		    </tr>
-		    <?php if($drafts->number_of_drafts == 0) {
-			?><tr><td colspan="4"><h2>There are currently no drafts available.</h2></td></tr><?php
+		    <?php if($drafts->number_of_drafts == 0) { ?><tr><td colspan="4"><h2>There are currently no drafts available.</h2></td></tr><?php
 		    }else {
 			foreach($drafts->draft_objects as $draft) {?><tr>
 			<td><img src="images/icons/<?php echo $draft->visibility;?>.png" border="0" alt="<?php echo $draft->visibility;?>" /></td>
