@@ -5,7 +5,7 @@ class indexObject {
     public $draft_objects = array();
 
     public function set_drafts() {
-        $draft_result = mysql_query("SELECT * FROM draft WHERE draft_status != 'undrafted' ORDER by draft_status DESC");
+        $draft_result = mysql_query("SELECT * FROM draft ORDER by draft_status DESC");
         $this->number_of_drafts = mysql_num_rows($draft_result);
 
         while($draft_row = mysql_fetch_array($draft_result)) {

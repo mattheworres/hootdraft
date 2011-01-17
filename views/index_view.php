@@ -25,7 +25,8 @@
 		    }else {
 			foreach($drafts->draft_objects as $draft) {?><tr>
 			<td><img src="images/icons/<?php echo $draft->visibility;?>.png" border="0" alt="<?php echo $draft->visibility;?>" /></td>
-			<td><a href="draft_main.php?draft_id=<?php echo $draft->draft_id;?>"><?php echo $draft->draft_name;?></a></td>
+			<?php if($draft->draft_status != "Setting Up") {?><td><a href="draft_main.php?draft_id=<?php echo $draft->draft_id;?>"><?php echo $draft->draft_name;?></a></td>
+                        <?php } else {?><td><?php echo $draft->draft_name;?></td><?php }?>
 			<td><?php echo $draft->draft_sport;?></td>
 			<td><?php echo $draft->draft_status;?></td>
 		    </tr>
