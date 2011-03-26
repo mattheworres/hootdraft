@@ -11,13 +11,13 @@ $drafts->set_drafts();
 
 switch($_REQUEST['q']) {
     case 'select':
-        $ACTIVE_TAB = "DRAFT_CENTRAL";
+        DEFINE("ACTIVE_TAB", "DRAFT_CENTRAL");
         require_once('/views/index_select_view.php');
         break;
 
     case 'index':
     default:
-        $ACTIVE_TAB = "INDEX";
+        DEFINE("ACTIVE_TAB", "INDEX");
         require_once('/views/index_view.php');
         break;
 }

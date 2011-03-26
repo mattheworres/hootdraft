@@ -12,20 +12,20 @@ include_once("login_fcns.php");
     </div>
     <div id="navcontainer">
 	<ul id="navlist"><?php
-        //New tab-selection method relies on each Presenter to set the $CURRENT_FILE variable.
-        if(!empty($ACTIVE_TAB)) {?>
-            <li<?php if($ACTIVE_TAB == 'INDEX') echo " id=\"active\"";?>><a href="index.php"<?php if($ACTIVE_TAB == 'INDEX') echo " id=\"current\" name=\"current\"";?>>Welcome!</a></li>
-	    <li<?php if($ACTIVE_TAB == 'DRAFT_CENTRAL') echo " id=\"active\"";?>><a href="index.php?q=select"<?php if($ACTIVE_TAB == 'DRAFT_CENTRAL') echo " id=\"current\" name=\"current\"";?>>Draft Central</a></li>
+        //New tab-selection method relies on each Presenter to set the $ACTIVE_TAB variable.
+        if(defined("ACTIVE_TAB")/*!empty($ACTIVE_TAB)*/) {?>
+            <li<?php if(ACTIVE_TAB == 'INDEX') echo " id=\"active\"";?>><a href="index.php"<?php if(ACTIVE_TAB == 'INDEX') echo " id=\"current\" name=\"current\"";?>>Welcome!</a></li>
+	    <li<?php if(ACTIVE_TAB == 'DRAFT_CENTRAL') echo " id=\"active\"";?>><a href="index.php?q=select"<?php if(ACTIVE_TAB == 'DRAFT_CENTRAL') echo " id=\"current\" name=\"current\"";?>>Draft Central</a></li>
             <?php  if(!isLoggedIn()) {//if the user is not authenticated?>
-            <li<?php if($ACTIVE_TAB == 'LOGIN') echo " id=\"active\"";?>><a href="login.php"<?php if($ACTIVE_TAB == 'INDEX_SELECT') echo " id=\"current\" name=\"current\"";?>>Commissioner Login</a></li>
+            <li<?php if(ACTIVE_TAB == 'LOGIN') echo " id=\"active\"";?>><a href="login.php"<?php if(ACTIVE_TAB == 'LOGIN') echo " id=\"current\" name=\"current\"";?>>Commissioner Login</a></li>
     <?php
-	    }else {?><li<?php if($ACTIVE_TAB == 'CONTROL_PANEL') echo " id=\"active\"";?>><a href="ccp.php"<?php if($ACTIVE_TAB == 'CONTROL_PANEL') echo " id=\"current\" name=\"current\"";?>>Control Panel</a></li>
-	    <li<?php if($ACTIVE_TAB == 'LOGOUT') echo " id=\"active\"";?>><a href="logout.php"<?php if($ACTIVE_TAB == 'LOGOUT') echo " id=\"current\" name=\"current\"";?>>Log Out</a></li>
-<?php   }   
+	    }else {?><li<?php if(ACTIVE_TAB == 'CONTROL_PANEL') echo " id=\"active\"";?>><a href="ccp.php"<?php if(ACTIVE_TAB == 'CONTROL_PANEL') echo " id=\"current\" name=\"current\"";?>>Control Panel</a></li>
+	    <li<?php if(ACTIVE_TAB == 'LOGOUT') echo " id=\"active\"";?>><a href="logout.php"<?php if(ACTIVE_TAB == 'LOGOUT') echo " id=\"current\" name=\"current\"";?>>Log Out</a></li>
+<?php       }
         }else {
             /*
              *NOTE: This logic is now considered legacy, and should be removed before the next release.
-             *The UPDATE HEADER LOGIC list item text will show up as grey text on any page that is not correctly using the new logic.
+             *The UPDATE HEADER LOGIC list item text will show up as red text on any page that is not correctly using the new logic.
              */
             $currentFile = $_SERVER["SCRIPT_NAME"];
 	    $parts = Explode('/', $currentFile);
