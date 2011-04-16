@@ -1,5 +1,7 @@
 <?php
 
+//TODO: Fix these so they go with the proper model classes... This is poorly named and is just a library file, not a model!
+
 function get_last_ten_picks($draft_id) {
     //Get the entire pick row for a draft for the last ten picks
     //Returns resultset

@@ -99,7 +99,7 @@
 				$_SESSION['password'] = $user_row['Password'];
 				?><h3>User Successfully Updated</h3>
 		<p class="success">The information for your super user has been successfully updated.</p>
-		<p class="success">To go back to your control panel, <a href="ccp.php">click here</a>.</p>
+		<p class="success">To go back to your control panel, <a href="control_panel.php?action=home">click here</a>.</p>
 				<?php }else {																//Entry 3-2-2
 				?><h3>Error: User Not Updated</h3>
 		<p class="error">Unfortunately, an error has occurred and the user has not been updated successfully. Please try again below by hitting "Update User".</p>

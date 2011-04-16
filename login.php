@@ -16,8 +16,8 @@ switch($status) {
         break;
 
     case "ALREADY_LOGGED_IN":
-        header('Location: ccp.php');
-        echo "You're already logged in, but you should be getting forwarded to <a href=\"ccp.php\">this page</a>.";
+        header('Location: control_panel.php?action=home');
+        echo "You're already logged in, but you should be getting forwarded to <a href=\"control_panel.php?action=home\">this page</a>.";
         break;
 
     case "INCORRECT_CREDENTIALS":
@@ -30,7 +30,7 @@ switch($status) {
         $authenticated = $login->authenticate_user($_POST['txt_user'], $_POST['txt_pass']);
 
         if($authenticated) {
-            header('Location: ccp.php');
+            header('Location: control_panel.php?action=home');
             exit(0);
         }else{
             define("ACTIVE_TAB", "LOGIN");

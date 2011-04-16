@@ -1,5 +1,7 @@
 <?php
 
+require_once("models/draft_object.php");
+
 class indexObject {
     public $number_of_drafts;
     public $draft_objects = array();
@@ -9,7 +11,7 @@ class indexObject {
         $this->number_of_drafts = mysql_num_rows($draft_result);
 
         while($draft_row = mysql_fetch_array($draft_result)) {
-            $draft_object = new indexDraft();
+            $draft_object = new draft_object();
             $draft_object->draft_id = $draft_row['draft_id'];
             $draft_object->draft_name = $draft_row['draft_name'];
             $draft_object->draft_status = $draft_row['draft_status'];
@@ -27,15 +29,6 @@ class indexObject {
             $this->draft_objects[] = $draft_object;
         }
     }
-}
-
-//TODO: Break this class off so it can be genericized into a program-wide class
-class indexDraft {
-    public $draft_id;
-    public $draft_name;
-    public $draft_status;
-    public $visibility;
-    public $draft_sport;
 }
 
 ?>

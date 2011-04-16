@@ -8,7 +8,6 @@
 	<div id="page_wrapper">
 	    <?php require('header.php'); ?>
 
-	    <?php //require('menu.php'); ?>
 	    <div id="content-wide">
 		<h3>Commissioner Control Panel</h3>
 		<p>This is your control panel.  From here, you have access to running your entire web-based fantasy drafts.</p>

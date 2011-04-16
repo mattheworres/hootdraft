@@ -19,7 +19,7 @@ include_once("login_fcns.php");
             <?php  if(!isLoggedIn()) {//if the user is not authenticated?>
             <li<?php if(ACTIVE_TAB == 'LOGIN') echo " id=\"active\"";?>><a href="login.php"<?php if(ACTIVE_TAB == 'LOGIN') echo " id=\"current\" name=\"current\"";?>>Commissioner Login</a></li>
     <?php
-	    }else {?><li<?php if(ACTIVE_TAB == 'CONTROL_PANEL') echo " id=\"active\"";?>><a href="ccp.php"<?php if(ACTIVE_TAB == 'CONTROL_PANEL') echo " id=\"current\" name=\"current\"";?>>Control Panel</a></li>
+	    }else {?><li<?php if(ACTIVE_TAB == 'CONTROL_PANEL') echo " id=\"active\"";?>><a href="control_panel.php?action=home"<?php if(ACTIVE_TAB == 'CONTROL_PANEL') echo " id=\"current\" name=\"current\"";?>>Control Panel</a></li>
 	    <li<?php if(ACTIVE_TAB == 'LOGOUT') echo " id=\"active\"";?>><a href="logout.php"<?php if(ACTIVE_TAB == 'LOGOUT') echo " id=\"current\" name=\"current\"";?>>Log Out</a></li>
 <?php       }
         }else {
@@ -38,7 +38,7 @@ include_once("login_fcns.php");
             <?php  if(!isLoggedIn()) {//if the user is not authenticated?>
             <li<?php if($currentFile == 'login.php') echo " id=\"active\"";?>><a href="login.php"<?php if($currentFile == 'login.php') echo " id=\"current\" name=\"current\"";?>>Commissioner Login</a></li>
     <?php
-	    }else {?><li<?php if($first_four_chars == 'ccp.' || $first_four_chars == "comm") echo " id=\"active\"";?>><a href="ccp.php"<?php if($first_four_chars == 'ccp.' || $first_four_chars == "comm") echo " id=\"current\" name=\"current\"";?>>Control Panel</a></li>
+	    }else {?><li<?php if($first_four_chars == 'ccp.' || $first_four_chars == "comm") echo " id=\"active\"";?>><a href="control_panel.php?action=home"<?php if($first_four_chars == 'ccp.' || $first_four_chars == "comm") echo " id=\"current\" name=\"current\"";?>>Control Panel</a></li>
 	    <li<?php if($currentFile == 'logout.php') echo " id=\"active\"";?>><a href="logout.php"<?php if($currentFile == 'logout.php') echo " id=\"current\" name=\"current\"";?>>Log Out</a></li>
     <?php   }
         }   ?>
