@@ -9,7 +9,7 @@
 	    <?php require('header.php'); ?>
 
 	    <div id="content-wide">
-		<h3><?php echo PAGE_TITLE;?></h3>
+		<h3><?php echo PAGE_HEADER;?></h3>
 		<?php echo PAGE_CONTENT;?>
 	    </div>
 	    <?php require('footer.php'); ?>

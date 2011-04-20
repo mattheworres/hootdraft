@@ -6,11 +6,16 @@ DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
 
 switch($_REQUEST['action']) {
     case 'createDraft':
+        //<editor-fold defaultstate="collapsed" desc="createDraft Logic">
         $draft = new draft_object();
+        DEFINE("CONTROL_PANEL_ACTION", "CREATE");
         require_once("/views/control_panel_create_draft_view.php");
         break;
+        //</editor-fold>
 
     case 'addDraft':
+        //<editor-fold defaultstate="collapsed" desc="addDraft Logic">
+
         $ERRORS = array();
 
         $draft = new draft_object(array(
@@ -24,29 +29,32 @@ switch($_REQUEST['action']) {
 
         if(count($object_errors) > 0) {
             $ERRORS = $object_errors;
+            DEFINE("CONTROL_PANEL_ACTION", "ADD");
             require_once("/views/control_panel_create_draft_view.php");
             break;
         }
 
         if($draft->saveDraft() == false) {
             $ERRORS[] = "Draft could not be saved, please try again.";
+            DEFINE("CONTROL_PANEL_ACTION", "ADD");
             require_once("/views/control_panel_create_draft_view.php");
             break;
         }
 
-        define("PAGE_TITLE", "Draft Successfully Created");
+        define("PAGE_HEADER", "Draft Successfully Created");
         define("PAGE_CONTENT", "<p class=\"success\">Your draft, <em>" . $draft->draft_name . "</em> has been successfully created.  <a href=\"control_panel.php?action=manageDraft&draftId=" . $draft->draft_id . "\">Click here</a> to manage your new draft.</p><p>REMEMBER: Your next step should be to add all managers before you begin drafting players.</p>");
         require_once("/views/generic_success_view.php");
-
+        //</editor-fold>
         break;
 
     case 'manageDraft':
-        echo "You are managing your draft.";
-        //require_once('/views/CHANGE_ME___.php');
+        // <editor-fold desc="manageDraft Logic">
+        //TODO: Look to old comm_manage_draft.php for logic to put here; still need to clean
+        //control_panel_manage_draft_view.php into an acceptable view.
         break;
-
+        // </editor-fold>
     case 'manageProfile':
-        echo "You are managing your profile.";
+        
         //require_once('/views/CHANGE_ME___.php');
         break;
 
