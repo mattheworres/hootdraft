@@ -3,17 +3,35 @@
  * Represents a PHPDraft "draft" object, which is the parent object.
  *
  * A draft has many managers, and managers have many players (picks).
+ *
+ * @property int $draft_id The unique identifier for this draft
+ * @property string $draft_name The string identifier for this draft
+ * @property string $draft_status The description of the status is in
+ * @property string $visibility Either 'locked' or 'unlocked' depending on existence of a password
+ * @property string $draft_password Determines draft visibility
+ * @property string $draft_sport
+ * @property string $draft_style Either 'serpentine' or 'standard'
+ * @property int $draft_rounds Number of rounds draft will have in total
+ * @property string $start_time Timestamp of when the draft was put into "started" status
+ * @property string $end_time Timestamp of when the draft was put into "completed" status
+ * @property int $current_round
+ * @property int $current_pick
  */
 class draft_object {
     public $draft_id;
     public $draft_name;
     public $draft_status;
     public $visibility;
+    public $draft_password;
     public $draft_sport;
     public $draft_style;
     public $draft_rounds;
+    public $start_time;
+    public $end_time;
+    public $current_round;
+    public $current_pick;
 
-    public function  __construct(array $properties = array()) {
+    public function __construct(array $properties = array()) {
         foreach($properties as $property => $value)
             if(property_exists('draft_object', $property))
                 $this->$property = $value;
@@ -60,6 +78,36 @@ class draft_object {
         $this->draft_id = mysql_insert_id();
 
         return true;
+    }
+
+    /**
+     * Returns an array of all current drafts in the database
+     * @return array of all available draft objects
+     */
+    public static function getAllDrafts() {
+        $drafts = array();
+        //TODO: Change draft object to include timestamp for creation; IDs are not technically reliable sortable columns.
+        $sql = "SELECT * FROM draft ORDER BY draft_id";
+        $drafts_result = mysql_query($sql);
+        
+        while($draft_row = mysql_fetch_array($drafts_result)) {
+            $drafts[] = new draft_object(array(
+                'draft_id' => $draft_row['draft_id'],
+                'draft_name' => $draft_row['draft_name'],
+                'draft_status' => $draft_row['draft_status'],
+                'visibility' => ($draft_row['draft_password'] != '' ? "locked" : "unlocked"),
+                'draft_password' => $draft_row['draft_password'],
+                'draft_sport' => $draft_row['draft_sport'],
+                'draft_style' => $draft_row['draft_style'],
+                'draft_rounds' => intval($draft_row['draft_rounds']),
+                'start_time' => $draft_row['start_time'],
+                'end_time' => $draft_row['end_time'],
+                'current_round' => intval($draft_row['current_round']),
+                'current_pick' => intval($draft_row['current_pick'])
+            ));
+        }
+
+        return $drafts;
     }
 }
 ?>

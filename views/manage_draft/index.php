@@ -9,18 +9,16 @@
 	    <?php require('header.php'); ?>
 
 	    <?php
-            //TODO: Rip out all of this spaghetti to get it to an acceptable view level.
 	    require_once('cleanstring.php');
 	    require_once('models/draft_model.php');
-	    $draft_id = CleanString(trim($_REQUEST['did']));
+
+            $draft_id = CleanString(trim($_REQUEST['did']));
 	    if(empty($draft_id))
 		require('comm_menu.php');
 	    else
 		require('comm_draft_menu.php');?>
             <div id="content">
-		<?php
-		require_once('cleanstring.php');
-		if(empty($_REQUEST['did'])) {//If we haven't been handed a draft ID, show table?><h3>Select a Draft</h3>
+		<h3>Select a Draft</h3>
                 <p>To begin managing a draft (either draft details, or editing managers, or editing players), select a draft below by clicking on its name.</p>
                 <table width="700">
                     <tr>
@@ -31,22 +29,21 @@
                     </tr>
 			<?php
 			$alt_row = true;
-			$draft_result = mysql_query("SELECT * FROM draft ORDER BY draft_id");
-			while($draft_row = mysql_fetch_array($draft_result)) {//Output a table row for each draft
-			    $manager_result = mysql_query("SELECT draft_id FROM managers WHERE draft_id = '" . $draft_row['draft_id']."'");
-			    $manager_num = mysql_num_rows($manager_result);
+			//while($draft_row = mysql_fetch_array($draft_result)) {
+                        foreach(DRAFTS as $draft) {
+                            $manager_num = manager_object::getCountOfManagersByDraftId($draft->draft_id);
 			    ?><tr<?php echo ($alt_row ? " background-color=\"#cccccc\"" : "");?>>
-                        <td><a href="comm_manage_draft.php?did=<?php echo $draft_row['draft_id'];?>"><?php echo $draft_row['draft_name'];?></a></td>
-                        <td><?php echo $draft_row['draft_sport'];?></td>
+                        <td><a href="comm_manage_draft.php?did=<?php echo $draft->draft_id;?>"><?php echo $draft->draft_name;?></a></td>
+                        <td><?php echo $draft->draft_sport;?></td>
                         <td><?php echo $manager_num;?></td>
-                        <td><?php echo $draft_row['draft_status'];?></td>
+                        <td><?php echo $draft->draft_status;?></td>
                     </tr>
 			    <?php
 			    if($alt_row)
 				$alt_row = false;
 			    else
 				$alt_row = true;
-			}//while
+			}//foreach
 			?>
                 </table>
 		    <?php

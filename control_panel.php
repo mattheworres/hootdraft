@@ -9,7 +9,7 @@ switch($_REQUEST['action']) {
         //<editor-fold defaultstate="collapsed" desc="createDraft Logic">
         $draft = new draft_object();
         DEFINE("CONTROL_PANEL_ACTION", "CREATE");
-        require_once("/views/control_panel_create_draft_view.php");
+        require_once("/views/control_panel/create_draft.php");
         break;
         //</editor-fold>
 
@@ -30,14 +30,14 @@ switch($_REQUEST['action']) {
         if(count($object_errors) > 0) {
             $ERRORS = $object_errors;
             DEFINE("CONTROL_PANEL_ACTION", "ADD");
-            require_once("/views/control_panel_create_draft_view.php");
+            require_once("/views/control_panel/create_draft.php");
             break;
         }
 
         if($draft->saveDraft() == false) {
             $ERRORS[] = "Draft could not be saved, please try again.";
             DEFINE("CONTROL_PANEL_ACTION", "ADD");
-            require_once("/views/control_panel_create_draft_view.php");
+            require_once("/views/control_panel/create_draft.php");
             break;
         }
 
@@ -61,7 +61,7 @@ switch($_REQUEST['action']) {
     case '':
     case 'home':
     default:
-        require_once('/views/control_panel_view.php');
+        require_once('/views/control_panel/index.php');
         break;
 }
 
