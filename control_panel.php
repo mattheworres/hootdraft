@@ -10,8 +10,8 @@ switch($_REQUEST['action']) {
         $draft = new draft_object();
         DEFINE("CONTROL_PANEL_ACTION", "CREATE");
         require_once("/views/control_panel/create_draft.php");
-        break;
         //</editor-fold>
+        break;
 
     case 'addDraft':
         //<editor-fold defaultstate="collapsed" desc="addDraft Logic">
@@ -46,15 +46,16 @@ switch($_REQUEST['action']) {
         require_once("/views/generic_success_view.php");
         //</editor-fold>
         break;
-
-    case 'manageDraft':
-        // <editor-fold desc="manageDraft Logic">
+        
+    case 'manageDrafts':
+        // <editor-fold defaultstate="collapsed" desc="manageDrafts Logic">
         //TODO: Look to old comm_manage_draft.php for logic to put here; still need to clean
         //control_panel_manage_draft_view.php into an acceptable view.
         $DRAFTS = draft_object::getAllDrafts();
-        require_once('/views/manage_draft/index.php');
-        break;
+        require_once('/views/control_panel/manage_draft.php');
         // </editor-fold>
+        break;
+        
     case 'manageProfile':
         //require_once('/views/CHANGE_ME___.php');
         break;

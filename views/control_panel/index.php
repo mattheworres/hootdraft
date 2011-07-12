@@ -17,7 +17,7 @@
 		    <legend>Draft Management</legend>
 		    <div>
 			<p><strong><a href="control_panel.php?action=createDraft">Create a New Draft</a></strong> - Create a brand new draft from scratch, and then add managers to that draft afterwards</p>
-			<p><strong><a href="comm_manage_draft.php">Manage an Existing Draft</a></strong> - Choose an existing draft from a list and manage it.  This includes adding team managers and the draft room itself!</p>
+			<p><strong><a href="control_panel.php?action=manageDrafts">Manage an Existing Draft</a></strong> - Choose an existing draft from a list and manage it.  This includes adding team managers and the draft room itself!</p>
 		    </div>
 		</fieldset>
 
