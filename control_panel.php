@@ -51,10 +51,11 @@ switch($_REQUEST['action']) {
         // <editor-fold desc="manageDraft Logic">
         //TODO: Look to old comm_manage_draft.php for logic to put here; still need to clean
         //control_panel_manage_draft_view.php into an acceptable view.
+        $DRAFTS = draft_object::getAllDrafts();
+        require_once('/views/manage_draft/index.php');
         break;
         // </editor-fold>
     case 'manageProfile':
-        
         //require_once('/views/CHANGE_ME___.php');
         break;
 
