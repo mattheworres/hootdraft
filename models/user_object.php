@@ -35,6 +35,21 @@ class user_object {
         $this->public_name = strlen($nameResult['Name']) > 0 ? $nameResult['Name'] : "The Commish";
     }
     
+    public function getDefaultCommissioner($commish_id) {
+        $id_int = intval($commish_id);
+        
+        if($id_int == 0)
+            return;
+        
+        $commish_sql = "SELECT * FROM user_login WHERE UserId = " . $id_int . " LIMIT 1";
+        $commish_row = mysql_fetch_array(mysql_query($commish_sql));
+        
+        $this->user_id = $commish_row['UserId'];
+        $this->user_name = $commish_row['Username'];
+        $this->public_name = $commish_row['Name'];
+        $this->password = $commish_row['Password'];
+    }
+    
     public function getHashedPassword() {
         return sha1($this->password);
     }

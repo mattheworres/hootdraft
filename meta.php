@@ -7,7 +7,7 @@
 	date_default_timezone_set('America/New_York');
 
         $owner = new user_object();
-        $owner->getCurrentlyLoggedInUser();
+        $owner->getDefaultCommissioner(99999);
 	?><meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
-    <title><?php echo $owner->public_name;?>'s PHPDraft | Web-Based Fantasy Draft Software</title>
+    <title><?php  echo $owner->public_name; ?>'s PHPDraft | Web-Based Fantasy Draft Software</title>
     <link href="css/style.css" type="text/css" rel="stylesheet" />
