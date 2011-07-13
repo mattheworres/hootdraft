@@ -64,7 +64,7 @@ class draft_object {
 
     /**
      * Adds a new instance of this draft to the database
-     * @return boolean success, whether or not the MySQL transaction succeeded.
+     * @return boolean success whether or not the MySQL transaction succeeded.
      */
     public function saveDraft() {
         $sql = "INSERT INTO draft "

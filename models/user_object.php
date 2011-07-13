@@ -60,5 +60,9 @@ class user_object {
        
         return true;
     }
+    
+    public function saveUser() {
+        //This is where the user object should be saved.
+    }
 }
 ?>

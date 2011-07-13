@@ -57,7 +57,23 @@ switch($_REQUEST['action']) {
         break;
         
     case 'manageProfile':
-        //require_once('/views/CHANGE_ME___.php');
+        require_once("models/user_edit_model.php");
+        $ERRORS = array();
+        
+        $userEditForm = new user_edit_model();
+        $userEditForm->getFormValues();
+        
+        $object_errors = $userEditForm->getValidity();
+        
+        if(count($object_errors) > 0) {
+            $ERRORS = $object_errors;
+            require_once("/views/control_panel/manage_profile.php");
+            break;
+        }
+        
+        define("PAGE_HEADER", "Profile Successfully Updated");
+        define("PAGE_CONTENT", "<p class=\"success\">Your user account has been successfully updated. <a href=\"control_panel.php?action=manageProfile\">Click here</a> to change your profile again, or <a href=\"control_panel.php\">click here</a> to be taken back to the control panel.");
+        require_once("/views/generic_success_view.php");
         break;
 
     case '':
