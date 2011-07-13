@@ -40,7 +40,7 @@ class loginObject {
         $user_result = mysql_query("SELECT UserID, Username, Password
                                     FROM user_login
                                     WHERE Username = '" . $userObject->user_name . "' AND
-                                    Password = '" . $userObject->hashedPassword() . "'
+                                    Password = '" . $userObject->getHashedPassword() . "'
                                ");
         if(!$user_row = mysql_fetch_array($user_result)) {
             return false;

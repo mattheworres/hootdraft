@@ -30,12 +30,12 @@ class user_object {
         if($this->user_id == 0)
             return;
         
-        $nameResult = mysql_fetch_array(mysql_query("SELECT Name FROM user_login WHERE UserID = " . $this->user_id . " AND Username = '" . $this->user_name . "' AND Password = '" . $this->hashedPassword() . "' LIMIT 1"));
+        $nameResult = mysql_fetch_array(mysql_query("SELECT Name FROM user_login WHERE UserID = " . $this->user_id . " AND Username = '" . $this->user_name . "' AND Password = '" . $this->password . "' LIMIT 1"));
         
         $this->public_name = strlen($nameResult['Name']) > 0 ? $nameResult['Name'] : "The Commish";
     }
     
-    public function hashedPassword() {
+    public function getHashedPassword() {
         return sha1($this->password);
     }
     
@@ -52,8 +52,9 @@ class user_object {
                                     WHERE 
                                     UserID = '" . $this->user_id . "' AND
                                     UserName = '" . $this->user_name . "' AND
-                                    Password = '" . $this->hashedPassword() . "'
+                                    Password = '" . $this->password . "'
                                ");
+        
         if(!$user_row = mysql_fetch_array($user_result))
             return false;
        
