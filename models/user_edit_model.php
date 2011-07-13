@@ -41,7 +41,7 @@ class user_edit_model {
     }
     
     /**
-     * Updates the current commissioner user account
+     * Converts this view model into a reasonable entity equivalent, and then performs the save function with that entity.
      * @return boolean success whether or not the MySQL transaction succeeded.
      */
     public function saveUser() {
