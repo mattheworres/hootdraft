@@ -54,6 +54,8 @@ class user_object {
         return sha1($this->password);
     }
     
+    //TODO: Change definition of password - assumption to be that user-object ALWAYS has the password that is hashed. getHashedPassword has to be modified, and we must provide the setter for that too.
+    
     public function userAuthenticated() {
         if($this->user_id == 0 
             || !isset($this->user_name) 
@@ -76,8 +78,15 @@ class user_object {
         return true;
     }
     
+    /**
+     * Updates the entity object in the database. For the time being, this only updates and does not account for the creation of new users.
+     * @return boolean success whether or not the MySQL transaction succeeded.
+     */
     public function saveUser() {
-        //This is where the user object should be saved.
+        $update_sql = "UPDATE user_login SET Username = '" . $this->user_name . "' AND Password = '" . $this->password . "' AND Name = '" . $this->public_name . "'
+            WHERE UserId = " . $this->user_id;
+        
+        return mysql_query($update_sql);
     }
 }
 ?>
