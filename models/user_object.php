@@ -35,6 +35,11 @@ class user_object {
         $this->public_name = strlen($nameResult['Name']) > 0 ? $nameResult['Name'] : "The Commish";
     }
     
+    /**
+     * Given the ID of a commissioner, grab and populate the object
+     * @param int $commish_id
+     * @return void 
+     */
     public function getDefaultCommissioner($commish_id) {
         $id_int = intval($commish_id);
         
@@ -50,12 +55,33 @@ class user_object {
         $this->password = $commish_row['Password'];
     }
     
-    public function getHashedPassword() {
-        return sha1($this->password);
+    /**
+     * To set the current user's ID for the currently logged in user
+     */
+    private function getLoggedInId() {
+        $this->user_id = intval($_SESSION['userid']);
     }
     
-    //TODO: Change definition of password - assumption to be that user-object ALWAYS has the password that is hashed. getHashedPassword has to be modified, and we must provide the setter for that too.
+    /**
+     * Given a plaintext password, return the hashed version according to hashing method specified
+     * @param string $rawPassword
+     * @return string Hashed password string 
+     */
+    public static function getHashedPassword($rawPassword) {
+        return sha1($rawPassword);
+    }
     
+    /**
+     * Given a raw plaintext password and use the specified hashing method and store it in the object
+     */
+    public function setHashedPassword($rawPassword) {
+        $this->password = sha1($rawPassword);
+    }
+    
+    /**
+     * Check to see if the user object is authentic or not
+     * @return bool If the user is authenticated or not
+     */
     public function userAuthenticated() {
         if($this->user_id == 0 
             || !isset($this->user_name) 
@@ -83,8 +109,15 @@ class user_object {
      * @return boolean success whether or not the MySQL transaction succeeded.
      */
     public function saveUser() {
-        $update_sql = "UPDATE user_login SET Username = '" . $this->user_name . "' AND Password = '" . $this->password . "' AND Name = '" . $this->public_name . "'
-            WHERE UserId = " . $this->user_id;
+        //TODO: Remove this hack. This assumes a single user being edited by himself.
+        $this->getLoggedInId();
+        
+        $update_sql = "UPDATE user_login SET Username = '" . $this->user_name . "'";
+        
+        if(isset($this->password) && strlen($this->password) > 0)
+                $update_sql .= " AND Password = '" . $this->password . "'";
+        
+        $update_sql .= " AND Name = '" . $this->public_name . "' WHERE UserID = " . $this->user_id;
         
         return mysql_query($update_sql);
     }

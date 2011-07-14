@@ -9,25 +9,26 @@
 	    <?php require('header.php'); ?>
 
 	    <?php
-	    require_once('cleanstring.php');
-
-	    require('comm_draft_menu.php');?>
+	    require('comm_draft_menu.php');
+            
+            require_once('models/user_edit_model.php');
+            ?>
 	    <div id="content">
                 <h3>Update User</h3>
                 <p>Use this form to update your commissioner login. There is only one login for the entire site, so be sure to pick a strong password. If you would like to update your current password, you must enter the current password, and then your new password twice (for verification). Otherwise, leave all three fields blank.</p>
                 <fieldset>
                     <legend>Update User</legend>
-                    <form action="comm_user_manage.php" method="post">
+                    <form action="control_panel.php?action=saveProfile" method="post">
                         <p><label for="username">Login*:</label>
-                        <input type="text" name="username" id="username" value="<?php echo $user_object->user_name;?>" /></p>
+                        <input type="text" name="username" id="username" value="<?php echo $user_view_model->username;?>" /></p>
                         <p><label for="old_password">Old Password:</label>
                         <input type="password" name="old_password" id="old_password" value="" autocomplete="off" /></p>
-                        <p><label for="old_password">New Password:</label>
+                        <p><label for="new_password">New Password:</label>
                         <input type="password" name="new_password" id="new_password" value="" autocomplete="off" /></p>
-                        <p><label for="old_password">New Password (verify):</label>
+                        <p><label for="verify_password">New Password (verify):</label>
                         <input type="password" name="verify_password" id="verify_password" value="" autocomplete="off" /></p>
                         <p><label for="name">Your Public Name*:</label>
-                        <input type="text" name="name" id="name" value="<?php echo $user_object->public_name;?>" size="15" maxlength="15" /> (visible everywhere on PHPDraft)</p>
+                        <input type="text" name="name" id="name" value="<?php echo $user_view_model->public_name;?>" size="15" maxlength="15" /> (visible everywhere on PHPDraft)</p>
                         <p><input type="submit" name="submit" class="button" value="Update User" /></p>
                         <?php if(count($ERRORS) > 0) { ?>
                         <?php foreach($ERRORS as $error) { ?>

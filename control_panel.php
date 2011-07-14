@@ -57,16 +57,38 @@ switch($_REQUEST['action']) {
         break;
         
     case 'manageProfile':
-        require_once("models/user_edit_model.php");
+        require_once("/models/user_edit_model.php");
+        require_once("/models/user_object.php");
+        
+        $loggedInUser = new user_object();
+        $loggedInUser->getCurrentlyLoggedInUser();
+        $user_view_model = new user_edit_model($loggedInUser);
+        
+        require_once("/views/control_panel/manage_profile.php");
+        break;
+        
+    case 'saveProfile':
+        require_once("/models/user_edit_model.php");
+        require_once("/models/user_object.php");
+        
         $ERRORS = array();
         
-        $userEditForm = new user_edit_model();
-        $userEditForm->getFormValues();
+        $loggedInUser = new user_object();
+        $loggedInUser->getCurrentlyLoggedInUser();
+        $user_view_model = new user_edit_model($loggedInUser);
         
-        $object_errors = $userEditForm->getValidity();
+        $user_view_model->getFormValues();
+        
+        $object_errors = $user_view_model->getValidity();
         
         if(count($object_errors) > 0) {
             $ERRORS = $object_errors;
+            require_once("/views/control_panel/manage_profile.php");
+            break;
+        }
+        
+        if(!$user_view_model->saveUser()) {
+            $ERRORS[] = "An error has occurred and your profile could not be updated. Please try again.";
             require_once("/views/control_panel/manage_profile.php");
             break;
         }

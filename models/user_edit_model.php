@@ -10,12 +10,20 @@ class user_edit_model {
     public $newVerifiedPassword;
     public $public_name;
     
+    public function __construct(user_object $user_object = null) {
+        if($user_object === null)
+            return;
+        
+        $this->username = $user_object->user_name;
+        $this->public_name = $user_object->public_name;
+    }
+    
     public function getFormValues() {
-        $this->username = $_REQUEST['username'];
-        $this->oldPassword = $_REQUEST['old_password'];
-        $this->newPassword = $_REQUEST['new_password'];
-        $this->newVerifiedPassword = $_REQUEST['verify_password'];
-        $this->public_name = $_REQUEST['name'];
+        if(isset($_POST['username'])) $this->username = $_POST['username'];
+        if(isset($_POST['old_password'])) $this->oldPassword = $_POST['old_password'];
+        if(isset($_POST['new_password'])) $this->newPassword = $_POST['new_password'];
+        if(isset($_POST['verify_password'])) $this->newVerifiedPassword = $_POST['verify_password'];
+        if(isset($_POST['name'])) $this->public_name = $_POST['name'];
     }
     
     /**
@@ -45,7 +53,15 @@ class user_edit_model {
      * @return boolean success whether or not the MySQL transaction succeeded.
      */
     public function saveUser() {
-        //TODO: Make this function a transform - take this view model and turn it into an entity model as best we can, so we can turn things over to the entity for saving. Don't want to delegate to view models for those features.
+        $user_entity_object = new user_object(array (
+            'user_name' => $this->username,
+            'public_name' => $this->public_name
+        ));
+        
+        if(isset($this->oldPassword) && isset($this->newPassword))
+            $user_entity_object->password = $this->newPassword;
+        
+        return $user_entity_object->saveUser();
     }
 }
 ?>

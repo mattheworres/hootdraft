@@ -24,7 +24,7 @@
 		<fieldset>
 		    <legend>User Management</legend>
 		    <div>
-			<p><strong><a href="comm_user_manage.php">Update Your User Profile</a></strong> - Change your login, password and name here for PHPDraft</p>
+			<p><strong><a href="control_panel.php?action=manageProfile">Update Your User Profile</a></strong> - Change your login, password and name here for PHPDraft</p>
 		    </div>
 		</fieldset>
 	    </div>
