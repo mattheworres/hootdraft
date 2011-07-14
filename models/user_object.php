@@ -121,7 +121,19 @@ class user_object {
         
         $success = mysql_query($update_sql);
         
+        if($success)
+            $this->updateAuthentication();
+        
         return $success;
+    }
+    
+    /**
+     * Assuming user information is up-to-date, update the session variables accordingly.
+     */
+    public function updateAuthentication() {
+        if($this->user_id > 0) $_SESSION['userid'] = $this->user_id;
+        $_SESSION['username'] = $this->user_name;
+        $_SESSION['password'] = $this->password;
     }
 }
 ?>

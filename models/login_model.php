@@ -45,9 +45,10 @@ class loginObject {
         if(!$user_row = mysql_fetch_array($user_result)) {
             return false;
         }else{
-            $_SESSION['userid'] = $user_row['UserID'];
-            $_SESSION['username'] = $user_row['Username'];
-            $_SESSION['password'] = $user_row['Password'];
+            $userObject->user_id = $user_row['UserID'];
+            $userObject->user_name = $user_row['Username'];
+            $userObject->password = $user_row['Password'];
+            $userObject->updateAuthentication();
             return true;
         }
     }
