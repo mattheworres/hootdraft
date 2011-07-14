@@ -115,11 +115,13 @@ class user_object {
         $update_sql = "UPDATE user_login SET Username = '" . $this->user_name . "'";
         
         if(isset($this->password) && strlen($this->password) > 0)
-                $update_sql .= " AND Password = '" . $this->password . "'";
+                $update_sql .= ",  Password = '" . $this->password . "'";
         
-        $update_sql .= " AND Name = '" . $this->public_name . "' WHERE UserID = " . $this->user_id;
+        $update_sql .= ",  Name = '" . $this->public_name . "' WHERE UserID = " . $this->user_id;
         
-        return mysql_query($update_sql);
+        $success = mysql_query($update_sql);
+        
+        return $success;
     }
 }
 ?>
