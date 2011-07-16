@@ -8,7 +8,7 @@
  * @property int $draft_id Foreign key to the draft this manager belongs to
  * @property string $manager_name Textual display name for each manager
  * @property string $team_name Deprecated
- * @property tinyint $draft_order The order in which the manager makes a pick in the draft.
+ * @property int $draft_order The order in which the manager makes a pick in the draft.
  */
 class manager_object {
 	public $manager_id;
@@ -44,20 +44,23 @@ class manager_object {
 	/**
 	 * Given a single draft ID, get all managers for that draft
 	 * @param int $draft_id
+	 * @param bool $draft_order_sort Whether or not to sort by the manager's order in the draft. If false, manager_name is used
 	 * @return manager_object 
 	 */
-	public static function getManagersByDraftId($draft_id) {
+	public static function getManagersByDraftId($draft_id, $draft_order_sort = false) {
 		$managers = array();
-		$sql = "SELECT * FROM managers WHERE draft_id = '" . $draft_id . "' ORDER BY manager_name";
+		$sql = "SELECT * FROM managers WHERE draft_id = '" . $draft_id . "' ORDER BY ";
+		$sql .= $draft_order_sort ? "draft_order" : "manager_name";
+		
 		$managers_result = mysql_query($sql);
 
 		while($manager_row = mysql_fetch_array($managers_result)) {
 			$managers[] = new manager_object(array(
-				'manager_id' => $manager_row['manager_id'],
-				'draft_id' => $manager_row['draft_id'],
+				'manager_id' => intval($manager_row['manager_id']),
+				'draft_id' => intval($manager_row['draft_id']),
 				'manager_name' => $manager_row['manager_name'],
 				'team_name' => $manager_row['team_name'],
-				'draft_order' => $manager_row['draft_order']
+				'draft_order' => intval($manager_row['draft_order'])
 			));
 		}
 

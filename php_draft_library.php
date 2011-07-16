@@ -5,7 +5,7 @@
  * Every effort should be made to keep this slim and small. If this gets large/unwieldy, that can't be a best practice.
  */
 
-function seconds_to_words($seconds) {
+function secondsToWords($seconds) {
 	$words = "";
 
 	//Years

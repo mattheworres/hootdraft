@@ -84,19 +84,16 @@ class draft_object {
 
 	/**
 	 * Load a specific draft by ID
+	 * @return boolean success whether or not the load succeeded
 	 */
 	public function loadById($id) {
-		if($id == 0) {
-			$this = null;
-			return;
-		}
+		if($id == 0)
+			return false;
 		
 		$draft_result = mysql_query("SELECT * FROM draft WHERE draft_id = " . $id . " LIMIT 1");
 		
-		if(!$draft_result) {
-			$this = null;
-			return;
-		}
+		if(!$draft_result)
+			return false;
 			
 		
 		$draft_row = mysql_fetch_array($draft_result);
@@ -113,6 +110,8 @@ class draft_object {
 		$this->end_time = strtotime($draft_row['draft_end_time']);
 		$this->current_round = intval($draft_row['draft_current_round']);
 		$this->current_pick = intval($draft_row['draft_current_pick']);
+		
+		return true;
 	}
 	
 	/**
@@ -151,7 +150,7 @@ class draft_object {
 	 */
 	public function getDraftDuration() {
 		if($this->draft_status == "complete")
-			return seconds_to_words($this->start_time - $this->end_time);
+			return secondsToWords($this->start_time - $this->end_time);
 		else
 			return "";
 	}
