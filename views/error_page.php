@@ -9,22 +9,22 @@
  */
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
+	<head>
 	<?php require('meta.php'); ?>
-    </head>
-    <body>
+	</head>
+	<body>
 	<div id="page_wrapper">
-	    <?php require('header.php'); ?>
+		<?php require('header.php'); ?>
 
-	    <?php require('menu.php'); ?>
-	    <div id="content">
+		<?php require('menu.php'); ?>
+		<div id="content">
 		<h3><?php echo $title;?></h3>
 		<p class="error"><?php echo $msg;?></p>
 		<p class="success"><?php echo $success_msg;?></p>
-	    </div>
-	    <?php require('footer.php'); ?>
+		</div>
+		<?php require('footer.php'); ?>
 	</div>
-    </body>
+	</body>
 </html>

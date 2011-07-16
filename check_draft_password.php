@@ -25,20 +25,20 @@ $draft_row = mysql_fetch_array($draft_result);
 $login_text = "This draft is password-protected.  You must <a href=\"draft_login.php?draft_id=".$draft_id."\">enter a password</a> to see this draft.";
 
 if($draft_row['draft_password'] != '' && !isLoggedIn()) {
-    //Need a password
-    if(!isset($_SESSION['draft_id']) || !isset($_SESSION['draft_password'])) {//If one or more of these aren't set, the user must now login.
+	//Need a password
+	if(!isset($_SESSION['draft_id']) || !isset($_SESSION['draft_password'])) {//If one or more of these aren't set, the user must now login.
 	header('Location: draft_login.php?draft_id='.$draft_id);
 	echo $login_text;
 	exit(1);
-    }
+	}
 
-    		//Select the database we wish to use
+			//Select the database we wish to use
 
-    if($draft_row['draft_password'] != $_SESSION['draft_password'] || $draft_row['draft_id'] != $_SESSION['draft_id']) {//If we didn't find a match of those credentials, we need to forward them to login
+	if($draft_row['draft_password'] != $_SESSION['draft_password'] || $draft_row['draft_id'] != $_SESSION['draft_id']) {//If we didn't find a match of those credentials, we need to forward them to login
 	header('Location: draft_login.php?draft_id='.$draft_id);
 	echo $login_text;
 	exit(1);
-    }
+	}
 }
 //If we have gotten to this point, the user is properly logged in and we can continue.
 ?>

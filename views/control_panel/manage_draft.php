@@ -1,53 +1,53 @@
 <?php require('check_login.php');?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
+	<head>
 	<?php require('meta.php'); ?>
-    </head>
-    <body>
-        <div id="page_wrapper">
-	    <?php require('header.php'); ?>
+	</head>
+	<body>
+		<div id="page_wrapper">
+		<?php require('header.php'); ?>
 
-	    <?php
-	    require_once('models/draft_model.php');
-            require_once('models/manager_object.php');
+		<?php
+		require_once('models/draft_model.php');
+			require_once('models/manager_object.php');
 
-            $draft_id = CleanString(trim($_REQUEST['did']));
-	    if(empty($draft_id))
+			$draft_id = intval($_GET['did']);
+		if($draft_id == 0)
 		require('comm_menu.php');
-	    else
+		else
 		require('comm_draft_menu.php');?>
-            <div id="content">
+			<div id="content">
 		<h3>Select a Draft</h3>
-                <p>To begin managing a draft (either draft details, or editing managers, or editing players), select a draft below by clicking on its name.</p>
-                <table width="700">
-                    <tr>
-                        <th>Draft Name</th>
-                        <th>Draft Sport</th>
-                        <th># Managers</th>
-                        <th>Status</th>
-                    </tr>
+				<p>To begin managing a draft (either draft details, or editing managers, or editing players), select a draft below by clicking on its name.</p>
+				<table width="700">
+					<tr>
+						<th>Draft Name</th>
+						<th>Draft Sport</th>
+						<th># Managers</th>
+						<th>Status</th>
+					</tr>
 			<?php
 			$alt_row = true;
 			//while($draft_row = mysql_fetch_array($draft_result)) {
-                        foreach($DRAFTS as $draft) {
-                            $numberOfManagers = manager_object::getCountOfManagersByDraftId($draft->draft_id);
-			    ?><tr<?php echo ($alt_row ? " background-color=\"#cccccc\"" : "");?>>
-                        <td><a href="comm_manage_draft.php?did=<?php echo $draft->draft_id;?>"><?php echo $draft->draft_name;?></a></td>
-                        <td><?php echo $draft->draft_sport;?></td>
-                        <td><?php echo $numberOfManagers;?></td>
-                        <td><?php echo $draft->draft_status;?></td>
-                    </tr>
-			    <?php
-			    if($alt_row)
+						foreach($DRAFTS as $draft) {
+							$numberOfManagers = manager_object::getCountOfManagersByDraftId($draft->draft_id);
+				?><tr<?php echo ($alt_row ? " background-color=\"#cccccc\"" : "");?>>
+						<td><a href="comm_manage_draft.php?did=<?php echo $draft->draft_id;?>"><?php echo $draft->draft_name;?></a></td>
+						<td><?php echo $draft->draft_sport;?></td>
+						<td><?php echo $numberOfManagers;?></td>
+						<td><?php echo $draft->draft_status;?></td>
+					</tr>
+				<?php
+				if($alt_row)
 				$alt_row = false;
-			    else
+				else
 				$alt_row = true;
 			}//foreach
 			?>
-                </table>
-            </div>
+				</table>
+			</div>
 <?php require('footer.php'); ?>
-        </div>
-    </body>
+		</div>
+	</body>
 </html>
