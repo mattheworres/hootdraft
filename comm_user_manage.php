@@ -1,4 +1,4 @@
-<?php require('check_login.php');?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+<?php require('check_login.php'); ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -31,7 +31,7 @@
 
 		require_once('cleanstring.php');
 
-		require('comm_draft_menu.php');?>
+		require('comm_draft_menu.php'); ?>
 		<div id="content">
 		<?php
 		if(empty($_POST))		//Entry 1-0

@@ -72,7 +72,7 @@ elseif($_REQUEST['q'] == 1) {
 			?><p class="error">*The password was incorrect for this draft. Please try again.</p>
 			<?php	echo $login_form;
 		}else
-			echo "Action wasn't set?";?>
+			echo "Action wasn't set?"; ?>
 		</div>
 		<?php require('footer.php'); ?>
 	</div>

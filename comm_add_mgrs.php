@@ -1,4 +1,4 @@
-<?php require('check_login.php');?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+<?php require('check_login.php'); ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -20,7 +20,7 @@
 		if(empty($draft_id))
 		require('comm_menu.php');
 		else
-		require('comm_draft_menu.php');?>
+		require('comm_draft_menu.php'); ?>
 
 		<div id="content">
 		<?php
@@ -146,12 +146,12 @@
 		</tr>
 		<?php foreach($managers as $manager) { ?>
 		<tr>
-			<td><?php echo $manager[0];?></td>
-			<td><?php echo $manager[1];?></td>
+			<td><?php echo $manager[0]; ?></td>
+			<td><?php echo $manager[1]; ?></td>
 		</tr>
 		<?php } ?>
 		</table>
-		<p class="success">Return to the <a href="comm_manage_draft.php?did=<?php echo $draft_id;?>">draft's main page</a>.</p><?php
+		<p class="success">Return to the <a href="comm_manage_draft.php?did=<?php echo $draft_id; ?>">draft's main page</a>.</p><?php
 	}else {
 		?><h3>Managers Not Added</h3>
 		<p class="error">An error has occurred and the managers were not added. Please hit the back button on your browser and try again.</p><?php

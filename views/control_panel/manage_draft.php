@@ -1,4 +1,4 @@
-<?php require('check_login.php');?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+<?php require('check_login.php'); ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -10,13 +10,9 @@
 
 		<?php
 		require_once('models/draft_model.php');
-			require_once('models/manager_object.php');
+		require_once('models/manager_object.php');
 
-			$draft_id = intval($_GET['did']);
-		if($draft_id == 0)
-		require('comm_menu.php');
-		else
-		require('comm_draft_menu.php');?>
+		require('comm_menu.php'); ?>
 			<div id="content">
 		<h3>Select a Draft</h3>
 				<p>To begin managing a draft (either draft details, or editing managers, or editing players), select a draft below by clicking on its name.</p>
@@ -27,24 +23,23 @@
 						<th># Managers</th>
 						<th>Status</th>
 					</tr>
-			<?php
-			$alt_row = true;
-			//while($draft_row = mysql_fetch_array($draft_result)) {
-						foreach($DRAFTS as $draft) {
-							$numberOfManagers = manager_object::getCountOfManagersByDraftId($draft->draft_id);
-				?><tr<?php echo ($alt_row ? " background-color=\"#cccccc\"" : "");?>>
-						<td><a href="comm_manage_draft.php?did=<?php echo $draft->draft_id;?>"><?php echo $draft->draft_name;?></a></td>
-						<td><?php echo $draft->draft_sport;?></td>
-						<td><?php echo $numberOfManagers;?></td>
-						<td><?php echo $draft->draft_status;?></td>
+					<?php
+					$alt_row = true;
+					
+					foreach($DRAFTS as $draft) {
+							$numberOfManagers = manager_object::getCountOfManagersByDraftId($draft->draft_id); ?>
+					<tr<?php echo ($alt_row ? " background-color=\"#cccccc\"" : ""); ?>>
+						<td><a href="draft.php?did=<?php echo $draft->draft_id; ?>"><?php echo $draft->draft_name; ?></a></td>
+						<td><?php echo $draft->draft_sport; ?></td>
+						<td><?php echo $numberOfManagers; ?></td>
+						<td><?php echo $draft->draft_status; ?></td>
 					</tr>
 				<?php
 				if($alt_row)
 				$alt_row = false;
 				else
 				$alt_row = true;
-			}//foreach
-			?>
+			}//foreach ?>
 				</table>
 			</div>
 <?php require('footer.php'); ?>

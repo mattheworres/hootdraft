@@ -1,4 +1,4 @@
-<?php require('check_login.php');?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+<?php require('check_login.php'); ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -20,7 +20,7 @@
 					<legend>Update User</legend>
 					<form action="control_panel.php?action=saveProfile" method="post">
 						<p><label for="username">Login*:</label>
-						<input type="text" name="username" id="username" value="<?php echo $user_view_model->username;?>" /></p>
+						<input type="text" name="username" id="username" value="<?php echo $user_view_model->username; ?>" /></p>
 						<p><label for="old_password">Old Password:</label>
 						<input type="password" name="old_password" id="old_password" value="" autocomplete="off" /></p>
 						<p><label for="new_password">New Password:</label>
@@ -28,11 +28,11 @@
 						<p><label for="verify_password">New Password (verify):</label>
 						<input type="password" name="verify_password" id="verify_password" value="" autocomplete="off" /></p>
 						<p><label for="name">Your Public Name*:</label>
-						<input type="text" name="name" id="name" value="<?php echo $user_view_model->public_name;?>" size="15" maxlength="15" /> (visible everywhere on PHPDraft)</p>
+						<input type="text" name="name" id="name" value="<?php echo $user_view_model->public_name; ?>" size="15" maxlength="15" /> (visible everywhere on PHPDraft)</p>
 						<p><input type="submit" name="submit" class="button" value="Update User" /></p>
 						<?php if(count($ERRORS) > 0) { ?>
 						<?php foreach($ERRORS as $error) { ?>
-						<p class="error">* <?php echo $error;?></p>
+						<p class="error">* <?php echo $error; ?></p>
 						<?php } ?>
 						<?php }else {?>
 						<p class="error">*Required</p>

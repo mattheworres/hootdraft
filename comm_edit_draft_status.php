@@ -1,4 +1,4 @@
-<?php require('check_login.php');?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+<?php require('check_login.php'); ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -42,7 +42,7 @@
 
 		$draft_status = CleanString(trim($_REQUEST['draft_status']));
 
-		require('comm_draft_menu.php');?>
+		require('comm_draft_menu.php'); ?>
 
 		<div id="content">
 		<?php
@@ -83,7 +83,7 @@
 			<?php
 		}elseif($number_of_managers == 0) {
 			 ?><h3>No Managers Found!</h3>
-		<p class="error">Your draft has no managers!  In order to begin the draft, you must first <a href="comm_add_mgrs.php?did=<?php echo $draft_id;?>">add managers to your draft</a>.  Make sure you double-check all other draft settings before beginning, too!</p>
+		<p class="error">Your draft has no managers!  In order to begin the draft, you must first <a href="comm_add_mgrs.php?did=<?php echo $draft_id; ?>">add managers to your draft</a>.  Make sure you double-check all other draft settings before beginning, too!</p>
 		<?php
 		}elseif(empty($_POST) && ($draft_num_rows == 0)) {
 			?><h3>Error: Draft Not Found</h3>
@@ -176,8 +176,8 @@
 
 			if($status_successful && $delete_successful && $pick_successful) {
 			?><h3>Draft Status Successfully Updated!</h3>
-		<p class="success"><strong><?php echo $draft_row['draft_name'];?></strong>'s draft status was changed successfully!</p>
-		<p class="success">Return to the <a href="comm_manage_draft.php?did=<?php echo $draft_id;?>">draft's main page</a>.</p><?php
+		<p class="success"><strong><?php echo $draft_row['draft_name']; ?></strong>'s draft status was changed successfully!</p>
+		<p class="success">Return to the <a href="comm_manage_draft.php?did=<?php echo $draft_id; ?>">draft's main page</a>.</p><?php
 			}else {
 			?><h3>Draft Status Not Updated</h3>
 			<?php if(!$status_successful) {?><p class="error">PHPDraft encountered an error and could not update the draft status. Please try again.</p><?php }?>

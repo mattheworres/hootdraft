@@ -13,7 +13,7 @@
 	<script type="text/javascript">
 		function load_search() {
 		var search_terms = $("#search_terms").val();
-		$("#search_results").load('draft_search.php?action=load_search&draft_id=<?php echo $draft_id;?>&search='+search_terms);
+		$("#search_results").load('draft_search.php?action=load_search&draft_id=<?php echo $draft_id; ?>&search='+search_terms);
 		};
 
 		$(document).ready(function() {
@@ -35,8 +35,8 @@
 
 		<?php require('draft_menu.php'); ?>
 		<div id="content">
-		<h3><?php echo $title;?></h3>
-		<p><?php echo $msg;?></p>
+		<h3><?php echo $title; ?></h3>
+		<p><?php echo $msg; ?></p>
 		<p><label for="search_terms">Search for: </label> <input type="text" name="search_terms" id="search_terms" length="30" maxlength="30" /><br />
 			<input type="submit" value="Search" id="submit_search" /></p>
 		<div id="search_results"></div>

@@ -15,7 +15,7 @@
 		function bind_selection() {
 		$("#round").change(function() {
 			var round_val = $("#round").val();
-		   $("#selection").load('comm_draft_picks.php?action=get_round_picks&draft_id=<?php echo $draft_id;?>&round='+round_val, function() {bind_selection();});
+		   $("#selection").load('comm_draft_picks.php?action=get_round_picks&draft_id=<?php echo $draft_id; ?>&round='+round_val, function() {bind_selection();});
 		});
 		};
 
@@ -31,21 +31,21 @@
 
 		<?php require('comm_draft_room_menu.php'); ?>
 		<div id="content">
-		<h3><?php echo $title;?></h3>
-		<p class="success"><?php echo $msg;?></p>
-		<p class="error"><?php echo $err_msg;?></p>
+		<h3><?php echo $title; ?></h3>
+		<p class="success"><?php echo $msg; ?></p>
+		<p class="error"><?php echo $err_msg; ?></p>
 		<fieldset>
 			<legend>Select a Pick to Edit</legend>
 			<form action="comm_draft_picks.php" method="post">
 			<input type="hidden" name="action" value="edit" />
-			<input type="hidden" name="draft_id" value="<?php echo $draft_id;?>" />
+			<input type="hidden" name="draft_id" value="<?php echo $draft_id; ?>" />
 			<p>To edit a pick, select a round first, and then all editable picks will show up. Select your pick and hit "Edit This Pick" to continue.</p>
 			<div id="selection">
 				<p><label for="round">Round*:</label>
 				<select name="round" id="round">
 				<option value="">(select a round)</option>
 				<?php for($i = 1; $i <= $rounds; $i++) {
-					?><option value="<?php echo $i;?>">Round <?php echo $i;?></option>
+					?><option value="<?php echo $i; ?>">Round <?php echo $i; ?></option>
 				<?php } ?>
 				</select></p>
 				<p><label for="pick_id">Editable Picks*:</label>

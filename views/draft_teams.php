@@ -17,11 +17,11 @@
 		$(document).ready(function() {
 		$("#manager_id").change(function() {
 			manager_id = $(this).val();
-			$("#team").load('draft_teams.php?action=load_team&draft_id=<?php echo $draft_id;?>&manager_id='+manager_id);
+			$("#team").load('draft_teams.php?action=load_team&draft_id=<?php echo $draft_id; ?>&manager_id='+manager_id);
 		});
 		$("#refresh").click(function() {
 			manager_id = $("#manager_id").val();
-			$("#team").load('draft_teams.php?action=load_team&draft_id=<?php echo $draft_id;?>&manager_id='+manager_id);
+			$("#team").load('draft_teams.php?action=load_team&draft_id=<?php echo $draft_id; ?>&manager_id='+manager_id);
 		})
 		});
 	</script>
@@ -32,13 +32,13 @@
 
 		<?php require('draft_menu.php'); ?>
 		<div id="content">
-		<h3><?php echo $title;?></h3>
+		<h3><?php echo $title; ?></h3>
 		<p>Select a team from the box below to see their current draft picks.</p>
 		<p><label for="manager_id">Select Manager:</label>
 			<select name="manager_id" id="manager_id">
 			<option>(select a manager)</option>
 			<?php while($all_managers = mysql_fetch_array($all_managers_result)) {
-				?><option value="<?php echo $all_managers['manager_id'];?>"><?php echo $all_managers['manager_name'] . " - " . $all_managers['team_name'];?></option>
+				?><option value="<?php echo $all_managers['manager_id']; ?>"><?php echo $all_managers['manager_name'] . " - " . $all_managers['team_name']; ?></option>
 				<?php } ?>
 			</select>
 			<?php if($draft_row['draft_status'] != "complete") {?>&nbsp;<a href="javascript:void();" id="refresh"><img src="images/icons/refresh.png" class="small_link" alt="Refresh Draft Picks" />&nbsp;(Refresh)</a><?php } ?></p>

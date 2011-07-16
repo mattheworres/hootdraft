@@ -1,4 +1,4 @@
-<?php require('check_login.php');?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+<?php require('check_login.php'); ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -23,7 +23,7 @@
 		$manager_name = CleanString(trim($_REQUEST['manager_name']));
 		$team_name = CleanString(trim($_REQUEST['team_name']));
 
-		require('comm_draft_menu.php');?>
+		require('comm_draft_menu.php'); ?>
 
 		<div id="content">
 		<?php
@@ -81,12 +81,12 @@
 
 			if($successful) {
 	?><h3>Manager Successfully Edited</h3>
-		<p class="success"><strong><?php echo $manager_name;?></strong> was edited successfully!</p>
-		<p class="success">Return to the <a href="comm_manage_draft.php?did=<?php echo $draft_id;?>">draft's main page</a>.</p><?php
+		<p class="success"><strong><?php echo $manager_name; ?></strong> was edited successfully!</p>
+		<p class="success">Return to the <a href="comm_manage_draft.php?did=<?php echo $draft_id; ?>">draft's main page</a>.</p><?php
 			}else {
 	?><h3>Manager Not Edited</h3>
 		<p class="error">An error has occurred and the manager was not edited. Please hit the back button on your browser and try again.</p>
-		<p class="error">SQL = <?php echo $sql;?></p><?php
+		<p class="error">SQL = <?php echo $sql; ?></p><?php
 			}
 }?>
 		</div>

@@ -1,4 +1,4 @@
-<?php require('check_login.php');?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+<?php require('check_login.php'); ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -15,7 +15,7 @@
 		if(empty($draft_id))
 		require('comm_menu.php');
 		else
-		require('comm_draft_menu.php');?>
+		require('comm_draft_menu.php'); ?>
 			<div id="content">
 		<?php
 		require_once('cleanstring.php');
@@ -34,11 +34,11 @@
 			while($draft_row = mysql_fetch_array($draft_result)) {//Output a table row for each draft
 				$manager_result = mysql_query("SELECT draft_id FROM managers WHERE draft_id = '" . $draft_row['draft_id']."'");
 				$manager_num = mysql_num_rows($manager_result);
-				?><tr<?php echo ($alt_row ? " background-color=\"#cccccc\"" : "");?>>
-						<td><a href="comm_manage_draft.php?did=<?php echo $draft_row['draft_id'];?>"><?php echo $draft_row['draft_name'];?></a></td>
-						<td><?php echo $draft_row['draft_sport'];?></td>
-						<td><?php echo $manager_num;?></td>
-						<td><?php echo $draft_row['draft_status'];?></td>
+				?><tr<?php echo ($alt_row ? " background-color=\"#cccccc\"" : ""); ?>>
+						<td><a href="comm_manage_draft.php?did=<?php echo $draft_row['draft_id']; ?>"><?php echo $draft_row['draft_name']; ?></a></td>
+						<td><?php echo $draft_row['draft_sport']; ?></td>
+						<td><?php echo $manager_num; ?></td>
+						<td><?php echo $draft_row['draft_status']; ?></td>
 					</tr>
 				<?php
 				if($alt_row)
@@ -66,15 +66,15 @@
 				$elapsed_time = $end_time - $start_time;
 				$elapsed_time = seconds_to_words($elapsed_time);
 			}
-			?><h3>Manage <?php echo $draft_row['draft_name'] . " (" . $draft_row['draft_sport'] . ")";?></h3>
+			?><h3>Manage <?php echo $draft_row['draft_name'] . " (" . $draft_row['draft_sport'] . ")"; ?></h3>
 				<p>Select your option below to begin managing this draft, or to begin/continue the draft process, enter the Draft Room now!</p>
 				<fieldset>
-					<legend><?php echo $draft_row['draft_name'];?> - Current Status</legend>
-					<div style="width: 70%; float:left;">
-			<p><strong>Sport: </strong> <?php echo $draft_row['draft_sport'];?></p>
-			<p><strong>Drafting Style: </strong> <?php echo $draft_row['draft_style'];?></p>
-			<p><strong># of Rounds: </strong> <?php echo $draft_row['draft_rounds'];?></p>
-			<p><strong>Status: </strong> <?php echo $draft_row['draft_status'];?> </p>
+					<legend><?php echo $draft_row['draft_name']; ?> - Current Status</legend>
+					<div style="width: 70%; float:left; ?>
+			<p><strong>Sport: </strong> <?php echo $draft_row['draft_sport']; ?></p>
+			<p><strong>Drafting Style: </strong> <?php echo $draft_row['draft_style']; ?></p>
+			<p><strong># of Rounds: </strong> <?php echo $draft_row['draft_rounds']; ?></p>
+			<p><strong>Status: </strong> <?php echo $draft_row['draft_status']; ?> </p>
 			<?php if($draft_row['draft_status'] == "complete") {?><p><strong>Total Draft Duration: </strong><?php echo $elapsed_time . "</p>";}?>
 			<p><strong>Draft Visibility: </strong> <?php if(!empty($draft_row['draft_password'])) {
 					echo "Private<br /><strong>Draft Password:</strong> " . $draft_row['draft_password'];
@@ -82,8 +82,8 @@
 					echo "Public";
 					}?></p>
 			</div>
-			<div style="width: 30%; float:right; text-align: right;">
-			<p><img src="images/icons/<?php echo $draft_row['draft_status'];?>.png" alt="<?php echo $draft_row['draft_status'];?>" title="<?php echo $draft_row['draft_status'];?>"/></p>
+			<div style="width: 30%; float:right; text-align: right; ?>
+			<p><img src="images/icons/<?php echo $draft_row['draft_status']; ?>.png" alt="<?php echo $draft_row['draft_status']; ?>" title="<?php echo $draft_row['draft_status']; ?>"/></p>
 			</div>
 				<?php if($manager_num == 0) {
 				echo "<p class=\"error\">*Before you can start your draft, you must <a href=\"comm_add_mgrs.php?did=".$draft_id."\">add managers</a>.</p>\n";
@@ -106,20 +106,20 @@
 						$downarrow_on = false;
 		?>
 						<tr>
-		<?php if($draft_row['draft_status'] == "undrafted") {?><td><a href="comm_edit_mgr.php?did=<?php echo $draft_id;?>&mid=<?php echo $manager_row['manager_id'];?>">Edit</a> |
-								<a href="comm_delete_mgr.php?did=<?php echo $draft_id;?>&mid=<?php echo $manager_row['manager_id'];?>">Delete</a></td>
-			<?php } ?><td><?php echo $manager_row['manager_name'];?></td>
-							<td><?php echo $manager_row['team_name'];?></td>
+		<?php if($draft_row['draft_status'] == "undrafted") {?><td><a href="comm_edit_mgr.php?did=<?php echo $draft_id; ?>&mid=<?php echo $manager_row['manager_id']; ?>">Edit</a> |
+								<a href="comm_delete_mgr.php?did=<?php echo $draft_id; ?>&mid=<?php echo $manager_row['manager_id']; ?>">Delete</a></td>
+			<?php } ?><td><?php echo $manager_row['manager_name']; ?></td>
+							<td><?php echo $manager_row['team_name']; ?></td>
 				<td>
-						<?php echo $manager_row['draft_order'] . "&nbsp;&nbsp;";?>
+						<?php echo $manager_row['draft_order'] . "&nbsp;&nbsp;"; ?>
 		<?php if($uparrow_on && $draft_row['draft_status'] == "undrafted") {?>
-				<a href="comm_draft_order.php?action=up&did=<?php echo $draft_id;?>&mid=<?php echo $manager_row['manager_id'];?>"><img src="images/icons/ArrowUp.png" alt="Move Up" border="0" /></a>
+				<a href="comm_draft_order.php?action=up&did=<?php echo $draft_id; ?>&mid=<?php echo $manager_row['manager_id']; ?>"><img src="images/icons/ArrowUp.png" alt="Move Up" border="0" /></a>
 			<?php }else {?>
 				<img src="images/icons/ArrowUp_off.png" alt="Move Up"  border="0"/>
 							<?php }
 						echo "&nbsp;";
 		if($downarrow_on && $draft_row['draft_status'] == "undrafted") {?>
-				<a href="comm_draft_order.php?action=down&did=<?php echo $draft_id;?>&mid=<?php echo $manager_row['manager_id'];?>"><img src="images/icons/ArrowDown.png" alt="Move Up"  border="0"/></a>
+				<a href="comm_draft_order.php?action=down&did=<?php echo $draft_id; ?>&mid=<?php echo $manager_row['manager_id']; ?>"><img src="images/icons/ArrowDown.png" alt="Move Up"  border="0"/></a>
 			<?php }else {?>
 				<img src="images/icons/ArrowDown_off.png" alt="Move Up"  border="0"/>
 			<?php }?>
@@ -130,10 +130,10 @@
 		<?php } ?>
 				</fieldset>
 		<fieldset>
-			<legend><?php echo $draft_row['draft_name'];?> - Functions</legend>
-				<?php if($draft_row['draft_status'] == "undrafted") {?><p><strong><a href="comm_add_mgrs.php?did=<?php echo $draft_id;?>">Add Manager(s)</a></strong></p>
-				<?php } ?><p><strong><a href="comm_edit_draft_pass.php?did=<?php echo $draft_id;?>">Change Draft Visibility</a></strong></p>
-	<?php if($draft_row['draft_status'] != "complete" && $manager_num > 0) {?><p><strong><a href="comm_edit_draft_status.php?did=<?php echo $draft_id;?>">Change Draft Status</a></strong></p><?php } ?>
+			<legend><?php echo $draft_row['draft_name']; ?> - Functions</legend>
+				<?php if($draft_row['draft_status'] == "undrafted") {?><p><strong><a href="comm_add_mgrs.php?did=<?php echo $draft_id; ?>">Add Manager(s)</a></strong></p>
+				<?php } ?><p><strong><a href="comm_edit_draft_pass.php?did=<?php echo $draft_id; ?>">Change Draft Visibility</a></strong></p>
+	<?php if($draft_row['draft_status'] != "complete" && $manager_num > 0) {?><p><strong><a href="comm_edit_draft_status.php?did=<?php echo $draft_id; ?>">Change Draft Status</a></strong></p><?php } ?>
 		</fieldset>
 			<?php
 			}else {//Were not able to find the draft with the ID handed to us

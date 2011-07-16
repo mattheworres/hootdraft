@@ -20,9 +20,9 @@
 
 		<?php require('menu.php'); ?>
 		<div id="content">
-		<h3><?php echo $title;?></h3>
-		<p class="error"><?php echo $msg;?></p>
-		<p class="success"><?php echo $success_msg;?></p>
+		<h3><?php echo $title; ?></h3>
+		<p class="error"><?php echo $msg; ?></p>
+		<p class="success"><?php echo $success_msg; ?></p>
 		</div>
 		<?php require('footer.php'); ?>
 	</div>

@@ -1,4 +1,4 @@
-<?php require('check_login.php');?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+<?php require('check_login.php'); ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -44,7 +44,7 @@
 		if(empty($draft_id))
 		require('comm_menu.php');
 		else
-		require('comm_draft_menu.php');?>
+		require('comm_draft_menu.php'); ?>
 		<div id="content">
 		<?php
 		if(empty($draft_id) && empty($_POST))		//Entry 1-0
@@ -96,7 +96,7 @@
 			}elseif($draft_row = mysql_num_rows($draft_result))		//Entry 3-2
 			{//If there is another draft with the same name that isn't THIS draft, we can't continue
 			?><h3>Draft Name Taken</h3>
-		<p class="error">There was another pre-existing draft that already has the name "<?php echo $draft_name;?>".  Please choose another name and hit "Update Draft" to continue.</p>
+		<p class="error">There was another pre-existing draft that already has the name "<?php echo $draft_name; ?>".  Please choose another name and hit "Update Draft" to continue.</p>
 			<?php print_edit($draft_id, $draft_name, $draft_sport, $draft_style, $draft_rounds);
 			}else									//Entry 3-2
 			{//We must have been given correct information, process and update the database.
@@ -106,7 +106,7 @@
 				mysql_query("UPDATE draft SET draft_rounds = ".$draft_rounds." WHERE draft_id = '".$draft_id."'")) {//Successfully updated the draft
 				?><h3>Draft Successfully Updated</h3>
 		<p class="success">The information for this draft has been successfully updated.</p>
-		<p class="success">To continue managing this draft, <a href="comm_manage_draft.php?did=<?php echo $draft_id;?>">click here</a>.</p>
+		<p class="success">To continue managing this draft, <a href="comm_manage_draft.php?did=<?php echo $draft_id; ?>">click here</a>.</p>
 				<?php }else {																//Entry 3-2-2
 				?><h3>Error: Draft Not Updated</h3>
 		<p class="error">Unfortunately, an error has occurred and the draft has not been updated successfully. Please try again below by hitting "Update Draft".</p>
