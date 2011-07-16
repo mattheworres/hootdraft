@@ -24,15 +24,15 @@ function select_db($dbname) {
 	global $my_conn;	//Use the global version
 
 	if(!$my_conn || !isset($my_conn)) {
-	die('Could not connect: Connection variable not set!');
+		die('Could not connect: Connection variable not set!');
 	}
 
 	if(!isset($dbname)) {//We weren't given a DB name
-	die('Could not select database: no database name given.');
+		die('Could not select database: no database name given.');
 	}
 
 	if(!mysql_select_db($dbname, $my_conn)) {//If we couldn't select that database
-	die('Could not select database: ' . mysql_error());
+		die('Could not select database: ' . mysql_error());
 	}
 }
 ?>

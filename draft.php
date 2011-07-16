@@ -18,7 +18,9 @@ if(!$load_success) {
 switch($_GET['action']) {
 	case '':
 	default:
+		// <editor-fold defaultstate="collapsed" desc="Main Draft Page Logic">
 		require_once("models/manager_object.php");
+		
 		$UPARROW = true;
 		$DOWNARROW = true;
 		
@@ -29,6 +31,6 @@ switch($_GET['action']) {
 		DEFINE('LOWEST_ORDER', $MANAGERS[NUMBER_OF_MANAGERS - 1]->draft_order);
 		
 		require_once('/views/draft/index.php');
+		// </editor-fold>
 		break;
-}
-?>
+} ?>
