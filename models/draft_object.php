@@ -62,6 +62,26 @@ class draft_object {
 
 		return $errors;
 	}
+	
+	/**
+	 * Set the text status of the draft according to arbitrary values stored in DB
+	 * @param $draft_status_from_database The textual status stored in the database
+	 */
+	public function setStatus($draft_status_from_database) {
+		switch($draft_status_from_database) {
+			case "undrafted":
+				$this->draft_status = "Setting Up";
+				break;
+			
+			case "in_progress":
+				$this->draft_status = "Currently Drafting";
+				break;
+			
+			case "complete":
+				$this->draft_status = "Draft Complete";
+				break;
+		}
+	}
 
 	/**
 	 * Adds a new instance of this draft to the database
