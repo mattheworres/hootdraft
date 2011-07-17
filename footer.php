@@ -3,5 +3,18 @@
 	PHPDraft | <a href="http://gplv3.fsf.org/" target="_blank">GNU GPL3 License</a> | 2011 <a href="http://www.mattheworres.com" target="_blank">Matthew Orres</a>
 </div>
 
-<script type="text/javascript" src="js/jquery-1.6.2.min.js" />
-<script type="text/javascript" src="js/jquery-ui-1.8.14.custom.min.js" />
+<div id="loadingDialog">
+	<img src="images/loading.gif" alt="Loading..."/>Loading...
+</div>
+
+<script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+<script type="text/javascript" src="js/jquery-ui-1.8.14.custom.min.js"></script>
+<script type="text/javascript">
+	$('#loadingDialog').dialog({
+		autoOpen: false,
+		title: "Loading...",
+		modal: true,
+		draggable: false,
+		resizable: false
+	});
+</script>

@@ -1,0 +1,25 @@
+span.manager-move-link {
+	display: inline-block;
+	cursor: pointer;
+	height: 16px;
+	width: 16px;
+	border: 0px;
+}
+
+span.up-on {
+	background-image: url('../images/icons/ArrowUp.png');
+}
+
+span.up-off {
+	background-image: url('../images/icons/ArrowUp_off.png');
+	cursor: default;
+}
+
+span.down-on {
+	background-image: url('../images/icons/ArrowDown.png');
+}
+
+span.down-off {
+	background-image: url('../images/icons/ArrowDown_off.png');
+	cursor: default;
+}

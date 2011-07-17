@@ -2,7 +2,8 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-	<?php require('meta.php'); ?>
+		<?php require('meta.php'); ?>
+		<link href="css/draft.css" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
 		<div id="page_wrapper">
@@ -35,48 +36,47 @@ else
 					<?php if(!HAS_MANAGERS) { ?>
 					<p class="error">*Before you can start your draft, you must <a href=\"comm_add_mgrs.php?did=<?php echo DRAFT_ID; ?>">add managers</a>.</p>
 						<?php }else { ?>
-					<table width="100%">
-						<tr>
-							<?php if($DRAFT->isUndrafted()) {?>
-							<th width="100">&nbsp;</th>
-							<?php } ?>
-							<th>Manager Name</th>
-							<th>Manager Team</th>
-							<th width="85">Draft Order</th>
-						</tr>
-						<?php
-						foreach($MANAGERS as $manager) {
+					<table id="managers-table" width="100%">
+						<thead>
+							<tr>
+								<?php if($DRAFT->isUndrafted()) {?>
+								<th width="100">&nbsp;</th>
+								<?php } ?>
+								<th>Manager Name</th>
+								<th>Manager Team</th>
+								<th width="85">Draft Order</th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php
+							foreach($MANAGERS as $manager) {
+								$UPARROW = true;
+								$DOWNARROW = true;
 
-							if($manager->draft_order == 1)
-								$UPARROW = false;
-							if($manager->draft_order == LOWEST_ORDER)
-								$DOWNARROW = false;
-							?>
-						<tr>
-							<?php if($DRAFT->isUndrafted()) {?>
-							<td>
-								<a href="comm_edit_mgr.php?did=<?php echo DRAFT_ID; ?>&mid=<?php echo $manager->manager_id; ?>">Edit</a> |
-								<a href="comm_delete_mgr.php?did=<?php echo DRAFT_ID; ?>&mid=<?php echo $manager->manager_id; ?>">Delete</a>
-							</td>
-							<?php } ?>
-							<td><?php echo $manager->manager_name; ?></td>
-							<td><?php echo $manager->team_name; ?></td>
-							<td>
-									<?php echo $manager_row['draft_order']; ?>&nbsp;&nbsp;
-							<?php if($UPARROW && $DRAFT->isUndrafted()) {?>
-							<a href="comm_draft_order.php?action=up&did=<?php echo DRAFT_ID; ?>&mid=<?php echo $manager->manager_id; ?>"><img src="images/icons/ArrowUp.png" alt="Move Up" border="0" /></a>
-							<?php }else {?>
-							<img src="images/icons/ArrowUp_off.png" alt="Move Up"  border="0"/>
-							<?php } ?>
-							&nbsp;
-							<?php if($DOWNARROW && $DRAFT->isUndrafted()) {?>
-							<a href="comm_draft_order.php?action=down&did=<?php echo DRAFT_ID; ?>&mid=<?php echo $manager->manager_id; ?>"><img src="images/icons/ArrowDown.png" alt="Move Up"  border="0"/></a>
-							<?php }else {?>
-							<img src="images/icons/ArrowDown_off.png" alt="Move Up"  border="0"/>
-							<?php } ?>
-							</td>
-						</tr>
-					<?php } ?>
+								if($manager->draft_order == 1)
+									$UPARROW = false;
+								if($manager->draft_order == LOWEST_ORDER)
+									$DOWNARROW = false;
+								?>
+							<tr data-manager-id="<?php echo $manager->manager_id;?>">
+								<?php if($DRAFT->isUndrafted()) {?>
+								<td>
+									<a href="comm_edit_mgr.php?did=<?php echo DRAFT_ID; ?>&mid=<?php echo $manager->manager_id; ?>">Edit</a> |
+									<a href="comm_delete_mgr.php?did=<?php echo DRAFT_ID; ?>&mid=<?php echo $manager->manager_id; ?>">Delete</a>
+								</td>
+								<?php } ?>
+								<td><?php echo $manager->manager_name; ?></td>
+								<td><?php echo $manager->team_name; ?></td>
+								<td>&nbsp;&nbsp;
+								<?php if($DRAFT->isUndrafted()) {?>
+									<span class="manager-move-link move-up up-on"></span>
+									&nbsp;
+									<span class="manager-move-link move-down down-on"></span>
+								<?php } ?>
+								</td>
+							</tr>
+						<?php } ?>
+						</tbody>
 					</table>
 			<?php } ?>
 				</fieldset>
@@ -88,6 +88,63 @@ else
 				</fieldset>
 			</div>
 <?php require('footer.php'); ?>
+			<script type="text/javascript">
+				$(document).ready(function() {
+					resetArrows();
+					
+					$('span.manager-move-link').live('click', function() {
+						var row = $(this).parents('tr:first'),
+							manager_id = row.attr('data-manager-id'),
+							$loadingDialog = $('#loadingDialog'),
+							isMoveUp = $(this).is('.move-up')
+							isOff = $(this).is('.down-off') || $(this).is('.up-off');
+							
+						if(isOff)
+							return;
+						
+						$loadingDialog.dialog('open');
+						
+						$.ajax({
+							type: 'POST',
+							url: 'manager.php?action=moveManager',
+							data: { mid: manager_id, direction: isMoveUp ? 'up' : 'down'},
+							success: function(data) {
+								$loadingDialog.dialog('close');
+								if(data == "SUCCESS") {
+									if(isMoveUp) {
+										row.insertBefore(row.prev());
+									}else {
+										row.insertAfter(row.next());
+									}
+								}else{
+									alert('Sorry - an error has occurred. Please try again.');
+								}
+							},
+							error: function() {
+								$loadingDialog.dialog('close');
+								alert('Sorry - an error has occurred. Please try again.');
+							}
+						})
+					});
+				});
+				
+				function resetArrows() {
+					//LEFT OFF HERE - need to ensure that the first and last rows have the proper arrows disabled.
+					var rows = $('#managers-table tbody tr'),
+						i = 1,
+						tableLength = rows.length;
+					
+					$.each(rows, function() {
+						if(i == 1)
+							this.children('span.move-up').removeClass('up-on').addClass('up-off');
+						
+						if(i == tableLength)
+							this.children('span.move-down').removeClass('down-on').addClass('down-off');
+
+						++i;
+					});
+				}
+			</script>
 		</div>
 	</body>
 </html>

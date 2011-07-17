@@ -4,15 +4,24 @@ require_once("models/manager_object.php");
 
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
 
-DEFINE('DRAFT_ID', intval($_GET['mid']));
+DEFINE('MANAGER_ID', intval($_GET['mid']));
 
 switch($_GET['action']) {
-	case 'moveManagerUp':
+	case 'moveManager':
+		$manager_id = $_POST['mid'];
+		$direction = $_POST['direction'];
 		
-		break;
-	
-	case 'moveManagerDown':
+		switch($direction) {
+			case 'up':
+				$success = manager_object::moveManagerUp($manager_id);
+				break;
+			
+			case 'down':
+				$success = manager_object::moveManagerDown($manager_id);
+				break;
+		}	
 		
+		echo $success ? "SUCCESS" : "FAILURE";
 		break;
 }
 ?>

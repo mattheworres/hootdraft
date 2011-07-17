@@ -21,9 +21,6 @@ switch($_GET['action']) {
 		// <editor-fold defaultstate="collapsed" desc="Main Draft Page Logic">
 		require_once("models/manager_object.php");
 		
-		$UPARROW = true;
-		$DOWNARROW = true;
-		
 		$MANAGERS = manager_object::getManagersByDraftId(DRAFT_ID, true);
 		
 		DEFINE('NUMBER_OF_MANAGERS', count($MANAGERS));
