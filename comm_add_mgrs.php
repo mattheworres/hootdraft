@@ -3,7 +3,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 	<?php require('meta.php'); ?>
-	<script src="js/jquery-1.4.2.min.js" type="text/JavaScript"></script>
 	</head>
 	<body>
 	<div id="page_wrapper">

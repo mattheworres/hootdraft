@@ -9,7 +9,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 	<?php require('meta.php'); ?>
-	<script src="js/jquery-1.4.2.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		function load_search() {
 		var search_terms = $("#search_terms").val();

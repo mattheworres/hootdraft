@@ -9,7 +9,7 @@
 	<head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link href="css/style.css" type="text/css" rel="stylesheet" />
-	<script src="js/jquery-1.4.2.min.js" type="text/javascript"></script>
+	<script src="js/jquery-1.6.2.min.js" type="text/javascript"></script>
 
 	<script type="text/javascript">
 		var poll_time = 1000 * 8;
@@ -40,8 +40,8 @@
 	</script>
 	<title>PHPDraft - <?php echo $draft_row['draft_name']; ?> - Draft Board</title>
 	</head>
-	<body style="margin-top: 1px; ?>
-	<p style="margin-left: auto; margin-right: auto; margin-top: 0px; margin-bottom: 1px; width:<?php echo $total_width; ?>px; text-align: left; vertical-align: middle; ?><strong><a href="draft_main.php?draft_id=<?php echo $draft_row['draft_id']; ?>"><img src="images/icons/back.png" border="0" alt="Go Back" />Go Back</a></strong></p>
+	<body style="margin-top: 1px;">
+	<p style="margin-left: auto; margin-right: auto; margin-top: 0px; margin-bottom: 1px; width:<?php echo $total_width; ?>px; text-align: left; vertical-align: middle;"><strong><a href="draft_main.php?draft_id=<?php echo $draft_row['draft_id']; ?>"><img src="images/icons/back.png" border="0" alt="Go Back" />Go Back</a></strong></p>
 	<div id="picks">
 		<table id="draft_table" width="<?php echo $total_width; ?>">
 		<tr><th class="left_col">Rd.</th><th class="left_col" colspan="<?php echo $number_of_managers; ?>"><?php echo $draft_row['draft_name']; ?> - Draft Board</th></tr>
