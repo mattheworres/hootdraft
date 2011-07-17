@@ -26,19 +26,23 @@ class manager_object {
 	/**
 	 * Get single instance of a manager object
 	 * @param int $manager_id
-	 * @return manager_object 
+	 * @return bool success whether or not the manager loaded correctly. 
 	 */
-	public static function getManagerById($manager_id) {
-		$sql = "SELECT * FROM managers WHERE manager_id = '" . $manager_id . "' LIMIT 1";
+	public function getManagerById($manager_id) {
+		$sql = "SELECT * FROM managers WHERE manager_id = " . $manager_id . " LIMIT 1";
 		$manager_result = mysql_query($sql);
-		if($manager_row = mysql_fetch_array($manager_result))
-			return new manager_object(array(
-				'manager_id' => $manager_row['manager_id'],
-				'draft_id' => $manager_row['draft_id'],
-				'manager_name' => $manager_row['manager_name'],
-				'team_name' => $manager_row['team_name'],
-				'draft_order' => $manager_row['draft_order']
-			));
+		if(!$manager_result)
+			return false;
+		
+		$manager_row = mysql_fetch_array($manager_result);
+
+		$this->manager_id = $manager_row['manager_id'];
+		$this->draft_id = $manager_row['draft_id'];
+		$this->manager_name = $manager_row['manager_name'];
+		$this->team_name = $manager_row['team_name'];
+		$this->draft_order = $manager_row['draft_order'];
+		
+		return true;
 	}
 
 	/**

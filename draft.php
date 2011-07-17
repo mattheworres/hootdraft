@@ -4,8 +4,8 @@ require_once("models/draft_object.php");
 
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
 
-$draft_id = intval($_GET['did']);
-DEFINE('DRAFT_ID', $draft_id);
+DEFINE('DRAFT_ID', intval($_GET['did']));
+
 $DRAFT = new draft_object();
 $load_success = $DRAFT->loadById(DRAFT_ID);
 
