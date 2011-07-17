@@ -33,7 +33,7 @@
 				<?php }
 			}?>
 		</table>
-		<p style="font-size: 80%; ?>*Cookies must be enabled</p>
+		<p style="font-size: 80%;">*Cookies must be enabled</p>
 		</div>
 		<?php require('footer.php'); ?>
 	</div>
