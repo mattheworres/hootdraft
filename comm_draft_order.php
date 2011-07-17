@@ -41,28 +41,30 @@ switch($action) {
 	case 'up':
 		// <editor-fold defaultstate="collapsed" desc="Up Logic">
 		$manager_result = mysql_query("SELECT draft_order FROM managers WHERE draft_id = ".$draft_id." AND manager_id = ".$manager_id." LIMIT 1");
+		
 		if(!$manager_row = mysql_fetch_array($manager_result)) {
-		$title = "Manager Not Found in Database";
-		$msg = "The manager you were attempting to update the draft order for was not found.  Please go back and try again.";
-		require('views/error_page.php');
-		exit(1);
+			$title = "Manager Not Found in Database";
+			$msg = "The manager you were attempting to update the draft order for was not found.  Please go back and try again.";
+			require('views/error_page.php');
+			exit(1);
 		}
 
 		$old_place = intval($manager_row['draft_order']);
 
 		if($old_place == 1) {
-		header('Location: comm_manage_draft.php?did='.$draft_id);
-		exit(0);
+			header('Location: comm_manage_draft.php?did='.$draft_id);
+			exit(0);
 		}
 
 		$new_place = intval($manager_row['draft_order']) - 1;
 
 		$swap_manager_result = mysql_query("SELECT draft_order, manager_id FROM managers WHERE draft_id = ".$draft_id." AND manager_id != ".$manager_id." AND draft_order = '".$new_place."'");
+		
 		if(!$swap_manager_row = mysql_fetch_array($swap_manager_result)) {
-		$title = "Swap Manager Not Found in Database";
-		$msg = "The manager you were attempting to update the draft order for was not found.  Please go back and try again.";
-		require('views/error_page.php');
-		exit(1);
+			$title = "Swap Manager Not Found in Database";
+			$msg = "The manager you were attempting to update the draft order for was not found.  Please go back and try again.";
+			require('views/error_page.php');
+			exit(1);
 		}
 
 		$sql1 = "UPDATE managers SET draft_order = '".$new_place."' WHERE draft_id = ".$draft_id." AND manager_id = ".$manager_id;
@@ -71,13 +73,13 @@ switch($action) {
 		$swap_success = mysql_query($sql2);
 
 		if(!$manager_success || !$swap_success) {
-		$title = "Draft Order Not Updated";
-		$msg = "An error occurred and the draft order wasn't updated.  Please go back and try again.<br/><br/>".$sql1."<br/><br/>".$sql2;
-		require('views/error_page.php');
-		exit(1);
+			$title = "Draft Order Not Updated";
+			$msg = "An error occurred and the draft order wasn't updated.  Please go back and try again.<br/><br/>".$sql1."<br/><br/>".$sql2;
+			require('views/error_page.php');
+			exit(1);
 		}else {
-		header('Location: comm_manage_draft.php?did='.$draft_id);
-		exit(0);
+			header('Location: comm_manage_draft.php?did='.$draft_id);
+			exit(0);
 		}
 		// </editor-fold>
 		break;
@@ -86,36 +88,36 @@ switch($action) {
 		// <editor-fold defaultstate="collapsed" desc="Down Logic">
 		$manager_result = mysql_query("SELECT draft_order FROM managers WHERE draft_id = ".$draft_id." AND manager_id = ".$manager_id." LIMIT 1");
 		if(!$manager_row = mysql_fetch_array($manager_result)) {
-		$title = "Manager Not Found in Database";
-		$msg = "The manager you were attempting to update the draft order for was not found.  Please go back and try again.";
-		require('views/error_page.php');
-		exit(1);
+			$title = "Manager Not Found in Database";
+			$msg = "The manager you were attempting to update the draft order for was not found.  Please go back and try again.";
+			require('views/error_page.php');
+			exit(1);
 		}
 
 		$old_place = intval($manager_row['draft_order']);
 
 		$lowest_order_result = mysql_query("SELECT draft_order FROM managers WHERE draft_id = ".$draft_id." ORDER BY draft_order DESC LIMIT 1");
 		if(!$lowest_order_row = mysql_fetch_array($lowest_order_result)) {
-		$title = "Draft Not Found";
-		$msg = "The draft that you were attempting to update the draft order for was not found.  Please go back and try again.";
-		require('views/error_page.php');
-		exit(1);
+			$title = "Draft Not Found";
+			$msg = "The draft that you were attempting to update the draft order for was not found.  Please go back and try again.";
+			require('views/error_page.php');
+			exit(1);
 		}
 		$lowest_order = intval($lowest_order_row['draft_order']);
 
 		if($old_place == $lowest_order) {
-		header('Location: comm_manage_draft.php?did='.$draft_id);
-		exit(0);
+			header('Location: comm_manage_draft.php?did='.$draft_id);
+			exit(0);
 		}
 
 		$new_place = intval($manager_row['draft_order']) + 1;
 
 		$swap_manager_result = mysql_query("SELECT draft_order, manager_id FROM managers WHERE draft_id = ".$draft_id." AND manager_id != ".$manager_id." AND draft_order = '".$new_place."'");
 		if(!$swap_manager_row = mysql_fetch_array($swap_manager_result)) {
-		$title = "Swap Manager Not Found in Database";
-		$msg = "The manager you were attempting to update the draft order for was not found.  Please go back and try again.";
-		require('views/error_page.php');
-		exit(1);
+			$title = "Swap Manager Not Found in Database";
+			$msg = "The manager you were attempting to update the draft order for was not found.  Please go back and try again.";
+			require('views/error_page.php');
+			exit(1);
 		}
 		$sql1 = "UPDATE managers SET draft_order = '".$new_place."' WHERE draft_id = ".$draft_id." AND manager_id = ".$manager_id;
 		$sql2 = "UPDATE managers SET draft_order = '".$old_place."' WHERE draft_id = ".$draft_id." AND manager_id = ".$swap_manager_row['manager_id'];
@@ -123,13 +125,13 @@ switch($action) {
 		$swap_success = mysql_query($sql2);
 
 		if(!$manager_success || !$swap_success) {
-		$title = "Draft Order Not Updated";
-		$msg = "An error occurred and the draft order wasn't updated.  Please go back and try again.<br/><br/>" . $sql1 . "<br/><br/>" . $sql2;
-		require('views/error_page.php');
-		exit(1);
+			$title = "Draft Order Not Updated";
+			$msg = "An error occurred and the draft order wasn't updated.  Please go back and try again.<br/><br/>" . $sql1 . "<br/><br/>" . $sql2;
+			require('views/error_page.php');
+			exit(1);
 		}else {
-		header('Location: comm_manage_draft.php?did='.$draft_id);
-		exit(0);
+			header('Location: comm_manage_draft.php?did='.$draft_id);
+			exit(0);
 		}
 		// </editor-fold>
 		break;
