@@ -1,4 +1,5 @@
 <?php
+
 require_once("check_login.php");
 require_once("models/draft_object.php");
 
@@ -19,6 +20,7 @@ switch($_GET['action']) {
 	case '':
 	default:
 		// <editor-fold defaultstate="collapsed" desc="Main Draft Page Logic">
+		//TODO: See if we should have a menu on the right side of this page... I think we should.
 		require_once("models/manager_object.php");
 		
 		$MANAGERS = manager_object::getManagersByDraftId(DRAFT_ID, true);

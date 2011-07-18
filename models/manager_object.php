@@ -77,7 +77,7 @@ class manager_object {
 	 * @return int $number_of_managers
 	 */
 	public static function getCountOfManagersByDraftId($draft_id) {
-		$sql = "SELECT * FROM managers WHERE draft_id = '" . $draft_id . "' ORDER BY manager_name";
+		$sql = "SELECT * FROM managers WHERE draft_id = " . $draft_id . " ORDER BY manager_name";
 
 		return mysql_num_rows(mysql_query($sql));
 	}
