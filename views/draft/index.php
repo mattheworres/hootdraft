@@ -58,7 +58,7 @@ else
 								if($manager->draft_order == LOWEST_ORDER)
 									$DOWNARROW = false;
 								?>
-							<tr data-manager-id="<?php echo $manager->manager_id;?>">
+							<tr data-manager-id="<?php echo $manager->manager_id;?>" class="touchy">
 								<?php if($DRAFT->isUndrafted()) {?>
 								<td>
 									<a href="comm_edit_mgr.php?did=<?php echo DRAFT_ID; ?>&mid=<?php echo $manager->manager_id; ?>">Edit</a> |
@@ -113,8 +113,10 @@ else
 								if(data == "SUCCESS") {
 									if(isMoveUp) {
 										row.insertBefore(row.prev());
+										resetArrows();
 									}else {
 										row.insertAfter(row.next());
+										resetArrows();
 									}
 								}else{
 									alert('Sorry - an error has occurred. Please try again.');
@@ -129,17 +131,24 @@ else
 				});
 				
 				function resetArrows() {
-					//LEFT OFF HERE - need to ensure that the first and last rows have the proper arrows disabled.
-					var rows = $('#managers-table tbody tr'),
+					var rows = $('#managers-table > tbody > tr'),
 						i = 1,
 						tableLength = rows.length;
 					
 					$.each(rows, function() {
-						if(i == 1)
-							this.children('span.move-up').removeClass('up-on').addClass('up-off');
+						var moverSpan = $(this).children().children('.move-up');
+						console.log('Spanner length = ' + moverSpan.length);
+						if(i == 1) {
+							$(this).children().children('span.move-up').removeClass('up-on').addClass('up-off');
+							if(tableLength > 1)
+								$(this).children().children('span.move-down').removeClass('down-off').addClass('down-on');
+						}
 						
-						if(i == tableLength)
-							this.children('span.move-down').removeClass('down-on').addClass('down-off');
+						if(i == tableLength) {
+							$(this).children().children('span.move-down').removeClass('down-on').addClass('down-off');
+							if(tableLength > 1)
+								$(this).children().children('span.move-up').removeClass('up-off').addClass('up-on');
+						}
 
 						++i;
 					});
