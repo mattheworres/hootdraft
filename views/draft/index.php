@@ -136,18 +136,17 @@ else
 						tableLength = rows.length;
 					
 					$.each(rows, function() {
-						var moverSpan = $(this).children().children('.move-up');
-						console.log('Spanner length = ' + moverSpan.length);
 						if(i == 1) {
 							$(this).children().children('span.move-up').removeClass('up-on').addClass('up-off');
 							if(tableLength > 1)
 								$(this).children().children('span.move-down').removeClass('down-off').addClass('down-on');
-						}
-						
-						if(i == tableLength) {
+						}else if(i == tableLength) {
 							$(this).children().children('span.move-down').removeClass('down-on').addClass('down-off');
 							if(tableLength > 1)
 								$(this).children().children('span.move-up').removeClass('up-off').addClass('up-on');
+						}else {
+							$(this).children().children('span.move-down').removeClass('down-off').addClass('down-on');
+							$(this).children().children('span.move-up').removeClass('up-off').addClass('up-on');
 						}
 
 						++i;
