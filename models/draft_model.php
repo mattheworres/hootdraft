@@ -414,7 +414,6 @@ $position_colors = Array(
 
 $nhl_teams = Array(
 	"ANA" => "Anaheim Ducks",
-	"ATL" => "Atlanta Thrashers",
 	"BOS" => "Boston Bruins",
 	"BUF" => "Buffalo Sabres",
 	"CGY" => "Calgary Flames",
@@ -442,7 +441,8 @@ $nhl_teams = Array(
 	"TAM" => "Tampa Bay Lightning",
 	"TOR" => "Toronto Maple Leafs",
 	"VAN" => "Vancouver Canucks",
-	"WAS" => "Washington Capitals"
+	"WAS" => "Washington Capitals",
+	"WPG" => "Winnipeg Jets"
 );
 
 $nhl_positions = Array(
