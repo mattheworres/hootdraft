@@ -10,7 +10,7 @@
 
 		<div id="content-wide">
 		<h3><?php echo PAGE_HEADER; ?></h3>
-		<?php echo PAGE_CONTENT; ?>
+		<p class="<?php echo P_CLASS; ?>"><?php echo PAGE_CONTENT; ?></p>
 		</div>
 		<?php require('footer.php'); ?>
 	</div>

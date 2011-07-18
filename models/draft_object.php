@@ -112,11 +112,9 @@ class draft_object {
 		
 		$draft_result = mysql_query("SELECT * FROM draft WHERE draft_id = " . $id . " LIMIT 1");
 		
-		if(!$draft_result)
+		if(!$draft_row = mysql_fetch_array($draft_result))
 			return false;
-			
 		
-		$draft_row = mysql_fetch_array($draft_result);
 		$this->draft_id = intval($draft_row['draft_id']);
 		$this->draft_name = $draft_row['draft_name'];
 		$this->draft_sport = $draft_row['draft_sport'];

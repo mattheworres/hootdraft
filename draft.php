@@ -12,8 +12,10 @@ $load_success = $DRAFT->loadById(DRAFT_ID);
 
 if(!$load_success) {
 	define("PAGE_HEADER", "Draft Not Found");
-	define("PAGE_CONTENT", "<p class=\"error\">We're sorry, but the draft could not be loaded. Please try again.</p>");
+	define("P_CLASS", "error");
+	define("PAGE_CONTENT", "We're sorry, but the draft could not be loaded. Please try again.");
 	require_once("/views/generic_result_view.php");
+	exit(1);
 }
 
 switch($_GET['action']) {
