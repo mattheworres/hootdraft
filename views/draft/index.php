@@ -13,10 +13,7 @@ require_once('cleanstring.php');
 require_once('models/draft_model.php');
 require_once('models/draft_object.php');
 
-if(DRAFT_ID == 0)
-	require('comm_menu.php');
-else
-	require('comm_draft_menu.php'); ?>
+require('views/shared/draft_menu.php'); ?>
 			<div id="content">
 				<h3>Manage <?php echo $DRAFT->draft_name; ?> (<?php echo $DRAFT->draft_sport; ?>)</h3>
 				<p>Select your option below to begin managing this draft, or to begin/continue the draft process, enter the Draft Room now!</p>
