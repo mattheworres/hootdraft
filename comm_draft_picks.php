@@ -36,65 +36,65 @@ $pick_result = mysql_query($pick_sql);
 $pick_row = mysql_fetch_array($pick_result);
 
 if(empty($draft_id) || $draft_count == 0) {
-    $title = "Draft Not Found";
-    $msg = "The draft was not found.  Please go back and try again.";
-    require('views/error_page.php');
-    exit(1);
+	$title = "Draft Not Found";
+	$msg = "The draft was not found.  Please go back and try again.";
+	require('views/error_page.php');
+	exit(1);
 }elseif($draft_row['draft_status'] == "undrafted") {
-    $title = "Draft Not Ready!";
-    $msg = "Your draft is currently not set to draft. Make sure all teams and settings are correct, and then change the draft status to \"In Progress\", and then come back and try again.";
-    require('views/error_page.php');
-    exit(1);
+	$title = "Draft Not Ready!";
+	$msg = "Your draft is currently not set to draft. Make sure all teams and settings are correct, and then change the draft status to \"In Progress\", and then come back and try again.";
+	require('views/error_page.php');
+	exit(1);
 }elseif($draft_row['draft_status'] == "complete") {
-    $title = "Draft Already Complete!";
-    $msg = "You can no longer draft because your draft is complete.";
-    require('views/error_page.php');
-    exit(1);
+	$title = "Draft Already Complete!";
+	$msg = "You can no longer draft because your draft is complete.";
+	require('views/error_page.php');
+	exit(1);
 }else {
-    switch($action) {
+	switch($action) {
 	case 'add':
-	    $title = "Enter the Next Draft Pick";
+		$title = "Enter the Next Draft Pick";
 
-	    $current_pick = get_current_pick($draft_id);
-	    $managers_result = get_managers($draft_id);
-	    $next_picks = get_next_picks($draft_id, $current_pick['player_pick']);
-	    $last_picks = get_last_picks($draft_id);
+		$current_pick = get_current_pick($draft_id);
+		$managers_result = get_managers($draft_id);
+		$next_picks = get_next_picks($draft_id, $current_pick['player_pick']);
+		$last_picks = get_last_picks($draft_id);
 
-	    $on_deck = mysql_fetch_array($next_picks);
-	    $in_the_hole = mysql_fetch_array($next_picks);
-	    $on_the_bench = mysql_fetch_array($next_picks);
-	    $grabbing_gatorade = mysql_fetch_array($next_picks);
+		$on_deck = mysql_fetch_array($next_picks);
+		$in_the_hole = mysql_fetch_array($next_picks);
+		$on_the_bench = mysql_fetch_array($next_picks);
+		$grabbing_gatorade = mysql_fetch_array($next_picks);
 
-	    if($draft_row['draft_sport'] == "hockey") {
+		if($draft_row['draft_sport'] == "hockey") {
 		$teams = $nhl_teams;
 		$positions = $nhl_positions;
-	    }elseif($draft_row['draft_sport'] == "football") {
+		}elseif($draft_row['draft_sport'] == "football") {
 		$teams = $nfl_teams;
 		$positions = $nfl_positions;
-	    }elseif($draft_row['draft_sport'] == "baseball") {
+		}elseif($draft_row['draft_sport'] == "baseball") {
 		$teams = $mlb_teams;
 		$positions = $mlb_positions;
-	    }elseif($draft_row['draft_sport'] == "basketball") {
+		}elseif($draft_row['draft_sport'] == "basketball") {
 		$teams = $nba_teams;
 		$positions = $nba_positions;
-	    }
+		}
 
-	    if($success == 1)
+		if($success == 1)
 		$msg = "Draft pick #".$old_pick." successfully added!";
 
-	    require('views/pick_add.php');
-	    exit(0);
-	    break;
+		require('views/pick_add.php');
+		exit(0);
+		break;
 
 	case 'add_pick':
-	    if(empty($draft_id) ||
-		    empty($round) ||
-		    empty($pick) ||
-		    empty($manager_id) ||
-		    empty($first_name) ||
-		    empty($last_name) ||
-		    empty($team_abbreviation) ||
-		    empty($position)) {
+		if(empty($draft_id) ||
+			empty($round) ||
+			empty($pick) ||
+			empty($manager_id) ||
+			empty($first_name) ||
+			empty($last_name) ||
+			empty($team_abbreviation) ||
+			empty($position)) {
 		$title = "Enter the Next Draft Pick";
 		$err_msg = "You can not have any empty fields! Make sure ALL fields are filled out and re-submit.";
 
@@ -102,31 +102,31 @@ if(empty($draft_id) || $draft_count == 0) {
 		$managers_result = get_managers($draft_id);
 
 		if($draft_row['draft_sport'] == "hockey") {
-		    $teams = $nhl_teams;
-		    $positions = $nhl_positions;
+			$teams = $nhl_teams;
+			$positions = $nhl_positions;
 		}elseif($draft_row['draft_sport'] == "football") {
-		    $teams = $nfl_teams;
-		    $positions = $nfl_positions;
+			$teams = $nfl_teams;
+			$positions = $nfl_positions;
 		}elseif($draft_row['draft_sport'] == "baseball") {
-		    $teams = $mlb_teams;
-		    $positions = $mlb_positions;
+			$teams = $mlb_teams;
+			$positions = $mlb_positions;
 		}elseif($draft_row['draft_sport'] == "basketball") {
-		    $teams = $nba_teams;
-		    $positions = $nba_positions;
+			$teams = $nba_teams;
+			$positions = $nba_positions;
 		}
 
 		require('views/pick_add.php');
 		exit(1);
-	    }else {
+		}else {
 		//mktime($hour,$min,$sec,$mon,$day,$year);
 		$now = mktime(date('H'), date('i'), date('s'), date('m'), date('d'), date('Y'));
 		$previous_pick = $pick - 1;
 
 		if($previous_pick > 0) {
-		    $start_time = get_previous_time($draft_id, $pick);
-		    $start = strtotime($start_time['pick_time']);
+			$start_time = get_previous_time($draft_id, $pick);
+			$start = strtotime($start_time['pick_time']);
 		}else {
-		    $start = strtotime($draft_row['draft_start_time']);
+			$start = strtotime($draft_row['draft_start_time']);
 		}
 
 		$alloted_time = $now - $start;
@@ -150,90 +150,90 @@ if(empty($draft_id) || $draft_count == 0) {
 		$next_pick = get_next_pick($draft_id, $pick);
 
 		if($next_pick) {
-		    $sql = "UPDATE draft SET ".
-			    "draft_current_pick = '".$next_pick['player_pick']."', ".
-			    "draft_current_round = '".$next_pick['player_round']."' ".
-			    "WHERE draft_id = '".$draft_id."'";
+			$sql = "UPDATE draft SET ".
+				"draft_current_pick = '".$next_pick['player_pick']."', ".
+				"draft_current_round = '".$next_pick['player_round']."' ".
+				"WHERE draft_id = '".$draft_id."'";
 
-		    mysql_query($sql) or die(mysql_error());
+			mysql_query($sql) or die(mysql_error());
 
-		    header('Location: comm_draft_picks.php?action=add&draft_id='.$draft_id.'&success=1&old_pick='.$pick);
-		    exit(0);
+			header('Location: comm_draft_picks.php?action=add&draft_id='.$draft_id.'&success=1&old_pick='.$pick);
+			exit(0);
 		}else {
-		    $sql = "UPDATE draft SET ".
-			    "draft_status = 'complete', ".
-			    "draft_end_time = '".$current_time."' ".
-			    "WHERE draft_id = '".$draft_id."'";
+			$sql = "UPDATE draft SET ".
+				"draft_status = 'complete', ".
+				"draft_end_time = '".$current_time."' ".
+				"WHERE draft_id = '".$draft_id."'";
 
-		    mysql_query($sql);
-		    header('Location: comm_manage_draft.php?did='.$draft_id);
-		    exit(0);
+			mysql_query($sql);
+			header('Location: comm_manage_draft.php?did='.$draft_id);
+			exit(0);
 		}
 
-	    }
-	    break;
+		}
+		break;
 
 	case 'select_edit':
-	    $title = "Edit a Draft Pick";
-	    $rounds = $draft_row['draft_rounds'];
-	    if($success)
+		$title = "Edit a Draft Pick";
+		$rounds = $draft_row['draft_rounds'];
+		if($success)
 		$msg = "Draft pick round ".$round.", #".$pick." successfully edited!";
 
-	    require('views/pick_edit_select.php');
-	    exit(0);
-	    break;
+		require('views/pick_edit_select.php');
+		exit(0);
+		break;
 
 	case 'edit':
-	    $title = "Edit Draft Pick - ".$pick_row['manager_name']."'s #".$pick_row['player_pick']." Pick";
-	    $managers_result = get_managers($draft_id);
+		$title = "Edit Draft Pick - ".$pick_row['manager_name']."'s #".$pick_row['player_pick']." Pick";
+		$managers_result = get_managers($draft_id);
 
-	    if($draft_row['draft_sport'] == "hockey") {
+		if($draft_row['draft_sport'] == "hockey") {
 		$teams = $nhl_teams;
 		$positions = $nhl_positions;
-	    }elseif($draft_row['draft_sport'] == "football") {
+		}elseif($draft_row['draft_sport'] == "football") {
 		$teams = $nfl_teams;
 		$positions = $nfl_positions;
-	    }elseif($draft_row['draft_sport'] == "baseball") {
+		}elseif($draft_row['draft_sport'] == "baseball") {
 		$teams = $mlb_teams;
 		$positions = $mlb_positions;
-	    }elseif($draft_row['draft_sport'] == "basketball") {
+		}elseif($draft_row['draft_sport'] == "basketball") {
 		$teams = $nba_teams;
 		$positions = $nba_positions;
-	    }
-	    
-	    require('views/pick_edit.php');
-	    exit(0);
-	    break;
+		}
+		
+		require('views/pick_edit.php');
+		exit(0);
+		break;
 
 	case 'edit_pick':
-	    if(empty($draft_id) ||
-		    empty($pick_id) ||
-		    empty($manager_id) ||
-		    empty($first_name) ||
-		    empty($last_name) ||
-		    empty($team_abbreviation) ||
-		    empty($position)) {
+		if(empty($draft_id) ||
+			empty($pick_id) ||
+			empty($manager_id) ||
+			empty($first_name) ||
+			empty($last_name) ||
+			empty($team_abbreviation) ||
+			empty($position)) {
 		$title = "Edit Draft Pick - ".$pick_row['manager_name']."'s #".$pick_row['player_pick']." Pick";
 		$err_msg = "You can not have any empty fields! Make sure ALL fields are filled out and re-submit.";
 		$managers_result = get_managers($draft_id);
 
 		if($draft_row['draft_sport'] == "hockey") {
-		    $teams = $nhl_teams;
-		    $positions = $nhl_positions;
+			$teams = $nhl_teams;
+			$positions = $nhl_positions;
 		}elseif($draft_row['draft_sport'] == "football") {
-		    $teams = $nfl_teams;
-		    $positions = $nfl_positions;
+			$teams = $nfl_teams;
+			$positions = $nfl_positions;
 		}elseif($draft_row['draft_sport'] == "baseball") {
-		    $teams = $mlb_teams;
-		    $positions = $mlb_positions;
+			$teams = $mlb_teams;
+			$positions = $mlb_positions;
 		}elseif($draft_row['draft_sport'] == "basketball") {
-		    $teams = $nba_teams;
-		    $positions = $nba_positions;
+			$teams = $nba_teams;
+			$positions = $nba_positions;
 		}
 
 		require('views/pick_edit.php');
 		exit(1);
-	    }else {
+		}else {
 		$sql = "UPDATE players SET ".
 			"manager_id = '".$manager_id."', ".
 			"first_name = '".$first_name."', ".
@@ -246,35 +246,35 @@ if(empty($draft_id) || $draft_count == 0) {
 
 		header('Location: comm_draft_picks.php?action=select_edit&draft_id='.$draft_id.'&success=1&round='.$pick_row['player_round'].'&pick='.$pick_row['player_pick']);
 		exit(0);
-	    }
-	    break;
+		}
+		break;
 
 	case 'get_round_picks':
-	    $picks = get_round_picks($draft_id, $round);
+		$picks = get_round_picks($draft_id, $round);
 
-	    $html = "<p><label for=\"round\">Round*:</label>
-			    <select name=\"round\" id=\"round\">";
-	    for($i = 1; $i < $draft_row['draft_rounds']; $i++) {
+		$html = "<p><label for=\"round\">Round*:</label>
+				<select name=\"round\" id=\"round\">";
+		for($i = 1; $i < $draft_row['draft_rounds']; $i++) {
 		$html .= "<option value=\"".$i."\"".($i == $round ? " selected" : "").">Round ".$i."</option>\n";
-	    }
-
-	    $html .= "</select></p>\n".
-		    "<p><label for=\"pick_id\">Editable Picks*:</label>".
-		    "<select name=\"pick_id\">";
-
-	    $count = mysql_num_rows($picks);
-	    if($count == 0)
-		$html .= "<option value=\"\" disabled>No Picks Made in Round ".$round."</option>";
-	    else {
-		while($pick = mysql_fetch_array($picks)) {
-		    $html .= "<option value=\"".$pick['player_id']."\">Pick ".$pick['player_pick']." - ".$pick['manager_name']."</option>";
 		}
-	    }
 
-	    $html .= "</select></p>";
-	    echo $html;
-	    exit(0);
-	    break;
-    }
+		$html .= "</select></p>\n".
+			"<p><label for=\"pick_id\">Editable Picks*:</label>".
+			"<select name=\"pick_id\">";
+
+		$count = mysql_num_rows($picks);
+		if($count == 0)
+		$html .= "<option value=\"\" disabled>No Picks Made in Round ".$round."</option>";
+		else {
+		while($pick = mysql_fetch_array($picks)) {
+			$html .= "<option value=\"".$pick['player_id']."\">Pick ".$pick['player_pick']." - ".$pick['manager_name']."</option>";
+		}
+		}
+
+		$html .= "</select></p>";
+		echo $html;
+		exit(0);
+		break;
+	}
 }
 ?>

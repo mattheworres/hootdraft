@@ -1,33 +1,32 @@
-<?php require('check_login.php');?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?php require('check_login.php'); ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
+	<head>
 	<?php require('meta.php'); ?>
-	<script src="js/jquery-1.4.2.min.js" type="text/JavaScript"></script>
-    </head>
-    <body>
+	</head>
+	<body>
 	<div id="page_wrapper">
-	    <?php require('header.php'); ?>
+		<?php require('header.php'); ?>
 
-	    <?php
-	    require_once('cleanstring.php');
+		<?php
+		require_once('cleanstring.php');
 
-	    if(!empty($_REQUEST['draft_id']))
+		if(!empty($_REQUEST['draft_id']))
 		$draft_id = intval($_REQUEST['draft_id']);
-	    else
+		else
 		$draft_id = intval($_REQUEST['did']);
 
-	    if(empty($draft_id))
+		if(empty($draft_id))
 		require('comm_menu.php');
-	    else
-		require('comm_draft_menu.php');?>
+		else
+		require('comm_draft_menu.php'); ?>
 
-	    <div id="content">
+		<div id="content">
 		<?php
 		function print_add_managers($draft_id, $managers = array()) {
-		    echo "<form action=\"comm_add_mgrs.php\" method=\"POST\">
+			echo "<form action=\"comm_add_mgrs.php\" method=\"POST\">
 			<input type=\"hidden\" name=\"draft_id\" value=\"".$draft_id."\" />
-		    <fieldset>
+			<fieldset>
 			<legend>Add Managers</legend>
 			<p><label for=\"mgr_1_name\">Manager 1 Name:</label>
 			<input type=\"text\" name=\"mgr_1\" id=\"mgr_1\">".$managers[0]['name']."</input><br />
@@ -79,91 +78,91 @@
 			<label for=\"mgr_10_team\">Manager 10 Team Name:</label>
 			<input type=\"text\" name=\"mgr_10_team\" id=\"mgr_10_team\">".$managers[9]['team_name']."</input></p>
 			<input type=\"submit\" value=\"Add Manager(s)\"></input>
-		    </fieldset>
+			</fieldset>
 		</form>";
 		}
 		
 		$managers = array();
 		$i = 0;
 		while($i < 10) {
-		    $mgr_name = CleanString(trim($_REQUEST['mgr_'.$i]));
-		    $team_name = CleanString(trim($_REQUEST['mgr_'.$i.'_team']));
-		    if(!empty($mgr_name) && !empty($team_name)) {
+			$mgr_name = CleanString(trim($_REQUEST['mgr_'.$i]));
+			$team_name = CleanString(trim($_REQUEST['mgr_'.$i.'_team']));
+			if(!empty($mgr_name) && !empty($team_name)) {
 			$temp_array = array($mgr_name, $team_name);
 			array_push($managers, $temp_array);
-		    }
-		    $i++;
+			}
+			$i++;
 		}
 		
 		if(!empty($managers))
-		    $have_managers = true;
+			$have_managers = true;
 		else
-		    $have_managers = false;
+			$have_managers = false;
 		$garbage = "JASDJA";
 		$draft_result = mysql_query("SELECT draft_id FROM draft WHERE draft_id = '" . $draft_id . "'");
 		$draft_found = mysql_num_rows($draft_result);
 		if(empty($draft_id) || $draft_found == 0) {
-		    ?><h3>Draft Not Found</h3>
+			?><h3>Draft Not Found</h3>
 		<p class="error">An error has occurred and the draft you were attempting to add managers to was not found.  Please go back and try again.</p>
-    <?php }elseif(!$have_managers && !empty($_REQUEST['draft_id'])) {
+	<?php }elseif(!$have_managers && !empty($_REQUEST['draft_id'])) {
 	?><h3>Add Managers</h3>
 	<p class="error">You must enter at least one manager name! Re-enter your manager names below, then hit "Add Managers" to continue.</p>
 	<?php print_add_managers($draft_id);
-    }elseif($have_managers) {
+	}elseif($have_managers) {
 	$manager_order_result = mysql_query("SELECT draft_order FROM managers WHERE draft_id = '".$draft_id."' ORDER BY draft_order DESC LIMIT 1");
 	$manager_order_row = mysql_fetch_array($manager_order_result);
 
 	$starting_order = intval($manager_order_row['draft_order']) + 1;	//Starting value to assign new managers for drafting order
 
 	foreach($managers as $idx => $manager) {
-	    $manager_name = $manager[0];
-	    $team_name = $manager[1];
+		$manager_name = $manager[0];
+		$team_name = $manager[1];
 	   $sql = "INSERT INTO managers ".
-	    "(manager_id, draft_id, manager_name, team_name, draft_order) ".
-	    "VALUES ".
-	    "(NULL, '" . $draft_id . "', '" . $manager_name . "', '" . $team_name . "', ".$starting_order."); ";
+		"(manager_id, draft_id, manager_name, team_name, draft_order) ".
+		"VALUES ".
+		"(NULL, '" . $draft_id . "', '" . $manager_name . "', '" . $team_name . "', ".$starting_order."); ";
 	   $starting_order++;
 	   $queries[$idx] = $sql;
 	}
 	
 	$successful = true;
 	foreach($queries as $idx => $query) {
-	    $query = trim($query);
-	    if(!empty($query)) {
+		$query = trim($query);
+		if(!empty($query)) {
 		$success = mysql_query($query);
 		if(!$success)
-		    $successful = false;
-	    }
+			$successful = false;
+		}
 	}
 	
 	if($successful) {
-	    ?><h3>Managers Added Successfully!</h3>
-	    <p class="success">The following managers were added successfully:</p>
-	    <table width="100%">
+		?><h3>Managers Added Successfully!</h3>
+		<p class="success">The following managers were added successfully:</p>
+		<table width="100%">
 		<tr>
-		    <th>Manager Name</th>
-		    <th>Team Name</th>
+			<th>Manager Name</th>
+			<th>Team Name</th>
 		</tr>
 		<?php foreach($managers as $manager) { ?>
 		<tr>
-		    <td><?php echo $manager[0];?></td>
-		    <td><?php echo $manager[1];?></td>
+			<td><?php echo $manager[0]; ?></td>
+			<td><?php echo $manager[1]; ?></td>
 		</tr>
 		<?php } ?>
-	    </table>
-	    <p class="success">Return to the <a href="comm_manage_draft.php?did=<?php echo $draft_id;?>">draft's main page</a>.</p><?php
+		</table>
+		<p class="success">Return to the <a href="comm_manage_draft.php?did=<?php echo $draft_id; ?>">draft's main page</a>.</p><?php
 	}else {
-	    ?><h3>Managers Not Added</h3>
-	    <p class="error">An error has occurred and the managers were not added. Please hit the back button on your browser and try again.</p><?php
+		?><h3>Managers Not Added</h3>
+		<p class="error">An error has occurred and the managers were not added. Please hit the back button on your browser and try again.</p><?php
 	}
 	
-    }else { ?><h3>Add Managers</h3>
+	}else { ?><h3>Add Managers</h3>
 		<p>Add managers by entering their names (manager name + team name) below and then hit "Add Managers" to continue.  You can add up to 10 managers at a single time.</p>
-    <?php 
-    print_add_managers($draft_id);
-    } ?>
-	    </div>
+	<?php 
+	print_add_managers($draft_id);
+	} ?>
+		</div>
 <?php require('footer.php'); ?>
 	</div>
-    </body>
+	</body>
 </html>
