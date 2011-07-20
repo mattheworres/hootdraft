@@ -7,10 +7,9 @@ DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
 
 DEFINE('DRAFT_ID', intval($_GET['did']));
 
-$DRAFT = new draft_object();
-$load_success = $DRAFT->loadById(DRAFT_ID);
+$DRAFT = new draft_object(DRAFT_ID);
 
-if(!$load_success) {
+if(!$DRAFT) {
 	define("PAGE_HEADER", "Draft Not Found");
 	define("P_CLASS", "error");
 	define("PAGE_CONTENT", "We're sorry, but the draft could not be loaded. Please try again.");

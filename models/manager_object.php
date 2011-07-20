@@ -18,6 +18,9 @@ class manager_object {
 	public $draft_order;
 
 	public function __construct($manager_id) {
+		if(intval($manager_id) == 0)
+			return false;
+		
 		$sql = "SELECT * FROM managers WHERE manager_id = " . $manager_id . " LIMIT 1";
 		$manager_result = mysql_query($sql);
 		if(!$manager_result)

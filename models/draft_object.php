@@ -32,10 +32,30 @@ class draft_object {
 	public $current_round;
 	public $current_pick;
 
-	public function __construct(array $properties = array()) {
-		foreach($properties as $property => $value)
-			if(property_exists('draft_object', $property))
-				$this->$property = $value;
+	public function __construct($id) {
+		if(intval($id) == 0)
+			return false;
+		
+		$draft_result = mysql_query("SELECT * FROM draft WHERE draft_id = " . $id . " LIMIT 1");
+		
+		if(!$draft_row = mysql_fetch_array($draft_result))
+			return false;
+		
+		$this->draft_id = intval($draft_row['draft_id']);
+		$this->draft_name = $draft_row['draft_name'];
+		$this->draft_sport = $draft_row['draft_sport'];
+		$this->draft_status = $draft_row['draft_status'];
+		$this->draft_style = $draft_row['draft_style'];
+		$this->draft_rounds = $draft_row['draft_rounds'];
+		$this->draft_password = $draft_row['draft_password'];
+		//TODO: Figure out how to convert to useable PHP datetimes:
+		//NOTE: Using strtotime, in the first draft page that's what I was using... update if necessary.
+		$this->start_time = strtotime($draft_row['draft_start_time']);
+		$this->end_time = strtotime($draft_row['draft_end_time']);
+		$this->current_round = intval($draft_row['draft_current_round']);
+		$this->current_pick = intval($draft_row['draft_current_pick']);
+		
+		return true;
 	}
 
 	/**
@@ -99,36 +119,6 @@ class draft_object {
 
 		$this->draft_id = mysql_insert_id();
 
-		return true;
-	}
-
-	/**
-	 * Load a specific draft by ID
-	 * @return boolean success whether or not the load succeeded
-	 */
-	public function loadById($id) {
-		if($id == 0)
-			return false;
-		
-		$draft_result = mysql_query("SELECT * FROM draft WHERE draft_id = " . $id . " LIMIT 1");
-		
-		if(!$draft_row = mysql_fetch_array($draft_result))
-			return false;
-		
-		$this->draft_id = intval($draft_row['draft_id']);
-		$this->draft_name = $draft_row['draft_name'];
-		$this->draft_sport = $draft_row['draft_sport'];
-		$this->draft_status = $draft_row['draft_status'];
-		$this->draft_style = $draft_row['draft_style'];
-		$this->draft_rounds = $draft_row['draft_rounds'];
-		$this->draft_password = $draft_row['draft_password'];
-		//TODO: Figure out how to convert to useable PHP datetimes:
-		//NOTE: Using strtotime, in the first draft page that's what I was using... update if necessary.
-		$this->start_time = strtotime($draft_row['draft_start_time']);
-		$this->end_time = strtotime($draft_row['draft_end_time']);
-		$this->current_round = intval($draft_row['draft_current_round']);
-		$this->current_pick = intval($draft_row['draft_current_pick']);
-		
 		return true;
 	}
 	

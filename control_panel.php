@@ -18,12 +18,11 @@ switch($_GET['action']) {
 
 		$ERRORS = array();
 
-		$draft = new draft_object(array(
-			'draft_name' => CleanString(trim($_POST['draft_name'])),
-			'draft_sport' => CleanString(trim($_POST['draft_sport'])),
-			'draft_style' => CleanString(trim($_POST['draft_style'])),
-			'draft_rounds' => intval($_POST['draft_rounds'])
-		));
+		$draft = new draft_object();
+		$draft->draft_name = trim($_POST['draft_name']);
+		$draft->draft_sport = trim($_POST['draft_sport']);
+		$draft->draft_style = trim($_POST['draft_style']);
+		$draft->draft_rounds = intval($_POST['draft_rounds']);
 
 		$object_errors = $draft->getValidity();
 

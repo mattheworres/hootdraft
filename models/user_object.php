@@ -16,10 +16,20 @@ class user_object {
 	public $public_name;
 	public $password;
 	
-	public function __construct(array $properties = array()) {
-		foreach($properties as $property => $value)
-			if(property_exists('user_object', $property))
-					$this->$property = $value;
+	public function __construct($user_id) {
+		if(intval($user_id) == 0)
+			return false;
+		
+		$userRow = mysql_fetch_array(mysql_query("SELECT * FROM user_login WHERE UserId = " . $user_id . " LIMIT 1"));
+		
+		if(!$userRow)
+			return false;
+		$this->user_id = $user_id;
+		$this->user_name = $userRow['Username'];
+		$this->public_name = $userRow['Name'];
+		$this->password = $userRow['Password'];
+		
+		return true;
 	}
 	
 	public function getCurrentlyLoggedInUser() {
