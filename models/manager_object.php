@@ -17,18 +17,7 @@ class manager_object {
 	public $team_name;
 	public $draft_order;
 
-	public function __construct(array $properties = array()) {
-		foreach($properties as $property => $value)
-			if(property_exists('manager_object', $property))
-				$this->$property = $value;
-	}
-
-	/**
-	 * Get single instance of a manager object
-	 * @param int $manager_id
-	 * @return bool success whether or not the manager loaded correctly. 
-	 */
-	public function getManagerById($manager_id) {
+	public function __construct($manager_id) {
 		$sql = "SELECT * FROM managers WHERE manager_id = " . $manager_id . " LIMIT 1";
 		$manager_result = mysql_query($sql);
 		if(!$manager_result)
@@ -49,7 +38,7 @@ class manager_object {
 	 * Given a single draft ID, get all managers for that draft
 	 * @param int $draft_id
 	 * @param bool $draft_order_sort Whether or not to sort by the manager's order in the draft. If false, manager_name is used
-	 * @return manager_object 
+	 * @return array of manager objects
 	 */
 	public static function getManagersByDraftId($draft_id, $draft_order_sort = false) {
 		$managers = array();
@@ -59,13 +48,12 @@ class manager_object {
 		$managers_result = mysql_query($sql);
 
 		while($manager_row = mysql_fetch_array($managers_result)) {
-			$managers[] = new manager_object(array(
-				'manager_id' => intval($manager_row['manager_id']),
-				'draft_id' => intval($manager_row['draft_id']),
-				'manager_name' => $manager_row['manager_name'],
-				'team_name' => $manager_row['team_name'],
-				'draft_order' => intval($manager_row['draft_order'])
-			));
+			$new_manager = new manager_object();
+			$new_manager->manager_id = intval($manager_row['manager_id']);
+			$new_manager->draft_id = intval($manager_row['draft_id']);
+			$new_manager->manager_name = $manager_row['manager_name'];
+			$new_manager->draft_order = intval($manager_row['draft_order']);
+			$managers[] = $new_manager;
 		}
 
 		return $managers;
@@ -77,7 +65,7 @@ class manager_object {
 	 * @return int $number_of_managers
 	 */
 	public static function getCountOfManagersByDraftId($draft_id) {
-		$sql = "SELECT * FROM managers WHERE draft_id = " . $draft_id . " ORDER BY manager_name";
+		$sql = "SELECT manager_id FROM managers WHERE draft_id = " . $draft_id . " ORDER BY manager_name";
 
 		return mysql_num_rows(mysql_query($sql));
 	}
@@ -88,8 +76,7 @@ class manager_object {
 	 * @return bool success on whether the move was completed successfully 
 	 */
 	public static function moveManagerUp($manager_id) {
-		$manager = new manager_object();
-		$manager->getManagerById($manager_id);
+		$manager = new manager_object($manager_id);
 		
 		if(!$manager || $manager->draft_order == 0)
 			return false;
@@ -127,9 +114,7 @@ class manager_object {
 	 * @return bool Success on whether the move was completed successfully 
 	 */
 	public static function moveManagerDown($manager_id) {
-		//$manager_result = mysql_query("SELECT draft_order FROM managers WHERE draft_id = ".$draft_id." AND manager_id = ".$manager_id." LIMIT 1");
-		$manager = new manager_object();
-		$manager->getManagerById($manager_id);
+		$manager = new manager_object($manager_id);
 		
 		if(!$manager || $manager->draft_order == 0)
 			return false;
