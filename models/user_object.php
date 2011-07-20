@@ -16,7 +16,7 @@ class user_object {
 	public $public_name;
 	public $password;
 	
-	public function __construct($user_id) {
+	public function __construct($user_id = 0) {
 		if(intval($user_id) == 0)
 			return false;
 		

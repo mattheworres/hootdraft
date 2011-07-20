@@ -32,7 +32,7 @@ class draft_object {
 	public $current_round;
 	public $current_pick;
 
-	public function __construct($id) {
+	public function __construct($id = 0) {
 		if(intval($id) == 0)
 			return false;
 		

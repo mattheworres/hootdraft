@@ -17,7 +17,7 @@ class manager_object {
 	public $team_name;
 	public $draft_order;
 
-	public function __construct($manager_id) {
+	public function __construct($manager_id = 0) {
 		if(intval($manager_id) == 0)
 			return false;
 		
