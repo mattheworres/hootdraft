@@ -75,9 +75,5 @@ switch(ACTION) {
 		
 		echo $success ? "SUCCESS" : "FAILURE";
 		break;
-	
-	case 'addManagers':
-		//TODO: Implement the bulk add-managers screen here
-		break;
 }
 ?>

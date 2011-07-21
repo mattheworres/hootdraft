@@ -20,6 +20,41 @@ if($DRAFT->draft_id == 0) {
 // </editor-fold>
 
 switch(ACTION) {
+	case 'addManagers':
+		//TODO: Add view here for bulk-add of managers
+		//TODO: Make page more friendly, change team name to email, use more JS and less static boxes
+		break;
+	
+	case 'saveManagers':
+		//TODO: Implement the saving of managers here, or spit out errors.
+		//Cycle through and add each manager, then add to list of newly added managers
+		//Will have to add a custom view for success so we can display a table of newly added managers.
+		break;
+	
+	case 'updateVisibility':
+		//TODO: Make this a jQuery dialog AJAX-based thing... no need for more views.
+		break;
+	
+	case 'changeStatus':
+		//TODO: Add view here
+		break;
+	
+	case 'updateStatus':
+		//TODO: Add processing and error/success here. Generic success should suffice.
+		break;
+	
+	case 'editDraft':
+		//TODO: Add view here
+		break;
+	
+	case 'saveDraft':
+		//TODO: Add update logic here. Generic result views.
+		break;
+	
+	case 'deleteDraft':
+		//TODO: Add view here?  Not sure if this can be AJAX-based or not.
+		break;
+	
 	case '':
 	default:
 		// <editor-fold defaultstate="collapsed" desc="Main Draft Page Logic">

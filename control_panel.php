@@ -48,8 +48,6 @@ switch($_GET['action']) {
 		
 	case 'manageDrafts':
 		// <editor-fold defaultstate="collapsed" desc="manageDrafts Logic">
-		//TODO: Look to old comm_manage_draft.php for logic to put here; still need to clean
-		//control_panel_manage_draft_view.php into an acceptable view.
 		$DRAFTS = draft_object::getAllDrafts();
 		DEFINE("CONTROL_PANEL_ACTION", "MANAGE");
 		require_once('/views/control_panel/manage_draft.php');
