@@ -133,20 +133,20 @@ class draft_object {
 		$drafts_result = mysql_query($sql);
 		
 		while($draft_row = mysql_fetch_array($drafts_result)) {
-			$drafts[] = new draft_object(array(
-				'draft_id' => $draft_row['draft_id'],
-				'draft_name' => $draft_row['draft_name'],
-				'draft_status' => $draft_row['draft_status'],
-				'visibility' => ($draft_row['draft_password'] != '' ? "locked" : "unlocked"),
-				'draft_password' => $draft_row['draft_password'],
-				'draft_sport' => $draft_row['draft_sport'],
-				'draft_style' => $draft_row['draft_style'],
-				'draft_rounds' => intval($draft_row['draft_rounds']),
-				'start_time' => $draft_row['start_time'],
-				'end_time' => $draft_row['end_time'],
-				'current_round' => intval($draft_row['current_round']),
-				'current_pick' => intval($draft_row['current_pick'])
-			));
+			$draft = new draft_object();
+			$draft->draft_id = $draft_row['draft_id'];
+			$draft->draft_name = $draft_row['draft_name'];
+			$draft->draft_status = $draft_row['draft_status'];
+			$draft->visibility = ($draft_row['draft_password'] != '' ? "locked" : "unlocked");
+			$draft->draft_password = $draft_row['draft_password'];
+			$draft->draft_sport = $draft_row['draft_sport'];
+			$draft->draft_style = $draft_row['draft_style'];
+			$draft->draft_rounds = intval($draft_row['draft_rounds']);
+			$draft->start_time = $draft_row['start_time'];
+			$draft->end_time = $draft_row['end_time'];
+			$draft->current_round = intval($draft_row['current_round']);
+			$draft->current_pick = intval($draft_row['current_pick']);
+			$drafts[] = $draft;
 		}
 
 		return $drafts;
