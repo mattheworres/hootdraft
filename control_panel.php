@@ -15,7 +15,6 @@ switch($_GET['action']) {
 
 	case 'addDraft':
 		//<editor-fold defaultstate="collapsed" desc="addDraft Logic">
-
 		$ERRORS = array();
 
 		$draft = new draft_object();
@@ -30,14 +29,14 @@ switch($_GET['action']) {
 			$ERRORS = $object_errors;
 			DEFINE("CONTROL_PANEL_ACTION", "ADD");
 			require_once("/views/control_panel/create_draft.php");
-			break;
+			exit(1);
 		}
 
 		if($draft->saveDraft() == false) {
 			$ERRORS[] = "Draft could not be saved, please try again.";
 			DEFINE("CONTROL_PANEL_ACTION", "ADD");
 			require_once("/views/control_panel/create_draft.php");
-			break;
+			exit(1);
 		}
 
 		define("PAGE_HEADER", "Draft Successfully Created");

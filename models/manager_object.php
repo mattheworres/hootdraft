@@ -36,6 +36,24 @@ class manager_object {
 		
 		return true;
 	}
+	
+	/**
+	 * Check the validity of parent manager object and return array of error descriptions if invalid.
+	 * @return array/string errors
+	 */
+	public function getValidity() {
+		$errors = array();
+
+		if(empty($this->manager_name))
+			$errors[] = "Manager name is empty.";
+
+		$has_a_draft = mysql_num_rows(mysql_query("SELECT draft_id FROM draft WHERE draft_id = " . $this->draft_id)) > 0;
+
+		if(!$has_a_draft)
+			$errors[] = "Manager's draft doesn't exist.";
+
+		return $errors;
+	}
 
 	/**
 	 * Move the given manager up in their draft order
@@ -113,6 +131,45 @@ class manager_object {
 			return false;
 			
 		return true;
+	}
+	
+	/**
+	 * Saves or updates the manager object
+	 * @return bool Success of the operation, be it an insert or update.
+	 */
+	public function saveManager() {
+		if($this->manager_id > 0) {
+			$sql = "UPDATE managers SET ".
+					"manager_name = '" . mysql_real_escape_string($this->manager_name) . "', ".
+					"team_name = '" . mysql_real_escape_string($this->team_name) . "' ".
+					"WHERE manager_id = " . $this->manager_id . " ".
+					"AND draft_id = " . $this->draft_id;
+
+			return mysql_query($sql);
+		}elseif($this->draft_id > 0) {
+			$sql = "INSERT INTO managers ".
+				"(manager_id, draft_id, manager_name, team_name, draft_order) ".
+				"VALUES ".
+				"(NULL, " . $this->draft_id . ", '" . mysql_real_escape_string($this->manager_name) . "', '" . mysql_real_escape_string($this->team_name) . "', " . $this->getLowestDraftorder() + 1 . ")";
+			
+			if(!mysql_query($sql))
+				return false;
+			
+			$this->manager_id = mysql_insert_id();
+			
+			return true;
+		}else
+			return false;
+	}
+	
+	/**
+	 * In order to get the lowest current draft number for this manager's draft.
+	 * @return int Lowest draft order for the given draft 
+	 */
+	public function getLowestDraftorder() {
+		$sql = "SELECT draft_order FROM managers WHERE draft_id = " . $this->draft_id . " ORDER BY draft_order DESC LIMIT 1";
+		$row = mysql_fetch_array(mysql_query($sql));
+		return intval($row['draft_order']);
 	}
 	
 	/**

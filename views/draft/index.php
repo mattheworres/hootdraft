@@ -55,11 +55,11 @@ require('views/shared/draft_menu.php'); ?>
 								if($manager->draft_order == LOWEST_ORDER)
 									$DOWNARROW = false;
 								?>
-							<tr data-manager-id="<?php echo $manager->manager_id;?>" class="touchy">
+							<tr data-manager-id="<?php echo $manager->manager_id;?>">
 								<?php if($DRAFT->isUndrafted()) {?>
 								<td>
-									<a href="comm_edit_mgr.php?did=<?php echo DRAFT_ID; ?>&mid=<?php echo $manager->manager_id; ?>">Edit</a> |
-									<a href="comm_delete_mgr.php?did=<?php echo DRAFT_ID; ?>&mid=<?php echo $manager->manager_id; ?>">Delete</a>
+									<a href="manager.php?action=editManager&mid=<?php echo $manager->manager_id; ?>">Edit</a> |
+									<a href="manager.php?action=deleteManager&mid=<?php echo $manager->manager_id; ?>">Delete</a>
 								</td>
 								<?php } ?>
 								<td><?php echo $manager->manager_name; ?></td>
