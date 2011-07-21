@@ -10,5 +10,4 @@ class indexObject {
 	public $number_of_drafts;
 	public $draft_objects = array();
 }
-
 ?>

@@ -4,11 +4,12 @@ require_once("check_login.php");
 require_once("models/draft_object.php");
 
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
-
+DEFINE("ACTION", $_GET['action']);
 DEFINE('DRAFT_ID', intval($_GET['did']));
 
 $DRAFT = new draft_object(DRAFT_ID);
 
+// <editor-fold defaultstate="collapsed" desc="Error checking on basic input">
 if(!$DRAFT) {
 	define("PAGE_HEADER", "Draft Not Found");
 	define("P_CLASS", "error");
@@ -16,8 +17,9 @@ if(!$DRAFT) {
 	require_once("/views/generic_result_view.php");
 	exit(1);
 }
+// </editor-fold>
 
-switch($_GET['action']) {
+switch(ACTION) {
 	case '':
 	default:
 		// <editor-fold defaultstate="collapsed" desc="Main Draft Page Logic">

@@ -3,22 +3,35 @@ require_once("check_login.php");
 require_once("models/manager_object.php");
 
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
+DEFINE("ACTION", $_GET['action']);
 
-DEFINE('MANAGER_ID', intval($_GET['mid']));
+//NOTE: This uses _REQUEST because we grab the ID from both POSTs and GETs
+DEFINE('MANAGER_ID', intval($_REQUEST['mid']));
 
-switch($_GET['action']) {
+$MANAGER = new manager_object(MANAGER_ID);
+
+// <editor-fold defaultstate="collapsed" desc="Error-checking on basic input">
+if(!$MANAGER) {
+	define("PAGE_HEADER", "Manager Not Found");
+	define("P_CLASS", "error");
+	define("PAGE_CONTENT", "We're sorry, but the manager could not be loaded. Please try again.");
+	require_once("/views/generic_result_view.php");
+	exit(1);
+}
+// </editor-fold>
+
+switch(ACTION) {
 	case 'moveManager':
 		// <editor-fold defaultstate="collapsed" desc="moveManager Logic">
-		$manager_id = $_POST['mid'];
 		$direction = $_POST['direction'];
 		
 		switch($direction) {
 			case 'up':
-				$success = manager_object::moveManagerUp($manager_id);
+				$success = $MANAGER->moveManagerUp();
 				break;
 			
 			case 'down':
-				$success = manager_object::moveManagerDown($manager_id);
+				$success = $MANAGER->moveManagerDown();
 				break;
 		}	
 		
@@ -27,7 +40,7 @@ switch($_GET['action']) {
 		break;
 	
 	case 'editManager':
-		//TODO: Implement the view/error screen here
+		
 		break;
 	
 	case 'updateManager':
