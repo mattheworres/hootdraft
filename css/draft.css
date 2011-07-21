@@ -6,6 +6,10 @@ span.manager-move-link {
 	border: 0px;
 }
 
+span.manager-delete-link {
+	cursor: pointer;
+}
+
 span.up-on {
 	background-image: url('../images/icons/ArrowUp.png');
 }

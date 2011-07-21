@@ -30,10 +30,8 @@ require('views/shared/draft_menu.php'); ?>
 					<div style="width: 30%; float:right; text-align: right;">
 						<p><img src="images/icons/<?php echo $DRAFT->draft_status; ?>.png" alt="<?php echo $DRAFT->draft_status; ?>" title="<?php echo $DRAFT->draft_status; ?>"/></p>
 					</div>
-					<?php if(!HAS_MANAGERS) { ?>
-					<p class="error">*Before you can start your draft, you must <a href=\"comm_add_mgrs.php?did=<?php echo DRAFT_ID; ?>">add managers</a>.</p>
-						<?php }else { ?>
-					<table id="managers-table" width="100%">
+					<p id="no-managers-msg" class="error"<?php if(HAS_MANAGERS) { ?> style="display: none;"<?php } ?>>*Before you can start your draft, you must <a href=\"comm_add_mgrs.php?did=<?php echo DRAFT_ID; ?>">add managers</a>.</p>
+					<table id="managers-table" width="100%"<?php if(!HAS_MANAGERS) { ?> style="display: none;"<?php } ?>>
 						<thead>
 							<tr>
 								<?php if($DRAFT->isUndrafted()) {?>
@@ -59,7 +57,8 @@ require('views/shared/draft_menu.php'); ?>
 								<?php if($DRAFT->isUndrafted()) {?>
 								<td>
 									<a href="manager.php?action=editManager&mid=<?php echo $manager->manager_id; ?>">Edit</a> |
-									<a href="manager.php?action=deleteManager&mid=<?php echo $manager->manager_id; ?>">Delete</a>
+									<!-- <a href="manager.php?action=deleteManager&mid=<?php echo $manager->manager_id; ?>">Delete</a>-->
+									<span class="manager-delete-link"><a>Delete</a></span>
 								</td>
 								<?php } ?>
 								<td><?php echo $manager->manager_name; ?></td>
@@ -75,13 +74,12 @@ require('views/shared/draft_menu.php'); ?>
 						<?php } ?>
 						</tbody>
 					</table>
-			<?php } ?>
 				</fieldset>
 				<fieldset>
 					<legend><?php echo $DRAFT->draft_name; ?> - Functions</legend>
 					<?php if($DRAFT->isUndrafted()) {?><p><strong><a href="comm_add_mgrs.php?did=<?php echo DRAFT_ID; ?>">Add Manager(s)</a></strong></p>
 					<?php } ?><p><strong><a href="comm_edit_draft_pass.php?did=<?php echo DRAFT_ID; ?>">Change Draft Visibility</a></strong></p>
-					<?php if(!$DRAFT->isCompleted() && HAS_MANAGERS) {?><p><strong><a href="comm_edit_draft_status.php?did=<?php echo DRAFT_ID; ?>">Change Draft Status</a></strong></p><?php } ?>
+					<?php if(!$DRAFT->isCompleted() && HAS_MANAGERS) {?><p id="draft-status-link"><strong><a href="comm_edit_draft_status.php?did=<?php echo DRAFT_ID; ?>">Change Draft Status</a></strong></p><?php } ?>
 				</fieldset>
 			</div>
 			<?php require('footer.php'); ?>

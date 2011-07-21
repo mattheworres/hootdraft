@@ -1,9 +1,9 @@
 $(document).ready(function() {
 	resetArrows();
 
-	$('span.manager-move-link').live('click', function() {
-		var row = $(this).parents('tr:first'),
-			manager_id = row.attr('data-manager-id'),
+	$('#managers-table span.manager-move-link').live('click', function() {
+		var $row = $(this).parents('tr:first'),
+			manager_id = $row.attr('data-manager-id'),
 			$loadingDialog = $('#loadingDialog'),
 			isMoveUp = $(this).is('.move-up')
 			isOff = $(this).is('.down-off') || $(this).is('.up-off');
@@ -21,10 +21,10 @@ $(document).ready(function() {
 				$loadingDialog.dialog('close');
 				if(data == "SUCCESS") {
 					if(isMoveUp) {
-						row.insertBefore(row.prev());
+						$row.insertBefore($row.prev());
 						resetArrows();
 					}else {
-						row.insertAfter(row.next());
+						$row.insertAfter($row.next());
 						resetArrows();
 					}
 				}else{
@@ -37,7 +37,46 @@ $(document).ready(function() {
 			}
 		})
 	});
+	
+	$('#managers-table .manager-delete-link').live('click', function() {
+		var $row = $(this).parents('tr:first'),
+			manager_id = $row.attr('data-manager-id'),
+			$loadingDialog = $('#loadingDialog');
+
+		$loadingDialog.dialog('open');
+
+		$.ajax({
+			type: 'POST',
+			url: 'manager.php?action=deleteManager',
+			data: { mid: manager_id },
+			success: function(data) {
+				$loadingDialog.dialog('close');
+				if(data == "SUCCESS") {
+					$row.empty().remove();
+					resetArrows();
+					checkForOtherManagers();
+				} else {
+					alert('Sorry - an error has occurred and the manager could not be deleted.');
+				}
+			},
+			error: function() {
+				$loadingDialog.dialog('close');
+				alert('Sorry - an error has occurred and the manager could not be deleted.');
+			}
+		});
+	});
 });
+
+function checkForOtherManagers() {
+	var number_of_managers = $('#managers-table tr').length - 1;	//Account for table header
+	
+	if(number_of_managers == 0) {
+		$('#managers-table').hide();
+		$('#no-managers-msg').show();
+		$('#draft-status-link').hide();
+		alert('You\'ve just deleted the last manager this draft had - in order to start this draft you must first add managers again.');
+	}
+}
 
 function resetArrows() {
 	var rows = $('#managers-table > tbody > tr'),

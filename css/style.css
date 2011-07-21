@@ -6,6 +6,10 @@ body {
 	background-color: #E0E0E0;
 }
 
+A {
+	color: #0000FF; text-decoration: none;
+}
+
 A:link {
 	COLOR: #0000FF; text-decoration: none;
 }

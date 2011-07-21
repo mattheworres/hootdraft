@@ -71,7 +71,9 @@ switch(ACTION) {
 		break;
 	
 	case 'deleteManager':
+		$success = $MANAGER->deleteManager();
 		
+		echo $success ? "SUCCESS" : "FAILURE";
 		break;
 	
 	case 'addManagers':

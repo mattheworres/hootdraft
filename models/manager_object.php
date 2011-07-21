@@ -172,6 +172,27 @@ class manager_object {
 		return intval($row['draft_order']);
 	}
 	
+	public function deleteManager() {
+		require_once('/models/draft_object.php');
+		$draft = new draft_object($this->draft_id);
+		
+		if($draft->draft_id == 0 || !$draft->isUndrafted()) {
+			return false;
+		}
+		
+		$old_order = $this->draft_order;
+		
+		$sql = "DELETE FROM managers WHERE manager_id = " . $this->manager_id . " AND draft_id = " . $this->draft_id . " LIMIT 1";
+		
+		$success = mysql_query($sql);
+		if(!$success)
+			return false;
+		
+		$success = $this->cascadeNewDraftOrder($old_order);
+		
+		return $success;
+	}
+	
 	/**
 	 * Given a single draft ID, get all managers for that draft
 	 * @param int $draft_id
@@ -208,6 +229,25 @@ class manager_object {
 
 		return mysql_num_rows(mysql_query($sql));
 	}
-}
-
-?>
+	
+	/**
+	 * After a manager is deleted, all managers that are after him have their draft order bumped up by one all the way down, and this function does that
+	 * @param int $old_order The order of the manager being deleted
+	 * @return boolean success
+	 */
+	private function cascadeNewDraftOrder($old_order) {
+		$sql = "SELECT manager_id FROM managers WHERE manager_id != " . $this->manager_id . " AND draft_id = " . $this->draft_id . " AND draft_order > " . $old_order . " ORDER BY draft_order ASC";
+		$managers_result = mysql_query($sql);
+		
+		$success = true;
+		
+		while($manager_row = mysql_fetch_array($managers_result)) {
+			$inner_sql = "UPDATE managers SET draft_order = " . $old_order . " WHERE manager_id = " . intval($manager_row['manager_id']);
+			if(!mysql_query($inner_sql))
+				$success = false;
+			$old_order++;
+		}
+		
+		return $success;
+	}
+}?>
