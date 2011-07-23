@@ -149,7 +149,7 @@ p {
 	line-height: 18px;
 	color: #333333;
 }
-p.error {
+p.error, .error {
 	color: #990000;
 	font-weight: bold;
 }
@@ -321,4 +321,9 @@ table th {
 
 #loadingDialog{
 	display: none;
+}
+
+.center
+{
+	text-align: center;
 }

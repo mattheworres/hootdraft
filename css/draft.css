@@ -27,3 +27,24 @@ span.down-off {
 	background-image: url('../images/icons/ArrowDown_off.png');
 	cursor: default;
 }
+
+input.manager_info
+{
+	width: 225px;
+}
+
+#addManagerButton, span.removeManagerButton{
+	cursor: pointer;
+}
+
+p.errorDescription
+{
+	display: none;
+}
+
+input.error
+{
+	font-weight: bold;
+	border: 1px solid #DB0037;
+	background-color: #FCDEE6;
+}

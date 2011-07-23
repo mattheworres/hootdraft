@@ -21,8 +21,8 @@ if($DRAFT->draft_id == 0) {
 
 switch(ACTION) {
 	case 'addManagers':
-		//TODO: Add view here for bulk-add of managers
-		//TODO: Make page more friendly, change team name to email, use more JS and less static boxes
+		$MANAGERS = array();
+		require_once('/views/draft/add_managers.php');
 		break;
 	
 	case 'saveManagers':
