@@ -38,7 +38,7 @@ class draft_object {
 	public function __construct($id = 0) {
 		if(intval($id) == 0)
 			return false;
-		
+
 		$id = intval($id);
 
 		$draft_result = mysql_query("SELECT * FROM draft WHERE draft_id = " . $id . " LIMIT 1");
@@ -147,16 +147,99 @@ class draft_object {
 	}
 
 	public function updateStatus($new_status) {
+		if($this->isCompleted())
+			return false;
+
+		$old_status = $this->draft_status;
+
 		$this->draft_status = $new_status;
+		$this->draft_current_pick = 1;
+		$this->draft_current_round = 1;
+
+		$draftJustStarted = ($old_status == "undrafted" && $this->isInProgress()) ? true : false;
+
+		if($draftJustStarted)
+			$this->start_time = $this->beginStartTime();
+		else
+			$this->start_time = "NULL";
+
 		$saveSuccess = $this->saveDraft();
 
 		if(!$saveSuccess)
 			return false;
+
+		require_once("/models/player_object.php");
+
+		$deleteCurrentSuccess = player_object::deletePlayersByDraft($this->draft_id);
+
+		if(!$deleteCurrentSuccess)
+			return false;
+
+		if($draftJustStarted) {
+			$setupSuccess = $this->setupPicks();
+
+			if(!$setupSuccess)
+				return false;
+		}
+
+		return true;
 	}
 
 	/**
-	 * Check to ensure $status is in the correct state to prevent any borking of the database.
-	 * @return bool 
+	 * Goes through and creates all of the draft's picks as placeholders, triggered when the draft status is set to "in progress"
+	 * @return bool $success True if successful 
+	 */
+	public function setupPicks() {
+		require_once("/models/manager_object.php");
+		require_once("/models/player_object.php");
+		$pick = 1;
+		$even = true;
+		
+		for($current_round = 1; $current_round <= $this->draft_rounds; $current_round++) {
+			if($this->styleIsSerpentine()) {
+				if($even) {
+					$managers = manager_object::getManagersByDraftId($this->draft_id, true);
+					$even = false;
+				} else {
+					$managers = manager_object::getManagersByDraftId($this->draft_id, true, "DESC");
+				}
+			}else
+				$managers = manager_object::getManagersByDraftId($this->draft_id, true);
+
+			foreach($managers as $manager) {
+				$new_pick = new player_object();
+				$new_pick->manager_id = $manager->manager_id;
+				$new_pick->draft_id = $this->draft_id;
+				$new_pick->player_round = $current_round;
+				$new_pick->player_pick = $pick;
+
+				$saveSuccess = $new_pick->savePlayer();
+				
+				if(!$saveSuccess)
+					return false;
+
+				$pick++;
+			}
+		}
+	}
+
+	/**
+	 * Using MySQL's NOW() function, set the draft's start time to NOW in database and return that value.
+	 * @return string MySQL timestamp given to draft 
+	 */
+	public function beginStartTime() {
+		$sql = "UPDATE draft SET draft_start_time = NOW() WHERE draft_id = " . $this->draft_id . " LIMIT 1";
+		mysql_query($sql);
+
+		$time_row = mysql_fetch_array(mysql_query("SELECT draft_start_time FROM draft WHERE draft_id = " . $this->draft_id . " LIMIT 1"));
+
+		return $time_row['draft_start_time'];
+	}
+
+	/**
+	 * Check to ensure $status is in the correct state to prevent any borking of the database.\
+	 * @param string $status The database value for status to be checked
+	 * @return bool true if status is legitimate, false otherwise
 	 */
 	public static function checkStatus($status) {
 		if($status == "undrafted"
@@ -239,6 +322,22 @@ class draft_object {
 	 */
 	public function isPasswordProtected() {
 		return (isset($this->draft_password) && strlen($this->draft_password) > 0);
+	}
+
+	/**
+	 * Determines if the draft style is serpentine
+	 * @return bool true if the draft is serpentine style, false otherwise
+	 */
+	public function styleIsSerpentine() {
+		return $this->draft_style == "serpentine";
+	}
+
+	/**
+	 * Determines if the draft style is standard
+	 * @return bool true if the draft is standard style, false otherwise
+	 */
+	public function styleIsStandard() {
+		return $this->draft_sty == "standard";
 	}
 	// </editor-fold>
 }

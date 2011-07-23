@@ -13,8 +13,8 @@
  * @property int $draft_id The ID of the draft this player belongs to
  * @property string $first_name The first name of the player
  * @property string $last_name The last name of the player
- * @property string $team The professional team the player plays for. Stored as three-character abbreviation
- * @property string $position The position the player plays. Stored as two-character abbreviation.
+ * @property string $team The professional team the player plays for. Stored as three character abbreviation
+ * @property string $position The position the player plays. Stored as one or three character abbreviation.
  * @property string $pick_time Timestamp of when the player was picked.
  * @property int $pick_duration Amount of seconds that were consumed during this pick
  * @property int $player_round Round the player was selected in
@@ -58,6 +58,42 @@ class player_object {
 		$this->player_pick = intval($player_row['player_pick']);
 
 		return true;
+	}
+
+	/**
+	 * Saves or updates a player. NOTE: Does not update or save the player's pick time or pick duration. Those must be handled separately.
+	 * @return bool true on success, false otherwise 
+	 */
+	public function savePlayer() {
+		if($this->player_id > 0) {
+			//TODO: Add a default value variable to trigger whether or not to set the pick time on player update. $setPickToNow = false
+			$sql = "UPDATE players SET ".
+			"manager_id = " . intval($this->manager_id) . ", ".
+			"draft_id = " . intval($this->draft_id) . ", ".
+			"first_name = " . mysql_real_escape_string($this->first_name) . ", ".
+			"last_name = " . mysql_real_escape_string($this->last_name). ", ".
+			"team = " . mysql_real_escape_string($this->team) . ", ".
+			"position = " . mysql_real_escape_string($this->position) . ", ".
+			"player_round = " . intval($this->player_round) . ", ".
+			"player_pick = " . intval($this->player_pick) . ", ".
+			"WHERE player_id = " . intval($this->player_id);
+			return mysql_query($sql);
+		} elseif($this->draft_id > 0 && $this->manager_id > 0) {
+			$sql = "INSERT INTO players ".
+			"(player_id, manager_id, draft_id, first_name, last_name, team, position, player_round, player_pick) ".
+			"VALUES ".
+			"(NULL, " . intval($this->manager_id) . ", " . intval($this->draft_id) . ", " . mysql_real_escape_string($this->first_name) . ", " . mysql_real_escape_string($this->last_name) . ", ".
+			mysql_real_escape_string($this->team) . ", " . mysql_real_escape_string($this->position) . ", " . mysql_real_escape_string($this->player_round) . ", " . mysql_real_escape_string($this->player_pick) . ")";
+			
+			$result = mysql_query($sql);
+			if(!$result)
+				return false;
+			
+			$this->player_id = mysql_insert_id();
+			
+			return true;
+		}else
+			return false;
 	}
 
 	/**
@@ -162,6 +198,25 @@ class player_object {
 		}
 
 		return $players;
+	}
+
+	public static function deletePlayersByDraft($draft_id) {
+		$draft_id = intval($draft_id);
+
+		if($draft_id == 0)
+			return false;
+
+		$players = player_object::getPlayersByDraft($draft_id);
+
+		$id_string = "0"; //TODO: Update this so it's cleaner? This is hacky.	
+
+		foreach($current_players as $player) {
+			$id_string .= "," . $player->player_id;
+		}
+
+		$sql = "DELETE FROM players WHERE player_id IN (" . mysql_escape_string($id_string) . ")";
+
+		return mysql_query($sql);
 	}
 }
 
