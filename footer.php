@@ -22,8 +22,11 @@
 	
 	$('#informationDialog').dialog({
 		autoOpen: false,
-		modal: true,
-		draggable: false,
-		resizable: false
+		resizable: false,
+		show: 'drop',
+		hide: 'drop',
+		open: function() {
+			setTimeout("$('#informationDialog').dialog('close');", 3000);
+		}
 	})
 </script>

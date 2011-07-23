@@ -48,3 +48,7 @@ input.error
 	border: 1px solid #DB0037;
 	background-color: #FCDEE6;
 }
+
+table.alt_rows td {
+	border-bottom: 1px solid #CCCCCC;
+}

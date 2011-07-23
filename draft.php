@@ -2,10 +2,11 @@
 
 require_once("check_login.php");
 require_once("models/draft_object.php");
+require_once("models/manager_object.php");
 
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
-DEFINE("ACTION", $_GET['action']);
-DEFINE('DRAFT_ID', intval($_GET['did']));
+DEFINE("ACTION", $_REQUEST['action']);
+DEFINE('DRAFT_ID', intval($_REQUEST['did']));
 
 $DRAFT = new draft_object(DRAFT_ID);
 
@@ -21,14 +22,32 @@ if($DRAFT->draft_id == 0) {
 
 switch(ACTION) {
 	case 'addManagers':
+		// <editor-fold defaultstate="collapsed" desc="addManagers Logic">
 		$MANAGERS = array();
+		$MANAGERS[] = new manager_object();
+		
+		$CURRENT_MANAGERS = manager_object::getManagersByDraftId(DRAFT_ID, true);
 		require_once('/views/draft/add_managers.php');
+		// </editor-fold>
 		break;
 	
 	case 'saveManagers':
-		//TODO: Implement the saving of managers here, or spit out errors.
-		//Cycle through and add each manager, then add to list of newly added managers
-		//Will have to add a custom view for success so we can display a table of newly added managers.
+		// <editor-fold defaultstate="collapsed" desc="saveManagers Logic">
+		$managers = $_POST['managers'];
+		foreach($managers as $manager_request) {
+			$new_manager = new manager_object();
+			$new_manager->draft_id = DRAFT_ID;
+			$new_manager->manager_name = $manager_request['manager_name'];
+			$new_manager->manager_email = $manager_request['manager_email'];
+			
+			if(!$new_manager->saveManager()) {
+				return "SERVER_ERROR";
+				exit(1);
+			}
+		}
+		
+		echo "SUCCESS";
+		// </editor-fold>
 		break;
 	
 	case 'updateVisibility':

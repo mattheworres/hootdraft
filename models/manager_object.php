@@ -150,9 +150,10 @@ class manager_object {
 			$sql = "INSERT INTO managers ".
 				"(manager_id, draft_id, manager_name, manager_email, draft_order) ".
 				"VALUES ".
-				"(NULL, " . $this->draft_id . ", '" . mysql_real_escape_string($this->manager_name) . "', '" . mysql_real_escape_string($this->manager_email) . "', " . $this->getLowestDraftorder() + 1 . ")";
+				"(NULL, " . $this->draft_id . ", '" . mysql_real_escape_string($this->manager_name) . "', '" . mysql_real_escape_string($this->manager_email) . "', " . (intval($this->getLowestDraftorder() + 1)) . ")";
 			
-			if(!mysql_query($sql))
+			$result = mysql_query($sql);
+			if(!$result)
 				return false;
 			
 			$this->manager_id = mysql_insert_id();
@@ -211,7 +212,7 @@ class manager_object {
 			$new_manager->manager_id = intval($manager_row['manager_id']);
 			$new_manager->draft_id = intval($manager_row['draft_id']);
 			$new_manager->manager_name = $manager_row['manager_name'];
-			$new_manager->team_name = $manager_row['team_name'];
+			$new_manager->manager_email = $manager_row['manager_email'];
 			$new_manager->draft_order = intval($manager_row['draft_order']);
 			$managers[] = $new_manager;
 		}
