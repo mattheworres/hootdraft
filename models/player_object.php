@@ -6,7 +6,7 @@
  * Each player is owned by a manager, who belongs to a draft.
  * 
  * Players carry draft information on them - such as which round and which pick
- * they were selected at.
+ * they exist at (player information will be blank if they are unchecked)
  * 
  * @property int $player_id The unique ID for this player
  * @property int $manager_id The ID of the manager this player belongs to
@@ -95,17 +95,17 @@ class player_object {
 	}
 
 	/**
-	 * Get all players/picks for a given draft.
+	 * Get all players/picks for a given manager that have been selected.
 	 * @param int $manager_id ID of the manager to get players for
 	 * @return array Player objects that belong to given manager. false on failure
 	 */
-	public static function getPlayersByManager($manager_id) {
+	public static function getSelectedPlayersByManager($manager_id) {
 		$manager_id = intval($manager_id);
 
 		if($manager_id == 0)
 			return false;
 
-		$players_result = mysql_query("SELECT * FROM players WHERE manager_id = " . $manager_id . " ORDER BY player_pick ASC");
+		$players_result = mysql_query("SELECT * FROM players WHERE manager_id = " . $manager_id . " AND pick_time IS NOT NULL ORDER BY player_pick ASC");
 
 		$players = array();
 
@@ -129,19 +129,19 @@ class player_object {
 	}
 
 	/**
-	 * Get all players/picks for a given round.
+	 * Get all selected players for a given round.
 	 * @param int $draft_id ID of the draft for the given round
 	 * @param int $round Round to get players for
 	 * @return array Player objects that belong in a given round. false on failure
 	 */
-	public static function getPlayersByRound($draft_id, $round) {
+	public static function getSelectedPlayersByRound($draft_id, $round) {
 		$draft_id = intval($draft_id);
 		$round = intval($round);
 
 		if($draft_id == 0 || $round == 0)
 			return false;
 
-		$players_result = mysql_query("SELECT * FROM players WHERE draft_id = " . $manager_id . " AND round = " . $round . " ORDER BY player_pick ASC");
+		$players_result = mysql_query("SELECT * FROM players WHERE draft_id = " . $manager_id . " AND round = " . $round . " AND pick_time IS NOT NULL ORDER BY player_pick ASC");
 
 		$players = array();
 
