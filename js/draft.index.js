@@ -74,7 +74,13 @@ $(document).ready(function() {
 		buttons: [
 			{
 				text: "Save",
-				click: function() { updateDraftVisibility(); }
+				click: function() { 
+					var success = updateDraftVisibility(); 
+					if(success === true) {
+						$(this).dialog("close");
+						$('#informationDialog').html('Draft\'s visibility updated!').dialog('open');
+					}
+				}
 			},
 			{
 				text: "Cancel",
@@ -133,31 +139,44 @@ function resetArrows() {
 
 function updateDraftVisibility() {
 	var status = parseInt($('#draft_status').val(), 10),
+		$password = $('#draft_password'),
+		$confirmPassword = $('#draft_password_confirm'),
+		$visibilityError = $('#visibilityError'),
+		$draftVisibility = $('#draft_visibility'),
 		password = $.trim($('#draft_password').val()),
 		confirmPassword = $.trim($('#draft_password_confirm').val());
 		
+	$password.removeClass('error');
+	$confirmPassword.removeClass('error');
+	$visibilityError.hide();
+		
 	if(status == 0) {
-		if(savePassword('')) {
-			$('#draft_password').val('');
-			$('#draft_confirm_password').val('');
-			$('#draft_visibility').html('Public');
+		var updateSuccess = savePassword('');
+		if(updateSuccess === true) {
+			$password.val('');
+			$confirmPassword.val('');
+			$draftVisibility.html('Public');
 			return true;
 		}else {
-			$('p.errorDescription').html('There was a server-side error, please try again.').show();
+			$visibilityError.html('There was a server-side error, please try again.').show();
 			return false;
 		}
 	}else {
 		if(password.length == 0 || confirmPassword.length == 0 || password != confirmPassword) {
-			$('p.errorDescription').html('To make the draft private, you must provide a password and confirm that password!').show();
+			$visibilityError.html('To make the draft private, you must provide a password and confirm that password!').show();
+			$password.addClass('error');
+			$confirmPassword.addClass('error');
 			return false;
 		}
 		
-		if(savePassword(password)) {
+		var success = savePassword(password);
+		
+		if(success === true) {
 			$('#visibilityDialog').dialog('close');
-			$('#draft_visibility').html('Private<br/><strong>Draft Password:</strong> ' + password);
+			$draftVisibility.html('Private<br/><br/><strong>Draft Password:</strong> ' + password);
 			return true;
 		}else {
-			$('p.errorDescription').html('There was a server-side error, please try again.').show();
+			$visibilityError.html('There was a server-side error, please try again.').show();
 			return false;
 		}
 	}
@@ -169,20 +188,25 @@ function savePassword(draft_pass) {
 	
 	$loadingDialog.dialog('open');
 	
+	result = false;
+	
 	$.ajax({
 		async: false,
+		type: 'POST',
 		data: {action: 'updateVisibility', did: draft_id, password: draft_pass},
 		url: 'draft.php',
 		success: function(data) {
 			$loadingDialog.dialog('close');
 			if(data == "SUCCESS") 
-				return true;
+				result = true;
 			else
-				return false;
+				result = false;
 		},
 		error: function() {
 			$loadingDialog.dialog('close');
-			return false;
+			result =  false;
 		}
 	});
+	
+	return result;
 }

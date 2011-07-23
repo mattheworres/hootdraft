@@ -51,14 +51,14 @@ switch(ACTION) {
 		break;
 	
 	case 'updateVisibility':
-		$new_password = mysql_real_escape_string($_POST['draft_password']);
+		$new_password = $_POST['password'];
 		
-		if($DRAFT->password == $new_password) {
+		if($DRAFT->draft_password == $new_password) {
 			echo "SUCCESS";
 			exit(0);
 		}
 		
-		$DRAFT->password = $new_password;
+		$DRAFT->draft_password = $new_password;
 		
 		if($DRAFT->saveDraft())
 			echo "SUCCESS";

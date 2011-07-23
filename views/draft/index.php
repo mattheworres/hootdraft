@@ -26,7 +26,7 @@
 						<p><strong># of Rounds: </strong> <?php echo $DRAFT->draft_rounds; ?></p>
 						<p><strong>Status: </strong> <?php echo $DRAFT->draft_status; ?> </p>
 						<?php if($DRAFT->isCompleted()) { ?><p><strong>Total Draft Duration: </strong><?php echo $DRAFT->getDraftDuration(); ?></p><?php } ?>
-						<p><strong>Draft Visibility: </strong> <span id="draft_visibility"><?php echo $DRAFT->isPasswordProtected() ? "Private<br /><strong>Draft Password:</strong> " . $DRAFT->draft_password : "Public"; ?></span></p>
+						<p><strong>Draft Visibility: </strong> <span id="draft_visibility"><?php echo $DRAFT->isPasswordProtected() ? "Private<br /><br/><strong>Draft Password:</strong> " . $DRAFT->draft_password : "Public"; ?></span></p>
 					</div>
 					<div style="width: 30%; float:right; text-align: right;">
 						<p><img src="images/icons/<?php echo $DRAFT->draft_status; ?>.png" alt="<?php echo $DRAFT->draft_status; ?>" title="<?php echo $DRAFT->draft_status; ?>"/></p>
@@ -99,7 +99,7 @@
 					<label for="draft_password_confirm">Confirm Password:</label>
 					<input type="text" id="draft_password_confirm" value="<?php echo $DRAFT->password; ?>" /><br/>
 				</div>
-				<p class="errorDescription error"></p>
+				<p id="visibilityError" class="errorDescription error"></p>
 		</div>
 	</body>
 </html>

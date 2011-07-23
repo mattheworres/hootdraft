@@ -109,17 +109,36 @@ class draft_object {
 	 * TODO: Update this so we so something similar to a Save-or-update, either an INSERT or an UPDATE
 	 */
 	public function saveDraft() {
-		$sql = "INSERT INTO draft "
-		. "(draft_id, draft_name, draft_sport, draft_status, draft_style, draft_rounds) "
-		. "VALUES "
-		. "(NULL, '" . $this->draft_name . "', '" . $this->draft_sport . "', 'undrafted', '" . $this->draft_style . "', " . $this->draft_rounds . ")";
+		if($this->draft_id > 0) {
+			$sql = "UPDATE draft SET ".
+					"draft_name = '" . mysql_real_escape_string($this->draft_name) . "', ".
+					"draft_sport = '" . mysql_real_escape_string($this->draft_sport) . "', ".
+					"draft_status = '" . mysql_real_escape_string($this->draft_status) . "', ".
+					"draft_style = '" . mysql_real_escape_string($this->draft_style) . "', ".
+					"draft_rounds = '" . intval($this->draft_rounds) . "', ";
+					
+			if(intval($this->current_round) > 1)
+				$sql .= "draft_current_round = " . intval($this->current_round) . ", ";
+			if(intval($this->current_pick) > 1)
+				$sql .= "draft_current_pick = " . intval($this->current_pick) . ", ";
+						
+			$sql .= "draft_password = '" . mysql_real_escape_string($this->draft_password) . "' ".
+					"WHERE draft_id = " . intval($this->draft_id);
 
-		if(!mysql_query($sql))
-			return false;
+			return mysql_query($sql);
+		}else {
+			$sql = "INSERT INTO draft "
+			. "(draft_id, draft_name, draft_sport, draft_status, draft_style, draft_rounds) "
+			. "VALUES "
+			. "(NULL, '" . $this->draft_name . "', '" . $this->draft_sport . "', 'undrafted', '" . $this->draft_style . "', " . $this->draft_rounds . ")";
 
-		$this->draft_id = mysql_insert_id();
+			if(!mysql_query($sql))
+				return false;
 
-		return true;
+			$this->draft_id = mysql_insert_id();
+
+			return true;
+		}
 	}
 	
 	/**

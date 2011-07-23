@@ -25,8 +25,11 @@
 		resizable: false,
 		show: 'drop',
 		hide: 'drop',
-		open: function() {
-			setTimeout("$('#informationDialog').dialog('close');", 3000);
-		}
+		buttons: [
+			{
+				text: "Ok",
+				click: function() { $(this).dialog("close"); }
+			}
+		]
 	})
 </script>
