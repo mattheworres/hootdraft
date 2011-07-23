@@ -1,4 +1,4 @@
-<?php require('check_login.php'); ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -18,8 +18,8 @@
 				<legend>Edit Manager</legend>
 				<p><label for="manager_name">Manager Name*:</label>
 				<input type="text" name="manager_name" id="manager_name" value="<?php echo $MANAGER->manager_name; ?>" /><br />
-				<label for="team_name">Manager Team Name*:</label>
-				<input type="text" name="team_name" id="team_name" value="<?php echo $MANAGER->team_name; ?>" /></p>
+				<label for="manager_email">Manager Email:</label>
+				<input type="text" name="manager_email" id="manager_email" value="<?php echo $MANAGER->team_name; ?>" /></p>
 				<p><input type="submit" name="submit" class="button" value="Edit Manager" /></p>
 				<?php if(count($ERRORS) > 0) { ?>
 				<?php foreach($ERRORS as $error) { ?>

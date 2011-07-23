@@ -1,4 +1,4 @@
-<?php require('check_login.php'); ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -38,7 +38,7 @@ require('views/shared/draft_menu.php'); ?>
 								<th width="100">&nbsp;</th>
 								<?php } ?>
 								<th>Manager Name</th>
-								<th>Manager Team</th>
+								<th>Manager Email</th>
 								<th width="85">Draft Order</th>
 							</tr>
 						</thead>
@@ -62,7 +62,7 @@ require('views/shared/draft_menu.php'); ?>
 								</td>
 								<?php } ?>
 								<td><?php echo $manager->manager_name; ?></td>
-								<td><?php echo $manager->team_name; ?></td>
+								<td><?php echo $manager->manager_email; ?></td>
 								<td>&nbsp;&nbsp;
 								<?php if($DRAFT->isUndrafted()) {?>
 									<span class="manager-move-link move-up up-on"></span>

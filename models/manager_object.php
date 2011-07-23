@@ -7,14 +7,14 @@
  * @property int $manager_id The unique identifier for this manager
  * @property int $draft_id Foreign key to the draft this manager belongs to
  * @property string $manager_name Textual display name for each manager
- * @property string $team_name Deprecated
+ * @property string $manager_email Email address of manager
  * @property int $draft_order The order in which the manager makes a pick in the draft.
  */
 class manager_object {
 	public $manager_id;
 	public $draft_id;
 	public $manager_name;
-	public $team_name;
+	public $manager_email;
 	public $draft_order;
 
 	public function __construct($manager_id = 0) {
@@ -31,7 +31,7 @@ class manager_object {
 		$this->manager_id = intval($manager_row['manager_id']);
 		$this->draft_id = intval($manager_row['draft_id']);
 		$this->manager_name = $manager_row['manager_name'];
-		$this->team_name = $manager_row['team_name'];
+		$this->manager_email = $manager_row['manager_email'];
 		$this->draft_order = intval($manager_row['draft_order']);
 		
 		return true;
@@ -141,16 +141,16 @@ class manager_object {
 		if($this->manager_id > 0) {
 			$sql = "UPDATE managers SET ".
 					"manager_name = '" . mysql_real_escape_string($this->manager_name) . "', ".
-					"team_name = '" . mysql_real_escape_string($this->team_name) . "' ".
+					"manager_email = '" . mysql_real_escape_string($this->manager_email) . "' ".
 					"WHERE manager_id = " . $this->manager_id . " ".
 					"AND draft_id = " . $this->draft_id;
 
 			return mysql_query($sql);
 		}elseif($this->draft_id > 0) {
 			$sql = "INSERT INTO managers ".
-				"(manager_id, draft_id, manager_name, team_name, draft_order) ".
+				"(manager_id, draft_id, manager_name, manager_email, draft_order) ".
 				"VALUES ".
-				"(NULL, " . $this->draft_id . ", '" . mysql_real_escape_string($this->manager_name) . "', '" . mysql_real_escape_string($this->team_name) . "', " . $this->getLowestDraftorder() + 1 . ")";
+				"(NULL, " . $this->draft_id . ", '" . mysql_real_escape_string($this->manager_name) . "', '" . mysql_real_escape_string($this->manager_email) . "', " . $this->getLowestDraftorder() + 1 . ")";
 			
 			if(!mysql_query($sql))
 				return false;
