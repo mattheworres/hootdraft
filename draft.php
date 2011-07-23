@@ -51,7 +51,19 @@ switch(ACTION) {
 		break;
 	
 	case 'updateVisibility':
-		//TODO: Make this a jQuery dialog AJAX-based thing... no need for more views.
+		$new_password = mysql_real_escape_string($_POST['draft_password']);
+		
+		if($DRAFT->password == $new_password) {
+			echo "SUCCESS";
+			exit(0);
+		}
+		
+		$DRAFT->password = $new_password;
+		
+		if($DRAFT->saveDraft())
+			echo "SUCCESS";
+		else
+			echo "FAILURE";
 		break;
 	
 	case 'changeStatus':

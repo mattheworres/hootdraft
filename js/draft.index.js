@@ -65,6 +65,36 @@ $(document).ready(function() {
 			}
 		});
 	});
+	
+	$('#visibilityDialog').dialog({
+		title: 'Change Draft Visibility',
+		autoOpen: false,
+		modal: true,
+		width: 650,
+		buttons: [
+			{
+				text: "Save",
+				click: function() { updateDraftVisibility(); }
+			},
+			{
+				text: "Cancel",
+				click: function() { $(this).dialog("close"); }
+			}
+		]
+	});
+	
+	$('#changeVisibility').live('click', function() {
+		$('#visibilityDialog').dialog('open');
+	})
+	
+	$('#draft_status').live('change', function() {
+		var value = $(this).val(),
+			$passwordBox = $('#passwordBox');
+		if(value == 1)
+			$passwordBox.show();
+		else
+			$passwordBox.hide();
+	});
 });
 
 function checkForOtherManagers() {
@@ -98,5 +128,61 @@ function resetArrows() {
 		}
 
 		++i;
+	});
+}
+
+function updateDraftVisibility() {
+	var status = parseInt($('#draft_status').val(), 10),
+		password = $.trim($('#draft_password').val()),
+		confirmPassword = $.trim($('#draft_password_confirm').val());
+		
+	if(status == 0) {
+		if(savePassword('')) {
+			$('#draft_password').val('');
+			$('#draft_confirm_password').val('');
+			$('#draft_visibility').html('Public');
+			return true;
+		}else {
+			$('p.errorDescription').html('There was a server-side error, please try again.').show();
+			return false;
+		}
+	}else {
+		if(password.length == 0 || confirmPassword.length == 0 || password != confirmPassword) {
+			$('p.errorDescription').html('To make the draft private, you must provide a password and confirm that password!').show();
+			return false;
+		}
+		
+		if(savePassword(password)) {
+			$('#visibilityDialog').dialog('close');
+			$('#draft_visibility').html('Private<br/><strong>Draft Password:</strong> ' + password);
+			return true;
+		}else {
+			$('p.errorDescription').html('There was a server-side error, please try again.').show();
+			return false;
+		}
+	}
+}
+
+function savePassword(draft_pass) {
+	var draft_id = parseInt($('#draft_id').val(), 10),
+		$loadingDialog = $('#loadingDialog');
+	
+	$loadingDialog.dialog('open');
+	
+	$.ajax({
+		async: false,
+		data: {action: 'updateVisibility', did: draft_id, password: draft_pass},
+		url: 'draft.php',
+		success: function(data) {
+			$loadingDialog.dialog('close');
+			if(data == "SUCCESS") 
+				return true;
+			else
+				return false;
+		},
+		error: function() {
+			$loadingDialog.dialog('close');
+			return false;
+		}
 	});
 }
