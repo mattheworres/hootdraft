@@ -52,7 +52,7 @@ $(document).ready(function() {
 			success: function(data) {
 				$loadingDialog.dialog('close');
 				if(data == "SUCCESS") {
-					$row.empty().remove();
+					$row.remove();
 					resetArrows();
 					checkForOtherManagers();
 				} else {

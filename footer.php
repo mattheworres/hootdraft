@@ -7,6 +7,8 @@
 	<img src="images/loading.gif" alt="Loading..."/>Loading...
 </div>
 
+<div id="informationDialog"></div>
+
 <script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.8.14.custom.min.js"></script>
 <script type="text/javascript">
@@ -17,4 +19,11 @@
 		draggable: false,
 		resizable: false
 	});
+	
+	$('#informationDialog').dialog({
+		autoOpen: false,
+		modal: true,
+		draggable: false,
+		resizable: false
+	})
 </script>
