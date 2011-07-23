@@ -121,6 +121,10 @@ class draft_object {
 				"draft_status = '" . mysql_real_escape_string($this->draft_status) . "', " .
 				"draft_style = '" . mysql_real_escape_string($this->draft_style) . "', " .
 				"draft_rounds = '" . intval($this->draft_rounds) . "', ";
+			
+			if(isset($this->start_time) && strlen($this->start_time) > 0)
+				if($this->start_time == "NULL")
+					$sql .= "draft_start_time = NULL, ";
 
 			if(intval($this->current_round) > 1)
 				$sql .= "draft_current_round = " . intval($this->current_round) . ", ";
@@ -153,8 +157,8 @@ class draft_object {
 		$old_status = $this->draft_status;
 
 		$this->draft_status = $new_status;
-		$this->draft_current_pick = 1;
-		$this->draft_current_round = 1;
+		$this->current_pick = 1;
+		$this->current_round = 1;
 
 		$draftJustStarted = ($old_status == "undrafted" && $this->isInProgress()) ? true : false;
 

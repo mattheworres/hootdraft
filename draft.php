@@ -84,7 +84,7 @@ switch(ACTION) {
 			exit(0);
 		}
 		
-		if(draft_object::checkStatus($new_status)) {
+		if(!draft_object::checkStatus($new_status)) {
 			$ERRORS = array();
 			$ERRORS[] = "Draft status is of the incorrect value. Please correct this and try again.";
 			require_once("/views/draft/edit_status.php");

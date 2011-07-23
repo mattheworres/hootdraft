@@ -79,11 +79,11 @@ class player_object {
 			"WHERE player_id = " . intval($this->player_id);
 			return mysql_query($sql);
 		} elseif($this->draft_id > 0 && $this->manager_id > 0) {
+			//TODO: Investigate how to insert with empty fields.
 			$sql = "INSERT INTO players ".
-			"(player_id, manager_id, draft_id, first_name, last_name, team, position, player_round, player_pick) ".
+			"(manager_id, draft_id, player_round, player_pick) ".
 			"VALUES ".
-			"(NULL, " . intval($this->manager_id) . ", " . intval($this->draft_id) . ", " . mysql_real_escape_string($this->first_name) . ", " . mysql_real_escape_string($this->last_name) . ", ".
-			mysql_real_escape_string($this->team) . ", " . mysql_real_escape_string($this->position) . ", " . mysql_real_escape_string($this->player_round) . ", " . mysql_real_escape_string($this->player_pick) . ")";
+			"(" . intval($this->manager_id) . ", " . intval($this->draft_id) . ", " .  intval($this->player_round) . ", " . intval($this->player_pick) . ")";
 			
 			$result = mysql_query($sql);
 			if(!$result)
@@ -210,7 +210,7 @@ class player_object {
 
 		$id_string = "0"; //TODO: Update this so it's cleaner? This is hacky.	
 
-		foreach($current_players as $player) {
+		foreach($players as $player) {
 			$id_string .= "," . $player->player_id;
 		}
 

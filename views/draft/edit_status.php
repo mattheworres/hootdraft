@@ -9,8 +9,8 @@
 		<?php require('header.php');
 		require('comm_draft_menu.php'); ?>
 		<div id="content">
-		<form action="comm_edit_draft_status.php" method="POST">
-			<input type="hidden" name="draft_id" value="<?php echo DRAFT_ID;?>" />
+		<form action="draft.php?action=updateStatus&did=<?php echo DRAFT_ID; ?>" method="POST">
+			<input type="hidden" name="draft_id" value="<?php echo DRAFT_ID; ?>" />
 			<fieldset>
 			<legend>Change Draft Status</legend>
 			<p><label for="team_name">Draft Status*:</label>
@@ -19,7 +19,7 @@
 				<option value="in_progress"<?php if($DRAFT->isInProgress()) { echo " selected=\"selected\""; } ?>>In Progress</option>
 			</select>
 			</p>
-			<p id="info" class="error">NOTE: If you switch from "In Progress" to "Undrafted" and have already started to draft, you <em>will</em> lose any and all progress in draft picks.<br />Are you sure?</p>
+			<p id="info" class="error">NOTE: If you switch from "In Progress" to "Undrafted" and have already started to draft, all data related to picks <em>will</em> be immediately deleted.<br />Are you sure?</p>
 			<p><input type="submit" name="submit" id="submit" class="button" value="Change Draft Status" /></p>
 			<?php if(count($ERRORS) > 0) {?>
 				<?php foreach($ERRORS as $error) {?>
