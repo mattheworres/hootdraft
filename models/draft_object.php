@@ -1,5 +1,7 @@
 <?php
+
 require_once("php_draft_library.php");
+
 /**
  * Represents a PHPDraft "draft" object, which is the parent object.
  *
@@ -19,6 +21,7 @@ require_once("php_draft_library.php");
  * @property int $current_pick
  */
 class draft_object {
+
 	public $draft_id;
 	public $draft_name;
 	public $draft_status;
@@ -36,11 +39,13 @@ class draft_object {
 		if(intval($id) == 0)
 			return false;
 		
+		$id = intval($id);
+
 		$draft_result = mysql_query("SELECT * FROM draft WHERE draft_id = " . $id . " LIMIT 1");
-		
+
 		if(!$draft_row = mysql_fetch_array($draft_result))
 			return false;
-		
+
 		$this->draft_id = intval($draft_row['draft_id']);
 		$this->draft_name = $draft_row['draft_name'];
 		$this->draft_sport = $draft_row['draft_sport'];
@@ -54,7 +59,7 @@ class draft_object {
 		$this->end_time = strtotime($draft_row['draft_end_time']);
 		$this->current_round = intval($draft_row['draft_current_round']);
 		$this->current_pick = intval($draft_row['draft_current_pick']);
-		
+
 		return true;
 	}
 
@@ -82,23 +87,23 @@ class draft_object {
 
 		return $errors;
 	}
-	
+
 	/**
-	 * Set the text status of the draft according to arbitrary values stored in DB
+	 * Grab the formatted string corresponding to the draft's status
 	 * @param $draft_status_from_database The textual status stored in the database
 	 */
-	public function setStatus($draft_status_from_database) {
-		switch($draft_status_from_database) {
+	public function getStatus() {
+		switch($this->draft_status) {
 			case "undrafted":
-				$this->draft_status = "Setting Up";
+				return "Setting Up";
 				break;
-			
+
 			case "in_progress":
-				$this->draft_status = "Currently Drafting";
+				return "Currently Drafting";
 				break;
-			
+
 			case "complete":
-				$this->draft_status = "Draft Complete";
+				return "Draft Complete";
 				break;
 		}
 	}
@@ -110,27 +115,27 @@ class draft_object {
 	 */
 	public function saveDraft() {
 		if($this->draft_id > 0) {
-			$sql = "UPDATE draft SET ".
-					"draft_name = '" . mysql_real_escape_string($this->draft_name) . "', ".
-					"draft_sport = '" . mysql_real_escape_string($this->draft_sport) . "', ".
-					"draft_status = '" . mysql_real_escape_string($this->draft_status) . "', ".
-					"draft_style = '" . mysql_real_escape_string($this->draft_style) . "', ".
-					"draft_rounds = '" . intval($this->draft_rounds) . "', ";
-					
+			$sql = "UPDATE draft SET " .
+				"draft_name = '" . mysql_real_escape_string($this->draft_name) . "', " .
+				"draft_sport = '" . mysql_real_escape_string($this->draft_sport) . "', " .
+				"draft_status = '" . mysql_real_escape_string($this->draft_status) . "', " .
+				"draft_style = '" . mysql_real_escape_string($this->draft_style) . "', " .
+				"draft_rounds = '" . intval($this->draft_rounds) . "', ";
+
 			if(intval($this->current_round) > 1)
 				$sql .= "draft_current_round = " . intval($this->current_round) . ", ";
 			if(intval($this->current_pick) > 1)
 				$sql .= "draft_current_pick = " . intval($this->current_pick) . ", ";
-						
-			$sql .= "draft_password = '" . mysql_real_escape_string($this->draft_password) . "' ".
-					"WHERE draft_id = " . intval($this->draft_id);
+
+			$sql .= "draft_password = '" . mysql_real_escape_string($this->draft_password) . "' " .
+				"WHERE draft_id = " . intval($this->draft_id);
 
 			return mysql_query($sql);
 		}else {
 			$sql = "INSERT INTO draft "
-			. "(draft_id, draft_name, draft_sport, draft_status, draft_style, draft_rounds) "
-			. "VALUES "
-			. "(NULL, '" . $this->draft_name . "', '" . $this->draft_sport . "', 'undrafted', '" . $this->draft_style . "', " . $this->draft_rounds . ")";
+				. "(draft_id, draft_name, draft_sport, draft_status, draft_style, draft_rounds) "
+				. "VALUES "
+				. "(NULL, '" . $this->draft_name . "', '" . $this->draft_sport . "', 'undrafted', '" . $this->draft_style . "', " . $this->draft_rounds . ")";
 
 			if(!mysql_query($sql))
 				return false;
@@ -140,7 +145,28 @@ class draft_object {
 			return true;
 		}
 	}
-	
+
+	public function updateStatus($new_status) {
+		$this->draft_status = $new_status;
+		$saveSuccess = $this->saveDraft();
+
+		if(!$saveSuccess)
+			return false;
+	}
+
+	/**
+	 * Check to ensure $status is in the correct state to prevent any borking of the database.
+	 * @return bool 
+	 */
+	public static function checkStatus($status) {
+		if($status == "undrafted"
+			|| $status == "in_progress"
+			|| $status == "complete")
+			return true;
+		else
+			return false;
+	}
+
 	/**
 	 * Returns an array of all current drafts in the database
 	 * @return array of all available draft objects
@@ -150,7 +176,7 @@ class draft_object {
 		//TODO: Change draft object to include timestamp for creation; IDs are not technically reliable sortable columns.
 		$sql = "SELECT * FROM draft ORDER BY draft_id";
 		$drafts_result = mysql_query($sql);
-		
+
 		while($draft_row = mysql_fetch_array($drafts_result)) {
 			$draft = new draft_object();
 			$draft->draft_id = $draft_row['draft_id'];
@@ -170,7 +196,7 @@ class draft_object {
 
 		return $drafts;
 	}
-	
+
 	/**
 	 * Returns a string representation of the time span of this draft
 	 * @return string String representation of the duration of this draft
@@ -181,9 +207,8 @@ class draft_object {
 		else
 			return "";
 	}
-	
 	// <editor-fold defaultstate="collapsed" desc="Draft State Information">
-	
+
 	/**
 	 * Determines if the draft is completed
 	 * @return bool true if the draft is completed, false otherwise
@@ -191,7 +216,7 @@ class draft_object {
 	public function isCompleted() {
 		return $this->draft_status == "complete";
 	}
-	
+
 	/**
 	 * Determines if draft is undrafted
 	 * @return bool true if the draft is undrafted, false otherwise
@@ -199,7 +224,15 @@ class draft_object {
 	public function isUndrafted() {
 		return $this->draft_status == "undrafted";
 	}
-	
+
+	/**
+	 * Determines if draft is in progress
+	 * @return bool true fi the draft is in progress, false otherwise 
+	 */
+	public function isInProgress() {
+		return $this->draft_status == "in_progress";
+	}
+
 	/**
 	 * Determines if draft is password-protected
 	 * @return bool true if the draft is password-protected, false otherwise
@@ -209,4 +242,5 @@ class draft_object {
 	}
 	// </editor-fold>
 }
+
 ?>

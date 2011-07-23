@@ -52,3 +52,7 @@ input.error
 table.alt_rows td {
 	border-bottom: 1px solid #CCCCCC;
 }
+
+#info {
+	display: none;
+}

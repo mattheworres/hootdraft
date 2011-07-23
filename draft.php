@@ -51,6 +51,7 @@ switch(ACTION) {
 		break;
 	
 	case 'updateVisibility':
+		// <editor-fold defaultstate="collapsed" desc="updateVisibility Logic">
 		$new_password = $_POST['password'];
 		
 		if($DRAFT->draft_password == $new_password) {
@@ -64,14 +65,50 @@ switch(ACTION) {
 			echo "SUCCESS";
 		else
 			echo "FAILURE";
+		// </editor-fold>
 		break;
 	
 	case 'changeStatus':
-		//TODO: Add view here
+		require_once("/views/draft/edit_status.php");
 		break;
 	
 	case 'updateStatus':
-		//TODO: Add processing and error/success here. Generic success should suffice.
+		// <editor-fold defaultstate="collapsed" desc="updateStatus Logic">
+		$new_status = $_POST['draft_status'];
+		
+		if($DRAFT->draft_status == $new_status) {
+			define("PAGE_HEADER", "Status Unchanged");
+			define("P_CLASS", "success");
+			define("PAGE_CONTENT", "Your draft's status was unchanged. <a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to the draft's main page, or <a href=\"draft.php?action=changeStatus&did=" . DRAFT_ID . "\">click here</a> to change it's status.");
+			require_once("/views/generic_result_view.php");
+			exit(0);
+		}
+		
+		if(draft_object::checkStatus($new_status)) {
+			$ERRORS = array();
+			$ERRORS[] = "Draft status is of the incorrect value. Please correct this and try again.";
+			require_once("/views/draft/edit_status.php");
+			exit(1);
+		}
+		
+		$success = $DRAFT->updateStatus($new_status);
+		
+		if($success) {
+			if($DRAFT->isInProgress())
+				$extra_message = "<br/><br/><a href=\"draft_room.php?did=" . DRAFT_ID . "\">Click here to be taken to the Draft Room - Your Draft Has Started!</a>";
+			
+			define("PAGE_HEADER", "Draft Status Updated");
+			define("P_CLASS", "success");
+			define("PAGE_CONTENT", "Your draft's status has been successfully updated." . $extra_message);
+			require_once("/views/generic_result_view.php");
+			exit(0);
+		}else {
+			$ERRORS = array();
+			$ERRORS[] = "An error occurred and your draft's status could not be updated.  Please try again.";
+			require_once("/views/draft/edit_status.php");
+			exit(1);
+		}
+		// </editor-fold>
 		break;
 	
 	case 'editDraft':

@@ -97,14 +97,15 @@
 		<p class="error">One or more of the fields were empty.  Please make sure all fields are completed below and then hit "Change Draft Status" to continue.</p>
 			<?php print_edit_status($draft_id, $draft_status);
 		}else {
-			$sql = "UPDATE draft SET ".
-				"draft_status = '".$draft_status."', ";
+			$sql = "UPDATE draft SET draft_status = '".$draft_status."', ";
+			
 			if($current_status == "undrafted" && $draft_status == "in_progress") {
-			$sql .= "draft_start_time = NOW(), ".
+				$sql .= "draft_start_time = NOW(), ".
 				"draft_current_pick = 1, ".
 				"draft_current_round = 1 ";
 			}else
-			$sql .= "draft_start_time = NULL ";
+				$sql .= "draft_start_time = NULL ";
+			
 			$sql .= "WHERE draft_id = '".$draft_id."' ";
 
 			$status_successful = mysql_query($sql);
