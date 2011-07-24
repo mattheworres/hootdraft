@@ -15,7 +15,7 @@ include_once("login_fcns.php");
 		//New tab-selection method relies on each Presenter to set the $ACTIVE_TAB variable.
 		if(defined("ACTIVE_TAB")/*!empty($ACTIVE_TAB)*/) {?>
 			<li<?php if(ACTIVE_TAB == 'INDEX') echo " id=\"active\"";?>><a href="index.php"<?php if(ACTIVE_TAB == 'INDEX') echo " id=\"current\" name=\"current\"";?>>Welcome!</a></li>
-		<li<?php if(ACTIVE_TAB == 'DRAFT_CENTRAL') echo " id=\"active\"";?>><a href="index.php?q=select"<?php if(ACTIVE_TAB == 'DRAFT_CENTRAL') echo " id=\"current\" name=\"current\"";?>>Draft Central</a></li>
+		<li<?php if(ACTIVE_TAB == 'DRAFT_CENTRAL') echo " id=\"active\"";?>><a href="index.php?action=select"<?php if(ACTIVE_TAB == 'DRAFT_CENTRAL') echo " id=\"current\" name=\"current\"";?>>Draft Central</a></li>
 			<?php  if(!isLoggedIn()) {//if the user is not authenticated?>
 			<li<?php if(ACTIVE_TAB == 'LOGIN') echo " id=\"active\"";?>><a href="login.php"<?php if(ACTIVE_TAB == 'LOGIN') echo " id=\"current\" name=\"current\"";?>>Commissioner Login</a></li>
 	<?php

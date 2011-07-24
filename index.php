@@ -11,7 +11,7 @@ $drafts = new indexObject();
 $drafts->draft_objects = draft_object::getAllDrafts();
 $drafts->number_of_drafts = count($drafts->draft_objects);
 
-switch($_GET['q']) {
+switch($_GET['action']) {
 	case 'select':
 		DEFINE("ACTIVE_TAB", "DRAFT_CENTRAL");
 		require_once('/views/index/index_select_view.php');
