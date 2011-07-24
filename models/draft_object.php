@@ -80,10 +80,12 @@ class draft_object {
 		if($this->draft_rounds < 1)
 			$errors[] = "Draft rounds must be at least 1 or more.";
 
-		$name_count = mysql_num_rows(mysql_query("SELECT draft_id FROM draft WHERE draft_name = '" . $this->draft_name . "' AND draft_sport = '" . $this->draft_sport . "'"));
+		if(empty($this->draft_id) || $this->draft_id == 0) {
+			$name_count = mysql_num_rows(mysql_query("SELECT draft_id FROM draft WHERE draft_name = '" . $this->draft_name . "' AND draft_sport = '" . $this->draft_sport . "'"));
 
-		if($name_count > 0)
-			$errors[] = "Draft already found with that name and sport.";
+			if($name_count > 0)
+				$errors[] = "Draft already found with that name and sport.";
+		}
 
 		return $errors;
 	}

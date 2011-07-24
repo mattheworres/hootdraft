@@ -5,6 +5,7 @@ if(!empty($draft_id)) {
 	require_once("login_fcns.php");
 	?><div id="right_side">
 	<h3>Navigation</h3>
+	<p style="color: red; font-weight: bold;">UPDATE MENU LOGIC</p>
 	<p><a href="control_panel.php?action=manageDrafts">&larr; Select a Draft</a></p>
 	<?php if(is_undrafted($draft_id)) {?><p><a href="comm_edit_draft.php?did=<?php echo $draft_id; ?>">Edit Draft Details</a></p>
 	<?php } if($currentFile != "comm_manage_draft.php") {?><p><a href="comm_manage_draft.php?did=<?php echo $draft_id; ?>">Manage Draft</a></p>

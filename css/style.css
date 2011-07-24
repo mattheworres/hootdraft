@@ -327,3 +327,10 @@ table th {
 {
 	text-align: center;
 }
+
+.inline-icon
+{
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 2px;
+}

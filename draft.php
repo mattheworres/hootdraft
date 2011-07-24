@@ -69,7 +69,9 @@ switch(ACTION) {
 		break;
 	
 	case 'changeStatus':
+		// <editor-fold defaultstate="collapsed" desc="changeStatus Logic">
 		require_once("/views/draft/edit_status.php");
+		// </editor-fold>
 		break;
 	
 	case 'updateStatus':
@@ -112,11 +114,51 @@ switch(ACTION) {
 		break;
 	
 	case 'editDraft':
-		//TODO: Add view here
+		// <editor-fold defaultstate="collapsed" desc="editDraft Logic">
+		if($DRAFT->isCompleted() || $DRAFT->isInProgress()) {
+			define("PAGE_HEADER", "You Cannot Edit This Draft");
+			define("P_CLASS", "success");
+			define("PAGE_CONTENT", "Because this draft is either in progress or completed, you are unable to edit the details of this draft. <a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to go back to the draft\'s homepage.");
+			require_once("/views/generic_result_view.php");
+			exit(1);
+		}
+		require_once("/views/draft/edit_draft.php");
+		// </editor-fold>
 		break;
 	
-	case 'saveDraft':
-		//TODO: Add update logic here. Generic result views.
+	case 'updateDraft':
+		if($DRAFT->isCompleted() || $DRAFT->isInProgress()) {
+			define("PAGE_HEADER", "You Cannot Edit This Draft");
+			define("P_CLASS", "success");
+			define("PAGE_CONTENT", "Because this draft is either in progress or completed, you are unable to edit the details of this draft. <a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to go back to the draft\'s homepage.");
+			require_once("/views/generic_result_view.php");
+			exit(1);
+		}
+		
+		$DRAFT->draft_name = trim($_POST['draft_name']);
+		$DRAFT->draft_sport = trim($_POST['draft_sport']);
+		$DRAFT->draft_style = trim($_POST['draft_style']);
+		$DRAFT->draft_rounds = intval($_POST['draft_rounds']);
+		
+		$object_errors = $DRAFT->getValidity();
+		
+		if(count($object_errors) > 0) {
+			$ERRORS = $object_errors;
+			require_once("/views/draft/edit_draft.php");
+			exit(1);
+		}
+		
+		if($DRAFT->saveDraft() == false) {
+			$ERRORS[] = "Draft could not be saved, please try again.";
+			DEFINE("CONTROL_PANEL_ACTION", "ADD");
+			require_once("/views/control_panel/create_draft.php");
+			exit(1);
+		}
+		
+		define("PAGE_HEADER", "Draft Edited Successfully!");
+		define("P_CLASS", "success");
+		define("PAGE_CONTENT", "Your draft " . $DRAFT->draft_name . " has been edited successfully. <a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to the draft's homepage, or <a href=\"draft.php?action=editDraft&did=" . DRAFT_ID . "\">click here</a> to edit the draft again.");
+		require_once("/views/generic_result_view.php");
 		break;
 	
 	case 'deleteDraft':

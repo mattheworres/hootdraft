@@ -7,7 +7,7 @@
 	<body>
 	<div id="page_wrapper">
 		<?php require('header.php');
-		require('comm_draft_menu.php'); ?>
+		require('views/shared/draft_menu.php');?>
 		<div id="content">
 		<form action="draft.php?action=updateStatus&did=<?php echo DRAFT_ID; ?>" method="POST">
 			<input type="hidden" name="draft_id" value="<?php echo DRAFT_ID; ?>" />
