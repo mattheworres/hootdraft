@@ -99,7 +99,7 @@ switch(ACTION) {
 			
 			define("PAGE_HEADER", "Draft Status Updated");
 			define("P_CLASS", "success");
-			define("PAGE_CONTENT", "Your draft's status has been successfully updated." . $extra_message);
+			define("PAGE_CONTENT", "Your draft's status has been successfully updated. <a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to its main page." . $extra_message);
 			require_once("/views/generic_result_view.php");
 			exit(0);
 		}else {

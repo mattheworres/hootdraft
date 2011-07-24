@@ -32,6 +32,11 @@
 		</form>
 		</div>
 		<?php require('footer.php'); ?>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				
+			});
+		</script>
 	</div>
 	</body>
 </html>

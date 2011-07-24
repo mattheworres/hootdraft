@@ -225,6 +225,7 @@ class draft_object {
 				$pick++;
 			}
 		}
+		return true;
 	}
 
 	/**
