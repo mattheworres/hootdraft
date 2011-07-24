@@ -69,7 +69,9 @@
 									<span class="manager-move-link move-up up-on"></span>
 									&nbsp;
 									<span class="manager-move-link move-down down-on"></span>
-								<?php } ?>
+								<?php } else { 
+									echo $manager->draft_order;
+								} ?>	
 								</td>
 							</tr>
 						<?php } ?>

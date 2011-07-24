@@ -32,7 +32,7 @@
 						<td><a href="draft.php?did=<?php echo $draft->draft_id; ?>"><?php echo $draft->draft_name; ?></a></td>
 						<td><?php echo $draft->draft_sport; ?></td>
 						<td><?php echo $numberOfManagers; ?></td>
-						<td><?php echo $draft->draft_status; ?></td>
+						<td><?php echo $draft->getStatus(); ?></td>
 					</tr>
 				<?php
 				if($alt_row)

@@ -16,15 +16,15 @@
 		<fieldset>
 			<legend>Draft Management</legend>
 			<div>
-			<p><strong><a href="control_panel.php?action=createDraft">Create a New Draft</a></strong> - Create a brand new draft from scratch, and then add managers to that draft afterwards</p>
-			<p><strong><a href="control_panel.php?action=manageDrafts">Manage an Existing Draft</a></strong> - Choose an existing draft from a list and manage it.  This includes adding team managers and the draft room itself!</p>
+				<p><strong><a href="control_panel.php?action=createDraft"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-plusthick"></span>Create a New Draft</a></strong> - Create a brand new draft from scratch, and then add managers to that draft afterwards</p>
+				<p><strong><a href="control_panel.php?action=manageDrafts"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-gear"></span>Manage an Existing Draft</a></strong> - Choose an existing draft from a list and manage it.  This includes adding team managers and the draft room itself!</p>
 			</div>
 		</fieldset>
 
 		<fieldset>
 			<legend>User Management</legend>
 			<div>
-			<p><strong><a href="control_panel.php?action=manageProfile">Update Your User Profile</a></strong> - Change your login, password and name here for PHPDraft</p>
+				<p><strong><a href="control_panel.php?action=manageProfile"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-person"></span>Update Your User Profile</a></strong> - Change your login, password and name here for PHPDraft</p>
 			</div>
 		</fieldset>
 		</div>

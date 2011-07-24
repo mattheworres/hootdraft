@@ -9,9 +9,8 @@
 		<?php require('header.php'); ?>
 
 		<?php
-		require('comm_draft_menu.php');
-			
-			require_once('models/user_edit_model.php');
+		require('/views/shared/draft_menu.php');
+		require_once('models/user_edit_model.php');
 			?>
 		<div id="content">
 				<h3>Update User</h3>

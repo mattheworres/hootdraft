@@ -56,3 +56,7 @@ table.alt_rows td {
 #info {
 	display: none;
 }
+
+#managers-table tr:hover {
+	background-color: #EEEEEE;
+}

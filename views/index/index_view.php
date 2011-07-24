@@ -24,11 +24,11 @@
 			<?php if($drafts->number_of_drafts == 0) { ?><tr><td colspan="4"><h2>There are currently no drafts available.</h2></td></tr><?php
 			}else {
 			foreach($drafts->draft_objects as $draft) {?><tr>
-			<td><img src="images/icons/<?php echo $draft->visibility; ?>.png" border="0" alt="<?php echo $draft->visibility; ?>" /></td>
-			<?php if($draft->draft_status != "Setting Up") {?><td><a href="draft_main.php?draft_id=<?php echo $draft->draft_id; ?>"><?php echo $draft->draft_name; ?></a></td>
+				<td><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-<?php echo $draft->visibility; ?>"></span></td>
+			<?php if(!$draft->isUndrafted()) {?><td><a href="draft_main.php?draft_id=<?php echo $draft->draft_id; ?>"><?php echo $draft->draft_name; ?></a></td>
 						<?php } else {?><td><?php echo $draft->draft_name; ?></td><?php }?>
 			<td><?php echo $draft->draft_sport; ?></td>
-			<td><?php echo $draft->draft_status; ?></td>
+			<td><?php echo $draft->getStatus(); ?></td>
 			</tr>
 				<?php }
 			}?>
