@@ -14,13 +14,13 @@ $drafts->number_of_drafts = count($drafts->draft_objects);
 switch($_GET['q']) {
 	case 'select':
 		DEFINE("ACTIVE_TAB", "DRAFT_CENTRAL");
-		require_once('/views/index_select_view.php');
+		require_once('/views/index/index_select_view.php');
 		break;
 
 	case 'index':
 	default:
 		DEFINE("ACTIVE_TAB", "INDEX");
-		require_once('/views/index_view.php');
+		require_once('/views/index/index_view.php');
 		break;
 }
 
