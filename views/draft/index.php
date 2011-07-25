@@ -76,9 +76,9 @@
 				</fieldset>
 				<fieldset>
 					<legend><?php echo $DRAFT->draft_name; ?> - Functions</legend>
-					<?php if($DRAFT->isUndrafted()) {?><p><strong><a href="draft.php?action=addManagers&did=<?php echo DRAFT_ID; ?>">Add Manager(s)</a></strong></p>
-					<?php } ?><p><strong><a id="changeVisibility" href="#">Change Draft Visibility</a></strong></p>
-					<?php if(!$DRAFT->isCompleted() && HAS_MANAGERS) {?><p id="draft-status-link"><strong><a href="draft.php?action=changeStatus&did=<?php echo DRAFT_ID; ?>">Change Draft Status</a></strong></p><?php } ?>
+					<?php if($DRAFT->isUndrafted()) {?><p><strong><a href="draft.php?action=addManagers&did=<?php echo DRAFT_ID; ?>"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-plusthick"></span>Add Manager(s)</a></strong></p>
+					<?php } ?><p><strong><a id="changeVisibility" href="#"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-key"></span>Change Draft Visibility</a></strong></p>
+					<?php if(!$DRAFT->isCompleted() && HAS_MANAGERS) {?><p id="draft-status-link"><strong><a href="draft.php?action=changeStatus&did=<?php echo DRAFT_ID; ?>"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-play"></span>Change Draft Status</a></strong></p><?php } ?>
 				</fieldset>
 			</div>
 			<?php require('footer.php'); ?>

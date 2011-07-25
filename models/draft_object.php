@@ -258,13 +258,14 @@ class draft_object {
 		if($this->draft_id == 0)
 			return false;
 		
-		//Picks
+		require_once("/models/player_object.php");
+		require_once("/models/manager_object.php");
+		
 		$pickRemovalSuccess = player_object::deletePlayersByDraft($this->draft_id);
 		
 		if(!$pickRemovalSuccess)
 			return false;
 		
-		//Managers
 		$managerRemovalSuccess = manager_object::deleteManagersByDraft($this->draft_id);
 		
 		if(!$managerRemovalSuccess)

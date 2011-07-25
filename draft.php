@@ -151,7 +151,6 @@ switch(ACTION) {
 
 		if($DRAFT->saveDraft() == false) {
 			$ERRORS[] = "Draft could not be saved, please try again.";
-			DEFINE("CONTROL_PANEL_ACTION", "ADD");
 			require_once("/views/control_panel/create_draft.php");
 			exit(1);
 		}

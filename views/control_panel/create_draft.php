@@ -6,9 +6,8 @@
 	</head>
 	<body>
 	<div id="page_wrapper">
-		<?php require('header.php'); ?>
-
-		<?php require('comm_menu.php'); ?>
+		<?php require('header.php'); 
+		require('/views/shared/commish_draftless_menu.php'); ?>
 		<div id="content">
 		<h3>Create a New Draft</h3>
 		<p>To create a draft, please enter a name for the draft to make it unique and identifiable (such as "Refridgerator Raiders" or "Yoohoo Yuppies"), and select the sport that this fantasy draft is for.  Once you're done, press "Create Draft" to create the draft.</p>

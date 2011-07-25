@@ -9,12 +9,7 @@
 		<?php require('header.php'); ?>
 
 		<?php
-		require_once('cleanstring.php');
-		$draft_id = CleanString(trim($_REQUEST['did']));
-		if(empty($draft_id))
-		require('comm_menu.php');
-		else
-		require('comm_draft_menu.php'); ?>
+		require('/views/shared/draft_menu.php'); ?>
 		<div id="content-wide">
 		<fieldset>
 			<legend>Are You Sure?</legend>

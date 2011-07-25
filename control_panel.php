@@ -105,6 +105,7 @@ switch($_GET['action']) {
 	case '':
 	case 'home':
 	default:
+		$DRAFTS = draft_object::getAllDrafts();
 		require_once('/views/control_panel/index.php');
 		break;
 }
