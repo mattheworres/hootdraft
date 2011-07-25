@@ -9,10 +9,6 @@
 		<div id="page_wrapper">
 			<?php 
 			require('header.php');
-			require_once('cleanstring.php');
-			require_once('models/draft_model.php');
-			require_once('models/draft_object.php');
-
 			require('views/shared/draft_menu.php'); ?>
 			<div id="content">
 				<h3>Manage <?php echo $DRAFT->draft_name; ?> (<?php echo $DRAFT->draft_sport; ?>)</h3>
@@ -31,7 +27,7 @@
 					<div style="width: 30%; float:right; text-align: right;">
 						<p><img src="images/icons/<?php echo $DRAFT->draft_status; ?>.png" alt="<?php echo $DRAFT->draft_status; ?>" title="<?php echo $DRAFT->draft_status; ?>"/></p>
 					</div>
-					<p id="no-managers-msg" class="error"<?php if(HAS_MANAGERS) { ?> style="display: none;"<?php } ?>>*Before you can start your draft, you must <a href=\"comm_add_mgrs.php?did=<?php echo DRAFT_ID; ?>">add managers</a>.</p>
+					<p id="no-managers-msg" class="error"<?php if(HAS_MANAGERS) { ?> style="display: none;"<?php } ?>>*Before you can start your draft, you must <a href="draft.php?action=addManagers&did=<?php echo DRAFT_ID; ?>">add managers</a>.</p>
 					<table id="managers-table" width="100%"<?php if(!HAS_MANAGERS) { ?> style="display: none;"<?php } ?>>
 						<thead>
 							<tr>

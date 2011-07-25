@@ -195,6 +195,25 @@ class manager_object {
 
 		return $success;
 	}
+	
+	public static function deleteManagersByDraft($draft_id) {
+		$draft_id = intval($draft_id);
+
+		if($draft_id == 0)
+			return false;
+
+		$managers = manager_object::getManagersByDraft($draft_id);
+
+		$id_string = "0"; //TODO: Update this so it's cleaner? This is hacky.	
+
+		foreach($managers as $manager) {
+			$id_string .= "," . $manager->manager_id;
+		}
+
+		$sql = "DELETE FROM managers WHERE manager_id IN (" . mysql_escape_string($id_string) . ")";
+
+		return mysql_query($sql);
+	}
 
 	/**
 	 * Given a single draft ID, get all managers for that draft
@@ -202,7 +221,7 @@ class manager_object {
 	 * @param bool $draft_order_sort Whether or not to sort by the manager's order in the draft. If false, manager_name is used
 	 * @return array of manager objects
 	 */
-	public static function getManagersByDraftId($draft_id, $draft_order_sort = false, $order_sort = "ASC") {
+	public static function getManagersByDraft($draft_id, $draft_order_sort = false, $order_sort = "ASC") {
 		$managers = array();
 		$sql = "SELECT * FROM managers WHERE draft_id = '" . $draft_id . "' ORDER BY ";
 		$sql .= $draft_order_sort ? "draft_order" : "manager_name";
@@ -227,7 +246,7 @@ class manager_object {
 	 * @param int $draft_id
 	 * @return int $number_of_managers
 	 */
-	public static function getCountOfManagersByDraftId($draft_id) {
+	public static function getCountOfManagersByDraft($draft_id) {
 		$sql = "SELECT manager_id FROM managers WHERE draft_id = " . $draft_id . " ORDER BY manager_name";
 
 		return mysql_num_rows(mysql_query($sql));

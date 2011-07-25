@@ -101,12 +101,23 @@ function removeAllExtraRows() {
 }
 				
 function updateCurrentTable(new_managers) {
+	var needToAddNewRow = $('#current-managers-table tr').length == 1;
 	$.each(new_managers, function() {
-		var $newRow = $('#current-managers-table tr.current-row:first').clone();
+		if(needToAddNewRow)  {
+			var $brandNewRow = $('<tr></tr>').addClass('current-row');
+			$('<td></td>').text(' ').appendTo($brandNewRow);
+			$('<td></td>').text(this.manager_name).addClass('current-manager-name').appendTo($brandNewRow);
+			$('<td></td>').text(this.manager_email).addClass('current-manager-email').appendTo($brandNewRow);
+			$('#current-managers-table').append($brandNewRow);
+			needToAddNewRow = false;
+		}else {
+			var $newRow = $('#current-managers-table tr.current-row:first').clone();
 
-		$newRow.find('.current-manager-name').html(this.manager_name);
-		$newRow.find('.current-manager-email').html(this.manager_email);
-		$newRow.insertAfter('#current-managers-table tr.current-row:last');
+			$newRow.show();
+			$newRow.find('.current-manager-name').html(this.manager_name);
+			$newRow.find('.current-manager-email').html(this.manager_email);
+			$newRow.insertAfter('#current-managers-table tr.current-row:last');
+		}
 	});
 }
 				

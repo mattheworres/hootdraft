@@ -25,12 +25,12 @@ switch(ACTION) {
 		// <editor-fold defaultstate="collapsed" desc="addManagers Logic">
 		$MANAGERS = array();
 		$MANAGERS[] = new manager_object();
-		
-		$CURRENT_MANAGERS = manager_object::getManagersByDraftId(DRAFT_ID, true);
+
+		$CURRENT_MANAGERS = manager_object::getManagersByDraft(DRAFT_ID, true);
 		require_once('/views/draft/add_managers.php');
 		// </editor-fold>
 		break;
-	
+
 	case 'saveManagers':
 		// <editor-fold defaultstate="collapsed" desc="saveManagers Logic">
 		$managers = $_POST['managers'];
@@ -39,45 +39,45 @@ switch(ACTION) {
 			$new_manager->draft_id = DRAFT_ID;
 			$new_manager->manager_name = $manager_request['manager_name'];
 			$new_manager->manager_email = $manager_request['manager_email'];
-			
+
 			if(!$new_manager->saveManager()) {
 				return "SERVER_ERROR";
 				exit(1);
 			}
 		}
-		
+
 		echo "SUCCESS";
 		// </editor-fold>
 		break;
-	
+
 	case 'updateVisibility':
 		// <editor-fold defaultstate="collapsed" desc="updateVisibility Logic">
 		$new_password = $_POST['password'];
-		
+
 		if($DRAFT->draft_password == $new_password) {
 			echo "SUCCESS";
 			exit(0);
 		}
-		
+
 		$DRAFT->draft_password = $new_password;
-		
+
 		if($DRAFT->saveDraft())
 			echo "SUCCESS";
 		else
 			echo "FAILURE";
 		// </editor-fold>
 		break;
-	
+
 	case 'changeStatus':
 		// <editor-fold defaultstate="collapsed" desc="changeStatus Logic">
 		require_once("/views/draft/edit_status.php");
 		// </editor-fold>
 		break;
-	
+
 	case 'updateStatus':
 		// <editor-fold defaultstate="collapsed" desc="updateStatus Logic">
 		$new_status = $_POST['draft_status'];
-		
+
 		if($DRAFT->draft_status == $new_status) {
 			define("PAGE_HEADER", "Status Unchanged");
 			define("P_CLASS", "success");
@@ -85,20 +85,20 @@ switch(ACTION) {
 			require_once("/views/generic_result_view.php");
 			exit(0);
 		}
-		
+
 		if(!draft_object::checkStatus($new_status)) {
 			$ERRORS = array();
 			$ERRORS[] = "Draft status is of the incorrect value. Please correct this and try again.";
 			require_once("/views/draft/edit_status.php");
 			exit(1);
 		}
-		
+
 		$success = $DRAFT->updateStatus($new_status);
-		
+
 		if($success) {
 			if($DRAFT->isInProgress())
 				$extra_message = "<br/><br/><a href=\"draft_room.php?did=" . DRAFT_ID . "\">Click here to be taken to the Draft Room - Your Draft Has Started!</a>";
-			
+
 			define("PAGE_HEADER", "Draft Status Updated");
 			define("P_CLASS", "success");
 			define("PAGE_CONTENT", "Your draft's status has been successfully updated. <a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to its main page." . $extra_message);
@@ -112,7 +112,7 @@ switch(ACTION) {
 		}
 		// </editor-fold>
 		break;
-	
+
 	case 'editDraft':
 		// <editor-fold defaultstate="collapsed" desc="editDraft Logic">
 		if($DRAFT->isCompleted() || $DRAFT->isInProgress()) {
@@ -125,8 +125,9 @@ switch(ACTION) {
 		require_once("/views/draft/edit_draft.php");
 		// </editor-fold>
 		break;
-	
+
 	case 'updateDraft':
+		// <editor-fold defaultstate="collapsed" desc="updateDraft Logic">
 		if($DRAFT->isCompleted() || $DRAFT->isInProgress()) {
 			define("PAGE_HEADER", "You Cannot Edit This Draft");
 			define("P_CLASS", "success");
@@ -134,49 +135,78 @@ switch(ACTION) {
 			require_once("/views/generic_result_view.php");
 			exit(1);
 		}
-		
+
 		$DRAFT->draft_name = trim($_POST['draft_name']);
 		$DRAFT->draft_sport = trim($_POST['draft_sport']);
 		$DRAFT->draft_style = trim($_POST['draft_style']);
 		$DRAFT->draft_rounds = intval($_POST['draft_rounds']);
-		
+
 		$object_errors = $DRAFT->getValidity();
-		
+
 		if(count($object_errors) > 0) {
 			$ERRORS = $object_errors;
 			require_once("/views/draft/edit_draft.php");
 			exit(1);
 		}
-		
+
 		if($DRAFT->saveDraft() == false) {
 			$ERRORS[] = "Draft could not be saved, please try again.";
 			DEFINE("CONTROL_PANEL_ACTION", "ADD");
 			require_once("/views/control_panel/create_draft.php");
 			exit(1);
 		}
-		
+
 		define("PAGE_HEADER", "Draft Edited Successfully!");
 		define("P_CLASS", "success");
 		define("PAGE_CONTENT", "Your draft " . $DRAFT->draft_name . " has been edited successfully. <a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to the draft's homepage, or <a href=\"draft.php?action=editDraft&did=" . DRAFT_ID . "\">click here</a> to edit the draft again.");
 		require_once("/views/generic_result_view.php");
+		// </editor-fold>
 		break;
-	
+
 	case 'deleteDraft':
-		//TODO: Add view here?  Not sure if this can be AJAX-based or not.
+		DEFINE("ANSWER", "schfourteenteen");
+		require_once('/views/draft/delete_draft.php');
 		break;
-	
+
+	case 'confirmDelete':
+		$answer = intval($_POST['txt_answer']);
+
+		if($answer != 111) {
+			DEFINE("ANSWER", "schfifty five");
+			$ERRORS[] = "You failed the math problem. You basically suck at life.";
+			require_once("/views/draft/delete_draft.php");
+			exit(1);
+		}
+
+		if($DRAFT->deleteDraft()) {
+			define("PAGE_HEADER", "Draft Removed Successfully");
+			define("P_CLASS", "success");
+			define("PAGE_CONTENT", "Your draft was successfully removed. <a href=\"control_panel.php\">Click here</a> to go back to the control panel.");
+			require_once("/views/generic_result_view.php");
+			exit(0);
+		} else {
+			define("PAGE_HEADER", "Draft Unable to Be Removed");
+			define("P_CLASS", "error");
+			define("PAGE_CONTENT", "A server side error has occurred and your draft could not be removed.  Please <a href=\"draft.php?action=deleteDraft&did=" . DRAFT_ID . "\">go back</a> and try again.");
+			require_once("/views/generic_result_view.php");
+			exit(1);
+		}
+
+		break;
+
 	case '':
 	default:
 		// <editor-fold defaultstate="collapsed" desc="Main Draft Page Logic">
 		require_once("models/manager_object.php");
-		
-		$MANAGERS = manager_object::getManagersByDraftId(DRAFT_ID, true);
-		
+
+		$MANAGERS = manager_object::getManagersByDraft(DRAFT_ID, true);
+
 		DEFINE('NUMBER_OF_MANAGERS', count($MANAGERS));
 		DEFINE('HAS_MANAGERS', NUMBER_OF_MANAGERS > 0);
 		DEFINE('LOWEST_ORDER', $MANAGERS[NUMBER_OF_MANAGERS - 1]->draft_order);
-		
+
 		require_once('/views/draft/index.php');
 		// </editor-fold>
 		break;
-} ?>
+}
+?>

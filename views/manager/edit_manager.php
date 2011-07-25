@@ -19,7 +19,7 @@
 				<p><label for="manager_name">Manager Name*:</label>
 				<input type="text" name="manager_name" id="manager_name" value="<?php echo $MANAGER->manager_name; ?>" /><br />
 				<label for="manager_email">Manager Email:</label>
-				<input type="text" name="manager_email" id="manager_email" value="<?php echo $MANAGER->team_name; ?>" /></p>
+				<input type="text" name="manager_email" id="manager_email" value="<?php echo $MANAGER->manager_email; ?>" /></p>
 				<p><input type="submit" name="submit" class="button" value="Edit Manager" /></p>
 				<?php if(count($ERRORS) > 0) { ?>
 				<?php foreach($ERRORS as $error) { ?>

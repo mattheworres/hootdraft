@@ -109,6 +109,17 @@ class draft_object {
 				break;
 		}
 	}
+	
+	/**
+	 * Returns a string representation of the time span of this draft
+	 * @return string String representation of the duration of this draft
+	 */
+	public function getDraftDuration() {
+		if($this->draft_status == "complete")
+			return secondsToWords($this->start_time - $this->end_time);
+		else
+			return "";
+	}
 
 	/**
 	 * Adds a new instance of this draft to the database
@@ -204,13 +215,13 @@ class draft_object {
 		for($current_round = 1; $current_round <= $this->draft_rounds; $current_round++) {
 			if($this->styleIsSerpentine()) {
 				if($even) {
-					$managers = manager_object::getManagersByDraftId($this->draft_id, true);
+					$managers = manager_object::getManagersByDraft($this->draft_id, true);
 					$even = false;
 				} else {
-					$managers = manager_object::getManagersByDraftId($this->draft_id, true, "DESC");
+					$managers = manager_object::getManagersByDraft($this->draft_id, true, "DESC");
 				}
 			}else
-				$managers = manager_object::getManagersByDraftId($this->draft_id, true);
+				$managers = manager_object::getManagersByDraft($this->draft_id, true);
 
 			foreach($managers as $manager) {
 				$new_pick = new player_object();
@@ -242,7 +253,28 @@ class draft_object {
 
 		return $time_row['draft_start_time'];
 	}
-
+	
+	public function deleteDraft() {
+		if($this->draft_id == 0)
+			return false;
+		
+		//Picks
+		$pickRemovalSuccess = player_object::deletePlayersByDraft($this->draft_id);
+		
+		if(!$pickRemovalSuccess)
+			return false;
+		
+		//Managers
+		$managerRemovalSuccess = manager_object::deleteManagersByDraft($this->draft_id);
+		
+		if(!$managerRemovalSuccess)
+			return false;
+		
+		$sql = "DELETE FROM draft WHERE draft_id = " . $this->draft_id . " LIMIT 1";
+		
+		return mysql_query($sql);
+	}
+	
 	/**
 	 * Check to ensure $status is in the correct state to prevent any borking of the database.\
 	 * @param string $status The database value for status to be checked
@@ -287,16 +319,6 @@ class draft_object {
 		return $drafts;
 	}
 
-	/**
-	 * Returns a string representation of the time span of this draft
-	 * @return string String representation of the duration of this draft
-	 */
-	public function getDraftDuration() {
-		if($this->draft_status == "complete")
-			return secondsToWords($this->start_time - $this->end_time);
-		else
-			return "";
-	}
 	// <editor-fold defaultstate="collapsed" desc="Draft State Information">
 
 	/**

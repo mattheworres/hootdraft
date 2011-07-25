@@ -13,7 +13,7 @@
 			<input type="hidden" name="draft_id" value="<?php echo DRAFT_ID; ?>" />
 			<fieldset>
 			<legend>Change Draft Status</legend>
-			<p><label for="team_name">Draft Status*:</label>
+			<p><label for="draft_status">Draft Status*:</label>
 			<select name="draft_status" id="draft_status">
 				<option value="undrafted"<?php if($DRAFT->isUndrafted()) { echo " selected=\"selected\""; } ?>>Undrafted</option>
 				<option value="in_progress"<?php if($DRAFT->isInProgress()) { echo " selected=\"selected\""; } ?>>In Progress</option>

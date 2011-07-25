@@ -27,7 +27,7 @@
 					$alt_row = true;
 					
 					foreach($DRAFTS as $draft) {
-							$numberOfManagers = manager_object::getCountOfManagersByDraftId($draft->draft_id); ?>
+							$numberOfManagers = manager_object::getCountOfManagersByDraft($draft->draft_id); ?>
 					<tr<?php echo ($alt_row ? " background-color=\"#cccccc\"" : ""); ?>>
 						<td><a href="draft.php?did=<?php echo $draft->draft_id; ?>"><?php echo $draft->draft_name; ?></a></td>
 						<td><?php echo $draft->draft_sport; ?></td>
