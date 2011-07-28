@@ -1,7 +1,8 @@
 <?php
 
-//TODO: Fix these so they go with the proper model classes... This is poorly named and is just a library file, not a model!
-
+/**
+ * DEPRECATED: See models/player_object.php
+ */
 function get_last_ten_picks($draft_id) {
 	//Get the entire pick row for a draft for the last ten picks
 	//Returns resultset
@@ -496,6 +497,10 @@ $nfl_positions = Array(
 	"TE" => "Tight End",
 	"DEF" => "Defense",
 	"K" => "Kicker"
+	/*"DL" => "Defensive Lineman",
+	"LB" => "Linebacker",
+	"DB" => "Defensive Back",
+	"OL" => "Offensive Lineman"*/
 );
 
 $mlb_teams = Array(

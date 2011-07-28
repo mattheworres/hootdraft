@@ -12,7 +12,8 @@
 			require('views/shared/draft_menu.php'); ?>
 			<div id="content">
 				<h3>Manage <?php echo $DRAFT->draft_name; ?> (<?php echo $DRAFT->draft_sport; ?>)</h3>
-				<p>Select your option below to begin managing this draft, or to begin/continue the draft process, enter the Draft Room now!</p>
+				<p>Select your option below to begin managing this draft.</p>
+				<?php if($DRAFT->isInProgress()) { ?><p class="success">Your draft is in progress! Click "Enter the Draft Room" to the right to get started or continue, commish!</p><?php } ?>
 				<fieldset>
 					<legend><?php echo $DRAFT->draft_name; ?> - Current Status</legend>
 					<div style="width: 70%; float:left;">
