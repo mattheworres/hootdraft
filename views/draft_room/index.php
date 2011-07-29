@@ -13,7 +13,7 @@
 		<h3><?php echo $DRAFT->draft_name; ?></h3>
 		<fieldset>
 			<legend>Draft Room Functions</legend>
-			<h3><a href="comm_draft_picks.php?action=add&draft_id=<?php echo DRAFT_ID; ?>"><img src="images/icons/add.png" alt="Add Pick" border="0" />&nbsp;Make a Pick</a></h3><br />
+			<h3><a href="draft_room.php?action=addScreen&did=<?php echo DRAFT_ID; ?>"><img src="images/icons/add.png" alt="Add Pick" border="0" />&nbsp;Make a Pick</a></h3><br />
 			<h3><a href="comm_draft_picks.php?action=select_edit&draft_id=<?php echo DRAFT_ID; ?>"><img src="images/icons/edit.png" alt="Edit Pick" border="0" />&nbsp;Edit a Pick</a></h3><br />
 			<h3><a href="comm_manage_draft.php?did=<?php echo DRAFT_ID; ?>"><img src="images/icons/back_blue.png" alt="Back to Manage Page" border="0" />&nbsp;Back to Manage Page</a></h3><br />
 			<h3><a href="draft_board.php?draft_id=<?php echo DRAFT_ID; ?>"><img src="images/icons/draft_board.png" alt="View Public Draft Board" border="0" />&nbsp;View Public Draft Board</a></h3>

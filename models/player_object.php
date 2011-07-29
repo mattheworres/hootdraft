@@ -44,6 +44,14 @@ class player_object {
 	public function properName() {
 		return $this->last_name . ", " . $this->first_name;
 	}
+	
+	/**
+	 * Returns a casually formatted player name in this format: "First Last"
+	 * @return string Player's casual name 
+	 */
+	public function casualName() {
+		return $this->first_name . " " . $this->last_name;
+	}
 	// </editor-fold>
 
 	public function __construct($id = 0) {
@@ -184,7 +192,7 @@ class player_object {
 		"FROM players p ".
 		"LEFT OUTER JOIN managers m ".
 		"ON m.manager_id = p.manager_id ".
-		"WHERE p.draft_id = ".$draft->draft_id." ".
+		"WHERE p.draft_id = " . $draft->draft_id . " ".
 		"AND p.pick_time IS NOT NULL ".
 		"ORDER BY p.player_pick DESC ".
 		"LIMIT 5";
@@ -208,10 +216,10 @@ class player_object {
 		$sql = "SELECT p.*, m.* ".
 		"FROM players p ".
 		"LEFT OUTER JOIN managers m ".
-		"ON m.manager_id = players.manager_id ".
-		"WHERE p.draft_id = ".$draft->draft_id." ".
-		"AND p.player_round = ".$draft->current_round." ".
-		"AND p.player_pick = ".$draft->current_pick." ".
+		"ON m.manager_id = p.manager_id ".
+		"WHERE p.draft_id = " . $draft->draft_id . " ".
+		"AND p.player_round = " . $draft->current_round . " ".
+		"AND p.player_pick = " . $draft->current_pick . " ".
 		"LIMIT 1";
 		
 		$pick_row = mysql_fetch_array(mysql_query($sql));
@@ -247,8 +255,8 @@ class player_object {
 		"FROM players p ".
 		"LEFT OUTER JOIN managers m ".
 		"ON m.manager_id = p.manager_id ".
-		"WHERE p.draft_id = ".$draft->draft_id." ".
-		"AND p.player_pick > ".$draft->current_pick . " ".
+		"WHERE p.draft_id = " . $draft->draft_id . " ".
+		"AND p.player_pick > " . $draft->current_pick . " ".
 		"ORDER BY p.player_pick ASC ".
 		"LIMIT 5";
 		

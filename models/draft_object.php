@@ -20,6 +20,9 @@ require_once("/models/player_object.php");
  * @property string $end_time Timestamp of when the draft was put into "completed" status
  * @property int $current_round
  * @property int $current_pick
+ * @property array $sports_teams An array of all of the teams in the pro sport. Capitalized abbreviation is key, full name is value.
+ * @property array $sports_positions An array of all the positions in the pro sport. Capitalized abbreviation is key, full name is value.
+ * @property array $sports_colors An array of all the colors used for each position in the draft. Capitalized position abbreviation is key, hex color string is value (with # prepended)
  */
 class draft_object {
 
@@ -35,6 +38,9 @@ class draft_object {
 	public $end_time;
 	public $current_round;
 	public $current_pick;
+	public $sports_teams;
+	public $sports_positions;
+	public $sports_colors;
 
 	public function __construct($id = 0) {
 		if(intval($id) == 0)
@@ -240,6 +246,14 @@ class draft_object {
 			}
 		}
 		return true;
+	}
+	
+	public function setupSport() {
+		require_once("/libraries/sports_values_library.php");
+		$lib = new sports_values_library();
+		$this->sports_teams = $lib->getTeams($this->draft_sport);
+		$this->sports_positions = $lib->getPositions($this->draft_sport);
+		$this->sports_colors = $lib->position_colors;
 	}
 
 	/**

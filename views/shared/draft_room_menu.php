@@ -1,5 +1,5 @@
 <?php
-if(DRAFT_ID == 0) {
+if(DRAFT_ID > 0) {
 	?><div id="right_side">
 	<h3>Navigation</h3>
 	 <h4><a href="draft_room.php?did=<?php echo DRAFT_ID; ?>"><strong>Main Draft Room</strong></a></h4>

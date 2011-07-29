@@ -41,6 +41,14 @@ switch(ACTION) {
 		$MANAGERS = manager_object::getManagersByDraft(DRAFT_ID);
 		$NEXT_FIVE_PICKS = $DRAFT->getNextFivePicks();
 		$LAST_FIVE_PICKS = $DRAFT->getLastFivePicks();
+		$kooky_labels = array();
+		$kooky_labels[] = "On Deck: ";
+		$kooky_labels[] = "In the Hole: ";
+		$kooky_labels[] = "Still on the Bench: ";
+		$kooky_labels[] = "Grabbing a Gatorade: ";
+		$kooky_labels[] = "Sippin on that Sizzerb: ";
+		
+		$DRAFT->setupSport();
 		
 		require("/views/draft_room/add_pick.php");
 		break;
