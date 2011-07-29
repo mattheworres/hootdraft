@@ -36,6 +36,14 @@ if($DRAFT->isUndrafted()) {
 // </editor-fold>
 
 switch(ACTION) {
+	case 'addScreen':
+		$CURRENT_PICK = $DRAFT->getCurrentPick();
+		$MANAGERS = manager_object::getManagersByDraft(DRAFT_ID);
+		$NEXT_FIVE_PICKS = $DRAFT->getNextFivePicks();
+		$LAST_FIVE_PICKS = $DRAFT->getLastFivePicks();
+		
+		require("/views/draft_room/add_pick.php");
+		break;
 	
 	default:
 		// <editor-fold defaultstate="collapsed" desc="Index Logic">

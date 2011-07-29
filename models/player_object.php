@@ -1,5 +1,5 @@
 <?php
-
+require_once("/models/draft_object.php");
 /**
  * Represents a PHPDraft player, or "pick" in the draft.
  * 
@@ -142,6 +142,7 @@ class player_object {
 		return $players;
 	}
 
+	// <editor-fold defaultstate="collapsed" desc="Draft-Related Pick Functions">
 	/**
 	 * For a draft get the ten most recent picks that have occurred.
 	 * @param int $draft_id
@@ -162,30 +163,106 @@ class player_object {
 				"AND pick_duration IS NOT NULL ".
 				"ORDER BY player_pick DESC LIMIT 10";
 
-		$players_result = mysql_query($sql);
+		$pick_result = mysql_query($sql);
 		
 		$picks = array();
 		
-		while($pick_row = mysql_fetch_array($players_result)) {
-			$player = new player_object();
-			$player->draft_id = $draft_id;
-			$player->player_id = intval($pick_row['player_id']);
-			$player->manager_id = intval($pick_row['manager_id']);
-			$player->manager_name = $pick_row['manager_name'];
-			$player->first_name = $pick_row['first_name'];
-			$player->last_name = $pick_row['last_name'];
-			$player->position = $pick_row['position'];
-			$player->team = $pick_row['team'];
-			$player->pick_time = strtotime($pick_row['pick_time']);
-			$player->pick_duration = intval($pick_row['pick_duration']);
-			$player->player_round = intval($pick_row['player_round']);
-			$player->player_pick = intval($pick_row['player_pick']);
-			
-			$picks[] = $player;
+		while($pick_row = mysql_fetch_array($pick_result)) {
+			$picks[] = player_object::fillPlayerObject($pick_row, $draft_id);
 		}
 		
 		return $picks;
 	}
+	
+	/**
+	 * Grab the last five completed draft picks
+	 * @param draft_object $draft
+	 * @return array last five picks 
+	 */
+	public static function getLastFivePicks(draft_object $draft) {
+		$sql = "SELECT p.*, m.* ".
+		"FROM players p ".
+		"LEFT OUTER JOIN managers m ".
+		"ON m.manager_id = p.manager_id ".
+		"WHERE p.draft_id = ".$draft->draft_id." ".
+		"AND p.pick_time IS NOT NULL ".
+		"ORDER BY p.player_pick DESC ".
+		"LIMIT 5";
+		
+		$pick_result = mysql_query($sql);
+		
+		$picks = array();
+		
+		while($pick_row = mysql_fetch_array($pick_result))
+			$picks[] = player_object::fillPlayerObject($pick_row, $draft->draft_id);
+		
+		return $picks;
+	}
+	
+	/**
+	 * Called from a draft or statically from a presenter, gets the current pick "on the clock"
+	 * @param draft_object $draft Object to get the current pick for
+	 * @return player_object The current pick
+	 */
+	public static function getCurrentPick(draft_object $draft) {
+		$sql = "SELECT p.*, m.* ".
+		"FROM players p ".
+		"LEFT OUTER JOIN managers m ".
+		"ON m.manager_id = players.manager_id ".
+		"WHERE p.draft_id = ".$draft->draft_id." ".
+		"AND p.player_round = ".$draft->current_round." ".
+		"AND p.player_pick = ".$draft->current_pick." ".
+		"LIMIT 1";
+		
+		$pick_row = mysql_fetch_array(mysql_query($sql));
+		
+		return player_object::fillPlayerObject($pick_row, $draft->draft_id);
+	}
+	
+	/**
+	 * Get the next pick object
+	 * @param draft_object $draft
+	 * @return player_object the next pick 
+	 */
+	public static function getNextPick(draft_object $draft) {
+		$sql = "SELECT p.*, m.* " .
+		"FROM players p " .
+		"LEFT OUTER JOIN managers m " .
+		"ON m.manager_id = p.manager_id " .
+		"WHERE p.draft_id = " . $draft->draft_id . " " .
+		"AND p.player_pick = " . ($draft->current_pick + 1) . " LIMIT 1";
+		
+		$pick_row = mysql_fetch_array(mysql_query($sql));
+		
+		return player_object::fillPlayerObject($pick_row, $draft->draft_id);
+	}
+	
+	/**
+	 * Get the next five picks
+	 * @param draft_object $draft
+	 * @return array of player_objects 
+	 */
+	public static function getNextFivePicks(draft_object $draft) {
+		$sql = "SELECT p.*, m.* ".
+		"FROM players p ".
+		"LEFT OUTER JOIN managers m ".
+		"ON m.manager_id = p.manager_id ".
+		"WHERE p.draft_id = ".$draft->draft_id." ".
+		"AND p.player_pick > ".$draft->current_pick . " ".
+		"ORDER BY p.player_pick ASC ".
+		"LIMIT 5";
+		
+		$pick_result = mysql_query($sql);
+		
+		$picks = array();
+		
+		while($pick_row = mysql_fetch_array($pick_result))
+			$picks[] = player_object::fillPlayerObject($pick_row, $draft->draft_id);
+		
+		return $picks;
+	}
+	
+	// </editor-fold>
 
 	/**
 	 * Get all players/picks for a given manager that have been selected.
@@ -279,6 +356,33 @@ class player_object {
 	// <editor-fold defaultstate="collapsed" desc="State Information">
 	public function hasName() {
 		return (strlen($this->first_name) + strlen($this->last_name) > 0);
+	}
+	// </editor-fold>
+	
+	// <editor-fold defaultstate="collapsed" desc="Private Object Helpers">
+	/**
+	 * This might be bad practice, but seemed that I was duplicating a TON of code for each query I ran on players and managers.
+	 * Given a single mysql row, fill a new player object and return it.
+	 * @param array $mysql_array Filled mysql row of player-manager data
+	 * @return player_object new player_object filled with data.
+	 */
+	private static function fillPlayerObject($mysql_array, $draft_id) {
+		$player = new player_object();
+		
+		$player->draft_id = $draft_id;
+		$player->player_id = intval($mysql_array['player_id']);
+		$player->manager_id = intval($mysql_array['manager_id']);
+		$player->manager_name = $mysql_array['manager_name'];
+		$player->first_name = $mysql_array['first_name'];
+		$player->last_name = $mysql_array['last_name'];
+		$player->position = $mysql_array['position'];
+		$player->team = $mysql_array['team'];
+		$player->pick_time = strtotime($mysql_array['pick_time']);
+		$player->pick_duration = intval($mysql_array['pick_duration']);
+		$player->player_round = intval($mysql_array['player_round']);
+		$player->player_pick = intval($mysql_array['player_pick']);
+		
+		return $player;
 	}
 	// </editor-fold>
 }

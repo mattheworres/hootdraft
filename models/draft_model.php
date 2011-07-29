@@ -20,6 +20,9 @@ function get_last_ten_picks($draft_id) {
 	return $picks_result;
 }
 
+/**
+ * DEPRECATED: See models/player_object.php
+ */
 function get_current_pick($draft_id) {
 	$draft_row = mysql_fetch_array(mysql_query("SELECT draft_current_round, draft_current_pick FROM draft WHERE draft_id = ".$draft_id));
 	
@@ -37,6 +40,9 @@ function get_current_pick($draft_id) {
 	return $current_pick;
 }
 
+/**
+ * DEPRECATED: See models/player_object.php
+ */
 function get_next_pick($draft_id, $current_pick) {
 	$sql = "SELECT player_round, player_pick FROM players ".
 		"WHERE draft_id = '".$draft_id."' ".
@@ -50,6 +56,9 @@ function get_next_pick($draft_id, $current_pick) {
 	return $next_pick;
 }
 
+/**
+ * DEPRECATED: See models/player_object.php
+ */
 function get_next_picks($draft_id, $current_pick) {
 	$sql = "SELECT p.*, m.manager_name ".
 		"FROM players p ".
@@ -94,6 +103,9 @@ function search_draft_basic($draft_id, $search_terms) {
 
 }
 
+/**
+ * DEPRECATED: See models/player_object.php
+ */
 function get_last_picks($draft_id) {
 	$sql = "SELECT p.*, m.manager_name ".
 		"FROM players p ".
@@ -108,6 +120,9 @@ function get_last_picks($draft_id) {
 	return $result;
 }
 
+/**
+ * DEPRECATED: See models/manager_object.php
+ */
 function get_managers($draft_id) {
 	$sql = "SELECT * ".
 		"FROM managers ".

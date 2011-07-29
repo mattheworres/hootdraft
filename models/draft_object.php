@@ -1,6 +1,7 @@
 <?php
 
-require_once("php_draft_library.php");
+require_once("/libraries/php_draft_library.php");
+require_once("/models/player_object.php");
 
 /**
  * Represents a PHPDraft "draft" object, which is the parent object.
@@ -254,6 +255,10 @@ class draft_object {
 		return $time_row['draft_start_time'];
 	}
 	
+	/**
+	 * Removes a draft, all of its managers and all of their picks permanently (hard delete)
+	 * @return bool success of delete 
+	 */
 	public function deleteDraft() {
 		if($this->draft_id == 0)
 			return false;
@@ -275,6 +280,37 @@ class draft_object {
 		
 		return mysql_query($sql);
 	}
+	
+	// <editor-fold defaultstate="collapsed" desc="Pick-Related Functions">
+	/**
+	 * Returns an array of the last five picks (player_object) 
+	 */
+	public function getLastFivePicks() {
+		return player_object::getLastFivePicks($this);
+	}
+	
+	/**
+	 * Returns the player_object that is the current pick for the draft.
+	 */
+	public function getCurrentPick() {
+		return player_object::getCurrentPick($this);
+	}
+	
+	/**
+	 *
+	 * @return type 
+	 */
+	public function getNextPick() {
+		return player_object::getNextPick($this);
+	}
+	
+	/**
+	 * Returns an array of five player_object that occur in the future
+	 */
+	public function getNextFivePicks() {
+		return player_object::getNextFivePicks($this);
+	}
+	// </editor-fold>
 	
 	/**
 	 * Check to ensure $status is in the correct state to prevent any borking of the database.\
