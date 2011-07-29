@@ -15,11 +15,13 @@
 		<fieldset>
 			<legend>Round <?php echo $DRAFT->current_round; ?>, Pick #<?php echo $DRAFT->current_pick; ?></legend>
 			<form action="draft_room.php?action=addPick" method="post">
-			<input type="hidden" name="draft_id" value="<?php echo DRAFT_ID; ?>" />
-			<input type="hidden" name="player_id" value="<?php echo $CURRENT_PICK->player_id; ?>" />
+			<input type="hidden" name="did" value="<?php echo DRAFT_ID; ?>" />
+			<input type="hidden" name="pid" value="<?php echo $CURRENT_PICK->player_id; ?>" />
+			<input type="hidden" name="pid" value="<?php echo $CURRENT_PICK->player_round; ?>" />
+			<input type="hidden" name="pid" value="<?php echo $CURRENT_PICK->player_pick; ?>" />
 			<p>
-				<label for="manager_id">Manager*:</label>
-				<select name="manager_id" id="manager_id" tabindex="1">
+				<label for="mid">Manager*:</label>
+				<select name="mid" id="mid" tabindex="1">
 				<?php foreach($MANAGERS as $manager) {?>
 					<option value="<?php echo $manager->manager_id; ?>"<?php if($manager->manager_id == $CURRENT_PICK->manager_id) { echo " selected=\"selected\""; }?>><?php echo $manager->manager_name; ?><?php if($manager->manager_id == $CURRENT_PICK->manager_id) { echo " (on the clock)"; }?></option>
 				<?php } ?>
@@ -34,8 +36,8 @@
 				<input type="text" name="last_name" id="last_name" value="<?php echo $CURRENT_PICK->last_name; ?>" tabindex="3"/>
 			</p>
 			<p>
-				<label for="team_abbreviation">Team*:</label>
-				<select name="team_abbreviation" tabindex="4">
+				<label for="team">Team*:</label>
+				<select name="team" tabindex="4">
 				<?php foreach($DRAFT->sports_teams as $abbr => $sports_team_name) {
 					?><option value="<?php echo $abbr; ?>"<?php if($CURRENT_PICK->team == $abbr) { echo " selected=\"selected\"";}?>><?php echo $sports_team_name; ?></option>
 				<?php } ?>

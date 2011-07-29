@@ -1,6 +1,7 @@
 <?php
 require_once("check_login.php");
 require_once("models/draft_object.php");
+require_once("models/player_object.php");
 require_once("models/manager_object.php");
 
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
@@ -35,22 +36,38 @@ if($DRAFT->isUndrafted()) {
 }
 // </editor-fold>
 
+
+$MANAGERS = manager_object::getManagersByDraft(DRAFT_ID);
+$kooky_labels = array();
+$kooky_labels[] = "On Deck: ";
+$kooky_labels[] = "In the Hole: ";
+$kooky_labels[] = "Still on the Bench: ";
+$kooky_labels[] = "Grabbing a Gatorade: ";
+$kooky_labels[] = "Sippin on that Sizzerb: ";
+
+$DRAFT->setupSport();
+
 switch(ACTION) {
 	case 'addScreen':
+		// <editor-fold defaultstate="collapsed" desc="addScreen Logic">
 		$CURRENT_PICK = $DRAFT->getCurrentPick();
-		$MANAGERS = manager_object::getManagersByDraft(DRAFT_ID);
+		
 		$NEXT_FIVE_PICKS = $DRAFT->getNextFivePicks();
 		$LAST_FIVE_PICKS = $DRAFT->getLastFivePicks();
-		$kooky_labels = array();
-		$kooky_labels[] = "On Deck: ";
-		$kooky_labels[] = "In the Hole: ";
-		$kooky_labels[] = "Still on the Bench: ";
-		$kooky_labels[] = "Grabbing a Gatorade: ";
-		$kooky_labels[] = "Sippin on that Sizzerb: ";
-		
-		$DRAFT->setupSport();
 		
 		require("/views/draft_room/add_pick.php");
+		// </editor-fold>
+		break;
+	
+	case 'addPick':
+		$submitted_pick = new player_object();
+		$submitted_pick->draft_id = DRAFT_ID;
+		$submitted_pick->player_id = intval($_POST['pid']);
+		$submitted_pick->manager_id = intval($_POST['mid']);
+		$submitted_pick->first_name = $_POST['first_name'];
+		$submitted_pick->last_name = $_POST['last_name'];
+		$submitted_pick->team = $_POST['team'];
+		$submitted_pick->position = $_POST['position'];
 		break;
 	
 	default:

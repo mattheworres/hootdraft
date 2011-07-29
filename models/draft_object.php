@@ -304,6 +304,14 @@ class draft_object {
 	}
 	
 	/**
+	 * Get the last player pick, or false on 0 rows.
+	 * @return player_object Last Player
+	 */
+	public function getLastPick() {
+		return player_object::getLastPick($this);
+	}
+	
+	/**
 	 * Returns the player_object that is the current pick for the draft.
 	 */
 	public function getCurrentPick() {

@@ -84,7 +84,7 @@ class player_object {
 	 * Saves or updates a player. NOTE: Does not update or save the player's pick time or pick duration. Those must be handled separately.
 	 * @return bool true on success, false otherwise 
 	 */
-	public function savePlayer() {
+	public function savePlayer($setPickToNow = false) {
 		if($this->player_id > 0) {
 			//TODO: Add a default value variable to trigger whether or not to set the pick time on player update. $setPickToNow = false
 			$sql = "UPDATE players SET " .
@@ -95,8 +95,12 @@ class player_object {
 				"team = " . mysql_real_escape_string($this->team) . ", " .
 				"position = " . mysql_real_escape_string($this->position) . ", " .
 				"player_round = " . intval($this->player_round) . ", " .
-				"player_pick = " . intval($this->player_pick) . ", " .
-				"WHERE player_id = " . intval($this->player_id);
+				"player_pick = " . intval($this->player_pick) . ", ";
+			
+			if($setPickToNow === true)
+				$sql .= "pick_time = NOW(), ";
+			
+			$sql .= "WHERE player_id = " . intval($this->player_id);
 			return mysql_query($sql);
 		} elseif($this->draft_id > 0 && $this->manager_id > 0) {
 			//TODO: Investigate how to insert with empty fields.
@@ -114,6 +118,10 @@ class player_object {
 			return true;
 		}else
 			return false;
+	}
+	
+	public function updatePickDuration(player_object $previous_pick) {
+		$start_time = $previous_pick->pick_time;
 	}
 
 	/**
@@ -205,6 +213,32 @@ class player_object {
 			$picks[] = player_object::fillPlayerObject($pick_row, $draft->draft_id);
 		
 		return $picks;
+	}
+	
+	/**
+	 * Get the previous (completed) pick in the draft
+	 * @param draft_object $draft
+	 * @return player_object $last_player, or false on 0 rows
+	 */
+	public static function getLastPick(draft_object $draft) {
+		$sql = "SELECT p.*, m.* ".
+		"FROM players p ".
+		"LEFT OUTER JOIN managers m ".
+		"ON m.manager_id = p.manager_id ".
+		"WHERE p.draft_id = " . $draft->draft_id . " ".
+		"AND p.player_round = " . $draft->current_round . " ".
+		"AND p.player_pick = " . $draft->current_pick . " ".
+		"AND p.pick_time IS NOT NULL ".
+		"LIMIT 1";
+		
+		$pick_result = mysql_query($sql);
+		
+		if(mysql_num_rows($pick_result) == 0)
+			return false;
+		
+		$pick_row = mysql_fetch_array($pick_result);
+		
+		return player_object::fillPlayerObject($pick_row, $draft->draft_id);
 	}
 	
 	/**
