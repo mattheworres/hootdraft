@@ -10,15 +10,20 @@
 		<?php require('header.php'); ?>
 
 		<?php require('/views/shared/draft_room_menu.php'); ?>
-		<div id="content">
+		<div id="content">	
+		<?php if(count($SUCCESSES) > 0) {?>
+			<?php foreach($SUCCESSES as $success) {?>
+				<p class="success">* <?php echo $success;?></p>
+			<?php }?>
+		<?php }?>
 		<h3>Enter the Next Draft Pick</h3>
 		<fieldset>
 			<legend>Round <?php echo $DRAFT->current_round; ?>, Pick #<?php echo $DRAFT->current_pick; ?></legend>
 			<form action="draft_room.php?action=addPick" method="post">
 			<input type="hidden" name="did" value="<?php echo DRAFT_ID; ?>" />
 			<input type="hidden" name="pid" value="<?php echo $CURRENT_PICK->player_id; ?>" />
-			<input type="hidden" name="pid" value="<?php echo $CURRENT_PICK->player_round; ?>" />
-			<input type="hidden" name="pid" value="<?php echo $CURRENT_PICK->player_pick; ?>" />
+			<input type="hidden" name="player_round" value="<?php echo $CURRENT_PICK->player_round; ?>" />
+			<input type="hidden" name="player_pick" value="<?php echo $CURRENT_PICK->player_pick; ?>" />
 			<p>
 				<label for="mid">Manager*:</label>
 				<select name="mid" id="mid" tabindex="1">
@@ -62,7 +67,7 @@
 			</form>
 		</fieldset>
 		<fieldset>
-			<legend>Looking Ahead - Next Four Picks</legend>
+			<legend>Looking Ahead - Next Five Picks</legend>
 			<p style="background-color: #DDDDDD;"><strong>Current Round - Round # <?php echo $CURRENT_PICK->player_round; ?></strong></p>
 			<?php $current_round = $CURRENT_PICK->player_round;
 			$i = 0;

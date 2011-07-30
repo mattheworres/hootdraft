@@ -5,45 +5,66 @@
  * Every effort should be made to keep this slim and small. If this gets large/unwieldy, that can't be a best practice.
  */
 
-function secondsToWords($seconds) {
-	$words = "";
+class php_draft_library {
 
-	//Years
-	$years = intval(intval($seconds) / 31536000);
-	if($years > 0) {
-		$seconds -= ($years * 31536000);
-		$words .= $years ." years, ";
+	public static function secondsToWords($seconds) {
+		$words = "";
+
+		//Years
+		$years = intval(intval($seconds) / 31536000);
+		if($years > 0) {
+			$seconds -= ($years * 31536000);
+			$words .= $years ." years, ";
+		}
+
+		//Weeks
+		$weeks = intval(intval($seconds) / 604800);
+		if($weeks > 0) {
+			$seconds -= ($weeks * 604800);
+			$words .= $weeks ." weeks, ";
+		}
+
+		//Days
+		$days = intval(intval($seconds) / 86400);
+		if($days > 0) {
+			$seconds -= ($days * 86400);
+			$words .= $days ." days, ";
+		}
+
+		//Hours
+		$hours = intval(intval($seconds) / 3600);
+		if($hours > 0){
+			$words .= $hours ." hours, ";
+		}
+		//Minutes
+		$minutes = bcmod((intval($seconds) / 60),60);
+		if($hours > 0 || $minutes > 0){
+			$words .= $minutes ." minutes, ";
+		}
+
+		//Seconds
+		$seconds = bcmod(intval($seconds),60);
+		$words .= $seconds ." seconds";
+
+		return $words;
 	}
 
-	//Weeks
-	$weeks = intval(intval($seconds) / 604800);
-	if($weeks > 0) {
-		$seconds -= ($weeks * 604800);
-		$words .= $weeks ." weeks, ";
+	/**
+	 * Get the Unix timestamp right now according to mktime.
+	 * @return time PHP Time string 
+	 */
+	public static function getNowUnixTimestamp() {
+		//mktime($hour,$min,$sec,$mon,$day,$year);
+		return mktime(date('H'), date('i'), date('s'), date('m'), date('d'), date('Y'));
+	}
+	
+	/**
+	 * Returns a standardized PHP date string in this format: Y-m-d H:i:s
+	 * @return string $date Formatted date for now 
+	 */
+	public static function getNowPhpTime() {
+		return date("Y-m-d H:i:s");
 	}
 
-	//Days
-	$days = intval(intval($seconds) / 86400);
-	if($days > 0) {
-		$seconds -= ($days * 86400);
-		$words .= $days ." days, ";
-	}
-
-	//Hours
-	$hours = intval(intval($seconds) / 3600);
-	if($hours > 0){
-		$words .= $hours ." hours, ";
-	}
-	//Minutes
-	$minutes = bcmod((intval($seconds) / 60),60);
-	if($hours > 0 || $minutes > 0){
-		$words .= $minutes ." minutes, ";
-	}
-
-	//Seconds
-	$seconds = bcmod(intval($seconds),60);
-	$words .= $seconds ." seconds";
-
-	return $words;
 }
 ?>

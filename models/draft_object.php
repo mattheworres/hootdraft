@@ -123,7 +123,7 @@ class draft_object {
 	 */
 	public function getDraftDuration() {
 		if($this->draft_status == "complete")
-			return secondsToWords($this->start_time - $this->end_time);
+			return php_draft_library::secondsToWords($this->start_time - $this->end_time);
 		else
 			return "";
 	}
@@ -159,7 +159,7 @@ class draft_object {
 			$sql = "INSERT INTO draft "
 				. "(draft_id, draft_name, draft_sport, draft_status, draft_style, draft_rounds) "
 				. "VALUES "
-				. "(NULL, '" . $this->draft_name . "', '" . $this->draft_sport . "', 'undrafted', '" . $this->draft_style . "', " . $this->draft_rounds . ")";
+				. "(NULL, '" . mysql_real_escape_string($this->draft_name) . "', '" . mysql_real_escape_string($this->draft_sport) . "', 'undrafted', '" . mysql_real_escape_string($this->draft_style) . "', " . intval($this->draft_rounds) . ")";
 
 			if(!mysql_query($sql))
 				return false;
@@ -167,6 +167,22 @@ class draft_object {
 			$this->draft_id = mysql_insert_id();
 
 			return true;
+		}
+	}
+	
+	public function moveDraftForward(player_object $next_pick) {
+		if($next_pick != null) {
+			$sql = "UPDATE draft SET ".
+			"draft_current_pick = " . intval($next_pick->player_pick) . ", ".
+			"draft_current_round = " . intval($next_pick->player_round) . " ".
+			"WHERE draft_id = " . intval($this->draft_id);
+			
+			return mysql_query($sql);
+		}else {
+			$sql = "UPDATE draft SET ".
+			"draft_status = 'complete', ".
+			"draft_end_time = '" . mysql_real_escape_string(php_draft_library::getNowPhpTime()) . "' ".
+			"WHERE draft_id = " . intval($this->draft_id);
 		}
 	}
 

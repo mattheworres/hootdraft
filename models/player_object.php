@@ -15,7 +15,7 @@ require_once("/models/draft_object.php");
  * @property string $last_name The last name of the player
  * @property string $team The professional team the player plays for. Stored as three character abbreviation
  * @property string $position The position the player plays. Stored as one or three character abbreviation.
- * @property string $pick_time Timestamp of when the player was picked.
+ * @property string $pick_time Timestamp of when the player was picked. Use strtotime to compare to other dates.
  * @property int $pick_duration Amount of seconds that were consumed during this pick
  * @property int $player_round Round the player was selected in
  * @property int $player_pick Pick the player was selected at
@@ -72,7 +72,7 @@ class player_object {
 		$this->last_name = $player_row['last_name'];
 		$this->team = $player_row['team'];
 		$this->position = $player_row['position'];
-		$this->pick_time = strtotime($player_row['pick_time']);
+		$this->pick_time = $player_row['pick_time'];
 		$this->pick_duration = intval($player_row['pick_duration']);
 		$this->player_round = intval($player_row['player_round']);
 		$this->player_pick = intval($player_row['player_pick']);
@@ -86,19 +86,21 @@ class player_object {
 	 */
 	public function savePlayer($setPickToNow = false) {
 		if($this->player_id > 0) {
-			//TODO: Add a default value variable to trigger whether or not to set the pick time on player update. $setPickToNow = false
 			$sql = "UPDATE players SET " .
 				"manager_id = " . intval($this->manager_id) . ", " .
 				"draft_id = " . intval($this->draft_id) . ", " .
-				"first_name = " . mysql_real_escape_string($this->first_name) . ", " .
-				"last_name = " . mysql_real_escape_string($this->last_name) . ", " .
-				"team = " . mysql_real_escape_string($this->team) . ", " .
-				"position = " . mysql_real_escape_string($this->position) . ", " .
+				"first_name = '" . mysql_real_escape_string($this->first_name) . "', " .
+				"last_name = '" . mysql_real_escape_string($this->last_name) . "', " .
+				"team = '" . mysql_real_escape_string($this->team) . "', " .
+				"position = '" . mysql_real_escape_string($this->position) . "', " .
 				"player_round = " . intval($this->player_round) . ", " .
 				"player_pick = " . intval($this->player_pick) . ", ";
 			
-			if($setPickToNow === true)
-				$sql .= "pick_time = NOW(), ";
+			if($setPickToNow == true) {
+				$now = php_draft_library::getNowPhpTime();
+				$this->pick_time = $now;
+				$sql .= "pick_time = '" . mysql_real_escape_string($now) . "' ";
+			}
 			
 			$sql .= "WHERE player_id = " . intval($this->player_id);
 			return mysql_query($sql);
@@ -120,8 +122,54 @@ class player_object {
 			return false;
 	}
 	
-	public function updatePickDuration(player_object $previous_pick) {
-		$start_time = $previous_pick->pick_time;
+	/**
+	 * Get the validity of this object as it stands to ensure it can be updated as a pick
+	 * @param draft_object $draft The draft this pick is being submitted for
+	 * @return array $errors Array of string error messages 
+	 */
+	public function getValidity(draft_object $draft) {
+		$errors = array();
+		
+		if(empty($this->draft_id) || $this->draft_id == 0)
+			$errors[] = "Player doesn't belong to a draft.";
+		if(empty($this->manager_id) || $this->manager_id == 0)
+			$errors[] = "Player doesn't belong to a manager.";
+		if(empty($this->player_id) || $this->player_id == 0)
+			$errors[] = "Player doesn't have an ID.";
+		
+		if(!$this->pickExists())
+			$errors[] = "Player doesn't exist.";
+		
+		if(!isset($this->first_name) || strlen($this->first_name) == 0)
+			$errors[] = "Player must have a first name.";
+		if(!isset($this->last_name) || strlen($this->last_name) == 0)
+			$errors[] = "Player must have a last name.";
+		if(!isset($this->team) || strlen($this->team) == 0 || strlen($draft->sports_teams[$this->team]) == 0)
+			$errors[] = "Player has an invalid team.";
+		if(!isset($this->position) || strlen($this->position) == 0 || strlen($draft->sports_positions[$this->position]) == 0)
+			$errors[] = "Player has an invalid position.";
+		
+		return $errors;
+	}
+	
+	public function updatePickDuration($previous_pick, draft_object $draft) {
+		require_once('/libraries/php_draft_library.php');
+		
+		if(!isset($this->pick_time))
+			throw new Exception("Must call updatePickDuration on a player object that already has its own pick_time set!");
+		
+		if($this->player_pick == 1) 
+			$start_time = $draft->start_time;
+		else
+			$start_time = strtotime($previous_pick->pick_time);
+		
+		$now = strtotime($this->pick_time);
+		
+		$alloted_time = $now - $start_time;
+		
+		$sql = "UPDATE players SET pick_duration = " . intval($alloted_time) . " WHERE player_id = " . intval($this->player_id);
+		
+		return mysql_query($sql);
 	}
 
 	/**
@@ -397,7 +445,19 @@ class player_object {
 	
 	// <editor-fold defaultstate="collapsed" desc="State Information">
 	public function hasName() {
-		return (strlen($this->first_name) + strlen($this->last_name) > 0);
+		return (strlen($this->first_name) + strlen($this->last_name) > 1);
+	}
+	
+	/**
+	 * Check to ensure the pick exists in the database
+	 * @return bool 
+	 */
+	private function pickExists() {
+		$sql = "SELECT player_id FROM players WHERE player_id = ". 
+		intval($this->player_id) . " AND draft_id = " . intval($this->draft_id) . " AND ".
+		"player_pick = " . $this->player_pick . " AND player_round = " . $this->player_round . " LIMIT 1";
+		
+		return (mysql_num_rows(mysql_query($sql)) == 1);
 	}
 	// </editor-fold>
 	
