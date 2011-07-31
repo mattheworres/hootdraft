@@ -19,7 +19,7 @@
 				?><option value="<?php echo $manager->manager_id; ?>"><?php echo $manager->manager_name; ?></option>
 				<?php } ?>
 			</select>
-			<?php if(!$DRAFT->isCompleted()) {?>&nbsp;<a href="javascript:void();" id="refresh"><img src="images/icons/refresh.png" class="small_link" alt="Refresh Draft Picks" />&nbsp;(Refresh)</a><?php } ?></p>
+			<?php if(!$DRAFT->isCompleted()) {?>&nbsp;<a href="#" id="refresh"><img src="images/icons/refresh.png" class="small_link" alt="Refresh Draft Picks" />&nbsp;(Refresh)</a><?php } ?></p>
 		<div id="team">
 			<p class="success"><strong>Last refreshed:</strong>  <?php echo $NOW; ?></p>
 			<p><strong>Manager: </strong><?php echo $MANAGER->manager_name; ?></p>
@@ -35,7 +35,7 @@
 				<tr style="background-color: <?php echo $DRAFT->sports_colors[$pick->position]; ?>">
 					<td><?php echo $pick->player_round; ?></td>
 					<td><?php echo $pick->player_pick; ?></td>
-					<td><?php echo $pick->casualName(); ?></td>
+					<td><span class="player-name"><?php echo $pick->casualName(); ?></span></td>
 					<td><?php echo $pick->position; ?></td>
 					<td><?php echo $pick->team; ?></td>
 				</tr>
