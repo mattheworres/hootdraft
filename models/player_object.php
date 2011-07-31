@@ -94,12 +94,12 @@ class player_object {
 				"team = '" . mysql_real_escape_string($this->team) . "', " .
 				"position = '" . mysql_real_escape_string($this->position) . "', " .
 				"player_round = " . intval($this->player_round) . ", " .
-				"player_pick = " . intval($this->player_pick) . ", ";
+				"player_pick = " . intval($this->player_pick) . " ";
 			
 			if($setPickToNow == true) {
 				$now = php_draft_library::getNowPhpTime();
 				$this->pick_time = $now;
-				$sql .= "pick_time = '" . mysql_real_escape_string($now) . "' ";
+				$sql .= ", pick_time = '" . mysql_real_escape_string($now) . "' ";
 			}
 			
 			$sql .= "WHERE player_id = " . intval($this->player_id);
@@ -436,12 +436,21 @@ class player_object {
 	 * Check to ensure the pick exists in the database
 	 * @return bool 
 	 */
-	private function pickExists() {
+	public function pickExists() {
 		$sql = "SELECT player_id FROM players WHERE player_id = ". 
 		intval($this->player_id) . " AND draft_id = " . intval($this->draft_id) . " AND ".
 		"player_pick = " . $this->player_pick . " AND player_round = " . $this->player_round . " LIMIT 1";
 		
 		return (mysql_num_rows(mysql_query($sql)) == 1);
+	}
+	
+	/**
+	 * Determine whether a player/pick has been selected. Generally determines if it is editable.
+	 * @return bool true if selected 
+	 */
+	public function hasBeenSelected() {
+		return isset($this->pick_time) && isset($this->pick_duration)
+			&& strlen($this->pick_time) > 0 && $this->pick_duration > 0;
 	}
 	// </editor-fold>
 	
@@ -467,7 +476,7 @@ class player_object {
 		$player->last_name = $mysql_array['last_name'];
 		$player->position = $mysql_array['position'];
 		$player->team = $mysql_array['team'];
-		$player->pick_time = strtotime($mysql_array['pick_time']);
+		$player->pick_time = $mysql_array['pick_time'];
 		$player->pick_duration = intval($mysql_array['pick_duration']);
 		$player->player_round = intval($mysql_array['player_round']);
 		$player->player_pick = intval($mysql_array['player_pick']);

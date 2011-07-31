@@ -29,7 +29,7 @@
 								</select></p>
 							<div id="picks">
 								<?php foreach($ROUND_1_PICKS as $editable_pick) { ?>
-								<p><a href="draft_room.php?action=editScreen&did=<?php echo DRAFT_ID;?>">Pick # <?php echo $editable_pick->player_pick; ?>, <span class="player-name"><?php echo $editable_pick->casualName(); ?></span> (<?php echo $editable_pick->position . ", " . $editable_pick->team; ?>) - <?php echo $editable_pick->manager_name; ?></a></p>
+								<p><a href="draft_room.php?action=editScreen&did=<?php echo DRAFT_ID;?>&pid=<?php echo $editable_pick->player_id; ?>">Pick # <?php echo $editable_pick->player_pick; ?>, <span class="player-name"><?php echo $editable_pick->casualName(); ?></span> (<?php echo $editable_pick->position . ", " . $editable_pick->team; ?>) - <?php echo $editable_pick->manager_name; ?></a></p>
 								<?php } ?>
 							</div>
 						</div>

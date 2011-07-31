@@ -7,6 +7,7 @@ require_once("models/manager_object.php");
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
 DEFINE("ACTION", $_REQUEST['action']);
 DEFINE('DRAFT_ID', intval($_REQUEST['did']));
+DEFINE('PLAYER_ID', intval($_REQUEST['pid']));
 
 $DRAFT = new draft_object(DRAFT_ID);
 
@@ -119,11 +120,14 @@ switch(ACTION) {
 		break;
 		
 	case 'selectPickToEdit':
+		// <editor-fold defaultstate="collapsed" desc="selectPickToEdit Logic">
 		$ROUND_1_PICKS = player_object::getSelectedPlayersByRound($DRAFT->draft_id, 1);
 		require("/views/draft_room/select_pick_to_edit.php");
+		// </editor-fold>
 		break;
 	
 	case 'getEditablePicks':
+		// <editor-fold defaultstate="collapsed" desc="getEditablePicks Logic">
 		$round_number = intval($_POST['round']);
 		if($round_number == 0) {
 			echo "ERROR";
@@ -137,14 +141,71 @@ switch(ACTION) {
 		}
 		
 		echo json_encode($editable_picks);
+		// </editor-fold>
 		break;
 	
 	case 'editScreen':
-		//Edit individual pick
+		// <editor-fold defaultstate="collapsed" desc="editScreen Logic">
+		$EDIT_PLAYER = new player_object(PLAYER_ID);
+		$isFalse = $EDIT_PLAYER === false;
+		$hasId = PLAYER_ID == 0;
+		$selected = !$EDIT_PLAYER->hasBeenSelected();
+		$exists = !$EDIT_PLAYER->pickExists();
+		
+		if($EDIT_PLAYER === false || PLAYER_ID == 0 || !$EDIT_PLAYER->hasBeenSelected() || !$EDIT_PLAYER->pickExists()) {
+			define("PAGE_HEADER", "Player Unable to be Edited");
+			define("P_CLASS", "error");
+			define("PAGE_CONTENT", "The player you were attempting to edit is un-editable. This may be because the wrong information was passed in, or the fact that the player/pick you were attempting to edit hasn't been selected in your draft.");
+			require_once("/views/generic_result_view.php");
+			exit(1);
+		}
+		
+		require("/views/draft_room/edit_pick.php");
+		// </editor-fold>
 		break;
 	
 	case 'editPick':
+		// <editor-fold defaultstate="collapsed" desc="editPick Logic">
+		$EDIT_PLAYER = new player_object(PLAYER_ID);
 		
+		$isFalse = $EDIT_PLAYER === false;
+		$hasId = PLAYER_ID == 0;
+		$selected = !$EDIT_PLAYER->hasBeenSelected();
+		$exists = !$EDIT_PLAYER->pickExists();
+		
+		if($EDIT_PLAYER === false || PLAYER_ID == 0 || !$EDIT_PLAYER->hasBeenSelected() || !$EDIT_PLAYER->pickExists()) {
+			define("PAGE_HEADER", "Player Unable to be Edited");
+			define("P_CLASS", "error");
+			define("PAGE_CONTENT", "The player you were attempting to edit is un-editable. This may be because the wrong information was passed in, or the fact that the player/pick you were attempting to edit hasn't been selected in your draft.");
+			require_once("/views/generic_result_view.php");
+			exit(1);
+		}
+		
+		$EDIT_PLAYER->manager_id = intval($_POST['manager_id']);
+		$EDIT_PLAYER->first_name = $_POST['first_name'];
+		$EDIT_PLAYER->last_name = $_POST['last_name'];
+		$EDIT_PLAYER->team = $_POST['team'];
+		$EDIT_PLAYER->position = $_POST['position'];
+		
+		$object_errors = $EDIT_PLAYER->getValidity($DRAFT);
+		
+		if(count($object_errors) > 0) {
+			$ERRORS = $object_errors;
+			require("/views/draft_room/edit_pick.php");
+			exit(1);
+		}
+		
+		if($EDIT_PLAYER->savePlayer() === false) {
+			$ERRORS[] = "There was an error while saving the pick. Please try again.";
+			require("/views/draft_room/edit_pick.php");
+			exit(1);
+		}
+		
+		define("PAGE_HEADER", "Pick Edited Successfully");
+		define("P_CLASS", "success");
+		define("PAGE_CONTENT", "Pick #" . $EDIT_PLAYER->player_pick . " " . $EDIT_PLAYER->casualName() .  " was successfully edited.<br/><br/><a href=\"draft_room.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to the main draft room, or <a href=\"draft_room.php?action=selectPickToEdit&did=" . DRAFT_ID . "\">click here</a> to go back to edit another draft pick.");
+		require_once("/views/generic_result_view.php");
+		// </editor-fold>
 		break;
 	
 	default:
