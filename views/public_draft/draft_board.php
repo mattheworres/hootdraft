@@ -49,7 +49,6 @@
 				intervalID = window.setInterval('check_for_new_picks()', poll_time);
 			};
 
-
 			function check_for_new_picks() {
 				var current_pick = parseInt($.ajax({
 					url: 'public_draft.php?action=checkPick&did=<?php echo DRAFT_ID;?>',
