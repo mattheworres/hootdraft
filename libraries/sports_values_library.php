@@ -205,7 +205,7 @@ class sports_values_library {
 			"OAK" => "Oakland Athletics",
 			"PHI" => "Philadelphia Phillies",
 			"PIT" => "Pittsburgh Pirates",
-			"SDG" => "San Diego Chargers",
+			"SDG" => "San Diego Padres",
 			"SFO" => "San Francisco Giants",
 			"SEA" => "Seattle Mariners",
 			"STL" => "St Louis Cardinals",
