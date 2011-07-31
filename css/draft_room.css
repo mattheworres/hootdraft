@@ -1,11 +1,11 @@
-label {
+#add_pick label {
 	display: inline-block;
 	width: 110px;
 	font-weight: bold;
 	text-align: right;
 }
 
-input.button {
+#add_pick input.button {
 	margin-left: 110px;
 	width: 300px;
 	height: 60px;
@@ -13,10 +13,15 @@ input.button {
 	font-size: 16px;
 }
 
-select, input {
+#add_pick select, input {
 	width: 300px;
 }
 
 p.round {
 	background-color: #DDDDDD;
+}
+
+span.player-name {
+	font-weight: bold;
+	font-size: 15px;
 }

@@ -49,7 +49,7 @@ class sports_values_library {
 			"light_orange" => "#FFCC66",
 			"light_blue" => "#CCFFFF",
 			"light_yellow" => "#FFFF99",
-			"light_red" => "#99CC99",
+			"light_red" => "#FF9999",
 			"dark_green" => "#99CC99",
 			"light_purple" => "#CCCCFF",
 			"light_green" => "#CCFFCC",

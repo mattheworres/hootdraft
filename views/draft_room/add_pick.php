@@ -17,7 +17,7 @@
 			<?php }?>
 		<?php }?>
 		<h3>Enter the Next Draft Pick</h3>
-		<fieldset>
+		<fieldset id="add_pick">
 			<legend>Round <?php echo $DRAFT->current_round; ?>, Pick #<?php echo $DRAFT->current_pick; ?></legend>
 			<form action="draft_room.php?action=addPick" method="post">
 			<input type="hidden" name="did" value="<?php echo DRAFT_ID; ?>" />
@@ -54,7 +54,7 @@
 				<select name="position" tabindex="5">
 					<?php if(strlen($CURRENT_PICK->position) == 0) {?><option selected="selected"></option><?php } ?>
 				<?php foreach($DRAFT->sports_positions as $abbr => $sports_position) {
-					?><option value="<?php echo $abbr; ?>"<?php if($CURRENT_PICK->position == $abbr) { echo " selected=\"selected\"";}?>><?php echo $sports_position; ?></option>
+					?><option style="background-color: <?php echo $DRAFT->sports_colors[$abbr]; ?>" value="<?php echo $abbr; ?>"<?php if($CURRENT_PICK->position == $abbr) { echo " selected=\"selected\"";}?>><?php echo $sports_position; ?></option>
 				<?php } ?>
 				</select>
 			</p>
@@ -84,7 +84,7 @@
 		<fieldset>
 			<legend>Looking Back - Last Five Picks</legend>
 			<?php foreach($LAST_FIVE_PICKS as $last_pick) { ?>
-			<p style="background-color: <?php echo $DRAFT->sports_colors[$last_pick->position]; ?>;"><strong><?php  echo "Pick #" . $last_pick->player_pick . " - "; ?></strong> <?php echo $last_pick->casualName() . " (" . $last_pick->team . " - " . $last_pick->position . ")<br><strong>Manager:</strong> " . $last_pick->manager_name . "<br><br>"; ?></p>
+			<p style="background-color: <?php echo $DRAFT->sports_colors[$last_pick->position]; ?>;"><span class="player-name"><?php echo $last_pick->casualName(); ?></span><?php echo " (Pick #" . $last_pick->player_pick . ", " . $last_pick->team . " - " . $last_pick->position . ")<br/><strong>Manager:</strong> " . $last_pick->manager_name . "<br/>"; ?></p>
 			<?php } ?>
 		</fieldset>
 		</div>

@@ -60,6 +60,7 @@ switch(ACTION) {
 		break;
 	
 	case 'addPick':
+		// <editor-fold defaultstate="collapsed" desc="addPick Logic">
 		$submitted_pick = new player_object();
 		$submitted_pick->draft_id = DRAFT_ID;
 		$submitted_pick->player_id = intval($_POST['pid']);
@@ -114,6 +115,36 @@ switch(ACTION) {
 		
 		$SUCCESSES[] = "<em>" . $submitted_pick->casualName() . "</em> was successfully drafted with the #" . $submitted_pick->player_pick . " selection.";
 		require_once("/views/draft_room/add_pick.php");
+		// </editor-fold>
+		break;
+		
+	case 'selectPickToEdit':
+		$ROUND_1_PICKS = player_object::getSelectedPlayersByRound($DRAFT->draft_id, 1);
+		require("/views/draft_room/select_pick_to_edit.php");
+		break;
+	
+	case 'getEditablePicks':
+		$round_number = intval($_POST['round']);
+		if($round_number == 0) {
+			echo "ERROR";
+			exit(1);
+		}
+		
+		$editable_picks = player_object::getSelectedPlayersByRound(DRAFT_ID, $round_number);
+		
+		if(empty($editable_picks)) {
+			exit(0);
+		}
+		
+		echo json_encode($editable_picks);
+		break;
+	
+	case 'editScreen':
+		//Edit individual pick
+		break;
+	
+	case 'editPick':
+		
 		break;
 	
 	default:

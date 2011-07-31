@@ -372,19 +372,7 @@ class player_object {
 		$players = array();
 
 		while($player_row = mysql_fetch_array($players_result)) {
-			$player = new player_object();
-			$player->player_id = intval($player_row['player_id']);
-			$player->manager_id = intval($player_row['manager_id']);
-			$player->draft_id = intval($player_row['draft_id']);
-			$player->first_name = $player_row['first_name'];
-			$player->last_name = $player_row['last_name'];
-			$player->team = $player_row['team'];
-			$player->position = $player_row['position'];
-			$player->pick_time = strtotime($player_row['pick_time']);
-			$player->pick_duration = intval($player_row['pick_duration']);
-			$player->player_round = intval($player_row['player_round']);
-			$player->player_pick = intval($player_row['player_pick']);
-			$players[] = $player;
+			$players[] = player_object::fillPlayerObject($player_row);
 		}
 
 		return $players;
@@ -402,25 +390,19 @@ class player_object {
 
 		if($draft_id == 0 || $round == 0)
 			return false;
+		
+		$sql = "SELECT p.*, m.* FROM players p ".
+		"LEFT OUTER JOIN managers m ".
+		"ON m.manager_id = p.manager_id ".
+		"WHERE p.draft_id = " . intval($draft_id) . 
+		" AND p.player_round = " . intval($round) . " AND p.pick_time IS NOT NULL ORDER BY p.player_pick ASC";
 
-		$players_result = mysql_query("SELECT * FROM players WHERE draft_id = " . $manager_id . " AND round = " . $round . " AND pick_time IS NOT NULL ORDER BY player_pick ASC");
+		$players_result = mysql_query($sql);
 
 		$players = array();
 
 		while($player_row = mysql_fetch_array($players_result)) {
-			$player = new player_object();
-			$player->player_id = intval($player_row['player_id']);
-			$player->manager_id = intval($player_row['manager_id']);
-			$player->draft_id = intval($player_row['draft_id']);
-			$player->first_name = $player_row['first_name'];
-			$player->last_name = $player_row['last_name'];
-			$player->team = $player_row['team'];
-			$player->position = $player_row['position'];
-			$player->pick_time = strtotime($player_row['pick_time']);
-			$player->pick_duration = intval($player_row['pick_duration']);
-			$player->player_round = intval($player_row['player_round']);
-			$player->player_pick = intval($player_row['player_pick']);
-			$players[] = $player;
+			$players[] = player_object::fillPlayerObject($player_row, $draft_id);
 		}
 
 		return $players;
@@ -470,10 +452,14 @@ class player_object {
 	 * @param array $mysql_array Filled mysql row of player-manager data
 	 * @return player_object new player_object filled with data.
 	 */
-	private static function fillPlayerObject($mysql_array, $draft_id) {
+	private static function fillPlayerObject($mysql_array, $draft_id = 0) {
 		$player = new player_object();
 		
-		$player->draft_id = $draft_id;
+		if($draft_id > 0)
+			$player->draft_id = $draft_id;
+		else
+			$player->draft_id = intval($mysql_array['draft_id']);
+		
 		$player->player_id = intval($mysql_array['player_id']);
 		$player->manager_id = intval($mysql_array['manager_id']);
 		$player->manager_name = $mysql_array['manager_name'];
