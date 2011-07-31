@@ -62,8 +62,8 @@ class draft_object {
 		$this->draft_password = $draft_row['draft_password'];
 		//TODO: Figure out how to convert to useable PHP datetimes:
 		//NOTE: Using strtotime, in the first draft page that's what I was using... update if necessary.
-		$this->start_time = strtotime($draft_row['draft_start_time']);
-		$this->end_time = strtotime($draft_row['draft_end_time']);
+		$this->start_time = $draft_row['draft_start_time'];
+		$this->end_time = $draft_row['draft_end_time'];
 		$this->current_round = intval($draft_row['draft_current_round']);
 		$this->current_pick = intval($draft_row['draft_current_pick']);
 
@@ -315,6 +315,13 @@ class draft_object {
 	}
 	
 	// <editor-fold defaultstate="collapsed" desc="Pick-Related Functions">
+	/**
+	 * Returns an array of the last five picks (player_object) 
+	 */
+	public function getLastTenPicks() {
+		return player_object::getLastTenPicks($this->draft_id);
+	}
+	
 	/**
 	 * Returns an array of the last five picks (player_object) 
 	 */

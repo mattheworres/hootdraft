@@ -163,11 +163,14 @@ switch(ACTION) {
 		break;
 
 	case 'deleteDraft':
+		// <editor-fold defaultstate="collapsed" desc="deleteDraft">
 		DEFINE("ANSWER", "schfourteenteen");
 		require_once('/views/draft/delete_draft.php');
+		// </editor-fold>
 		break;
 
 	case 'confirmDelete':
+		// <editor-fold defaultstate="collapsed" desc="confirmDelete Logic">
 		$answer = intval($_POST['txt_answer']);
 
 		if($answer != 111) {
@@ -190,7 +193,7 @@ switch(ACTION) {
 			require_once("/views/generic_result_view.php");
 			exit(1);
 		}
-
+		// </editor-fold>
 		break;
 
 	case '':

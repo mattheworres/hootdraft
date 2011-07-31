@@ -6,5 +6,5 @@ if(DRAFT_ID > 0) {
 	<p><a href="draft_room.php?action=addScreen&did=<?php echo DRAFT_ID; ?>"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-plusthick"></span>Make a Pick</a></p>
 	<p><a href="draft_room.php?action=selectPickToEdit&did=<?php echo DRAFT_ID; ?>"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-pencil"></span>Edit a Pick</a></p>
 	<p><a href="draft_board.php?draft_id=<?php echo DRAFT_ID; ?>"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-calculator"></span>View Public Board</a></p>
-	<p><a href="comm_manage_draft.php?did=<?php echo DRAFT_ID; ?>"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-arrowreturnthick-1-w"></span>Back to Manage Page</a></p>
+	<p><a href="draft.php?did=<?php echo DRAFT_ID; ?>"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-arrowreturnthick-1-w"></span>Back to Manage Page</a></p>
 </div><?php } ?>

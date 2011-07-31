@@ -220,14 +220,14 @@ class player_object {
 		if($draft_id == 0)
 			return false;
 
-		$sql = "SELECT *, m.manager_name, m.manager_id ".
-				"FROM players ".
+		$sql = "SELECT p.*, m.manager_name, m.manager_id ".
+				"FROM players p ".
 				"LEFT OUTER JOIN managers m ".
-				"ON m.manager_id = players.manager_id ".
-				"WHERE players.draft_id = " . $draft_id . " ".
-				"AND pick_time IS NOT NULL ".
-				"AND pick_duration IS NOT NULL ".
-				"ORDER BY player_pick DESC LIMIT 10";
+				"ON m.manager_id = p.manager_id ".
+				"WHERE p.draft_id = " . $draft_id . " ".
+				"AND p.pick_time IS NOT NULL ".
+				"AND p.pick_duration IS NOT NULL ".
+				"ORDER BY p.player_pick DESC LIMIT 10";
 
 		$pick_result = mysql_query($sql);
 		

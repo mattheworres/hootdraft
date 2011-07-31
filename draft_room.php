@@ -37,7 +37,6 @@ if($DRAFT->isUndrafted()) {
 }
 // </editor-fold>
 
-
 $MANAGERS = manager_object::getManagersByDraft(DRAFT_ID);
 $kooky_labels = array();
 $kooky_labels[] = "On Deck: ";
@@ -147,10 +146,6 @@ switch(ACTION) {
 	case 'editScreen':
 		// <editor-fold defaultstate="collapsed" desc="editScreen Logic">
 		$EDIT_PLAYER = new player_object(PLAYER_ID);
-		$isFalse = $EDIT_PLAYER === false;
-		$hasId = PLAYER_ID == 0;
-		$selected = !$EDIT_PLAYER->hasBeenSelected();
-		$exists = !$EDIT_PLAYER->pickExists();
 		
 		if($EDIT_PLAYER === false || PLAYER_ID == 0 || !$EDIT_PLAYER->hasBeenSelected() || !$EDIT_PLAYER->pickExists()) {
 			define("PAGE_HEADER", "Player Unable to be Edited");
@@ -167,11 +162,6 @@ switch(ACTION) {
 	case 'editPick':
 		// <editor-fold defaultstate="collapsed" desc="editPick Logic">
 		$EDIT_PLAYER = new player_object(PLAYER_ID);
-		
-		$isFalse = $EDIT_PLAYER === false;
-		$hasId = PLAYER_ID == 0;
-		$selected = !$EDIT_PLAYER->hasBeenSelected();
-		$exists = !$EDIT_PLAYER->pickExists();
 		
 		if($EDIT_PLAYER === false || PLAYER_ID == 0 || !$EDIT_PLAYER->hasBeenSelected() || !$EDIT_PLAYER->pickExists()) {
 			define("PAGE_HEADER", "Player Unable to be Edited");
