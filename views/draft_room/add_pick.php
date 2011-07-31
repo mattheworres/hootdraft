@@ -43,6 +43,7 @@
 			<p>
 				<label for="team">Team*:</label>
 				<select name="team" tabindex="4">
+				<?php if(strlen($CURRENT_PICK->team) == 0) {?><option selected="selected"></option><?php } ?>
 				<?php foreach($DRAFT->sports_teams as $abbr => $sports_team_name) {
 					?><option value="<?php echo $abbr; ?>"<?php if($CURRENT_PICK->team == $abbr) { echo " selected=\"selected\"";}?>><?php echo $sports_team_name; ?></option>
 				<?php } ?>
@@ -51,6 +52,7 @@
 			<p>
 				<label for="position">Position*:</label>
 				<select name="position" tabindex="5">
+					<?php if(strlen($CURRENT_PICK->position) == 0) {?><option selected="selected"></option><?php } ?>
 				<?php foreach($DRAFT->sports_positions as $abbr => $sports_position) {
 					?><option value="<?php echo $abbr; ?>"<?php if($CURRENT_PICK->position == $abbr) { echo " selected=\"selected\"";}?>><?php echo $sports_position; ?></option>
 				<?php } ?>
@@ -68,12 +70,11 @@
 		</fieldset>
 		<fieldset>
 			<legend>Looking Ahead - Next Five Picks</legend>
-			<p style="background-color: #DDDDDD;"><strong>Current Round - Round # <?php echo $CURRENT_PICK->player_round; ?></strong></p>
 			<?php $current_round = $CURRENT_PICK->player_round;
 			$i = 0;
 			foreach($NEXT_FIVE_PICKS as $next_pick) { ?>
 			<?php if($next_pick->player_round > $current_round) {
-				?><p><strong>Round #<?php echo $next_pick->player_round; ?></strong></p>
+				?><p class="round"><strong>Round #<?php echo $next_pick->player_round; ?></strong></p>
 			<?php $current_round = $next_pick->player_round; } ?>
 			<p><strong><?php echo $kooky_labels[$i]; ?></strong><?php  echo "Pick #" . $next_pick->player_pick . " - " . $next_pick->manager_name; ?></p>
 			<?php 
@@ -83,7 +84,7 @@
 		<fieldset>
 			<legend>Looking Back - Last Five Picks</legend>
 			<?php foreach($LAST_FIVE_PICKS as $last_pick) { ?>
-			<p style="color: <?php echo $DRAFT->sports_colors[$last_pick->position]; ?>;"><strong><?php  echo "Pick #" . $last_pick->player_pick . " - "; ?></strong> <?php echo $last_pick->casualName() . " (" . $last_pick->team . "-" . $last_pick->position . ")<br><strong>Manager:</strong> " . $last_pick->manager_name . "<br><br>"; ?></p>
+			<p style="background-color: <?php echo $DRAFT->sports_colors[$last_pick->position]; ?>;"><strong><?php  echo "Pick #" . $last_pick->player_pick . " - "; ?></strong> <?php echo $last_pick->casualName() . " (" . $last_pick->team . " - " . $last_pick->position . ")<br><strong>Manager:</strong> " . $last_pick->manager_name . "<br><br>"; ?></p>
 			<?php } ?>
 		</fieldset>
 		</div>

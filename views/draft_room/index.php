@@ -33,7 +33,7 @@
 				?><td colspan="5"><h2>No picks have been made yet.</h2></td><?php
 			}else {
 				foreach($LAST_TEN_PICKS as $player) { ?>
-			<tr>
+			<tr style="background-color:<?php echo $DRAFT->sports_colors[$player->position]; ?>;">
 				<td><?php echo $player->player_round; ?></td>
 				<td><?php echo $player->player_pick; ?></td>
 				<td><?php echo $player->manager_name; ?></td>

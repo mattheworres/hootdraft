@@ -167,6 +167,8 @@ class player_object {
 		
 		$alloted_time = $now - $start_time;
 		
+		$this->pick_duration = intval($alloted_time);
+		
 		$sql = "UPDATE players SET pick_duration = " . intval($alloted_time) . " WHERE player_id = " . intval($this->player_id);
 		
 		return mysql_query($sql);

@@ -172,9 +172,12 @@ class draft_object {
 	
 	public function moveDraftForward(player_object $next_pick) {
 		if($next_pick != null) {
+			$this->current_pick = intval($next_pick->player_pick);
+			$this->current_round = intval($next_pick->player_round);
+			
 			$sql = "UPDATE draft SET ".
-			"draft_current_pick = " . intval($next_pick->player_pick) . ", ".
-			"draft_current_round = " . intval($next_pick->player_round) . " ".
+			"draft_current_pick = " . $this->current_pick . ", ".
+			"draft_current_round = " . $this->current_round . " ".
 			"WHERE draft_id = " . intval($this->draft_id);
 			
 			return mysql_query($sql);

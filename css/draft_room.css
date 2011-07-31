@@ -16,3 +16,7 @@ input.button {
 select, input {
 	width: 300px;
 }
+
+p.round {
+	background-color: #DDDDDD;
+}

@@ -73,7 +73,7 @@ switch(ACTION) {
 		
 		$NEXT_FIVE_PICKS = $DRAFT->getNextFivePicks();
 		$LAST_FIVE_PICKS = $DRAFT->getLastFivePicks();
-		$CURRENT_PICK = $submitted_pick;
+		$CURRENT_PICK = clone $submitted_pick;
 		
 		$object_errors = $submitted_pick->getValidity($DRAFT);
 		
@@ -109,9 +109,10 @@ switch(ACTION) {
 		
 		$NEXT_FIVE_PICKS = $DRAFT->getNextFivePicks();
 		$LAST_FIVE_PICKS = $DRAFT->getLastFivePicks();
+		unset($CURRENT_PICK);
 		$CURRENT_PICK = $DRAFT->getCurrentPick();
 		
-		$SUCCESSES[] = "Player <strong>" . $submitted_pick->casualName() . "</strong> was successfully drafted by " . $submitted_pick->manager_name;
+		$SUCCESSES[] = "<em>" . $submitted_pick->casualName() . "</em> was successfully drafted with the #" . $submitted_pick->player_pick . " selection.";
 		require_once("/views/draft_room/add_pick.php");
 		break;
 	
@@ -119,6 +120,7 @@ switch(ACTION) {
 		// <editor-fold defaultstate="collapsed" desc="Index Logic">
 		require_once("models/player_object.php");
 		$LAST_TEN_PICKS = player_object::getLastTenPicks(DRAFT_ID);
+		$DRAFT->setupSport();
 		
 		if($LAST_TEN_PICKS === false) {
 			define("PAGE_HEADER", "Last 10 Picks Unable to be Loaded");
