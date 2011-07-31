@@ -382,9 +382,12 @@ class player_object {
 	 * Get all selected players for a given round.
 	 * @param int $draft_id ID of the draft for the given round
 	 * @param int $round Round to get players for
+	 * @param bool $sort Whether to sort by ASC or not. False == DESC
 	 * @return array Player objects that belong in a given round. false on failure
 	 */
-	public static function getSelectedPlayersByRound($draft_id, $round) {
+	public static function getSelectedPlayersByRound($draft_id, $round, $sort = true) {
+		$sortOrder = $sort ? "ASC" : "DESC";
+		
 		$draft_id = intval($draft_id);
 		$round = intval($round);
 
@@ -395,7 +398,40 @@ class player_object {
 		"LEFT OUTER JOIN managers m ".
 		"ON m.manager_id = p.manager_id ".
 		"WHERE p.draft_id = " . intval($draft_id) . 
-		" AND p.player_round = " . intval($round) . " AND p.pick_time IS NOT NULL ORDER BY p.player_pick ASC";
+		" AND p.player_round = " . intval($round) . " AND p.pick_time IS NOT NULL ORDER BY p.player_pick " . $sortOrder;
+
+		$players_result = mysql_query($sql);
+
+		$players = array();
+
+		while($player_row = mysql_fetch_array($players_result)) {
+			$players[] = player_object::fillPlayerObject($player_row, $draft_id);
+		}
+
+		return $players;
+	}
+	
+	/**
+	 * Get all picks, selected or not, for a given round. Use $sort if your style is serpentine.
+	 * @param int $draft_id ID of the draft for the given round
+	 * @param int $round Round to get players for
+	 * @param bool $sort Whether to sort by ASC or not. False == DESC
+	 * @return array Player objects that belong in a given round. false on failure
+	 */
+	public static function getAllPlayersByRound($draft_id, $round, $sort = true) {
+		$sortOrder = $sort ? "ASC" : "DESC";
+		
+		$draft_id = intval($draft_id);
+		$round = intval($round);
+
+		if($draft_id == 0 || $round == 0)
+			return false;
+		
+		$sql = "SELECT p.*, m.* FROM players p ".
+		"LEFT OUTER JOIN managers m ".
+		"ON m.manager_id = p.manager_id ".
+		"WHERE p.draft_id = " . intval($draft_id) . 
+		" AND p.player_round = " . intval($round) . " ORDER BY p.player_pick " . $sortOrder;
 
 		$players_result = mysql_query($sql);
 

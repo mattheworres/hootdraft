@@ -267,6 +267,25 @@ class draft_object {
 		return true;
 	}
 	
+	public function getAllDraftPicks() {
+		$picks = array();
+		
+		$sort = true;
+		for($i = 1; $i <= $this->draft_rounds; ++$i) {
+			if($this->styleIsSerpentine()) {
+				$picks[] = player_object::getAllPlayersByRound($this->draft_id, $i, $sort);
+				$sort = $sort ? false : true;
+			}else{
+				$picks[] = player_object::getAllPlayersByRound($this->draft_id, $i);
+			}
+		}
+		
+		return $picks;
+	}
+	
+	/**
+	 * Grab proper array values for Teams and Positions dropdowns, and corresponding colors for positions too. Void function, operates on calling object.
+	 */
 	public function setupSport() {
 		require_once("/libraries/sports_values_library.php");
 		$lib = new sports_values_library();
@@ -274,7 +293,7 @@ class draft_object {
 		$this->sports_positions = $lib->getPositions($this->draft_sport);
 		$this->sports_colors = $lib->position_colors;
 	}
-
+	
 	/**
 	 * Using MySQL's NOW() function, set the draft's start time to NOW in database and return that value.
 	 * @return string MySQL timestamp given to draft 
