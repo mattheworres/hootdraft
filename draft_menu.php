@@ -5,6 +5,7 @@ if(!empty($draft_id)) {
 	require_once("login_fcns.php");
 	?><div id="right_side">
 	<h3>Navigation</h3>
+	<p style="color: red; font-weight: bold;">UPDATE MENU LOGIC</p>
 	 <?php if($currentFile != "draft_main.php") {?><h4><a href="draft_main.php?draft_id=<?php echo $draft_id; ?>">Draft Home Page</a></h4><?php } ?>
 	<p><a href="draft_board.php?draft_id=<?php echo $draft_id; ?>"><img src="images/icons/draft_board_small.png" class="small_link" alt="View Full Draft Board" />&nbsp;Full Draft Board</a></p>
 	<p><a href="draft_teams.php?draft_id=<?php echo $draft_id; ?>"><img src="images/icons/team_picks_small.png" class="small_link" alt="View Picks by Team" />&nbsp;Picks per Team</a></p>

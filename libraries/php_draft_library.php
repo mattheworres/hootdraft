@@ -65,6 +65,10 @@ class php_draft_library {
 	public static function getNowPhpTime() {
 		return date("Y-m-d H:i:s");
 	}
+	
+	public static function getNowRefreshTime() {
+		return date("h:i:s A");
+	}
 
 }
 ?>
