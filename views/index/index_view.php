@@ -25,7 +25,7 @@
 			}else {
 			foreach($drafts->draft_objects as $draft) {?><tr>
 				<td><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-<?php echo $draft->visibility; ?>"></span></td>
-			<?php if(!$draft->isUndrafted()) {?><td><a href="draft_main.php?draft_id=<?php echo $draft->draft_id; ?>"><?php echo $draft->draft_name; ?></a></td>
+			<?php if(!$draft->isUndrafted()) {?><td><a href="public_draft.php?did=<?php echo $draft->draft_id; ?>"><?php echo $draft->draft_name; ?></a></td>
 						<?php } else {?><td><?php echo $draft->draft_name; ?></td><?php }?>
 			<td><?php echo $draft->draft_sport; ?></td>
 			<td><?php echo $draft->getStatus(); ?></td>

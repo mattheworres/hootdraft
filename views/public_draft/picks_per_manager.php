@@ -48,11 +48,6 @@
 			var manager_id;
 
 			$(document).ready(function() {
-				/*$("#manager_id").change(function() {
-					manager_id = $(this).val();
-					$("#team").load('public_draft.php?action=loadManagerPicks&did=<?php echo $draft_id; ?>&mid='+manager_id);
-				});*/
-				
 				$("#refresh").live('click', reloadPicks);
 				$("#mid").live('change', reloadPicks);
 			});

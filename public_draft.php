@@ -2,6 +2,8 @@
 require_once("dbconn.php");
 set_conn();
 
+require("check_draft_password.php");
+
 require_once("/models/draft_object.php");
 require_once("/models/manager_object.php");
 

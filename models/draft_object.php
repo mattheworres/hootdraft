@@ -333,6 +333,12 @@ class draft_object {
 		return mysql_query($sql);
 	}
 	
+	public function checkDraftPublicLogin() {
+		return isset($_SESSION['did']) && isset($_SESSION['draft_password']) 
+			&& $_SESSION['did'] == $this->draft_id 
+			&& $_SESSION['draft_password'] == $this->draft_password;
+	}
+	
 	// <editor-fold defaultstate="collapsed" desc="Pick-Related Functions">
 	/**
 	 * Returns an array of the last five picks (player_object) 
