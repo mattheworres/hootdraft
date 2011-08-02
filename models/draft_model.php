@@ -73,6 +73,9 @@ function get_next_picks($draft_id, $current_pick) {
 	return $result;
 }
 
+/**
+ * DEPRECATED: See models/player_object.php
+ */
 function search_draft($draft_id, $search_terms) {
 	$sql = "SELECT p.*, m.manager_name,  MATCH (p.first_name, p.last_name) AGAINST ('".$search_terms."') as score ".
 		"FROM players p ".
@@ -87,6 +90,9 @@ function search_draft($draft_id, $search_terms) {
 	return $result;
 }
 
+/**
+ * DEPRECATED: See models/player_object.php
+ */
 function search_draft_basic($draft_id, $search_terms) {
 	$sql = "SELECT p.*, m.manager_name ".
 		"FROM players p ".

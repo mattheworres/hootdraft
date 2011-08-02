@@ -123,6 +123,26 @@ switch(ACTION) {
 		require("/views/public_draft/picks_per_round_results.php");
 		// </editor-fold>
 		break;
+		
+	case 'searchDraft':
+		require("/views/public_draft/search_draft.php");
+		break;
+	
+	case 'searchResults':
+		require_once("/libraries/php_draft_library.php");
+		require_once("/models/search_object.php");
+		$team = $_GET['team'];
+		$position = $_GET['position'];
+		$SEARCHER = new search_object($_GET['keywords'], $_GET['team'], $_GET['position']);
+		$SEARCHER->searchDraft($DRAFT->draft_id);
+		
+		$NOW = php_draft_library::getNowRefreshTime();
+		require("/views/public_draft/search_draft_results.php");
+		break;
+	
+	case 'viewStats':
+		
+		break;
 	
 	default:
 		// <editor-fold defaultstate="collapsed" desc="index logic">
