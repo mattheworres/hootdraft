@@ -1,4 +1,5 @@
 <?php
+
 require_once("dbconn.php");
 set_conn();
 
@@ -11,7 +12,9 @@ DEFINE("ACTIVE_TAB", "DRAFT_CENTRAL");
 DEFINE("ACTION", $_REQUEST['action']);
 DEFINE('DRAFT_ID', intval($_REQUEST['did']));
 
-$DRAFT = new draft_object(DRAFT_ID);
+//Draft password may have pre-loaded this for us.
+if(!isset($DRAFT) || get_class($DRAFT) != "draft_object")
+	$DRAFT = new draft_object(DRAFT_ID);
 
 // <editor-fold defaultstate="collapsed" desc="Error checking on basic input">
 if($DRAFT === false || $DRAFT->draft_id == 0) {
@@ -24,8 +27,6 @@ if($DRAFT === false || $DRAFT->draft_id == 0) {
 // </editor-fold>
 
 $DRAFT->setupSport();
-
-//TODO: Add checking for draft password!!
 
 switch(ACTION) {
 	case 'draftBoard':
@@ -64,12 +65,14 @@ switch(ACTION) {
 		break;
 	
 	case 'picksPerManager':
+		// <editor-fold defaultstate="collapsed" desc="picksPerManager Logic">
 		require_once("/libraries/php_draft_library.php");
 		$MANAGERS = manager_object::getManagersByDraft($DRAFT->draft_id);
 		$MANAGER = $MANAGERS[0];
 		$MANAGER_PICKS = player_object::getSelectedPlayersByManager($MANAGER->manager_id);
 		$NOW = php_draft_library::getNowRefreshTime();
 		require("/views/public_draft/picks_per_manager.php");
+		// </editor-fold>
 		break;
 	
 	case 'loadManagerPicks':
@@ -85,6 +88,7 @@ switch(ACTION) {
 		$NOW = php_draft_library::getNowRefreshTime();
 		
 		if(empty($MANAGER_PICKS)) {
+			echo "<h3>No picks for " . $MANAGER->manager_name . " yet.</h3>";
 			exit(0);
 		}
 		
@@ -93,7 +97,31 @@ switch(ACTION) {
 		break;
 	
 	case 'picksPerRound':
+		// <editor-fold defaultstate="collapsed" desc="picksPerRound Logic">
+		require_once("/libraries/php_draft_library.php");
+		$ROUND = 1;
+		$ROUND_PICKS = player_object::getSelectedPlayersByRound($DRAFT->draft_id, $ROUND);
+		$NOW = php_draft_library::getNowRefreshTime();
+		require("/views/public_draft/picks_per_round.php");
+		// </editor-fold>
+		break;
+	
+	case 'loadRoundPicks':
+		// <editor-fold defaultstate="collapsed" desc="loadRoundPicks Logic">
+		$ROUND = intval($_REQUEST['round']);
 		
+		if($ROUND == 0)
+			exit(1);
+		
+		$ROUND_PICKS = player_object::getSelectedPlayersByRound($DRAFT->draft_id, $ROUND);
+		$NOW = php_draft_library::getNowRefreshTime();
+		
+		if(empty($ROUND_PICKS)) {
+			echo "<h4>No draft selections have been made for round #" . $ROUND . " yet.</h4>";
+			exit(0);
+		}
+		require("/views/public_draft/picks_per_round_results.php");
+		// </editor-fold>
 		break;
 	
 	default:

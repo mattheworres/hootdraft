@@ -334,3 +334,8 @@ table th {
 	vertical-align: middle;
 	margin-right: 2px;
 }
+
+span.player-name {
+	font-weight: bold;
+	font-size: 15px;
+}

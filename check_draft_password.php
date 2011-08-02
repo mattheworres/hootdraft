@@ -2,7 +2,6 @@
 
 session_start();  //Start/restore user session data
 
-require_once('dbconn.php');
 require_once('/models/draft_object.php');
 require_once('/models/user_object.php');
 
@@ -16,17 +15,6 @@ $pageURL .= $_SERVER["SERVER_PORT"] != "80" ? $_SERVER["SERVER_NAME"] . ":" . $_
 $DESTINATION = $pageURL;
 
 $DRAFT = new draft_object($DRAFT_ID);
-if($DRAFT->draft_id == 0 || $DRAFT === false) {
-	define("PAGE_HEADER", "Draft Not Found");
-	define("P_CLASS", "error");
-	define("PAGE_CONTENT", "The draft you were attempting to view was not found. Please try again.");
-	require_once("/views/generic_result_view.php");
-	exit(1);
-}
-
-$blart = $DRAFT->isPasswordProtected();
-$hart = $DRAFT->checkDraftPublicLogin();
-$hartablart = $hart && $blart;
 
 if($DRAFT->isPasswordProtected()) {
 	if(!$DRAFT->checkDraftPublicLogin()) {
