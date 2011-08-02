@@ -46,12 +46,14 @@
 				function load_search() {
 					var search_terms = $("#search_terms").val(),
 					$loadingDialog = $('#loadingDialog'),
+					$searchResults = $('#search_results'),
 					selectedTeam = $('#team').val(),
 					selectedPosition = $('#position').val();
 					
 					//$("#search_results").load('public_draft.php?action=searchResults&did=<?php echo DRAFT_ID;?>&search='+search_terms);
 					
 					$loadingDialog.dialog('open');
+					$searchResults.hide();
 					$.ajax({
 						type: 'GET',
 						async: false,
@@ -59,7 +61,8 @@
 						url: 'public_draft.php?action=searchResults&did=<?php echo DRAFT_ID;?>',
 						success: function(data) {
 							$loadingDialog.dialog('close');
-							$('#search_results').html(data);
+							$searchResults.html(data);
+							$searchResults.show("fade", 400);
 						},
 						error: function(data) {
 							$loadingDialog.dialog('close');

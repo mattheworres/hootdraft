@@ -125,10 +125,13 @@ switch(ACTION) {
 		break;
 		
 	case 'searchDraft':
+		// <editor-fold defaultstate="collapsed" desc="searchDraft Logic">
 		require("/views/public_draft/search_draft.php");
+		// </editor-fold>
 		break;
 	
 	case 'searchResults':
+		// <editor-fold defaultstate="collapsed" desc="searchResults Logics">
 		require_once("/libraries/php_draft_library.php");
 		require_once("/models/search_object.php");
 		$team = $_GET['team'];
@@ -138,10 +141,12 @@ switch(ACTION) {
 		
 		$NOW = php_draft_library::getNowRefreshTime();
 		require("/views/public_draft/search_draft_results.php");
+		// </editor-fold>
 		break;
 	
 	case 'viewStats':
-		
+		//TODO: Add data modeling for stats object, and get stats.
+		//Note: stats object can include its own SQL queries, it's all read-only anyways so no error-checking needed, there's no user input.
 		break;
 	
 	default:

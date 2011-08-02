@@ -47,7 +47,8 @@
 			<br/><br/>
 			<?php require('footer.php');?>
 			<script type="text/javascript">
-				var manager_id;
+				var manager_id,
+					$picks = $('#picks');
 
 				$(document).ready(function() {
 					$("#refresh").live('click', reloadPicks);
@@ -57,8 +58,9 @@
 				function reloadPicks() {
 					var $loadingDialog = $('#loadingDialog');
 					$loadingDialog.dialog('open');
+					$picks.hide();
 					manager_id = $("#mid").val();
-					$("#picks").load('public_draft.php?action=loadManagerPicks&did=<?php echo DRAFT_ID;?>&mid='+manager_id, function() { $loadingDialog.dialog('close'); });
+					$("#picks").load('public_draft.php?action=loadManagerPicks&did=<?php echo DRAFT_ID;?>&mid='+manager_id, function() { $loadingDialog.dialog('close'); $picks.show("fade", 400); });
 				}
 			</script>
 		</div>
