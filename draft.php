@@ -6,7 +6,7 @@ require_once("models/manager_object.php");
 
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
 DEFINE("ACTION", $_REQUEST['action']);
-DEFINE('DRAFT_ID', intval($_REQUEST['did']));
+DEFINE('DRAFT_ID', (int)$_REQUEST['did']);
 
 $DRAFT = new draft_object(DRAFT_ID);
 
@@ -139,7 +139,7 @@ switch(ACTION) {
 		$DRAFT->draft_name = trim($_POST['draft_name']);
 		$DRAFT->draft_sport = trim($_POST['draft_sport']);
 		$DRAFT->draft_style = trim($_POST['draft_style']);
-		$DRAFT->draft_rounds = intval($_POST['draft_rounds']);
+		$DRAFT->draft_rounds = (int)$_POST['draft_rounds'];
 
 		$object_errors = $DRAFT->getValidity();
 
@@ -171,7 +171,7 @@ switch(ACTION) {
 
 	case 'confirmDelete':
 		// <editor-fold defaultstate="collapsed" desc="confirmDelete Logic">
-		$answer = intval($_POST['txt_answer']);
+		$answer = (int)$_POST['txt_answer'];
 
 		if($answer != 111) {
 			DEFINE("ANSWER", "schfifty five");

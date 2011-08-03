@@ -17,7 +17,7 @@ class user_object {
 	public $password;
 	
 	public function __construct($user_id = 0) {
-		if(intval($user_id) == 0)
+		if((int)$user_id == 0)
 			return false;
 		
 		$userRow = mysql_fetch_array(mysql_query("SELECT * FROM user_login WHERE UserId = " . $user_id . " LIMIT 1"));
@@ -33,7 +33,7 @@ class user_object {
 	}
 	
 	public function getCurrentlyLoggedInUser() {
-		$this->user_id = intval($_SESSION['userid']);
+		$this->user_id = (int)$_SESSION['userid'];
 		$this->user_name = $_SESSION['username'];
 		$this->password = $_SESSION['password'];
 		
@@ -51,7 +51,7 @@ class user_object {
 	 * @return void 
 	 */
 	public function getDefaultCommissioner($commish_id) {
-		$id_int = intval($commish_id);
+		$id_int = (int)$commish_id;
 		
 		if($id_int == 0)
 			return;
@@ -69,7 +69,7 @@ class user_object {
 	 * To set the current user's ID for the currently logged in user
 	 */
 	private function getLoggedInId() {
-		$this->user_id = intval($_SESSION['userid']);
+		$this->user_id = (int)$_SESSION['userid'];
 	}
 	
 	/**

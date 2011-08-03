@@ -6,7 +6,7 @@ DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
 DEFINE("ACTION", $_GET['action']);
 
 //NOTE: This uses _REQUEST because we grab the ID from both POSTs and GETs
-DEFINE('MANAGER_ID', intval($_REQUEST['mid']));
+DEFINE('MANAGER_ID', (int)$_REQUEST['mid']);
 
 $MANAGER = new manager_object(MANAGER_ID);
 

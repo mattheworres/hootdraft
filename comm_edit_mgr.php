@@ -12,11 +12,11 @@
 		require_once('cleanstring.php');
 
 		if(!empty($_REQUEST['draft_id']) && !empty($_REQUEST['manager_id'])) {
-		$draft_id = intval($_REQUEST['draft_id']);
-		$manager_id = intval($_REQUEST['manager_id']);
+		$draft_id = (int)$_REQUEST['draft_id'];
+		$manager_id = (int)$_REQUEST['manager_id'];
 		}else {
-		$manager_id = intval($_REQUEST['mid']);
-		$draft_id = intval($_REQUEST['did']);
+		$manager_id = (int)$_REQUEST['mid'];
+		$draft_id = (int)$_REQUEST['did'];
 		}
 
 		$manager_name = CleanString(trim($_REQUEST['manager_name']));

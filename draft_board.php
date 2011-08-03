@@ -8,9 +8,9 @@ include_once("models/draft_model.php");
 set_conn();
 
 
-$draft_id = intval($_REQUEST['draft_id']);
+$draft_id = (int)$_REQUEST['draft_id'];
 $action = CleanString(trim($_REQUEST['action']));
-$pick = intval($_REQUEST['pick']);
+$pick = (int)$_REQUEST['pick'];
 
 $draft_result = mysql_query("SELECT * FROM draft WHERE draft_id = '" . $draft_id . "'");
 $draft_count = mysql_num_rows($draft_result);
@@ -32,7 +32,7 @@ if(empty($draft_id) || $draft_count == 0) {
 			if($draft_row['draft_status'] == "complete")
 				echo "9999";
 			else
-				echo intval($draft_row['draft_current_pick']);
+				echo (int)$draft_row['draft_current_pick'];
 			exit(0);
 			break;
 
@@ -41,7 +41,7 @@ if(empty($draft_id) || $draft_count == 0) {
 			$managers = get_managers($draft_id);
 			$number_of_managers = mysql_num_rows($managers);
 			$col_width = 115;
-			$total_width = 10 + ($col_width * intval($number_of_managers));
+			$total_width = 10 + ($col_width * (int)$number_of_managers);
 			$picks_result = Array();
 
 			if($draft_row['draft_style'] == "standard") {
@@ -85,9 +85,9 @@ if(empty($draft_id) || $draft_count == 0) {
 			$rounds = $draft_row['draft_rounds'];
 			$managers = get_managers($draft_id);
 			$number_of_managers = mysql_num_rows($managers);
-			$picks_total = intval($rounds) * intval($number_of_managers);
+			$picks_total = (int)$rounds * (int)$number_of_managers;
 			$col_width = 115;
-			$total_width = 10 + ($col_width * intval($number_of_managers));
+			$total_width = 10 + ($col_width * (int)$number_of_managers);
 			$picks_result = Array();
 
 			if($draft_row['draft_style'] == "standard") {

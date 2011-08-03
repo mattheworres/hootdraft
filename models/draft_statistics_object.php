@@ -32,7 +32,7 @@ class draft_statistics_object {
 	private $sports_positions;
 	
 	public function generateStatistics(draft_object $draft) {
-		$this->draft_id = intval($draft->draft_id);
+		$this->draft_id = (int)$draft->draft_id;
 		$this->sports_teams = $draft->sports_teams;
 		$this->sports_positions = $draft->sports_positions;
 		
@@ -61,7 +61,7 @@ class draft_statistics_object {
 		$row = mysql_fetch_array($result);
 		
 		$this->hold_on_manager_name = $row['manager_name'];
-		$this->hold_on_pick_time = php_draft_library::secondsToWords(intval($row['pick_average']));
+		$this->hold_on_pick_time = php_draft_library::secondsToWords((int)$row['pick_average']);
 	}
 	
 	private function generateQuickieAward() {
@@ -78,7 +78,7 @@ class draft_statistics_object {
 		$row = mysql_fetch_array($result);
 		
 		$this->quickie_manager = $row['manager_name'];
-		$this->quickie_pick_time = php_draft_library::secondsToWords(intval($row['pick_average']));
+		$this->quickie_pick_time = php_draft_library::secondsToWords((int)$row['pick_average']);
 	}
 	
 	private function generateSlowpokeAward() {
@@ -95,7 +95,7 @@ class draft_statistics_object {
 		$row = mysql_fetch_array($result);
 		
 		$this->slowpoke_manager_name = $row['manager_name'];
-		$this->slowpoke_pick_time = php_draft_library::secondsToWords(intval($row['pick_max']));
+		$this->slowpoke_pick_time = php_draft_library::secondsToWords((int)$row['pick_max']);
 	}
 	
 	private function generateSpeedyAward() {
@@ -112,7 +112,7 @@ class draft_statistics_object {
 		$row = mysql_fetch_array($result);
 		
 		$this->speedy_manager_name = $row['manager_name'];
-		$this->speedy_pick_time = php_draft_library::secondsToWords(intval($row['pick_min']));
+		$this->speedy_pick_time = php_draft_library::secondsToWords((int)$row['pick_min']);
 	}
 	
 	private function generateAveragePickTime() {
@@ -123,7 +123,7 @@ class draft_statistics_object {
 		
 		$result = mysql_query($sql);
 		$row = mysql_fetch_array($result);
-		$this->average_pick_time = php_draft_library::secondsToWords(intval($row['pick_average']));
+		$this->average_pick_time = php_draft_library::secondsToWords((int)$row['pick_average']);
 	}
 	
 	private function generateRoundTimes() {
@@ -138,8 +138,8 @@ class draft_statistics_object {
 		$result = mysql_query($sql);
 		$row = mysql_fetch_array($result);
 		
-		$this->longest_round = intval($row['player_round']);
-		$this->longest_round_time = php_draft_library::secondsToWords(intval($row['round_time']));
+		$this->longest_round = (int)$row['player_round'];
+		$this->longest_round_time = php_draft_library::secondsToWords((int)$row['round_time']);
 		
 		$sql = "SELECT DISTINCT p.player_round, sum( p.pick_duration ) AS round_time
 		FROM players p
@@ -152,8 +152,8 @@ class draft_statistics_object {
 		$result = mysql_query($sql);
 		$row = mysql_fetch_array($result);
 		
-		$this->shortest_round = intval($row['player_round']);
-		$this->shortest_round_time = php_draft_library::secondsToWords(intval($row['round_time']));
+		$this->shortest_round = (int)$row['player_round'];
+		$this->shortest_round_time = php_draft_library::secondsToWords((int)$row['round_time']);
 	}
 	
 	private function generateTeamSuperlatives() {
@@ -169,7 +169,7 @@ class draft_statistics_object {
 		$row = mysql_fetch_array($result);
 		
 		$this->most_drafted_team = $this->sports_teams[$row['team']];
-		$this->most_drafted_team_count = intval($row['team_occurences']);
+		$this->most_drafted_team_count = (int)$row['team_occurences'];
 		
 		$sql = "SELECT DISTINCT p.team, count(team) as team_occurences
 		FROM players p
@@ -183,7 +183,7 @@ class draft_statistics_object {
 		$row = mysql_fetch_array($result);
 		
 		$this->least_drafted_team = $this->sports_teams[$row['team']];
-		$this->least_drafted_team_count = intval($row['team_occurences']);
+		$this->least_drafted_team_count = (int)$row['team_occurences'];
 	}
 	
 	private function generatePositionSuperlatives() {
@@ -199,7 +199,7 @@ class draft_statistics_object {
 		$row = mysql_fetch_array($result);
 		
 		$this->most_drafted_position = $this->sports_positions[$row['position']];
-		$this->most_drafted_position_count = intval($row['position_occurences']);
+		$this->most_drafted_position_count = (int)$row['position_occurences'];
 		
 		$sql = "SELECT DISTINCT p.position, count(position) as position_occurences
 		FROM players p
@@ -213,7 +213,7 @@ class draft_statistics_object {
 		$row = mysql_fetch_array($result);
 		
 		$this->least_drafted_position = $this->sports_positions[$row['position']];
-		$this->least_drafted_position_count = intval($row['position_occurences']);
+		$this->least_drafted_position_count = (int)$row['position_occurences'];
 	}
 	// </editor-fold>
 }

@@ -35,9 +35,9 @@
 			require_once('cleanstring.php');
 
 			if(!empty($_REQUEST['draft_id']))
-				$draft_id = intval($_REQUEST['draft_id']);
+				$draft_id = (int)$_REQUEST['draft_id'];
 			else
-				$draft_id = intval($_REQUEST['did']);
+				$draft_id = (int)$_REQUEST['did'];
 
 			$draft_status = CleanString(trim($_REQUEST['draft_status']));
 
@@ -123,7 +123,7 @@
 						$draft_result = mysql_query("SELECT * FROM draft WHERE draft_id = '" . $draft_id . "' LIMIT 1");
 						$draft_row = mysql_fetch_array($draft_result);
 						$pick_successful = true;
-						$rounds = intval($draft_row['draft_rounds']);
+						$rounds = (int)$draft_row['draft_rounds'];
 
 						switch($draft_row['draft_style']) {
 							case 'serpentine':

@@ -20,7 +20,7 @@ class manager_object {
 	public $draft_order;
 
 	public function __construct($manager_id = 0) {
-		if(intval($manager_id) == 0)
+		if((int)$manager_id == 0)
 			return false;
 
 		$sql = "SELECT * FROM managers WHERE manager_id = " . $manager_id . " LIMIT 1";
@@ -30,11 +30,11 @@ class manager_object {
 
 		$manager_row = mysql_fetch_array($manager_result);
 
-		$this->manager_id = intval($manager_row['manager_id']);
-		$this->draft_id = intval($manager_row['draft_id']);
+		$this->manager_id = (int)$manager_row['manager_id'];
+		$this->draft_id = (int)$manager_row['draft_id'];
 		$this->manager_name = $manager_row['manager_name'];
 		$this->manager_email = $manager_row['manager_email'];
-		$this->draft_order = intval($manager_row['draft_order']);
+		$this->draft_order = (int)$manager_row['draft_order'];
 
 		return true;
 	}
@@ -80,7 +80,7 @@ class manager_object {
 
 		$swap_manager_row = mysql_fetch_array($swap_manager_result);
 
-		$swap_manager_id = intval($swap_manager_row['manager_id']);
+		$swap_manager_id = (int)$swap_manager_row['manager_id'];
 
 		$sql1 = "UPDATE managers SET draft_order = " . $new_place . " WHERE draft_id = " . $this->draft_id . " AND manager_id = " . $this->manager_id;
 		$sql2 = "UPDATE managers SET draft_order = " . $old_place . " WHERE draft_id = " . $this->draft_id . " AND manager_id = " . $swap_manager_id;
@@ -109,7 +109,7 @@ class manager_object {
 		if(!$lowest_order_row = mysql_fetch_array($lowest_order_result))
 			return false;
 
-		$lowest_order = intval($lowest_order_row['draft_order']);
+		$lowest_order = (int)$lowest_order_row['draft_order'];
 
 		if($old_place == $lowest_order)
 			return true;
@@ -122,7 +122,7 @@ class manager_object {
 			return false;
 
 		$swap_manager_row = mysql_fetch_array($swap_manager_result);
-		$swap_manager_id = intval($swap_manager_row['manager_id']);
+		$swap_manager_id = (int)$swap_manager_row['manager_id'];
 
 		$sql1 = "UPDATE managers SET draft_order = " . $new_place . " WHERE draft_id = " . $this->draft_id . " AND manager_id = " . $this->manager_id;
 		$sql2 = "UPDATE managers SET draft_order = " . $old_place . " WHERE draft_id = " . $this->draft_id . " AND manager_id = " . $swap_manager_id;
@@ -144,15 +144,15 @@ class manager_object {
 			$sql = "UPDATE managers SET " .
 				"manager_name = '" . mysql_real_escape_string($this->manager_name) . "', " .
 				"manager_email = '" . mysql_real_escape_string($this->manager_email) . "' " .
-				"WHERE manager_id = " . intval($this->manager_id) . " " .
-				"AND draft_id = " . intval($this->draft_id);
+				"WHERE manager_id = " . (int)$this->manager_id . " " .
+				"AND draft_id = " . (int)$this->draft_id;
 
 			return mysql_query($sql);
 		} elseif($this->draft_id > 0) {
 			$sql = "INSERT INTO managers " .
 				"(manager_id, draft_id, manager_name, manager_email, draft_order) " .
 				"VALUES " .
-				"(NULL, " . $this->draft_id . ", '" . mysql_real_escape_string($this->manager_name) . "', '" . mysql_real_escape_string($this->manager_email) . "', " . (intval($this->getLowestDraftorder() + 1)) . ")";
+				"(NULL, " . $this->draft_id . ", '" . mysql_real_escape_string($this->manager_name) . "', '" . mysql_real_escape_string($this->manager_email) . "', " . ((int)$this->getLowestDraftorder( + 1)) . ")";
 
 			$result = mysql_query($sql);
 			if(!$result)
@@ -172,7 +172,7 @@ class manager_object {
 	public function getLowestDraftorder() {
 		$sql = "SELECT draft_order FROM managers WHERE draft_id = " . $this->draft_id . " ORDER BY draft_order DESC LIMIT 1";
 		$row = mysql_fetch_array(mysql_query($sql));
-		return intval($row['draft_order']);
+		return (int)$row['draft_order'];
 	}
 
 	public function deleteManager() {
@@ -197,7 +197,7 @@ class manager_object {
 	}
 	
 	public static function deleteManagersByDraft($draft_id) {
-		$draft_id = intval($draft_id);
+		$draft_id = (int)$draft_id;
 
 		if($draft_id == 0)
 			return false;
@@ -230,11 +230,11 @@ class manager_object {
 
 		while($manager_row = mysql_fetch_array($managers_result)) {
 			$new_manager = new manager_object();
-			$new_manager->manager_id = intval($manager_row['manager_id']);
-			$new_manager->draft_id = intval($manager_row['draft_id']);
+			$new_manager->manager_id = (int)$manager_row['manager_id'];
+			$new_manager->draft_id = (int)$manager_row['draft_id'];
 			$new_manager->manager_name = $manager_row['manager_name'];
 			$new_manager->manager_email = $manager_row['manager_email'];
-			$new_manager->draft_order = intval($manager_row['draft_order']);
+			$new_manager->draft_order = (int)$manager_row['draft_order'];
 			$managers[] = $new_manager;
 		}
 
@@ -264,7 +264,7 @@ class manager_object {
 		$success = true;
 
 		while($manager_row = mysql_fetch_array($managers_result)) {
-			$inner_sql = "UPDATE managers SET draft_order = " . $old_order . " WHERE manager_id = " . intval($manager_row['manager_id']);
+			$inner_sql = "UPDATE managers SET draft_order = " . $old_order . " WHERE manager_id = " . (int)$manager_row['manager_id'];
 			if(!mysql_query($inner_sql))
 				$success = false;
 			$old_order++;

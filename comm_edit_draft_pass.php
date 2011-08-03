@@ -30,9 +30,9 @@
 		require_once('cleanstring.php');
 
 		if(!empty($_REQUEST['draft_id']))
-		$draft_id = intval($_REQUEST['draft_id']);
+		$draft_id = (int)$_REQUEST['draft_id'];
 		else
-		$draft_id = intval($_REQUEST['did']);
+		$draft_id = (int)$_REQUEST['did'];
 
 
 		$draft_password = CleanString(trim($_REQUEST['draft_password']));

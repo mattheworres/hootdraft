@@ -56,27 +56,27 @@ class player_object {
 	// </editor-fold>
 
 	public function __construct($id = 0) {
-		if(intval($id) == 0)
+		if((int)$id == 0)
 			return false;
 
-		$id = intval($id);
+		$id = (int)$id;
 
 		$player_result = mysql_query("SELECT * FROM players WHERE player_id = " . $id . " LIMIT 1");
 
 		if(!$player_row = mysql_fetch_array($player_result))
 			return false;
 
-		$this->player_id = intval($player_row['player_id']);
-		$this->manager_id = intval($player_row['manager_id']);
-		$this->draft_id = intval($player_row['draft_id']);
+		$this->player_id = (int)$player_row['player_id'];
+		$this->manager_id = (int)$player_row['manager_id'];
+		$this->draft_id = (int)$player_row['draft_id'];
 		$this->first_name = $player_row['first_name'];
 		$this->last_name = $player_row['last_name'];
 		$this->team = $player_row['team'];
 		$this->position = $player_row['position'];
 		$this->pick_time = $player_row['pick_time'];
-		$this->pick_duration = intval($player_row['pick_duration']);
-		$this->player_round = intval($player_row['player_round']);
-		$this->player_pick = intval($player_row['player_pick']);
+		$this->pick_duration = (int)$player_row['pick_duration'];
+		$this->player_round = (int)$player_row['player_round'];
+		$this->player_pick = (int)$player_row['player_pick'];
 
 		return true;
 	}
@@ -88,14 +88,14 @@ class player_object {
 	public function savePlayer($setPickToNow = false) {
 		if($this->player_id > 0) {
 			$sql = "UPDATE players SET " .
-				"manager_id = " . intval($this->manager_id) . ", " .
-				"draft_id = " . intval($this->draft_id) . ", " .
+				"manager_id = " . (int)$this->manager_id . ", " .
+				"draft_id = " . (int)$this->draft_id . ", " .
 				"first_name = '" . mysql_real_escape_string($this->first_name) . "', " .
 				"last_name = '" . mysql_real_escape_string($this->last_name) . "', " .
 				"team = '" . mysql_real_escape_string($this->team) . "', " .
 				"position = '" . mysql_real_escape_string($this->position) . "', " .
-				"player_round = " . intval($this->player_round) . ", " .
-				"player_pick = " . intval($this->player_pick) . " ";
+				"player_round = " . (int)$this->player_round . ", " .
+				"player_pick = " . (int)$this->player_pick . " ";
 			
 			if($setPickToNow == true) {
 				$now = php_draft_library::getNowPhpTime();
@@ -103,14 +103,14 @@ class player_object {
 				$sql .= ", pick_time = '" . mysql_real_escape_string($now) . "' ";
 			}
 			
-			$sql .= "WHERE player_id = " . intval($this->player_id);
+			$sql .= "WHERE player_id = " . (int)$this->player_id;
 			return mysql_query($sql);
 		} elseif($this->draft_id > 0 && $this->manager_id > 0) {
 			//TODO: Investigate how to insert with empty fields.
 			$sql = "INSERT INTO players " .
 				"(manager_id, draft_id, player_round, player_pick) " .
 				"VALUES " .
-				"(" . intval($this->manager_id) . ", " . intval($this->draft_id) . ", " . intval($this->player_round) . ", " . intval($this->player_pick) . ")";
+				"(" . (int)$this->manager_id . ", " . (int)$this->draft_id . ", " . (int)$this->player_round . ", " . (int)$this->player_pick . ")";
 
 			$result = mysql_query($sql);
 			if(!$result)
@@ -168,9 +168,9 @@ class player_object {
 		
 		$alloted_time = $now - $start_time;
 		
-		$this->pick_duration = intval($alloted_time);
+		$this->pick_duration = (int)$alloted_time;
 		
-		$sql = "UPDATE players SET pick_duration = " . intval($alloted_time) . " WHERE player_id = " . intval($this->player_id);
+		$sql = "UPDATE players SET pick_duration = " . (int)$alloted_time . " WHERE player_id = " . (int)$this->player_id;
 		
 		return mysql_query($sql);
 	}
@@ -181,7 +181,7 @@ class player_object {
 	 * @return array Player objects that belong to given draft. false on failure
 	 */
 	public static function getPlayersByDraft($draft_id) {
-		$draft_id = intval($draft_id);
+		$draft_id = (int)$draft_id;
 
 		if($draft_id == 0)
 			return false;
@@ -192,17 +192,17 @@ class player_object {
 
 		while($player_row = mysql_fetch_array($players_result)) {
 			$player = new player_object();
-			$player->player_id = intval($player_row['player_id']);
-			$player->manager_id = intval($player_row['manager_id']);
-			$player->draft_id = intval($player_row['draft_id']);
+			$player->player_id = (int)$player_row['player_id'];
+			$player->manager_id = (int)$player_row['manager_id'];
+			$player->draft_id = (int)$player_row['draft_id'];
 			$player->first_name = $player_row['first_name'];
 			$player->last_name = $player_row['last_name'];
 			$player->team = $player_row['team'];
 			$player->position = $player_row['position'];
 			$player->pick_time = strtotime($player_row['pick_time']);
-			$player->pick_duration = intval($player_row['pick_duration']);
-			$player->player_round = intval($player_row['player_round']);
-			$player->player_pick = intval($player_row['player_pick']);
+			$player->pick_duration = (int)$player_row['pick_duration'];
+			$player->player_round = (int)$player_row['player_round'];
+			$player->player_pick = (int)$player_row['player_pick'];
 			$players[] = $player;
 		}
 
@@ -216,7 +216,7 @@ class player_object {
 	 * @return array picks Array of picks, or false on error.
 	 */
 	public static function getLastTenPicks($draft_id) {
-		$draft_id = intval($draft_id);
+		$draft_id = (int)$draft_id;
 
 		if($draft_id == 0)
 			return false;
@@ -363,7 +363,7 @@ class player_object {
 	 * @return array Player objects that belong to given manager. false on failure
 	 */
 	public static function getSelectedPlayersByManager($manager_id) {
-		$manager_id = intval($manager_id);
+		$manager_id = (int)$manager_id;
 
 		if($manager_id == 0)
 			return false;
@@ -389,8 +389,8 @@ class player_object {
 	public static function getSelectedPlayersByRound($draft_id, $round, $sort = true) {
 		$sortOrder = $sort ? "ASC" : "DESC";
 		
-		$draft_id = intval($draft_id);
-		$round = intval($round);
+		$draft_id = (int)$draft_id;
+		$round = (int)$round;
 
 		if($draft_id == 0 || $round == 0)
 			return false;
@@ -398,8 +398,8 @@ class player_object {
 		$sql = "SELECT p.*, m.* FROM players p ".
 		"LEFT OUTER JOIN managers m ".
 		"ON m.manager_id = p.manager_id ".
-		"WHERE p.draft_id = " . intval($draft_id) . 
-		" AND p.player_round = " . intval($round) . " AND p.pick_time IS NOT NULL ORDER BY p.player_pick " . $sortOrder;
+		"WHERE p.draft_id = " . (int)$draft_id . 
+		" AND p.player_round = " . (int)$round . " AND p.pick_time IS NOT NULL ORDER BY p.player_pick " . $sortOrder;
 
 		$players_result = mysql_query($sql);
 
@@ -422,8 +422,8 @@ class player_object {
 	public static function getAllPlayersByRound($draft_id, $round, $sort = true) {
 		$sortOrder = $sort ? "ASC" : "DESC";
 		
-		$draft_id = intval($draft_id);
-		$round = intval($round);
+		$draft_id = (int)$draft_id;
+		$round = (int)$round;
 
 		if($draft_id == 0 || $round == 0)
 			return false;
@@ -431,8 +431,8 @@ class player_object {
 		$sql = "SELECT p.*, m.* FROM players p ".
 		"LEFT OUTER JOIN managers m ".
 		"ON m.manager_id = p.manager_id ".
-		"WHERE p.draft_id = " . intval($draft_id) . 
-		" AND p.player_round = " . intval($round) . " ORDER BY p.player_pick " . $sortOrder;
+		"WHERE p.draft_id = " . (int)$draft_id . 
+		" AND p.player_round = " . (int)$round . " ORDER BY p.player_pick " . $sortOrder;
 
 		$players_result = mysql_query($sql);
 
@@ -446,7 +446,7 @@ class player_object {
 	}
 
 	public static function deletePlayersByDraft($draft_id) {
-		$draft_id = intval($draft_id);
+		$draft_id = (int)$draft_id;
 
 		if($draft_id == 0)
 			return false;
@@ -470,7 +470,7 @@ class player_object {
 	 * @param int $draft_id 
 	 */
 	public static function searchPlayersByStrictCriteria(search_object $search, $draft_id) {
-		$draft_id = intval($draft_id);
+		$draft_id = (int)$draft_id;
 		$search->keywords = mysql_real_escape_string($search->keywords);
 		$search->team = mysql_real_escape_string($search->team);
 		$search->position = mysql_real_escape_string($search->position);
@@ -507,7 +507,7 @@ class player_object {
 	 * @param int $draft_id 
 	 */
 	public static function searchPlayersByLooseCriteria(search_object $search, $draft_id) {
-		$draft_id = intval($draft_id);
+		$draft_id = (int)$draft_id;
 		$search->keywords = mysql_real_escape_string($search->keywords);
 		$search->team = mysql_real_escape_string($search->team);
 		$search->position = mysql_real_escape_string($search->position);
@@ -552,7 +552,7 @@ class player_object {
 	 */
 	public function pickExists() {
 		$sql = "SELECT player_id FROM players WHERE player_id = ". 
-		intval($this->player_id) . " AND draft_id = " . intval($this->draft_id) . " AND ".
+		(int)$this->player_id . " AND draft_id = " . (int)$this->draft_id . " AND ".
 		"player_pick = " . $this->player_pick . " AND player_round = " . $this->player_round . " LIMIT 1";
 		
 		return (mysql_num_rows(mysql_query($sql)) == 1);
@@ -581,19 +581,19 @@ class player_object {
 		if($draft_id > 0)
 			$player->draft_id = $draft_id;
 		else
-			$player->draft_id = intval($mysql_array['draft_id']);
+			$player->draft_id = (int)$mysql_array['draft_id'];
 		
-		$player->player_id = intval($mysql_array['player_id']);
-		$player->manager_id = intval($mysql_array['manager_id']);
+		$player->player_id = (int)$mysql_array['player_id'];
+		$player->manager_id = (int)$mysql_array['manager_id'];
 		$player->manager_name = $mysql_array['manager_name'];
 		$player->first_name = $mysql_array['first_name'];
 		$player->last_name = $mysql_array['last_name'];
 		$player->position = $mysql_array['position'];
 		$player->team = $mysql_array['team'];
 		$player->pick_time = $mysql_array['pick_time'];
-		$player->pick_duration = intval($mysql_array['pick_duration']);
-		$player->player_round = intval($mysql_array['player_round']);
-		$player->player_pick = intval($mysql_array['player_pick']);
+		$player->pick_duration = (int)$mysql_array['pick_duration'];
+		$player->player_round = (int)$mysql_array['player_round'];
+		$player->player_pick = (int)$mysql_array['player_pick'];
 		
 		return $player;
 	}

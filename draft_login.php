@@ -8,7 +8,7 @@ require_once("models/draft_object.php");
 DEFINE('ACTIVE_TAB', 'DRAFT_CENTRAL');
 
 $DESTINATION = $_POST['destination'];
-$DRAFT_ID = intval($_POST['did']);
+$DRAFT_ID = (int)$_POST['did'];
 $DRAFT = new draft_object($DRAFT_ID);
 $password = $_POST['draft_password'];
 

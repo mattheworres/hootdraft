@@ -12,9 +12,9 @@
 		require_once('cleanstring.php');
 
 		if(!empty($_REQUEST['draft_id']))
-		$draft_id = intval($_REQUEST['draft_id']);
+		$draft_id = (int)$_REQUEST['draft_id'];
 		else
-		$draft_id = intval($_REQUEST['did']);
+		$draft_id = (int)$_REQUEST['did'];
 
 		if(empty($draft_id))
 		require('comm_menu.php');
@@ -112,7 +112,7 @@
 	$manager_order_result = mysql_query("SELECT draft_order FROM managers WHERE draft_id = '".$draft_id."' ORDER BY draft_order DESC LIMIT 1");
 	$manager_order_row = mysql_fetch_array($manager_order_result);
 
-	$starting_order = intval($manager_order_row['draft_order']) + 1;	//Starting value to assign new managers for drafting order
+	$starting_order = (int)$manager_order_row['draft_order'] + 1;	//Starting value to assign new managers for drafting order
 
 	foreach($managers as $idx => $manager) {
 		$manager_name = $manager[0];

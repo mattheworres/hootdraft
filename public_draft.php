@@ -10,7 +10,7 @@ require_once("/models/manager_object.php");
 
 DEFINE("ACTIVE_TAB", "DRAFT_CENTRAL");
 DEFINE("ACTION", $_REQUEST['action']);
-DEFINE('DRAFT_ID', intval($_REQUEST['did']));
+DEFINE('DRAFT_ID', (int)$_REQUEST['did']);
 
 //Draft password may have pre-loaded this for us.
 if(!isset($DRAFT) || get_class($DRAFT) != "draft_object")
@@ -47,7 +47,7 @@ switch(ACTION) {
 		if($DRAFT->isCompleted())
 			echo "9999";
 		else
-			echo intval($DRAFT->current_pick);
+			echo (int)$DRAFT->current_pick;
 		// </editor-fold>
 		break;
 	
@@ -77,7 +77,7 @@ switch(ACTION) {
 	
 	case 'loadManagerPicks':
 		// <editor-fold defaultstate="collapsed" desc="loadManagerPicks Logic">
-		$manager_id = intval($_REQUEST['mid']);
+		$manager_id = (int)$_REQUEST['mid'];
 		$MANAGER = new manager_object($manager_id);
 		
 		if($manager_id == 0 || $manager === false) {
@@ -108,7 +108,7 @@ switch(ACTION) {
 	
 	case 'loadRoundPicks':
 		// <editor-fold defaultstate="collapsed" desc="loadRoundPicks Logic">
-		$ROUND = intval($_REQUEST['round']);
+		$ROUND = (int)$_REQUEST['round'];
 		
 		if($ROUND == 0)
 			exit(1);

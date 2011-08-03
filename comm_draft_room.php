@@ -7,7 +7,7 @@ include_once("models/draft_model.php");
 set_conn();
 
 
-$draft_id = intval($_REQUEST['draft_id']);
+$draft_id = (int)$_REQUEST['draft_id'];
 $action = CleanString(trim($_REQUEST['action']));
 
 $draft_result = mysql_query("SELECT * FROM draft WHERE draft_id = '".$draft_id."'");

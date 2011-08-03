@@ -21,7 +21,7 @@ switch($_GET['action']) {
 		$draft->draft_name = trim($_POST['draft_name']);
 		$draft->draft_sport = trim($_POST['draft_sport']);
 		$draft->draft_style = trim($_POST['draft_style']);
-		$draft->draft_rounds = intval($_POST['draft_rounds']);
+		$draft->draft_rounds = (int)$_POST['draft_rounds'];
 
 		$object_errors = $draft->getValidity();
 

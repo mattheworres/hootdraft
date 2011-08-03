@@ -10,8 +10,8 @@ date_default_timezone_set('America/New_York');
 set_conn();
 
 
-$draft_id = intval($_REQUEST['draft_id']);
-$manager_id = intval($_REQUEST['manager_id']);
+$draft_id = (int)$_REQUEST['draft_id'];
+$manager_id = (int)$_REQUEST['manager_id'];
 $action = CleanString(trim($_REQUEST['action']));
 
 $draft_result = mysql_query("SELECT * FROM draft WHERE draft_id = '" . $draft_id . "'");

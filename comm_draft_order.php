@@ -5,8 +5,8 @@ include_once("cleanstring.php");
 
 set_conn();
 
-$draft_id = intval($_GET['did']);
-$manager_id = intval($_GET['mid']);
+$draft_id = (int)$_GET['did'];
+$manager_id = (int)$_GET['mid'];
 $action = $_GET['action'];
 
 $draft_result = mysql_query("SELECT draft_status FROM draft WHERE draft_id = " . $draft_id);
@@ -49,14 +49,14 @@ switch($action) {
 			exit(1);
 		}
 
-		$old_place = intval($manager_row['draft_order']);
+		$old_place = (int)$manager_row['draft_order'];
 
 		if($old_place == 1) {
 			header('Location: comm_manage_draft.php?did='.$draft_id);
 			exit(0);
 		}
 
-		$new_place = intval($manager_row['draft_order']) - 1;
+		$new_place = (int)$manager_row['draft_order'] - 1;
 
 		$swap_manager_result = mysql_query("SELECT draft_order, manager_id FROM managers WHERE draft_id = ".$draft_id." AND manager_id != ".$manager_id." AND draft_order = '".$new_place."'");
 		
@@ -94,7 +94,7 @@ switch($action) {
 			exit(1);
 		}
 
-		$old_place = intval($manager_row['draft_order']);
+		$old_place = (int)$manager_row['draft_order'];
 
 		$lowest_order_result = mysql_query("SELECT draft_order FROM managers WHERE draft_id = ".$draft_id." ORDER BY draft_order DESC LIMIT 1");
 		if(!$lowest_order_row = mysql_fetch_array($lowest_order_result)) {
@@ -103,14 +103,14 @@ switch($action) {
 			require('views/error_page.php');
 			exit(1);
 		}
-		$lowest_order = intval($lowest_order_row['draft_order']);
+		$lowest_order = (int)$lowest_order_row['draft_order'];
 
 		if($old_place == $lowest_order) {
 			header('Location: comm_manage_draft.php?did='.$draft_id);
 			exit(0);
 		}
 
-		$new_place = intval($manager_row['draft_order']) + 1;
+		$new_place = (int)$manager_row['draft_order'] + 1;
 
 		$swap_manager_result = mysql_query("SELECT draft_order, manager_id FROM managers WHERE draft_id = ".$draft_id." AND manager_id != ".$manager_id." AND draft_order = '".$new_place."'");
 		if(!$swap_manager_row = mysql_fetch_array($swap_manager_result)) {

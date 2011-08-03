@@ -37,9 +37,9 @@
 
 		require_once('cleanstring.php');
 		if(empty($_POST))
-		$draft_id = intval($_REQUEST['did']);
+		$draft_id = (int)$_REQUEST['did'];
 		else
-		$draft_id = intval($_REQUEST['draft_id']);
+		$draft_id = (int)$_REQUEST['draft_id'];
 
 		if(empty($draft_id))
 		require('comm_menu.php');
@@ -75,7 +75,7 @@
 			$draft_name = CleanString($_POST['draft_name']);
 			$draft_sport = CleanString($_POST['draft_sport']);
 			$draft_style = CleanString($_POST['draft_style']);
-			$draft_rounds = intval($_POST['draft_rounds']);
+			$draft_rounds = (int)$_POST['draft_rounds'];
 
 			include_once('models/draft_model.php');
 

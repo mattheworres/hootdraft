@@ -9,17 +9,17 @@ set_conn();
 
 
 
-$draft_id = intval($_REQUEST['draft_id']);
+$draft_id = (int)$_REQUEST['draft_id'];
 $action = CleanString(trim($_REQUEST['action']));
 
-$pick_id = intval($_REQUEST['pick_id']);
-$manager_id = intval($_REQUEST['manager_id']);
+$pick_id = (int)$_REQUEST['pick_id'];
+$manager_id = (int)$_REQUEST['manager_id'];
 
-$success = intval($_REQUEST['success']);
+$success = (int)$_REQUEST['success'];
 
-$round = intval($_REQUEST['round']);
-$pick = intval($_REQUEST['pick']);
-$old_pick = intval($_REQUEST['old_pick']);
+$round = (int)$_REQUEST['round'];
+$pick = (int)$_REQUEST['pick'];
+$old_pick = (int)$_REQUEST['old_pick'];
 $first_name = CleanString(trim($_REQUEST['first_name']));
 $last_name = CleanString(trim($_REQUEST['last_name']));
 $team_abbreviation = CleanString(trim($_REQUEST['team_abbreviation']));

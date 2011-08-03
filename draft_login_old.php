@@ -1,8 +1,8 @@
 <?php session_start();	/*Even if we have a false alarm, start the session at least before headers are sent*/
 include_once("dbconn.php");
 include_once("cleanstring.php");
-$_REQUEST['q'] = intval($_REQUEST['q']);
-$draft_id = intval($_REQUEST['draft_id']);
+$_REQUEST['q'] = (int)$_REQUEST['q'];
+$draft_id = (int)$_REQUEST['draft_id'];
 $draft_password = CleanString(trim($_REQUEST['draft_password']));
 
 set_conn();

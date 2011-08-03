@@ -43,7 +43,7 @@ class draft_object {
 	public $sports_colors;
 
 	public function __construct($id = 0) {
-		$id = intval($id);
+		$id = (int)$id;
 		
 		if($id == 0)
 			return false;
@@ -53,7 +53,7 @@ class draft_object {
 		if(!$draft_row = mysql_fetch_array($draft_result))
 			return false;
 
-		$this->draft_id = intval($draft_row['draft_id']);
+		$this->draft_id = (int)$draft_row['draft_id'];
 		$this->draft_name = $draft_row['draft_name'];
 		$this->draft_sport = $draft_row['draft_sport'];
 		$this->draft_status = $draft_row['draft_status'];
@@ -62,8 +62,8 @@ class draft_object {
 		$this->draft_password = $draft_row['draft_password'];
 		$this->start_time = $draft_row['draft_start_time'];
 		$this->end_time = $draft_row['draft_end_time'];
-		$this->current_round = intval($draft_row['draft_current_round']);
-		$this->current_pick = intval($draft_row['draft_current_pick']);
+		$this->current_round = (int)$draft_row['draft_current_round'];
+		$this->current_pick = (int)$draft_row['draft_current_pick'];
 
 		return true;
 	}
@@ -87,7 +87,7 @@ class draft_object {
 
 		if(empty($this->draft_id) || $this->draft_id == 0) {
 			$name_result = mysql_fetch_array(mysql_query("SELECT COUNT(draft_id) as count FROM draft WHERE draft_name = '" . mysql_real_escape_string($this->draft_name) . "' AND draft_sport = '" . mysql_real_escape_string($this->draft_sport) . "'"));
-			$name_count = intval($name_result['count']);
+			$name_count = (int)$name_result['count'];
 
 			if($name_count > 0)
 				$errors[] = "Draft already found with that name and sport.";
@@ -140,26 +140,26 @@ class draft_object {
 				"draft_sport = '" . mysql_real_escape_string($this->draft_sport) . "', " .
 				"draft_status = '" . mysql_real_escape_string($this->draft_status) . "', " .
 				"draft_style = '" . mysql_real_escape_string($this->draft_style) . "', " .
-				"draft_rounds = '" . intval($this->draft_rounds) . "', ";
+				"draft_rounds = '" . (int)$this->draft_rounds . "', ";
 			
 			if(isset($this->start_time) && strlen($this->start_time) > 0)
 				if($this->start_time == "NULL")
 					$sql .= "draft_start_time = NULL, ";
 
-			if(intval($this->current_round) > 1)
-				$sql .= "draft_current_round = " . intval($this->current_round) . ", ";
-			if(intval($this->current_pick) > 1)
-				$sql .= "draft_current_pick = " . intval($this->current_pick) . ", ";
+			if((int)$this->current_round > 1)
+				$sql .= "draft_current_round = " . (int)$this->current_round . ", ";
+			if((int)$this->current_pick > 1)
+				$sql .= "draft_current_pick = " . (int)$this->current_pick . ", ";
 
 			$sql .= "draft_password = '" . mysql_real_escape_string($this->draft_password) . "' " .
-				"WHERE draft_id = " . intval($this->draft_id);
+				"WHERE draft_id = " . (int)$this->draft_id;
 
 			return mysql_query($sql);
 		}else {
 			$sql = "INSERT INTO draft "
 				. "(draft_id, draft_name, draft_sport, draft_status, draft_style, draft_rounds) "
 				. "VALUES "
-				. "(NULL, '" . mysql_real_escape_string($this->draft_name) . "', '" . mysql_real_escape_string($this->draft_sport) . "', 'undrafted', '" . mysql_real_escape_string($this->draft_style) . "', " . intval($this->draft_rounds) . ")";
+				. "(NULL, '" . mysql_real_escape_string($this->draft_name) . "', '" . mysql_real_escape_string($this->draft_sport) . "', 'undrafted', '" . mysql_real_escape_string($this->draft_style) . "', " . (int)$this->draft_rounds . ")";
 
 			if(!mysql_query($sql))
 				return false;
@@ -172,20 +172,20 @@ class draft_object {
 	
 	public function moveDraftForward(player_object $next_pick) {
 		if($next_pick != null) {
-			$this->current_pick = intval($next_pick->player_pick);
-			$this->current_round = intval($next_pick->player_round);
+			$this->current_pick = (int)$next_pick->player_pick;
+			$this->current_round = (int)$next_pick->player_round;
 			
 			$sql = "UPDATE draft SET ".
-			"draft_current_pick = " . intval($this->current_pick) . ", ".
-			"draft_current_round = " . intval($this->current_round) . " ".
-			"WHERE draft_id = " . intval($this->draft_id);
+			"draft_current_pick = " . (int)$this->current_pick . ", ".
+			"draft_current_round = " . (int)$this->current_round . " ".
+			"WHERE draft_id = " . (int)$this->draft_id;
 			
 			return mysql_query($sql);
 		}else {
 			$sql = "UPDATE draft SET ".
 			"draft_status = 'complete', ".
 			"draft_end_time = '" . mysql_real_escape_string(php_draft_library::getNowPhpTime()) . "' ".
-			"WHERE draft_id = " . intval($this->draft_id);
+			"WHERE draft_id = " . (int)$this->draft_id;
 		}
 	}
 
@@ -299,10 +299,10 @@ class draft_object {
 	 * @return string MySQL timestamp given to draft 
 	 */
 	public function beginStartTime() {
-		$sql = "UPDATE draft SET draft_start_time = NOW() WHERE draft_id = " . intval($this->draft_id) . " LIMIT 1";
+		$sql = "UPDATE draft SET draft_start_time = NOW() WHERE draft_id = " . (int)$this->draft_id . " LIMIT 1";
 		mysql_query($sql);
 
-		$time_row = mysql_fetch_array(mysql_query("SELECT draft_start_time FROM draft WHERE draft_id = " . intval($this->draft_id) . " LIMIT 1"));
+		$time_row = mysql_fetch_array(mysql_query("SELECT draft_start_time FROM draft WHERE draft_id = " . (int)$this->draft_id . " LIMIT 1"));
 
 		return $time_row['draft_start_time'];
 	}
@@ -328,7 +328,7 @@ class draft_object {
 		if(!$managerRemovalSuccess)
 			return false;
 		
-		$sql = "DELETE FROM draft WHERE draft_id = " . intval($this->draft_id) . " LIMIT 1";
+		$sql = "DELETE FROM draft WHERE draft_id = " . (int)$this->draft_id . " LIMIT 1";
 		
 		return mysql_query($sql);
 	}
@@ -411,18 +411,18 @@ class draft_object {
 
 		while($draft_row = mysql_fetch_array($drafts_result)) {
 			$draft = new draft_object();
-			$draft->draft_id = intval($draft_row['draft_id']);
+			$draft->draft_id = (int)$draft_row['draft_id'];
 			$draft->draft_name = $draft_row['draft_name'];
 			$draft->draft_status = $draft_row['draft_status'];
 			$draft->visibility = ($draft_row['draft_password'] != '' ? "locked" : "unlocked");
 			$draft->draft_password = $draft_row['draft_password'];
 			$draft->draft_sport = $draft_row['draft_sport'];
 			$draft->draft_style = $draft_row['draft_style'];
-			$draft->draft_rounds = intval($draft_row['draft_rounds']);
+			$draft->draft_rounds = (int)$draft_row['draft_rounds'];
 			$draft->start_time = $draft_row['start_time'];
 			$draft->end_time = $draft_row['end_time'];
-			$draft->current_round = intval($draft_row['current_round']);
-			$draft->current_pick = intval($draft_row['current_pick']);
+			$draft->current_round = (int)$draft_row['current_round'];
+			$draft->current_pick = (int)$draft_row['current_pick'];
 			$drafts[] = $draft;
 		}
 

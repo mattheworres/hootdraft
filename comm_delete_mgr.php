@@ -5,8 +5,8 @@ include_once("dbconn.php");
 set_conn();
 
 
-$draft_id = intval($_REQUEST['did']);
-$manager_id = intval($_REQUEST['mid']);
+$draft_id = (int)$_REQUEST['did'];
+$manager_id = (int)$_REQUEST['mid'];
 
 if(empty($draft_id)) {
 	$title = "Draft Not Found";
@@ -20,7 +20,7 @@ if(empty($draft_id)) {
 	exit(1);
 }else {
 	$manager_row = mysql_fetch_array(mysql_query("SELECT draft_order FROM managers WHERE draft_id = '".$draft_id."' AND manager_id = '".$manager_id."'"));
-	$old_order = intval($manager_row['draft_order']);
+	$old_order = (int)$manager_row['draft_order'];
 
 	$sql = "DELETE FROM managers WHERE draft_id = '".$draft_id."' AND manager_id = '".$manager_id."'";
 	$success = mysql_query($sql);

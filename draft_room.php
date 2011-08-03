@@ -6,8 +6,8 @@ require_once("models/manager_object.php");
 
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
 DEFINE("ACTION", $_REQUEST['action']);
-DEFINE('DRAFT_ID', intval($_REQUEST['did']));
-DEFINE('PLAYER_ID', intval($_REQUEST['pid']));
+DEFINE('DRAFT_ID', (int)$_REQUEST['did']);
+DEFINE('PLAYER_ID', (int)$_REQUEST['pid']);
 
 $DRAFT = new draft_object(DRAFT_ID);
 
@@ -63,14 +63,14 @@ switch(ACTION) {
 		// <editor-fold defaultstate="collapsed" desc="addPick Logic">
 		$submitted_pick = new player_object();
 		$submitted_pick->draft_id = DRAFT_ID;
-		$submitted_pick->player_id = intval($_POST['pid']);
-		$submitted_pick->manager_id = intval($_POST['mid']);
+		$submitted_pick->player_id = (int)$_POST['pid'];
+		$submitted_pick->manager_id = (int)$_POST['mid'];
 		$submitted_pick->first_name = $_POST['first_name'];
 		$submitted_pick->last_name = $_POST['last_name'];
 		$submitted_pick->team = $_POST['team'];
 		$submitted_pick->position = $_POST['position'];
-		$submitted_pick->player_round = intval($_POST['player_round']);
-		$submitted_pick->player_pick = intval($_POST['player_pick']);
+		$submitted_pick->player_round = (int)$_POST['player_round'];
+		$submitted_pick->player_pick = (int)$_POST['player_pick'];
 		
 		$NEXT_FIVE_PICKS = $DRAFT->getNextFivePicks();
 		$LAST_FIVE_PICKS = $DRAFT->getLastFivePicks();
@@ -127,7 +127,7 @@ switch(ACTION) {
 	
 	case 'getEditablePicks':
 		// <editor-fold defaultstate="collapsed" desc="getEditablePicks Logic">
-		$round_number = intval($_POST['round']);
+		$round_number = (int)$_POST['round'];
 		if($round_number == 0) {
 			echo "ERROR";
 			exit(1);
@@ -171,7 +171,7 @@ switch(ACTION) {
 			exit(1);
 		}
 		
-		$EDIT_PLAYER->manager_id = intval($_POST['manager_id']);
+		$EDIT_PLAYER->manager_id = (int)$_POST['manager_id'];
 		$EDIT_PLAYER->first_name = $_POST['first_name'];
 		$EDIT_PLAYER->last_name = $_POST['last_name'];
 		$EDIT_PLAYER->team = $_POST['team'];
