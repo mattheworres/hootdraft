@@ -87,7 +87,7 @@ switch(ACTION) {
 		
 		$previous_pick = player_object::getLastPick($DRAFT);
 		
-		if($submitted_pick->savePlayer(true) === false) {
+		if($previous_pick === false || $submitted_pick->savePlayer(true) === false) {
 			$ERRORS[] = "Unable to update pick, please try again.";
 			require("/views/draft_room/add_pick.php");
 			exit(1);

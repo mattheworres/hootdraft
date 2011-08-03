@@ -276,10 +276,10 @@ class player_object {
 		"FROM players p ".
 		"LEFT OUTER JOIN managers m ".
 		"ON m.manager_id = p.manager_id ".
-		"WHERE p.draft_id = " . $draft->draft_id . " ".
-		"AND p.player_round = " . $draft->current_round . " ".
-		"AND p.player_pick = " . $draft->current_pick - 1 . " ".
-		"AND p.pick_time IS NOT NULL ".
+		"WHERE p.draft_id = " . $draft->draft_id .
+		" AND p.player_round = " . $draft->current_round .
+		" AND p.player_pick = " . ($draft->current_pick - 1) .
+		" AND p.pick_time IS NOT NULL ".
 		"LIMIT 1";
 		
 		$pick_result = mysql_query($sql);
