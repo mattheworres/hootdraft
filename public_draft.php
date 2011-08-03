@@ -144,9 +144,9 @@ switch(ACTION) {
 		// </editor-fold>
 		break;
 	
-	case 'viewStats':
+	case 'draftStats':
 		//TODO: Add data modeling for stats object, and get stats.
-		//Note: stats object can include its own SQL queries, it's all read-only anyways so no error-checking needed, there's no user input.
+		require("/views/public_draft/draft_statistics.php");
 		break;
 	
 	default:
