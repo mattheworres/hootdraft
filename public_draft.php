@@ -145,7 +145,9 @@ switch(ACTION) {
 		break;
 	
 	case 'draftStats':
-		//TODO: Add data modeling for stats object, and get stats.
+		require_once("/models/draft_statistics_object.php");
+		$STATS = new draft_statistics_object();
+		$STATS->generateStatistics($DRAFT);
 		require("/views/public_draft/draft_statistics.php");
 		break;
 	

@@ -7,7 +7,7 @@ if(DRAFT_ID > 0) {
 	<p><a href="public_draft.php?action=picksPerManager&did=<?php echo DRAFT_ID; ?>"><img src="images/icons/team_picks_small.png" class="small_link" alt="View Picks by Team" />&nbsp;Picks per Manager</a></p>
 	<p><a href="public_draft.php?action=picksPerRound&did=<?php echo DRAFT_ID; ?>"><img src="images/icons/round_picks_small.png" class="small_link" alt="View Picks by Round" />&nbsp;Picks per Round</a></p>
 	<br />
-	<h4><a href="draft_stats.php?draft_id=<?php echo DRAFT_ID; ?>"><img src="images/icons/stats_small.png" class="small_link" alt="View Draft Statistics" />&nbsp;Draft Statistics</a></h4>
+	<h4><a href="public_draft.php?action=draftStats&did=<?php echo DRAFT_ID; ?>"><img src="images/icons/stats_small.png" class="small_link" alt="View Draft Statistics" />&nbsp;Draft Statistics</a></h4>
 	<br />
 	<h4><a href="public_draft.php?action=searchDraft&did=<?php echo DRAFT_ID; ?>"><img src="images/icons/search_small.png" class="small_link" alt="Search the Draft" />&nbsp;Search</a></h4>
 	<br />
