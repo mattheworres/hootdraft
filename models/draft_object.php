@@ -43,10 +43,10 @@ class draft_object {
 	public $sports_colors;
 
 	public function __construct($id = 0) {
-		if(intval($id) == 0)
-			return false;
-
 		$id = intval($id);
+		
+		if($id == 0)
+			return false;
 
 		$draft_result = mysql_query("SELECT * FROM draft WHERE draft_id = " . $id . " LIMIT 1");
 
@@ -60,8 +60,6 @@ class draft_object {
 		$this->draft_style = $draft_row['draft_style'];
 		$this->draft_rounds = $draft_row['draft_rounds'];
 		$this->draft_password = $draft_row['draft_password'];
-		//TODO: Figure out how to convert to useable PHP datetimes:
-		//NOTE: Using strtotime, in the first draft page that's what I was using... update if necessary.
 		$this->start_time = $draft_row['draft_start_time'];
 		$this->end_time = $draft_row['draft_end_time'];
 		$this->current_round = intval($draft_row['draft_current_round']);
@@ -77,11 +75,11 @@ class draft_object {
 	public function getValidity() {
 		$errors = array();
 
-		if(empty($this->draft_name))
+		if(!isset($this->draft_name) || strlen($this->draft_name) == 0)
 			$errors[] = "Draft Name is empty.";
-		if(empty($this->draft_sport))
+		if(!isset($this->draft_name) || strlen($this->draft_sport) == 0)
 			$errors[] = "Draft Sport is empty.";
-		if(empty($this->draft_style))
+		if(!isset($this->draft_style) || strlen($this->draft_style) == 0)
 			$errors[] = "Draft Style is empty.";
 
 		if($this->draft_rounds < 1)
@@ -123,9 +121,10 @@ class draft_object {
 	 * @return string String representation of the duration of this draft
 	 */
 	public function getDraftDuration() {
-		if($this->draft_status == "complete")
-			return php_draft_library::secondsToWords($this->start_time - $this->end_time);
-		else
+		if($this->draft_status == "complete") {
+			$duration_seconds = strtotime($this->end_time) - strtotime($this->start_time);
+			return php_draft_library::secondsToWords($duration_seconds);
+		} else
 			return "";
 	}
 
@@ -177,8 +176,8 @@ class draft_object {
 			$this->current_round = intval($next_pick->player_round);
 			
 			$sql = "UPDATE draft SET ".
-			"draft_current_pick = " . $this->current_pick . ", ".
-			"draft_current_round = " . $this->current_round . " ".
+			"draft_current_pick = " . intval($this->current_pick) . ", ".
+			"draft_current_round = " . intval($this->current_round) . " ".
 			"WHERE draft_id = " . intval($this->draft_id);
 			
 			return mysql_query($sql);
@@ -300,10 +299,10 @@ class draft_object {
 	 * @return string MySQL timestamp given to draft 
 	 */
 	public function beginStartTime() {
-		$sql = "UPDATE draft SET draft_start_time = NOW() WHERE draft_id = " . $this->draft_id . " LIMIT 1";
+		$sql = "UPDATE draft SET draft_start_time = NOW() WHERE draft_id = " . intval($this->draft_id) . " LIMIT 1";
 		mysql_query($sql);
 
-		$time_row = mysql_fetch_array(mysql_query("SELECT draft_start_time FROM draft WHERE draft_id = " . $this->draft_id . " LIMIT 1"));
+		$time_row = mysql_fetch_array(mysql_query("SELECT draft_start_time FROM draft WHERE draft_id = " . intval($this->draft_id) . " LIMIT 1"));
 
 		return $time_row['draft_start_time'];
 	}
@@ -329,7 +328,7 @@ class draft_object {
 		if(!$managerRemovalSuccess)
 			return false;
 		
-		$sql = "DELETE FROM draft WHERE draft_id = " . $this->draft_id . " LIMIT 1";
+		$sql = "DELETE FROM draft WHERE draft_id = " . intval($this->draft_id) . " LIMIT 1";
 		
 		return mysql_query($sql);
 	}
@@ -412,7 +411,7 @@ class draft_object {
 
 		while($draft_row = mysql_fetch_array($drafts_result)) {
 			$draft = new draft_object();
-			$draft->draft_id = $draft_row['draft_id'];
+			$draft->draft_id = intval($draft_row['draft_id']);
 			$draft->draft_name = $draft_row['draft_name'];
 			$draft->draft_status = $draft_row['draft_status'];
 			$draft->visibility = ($draft_row['draft_password'] != '' ? "locked" : "unlocked");
