@@ -17,13 +17,15 @@ class user_object {
 	public $password;
 	
 	public function __construct($user_id = 0) {
-		if((int)$user_id == 0)
+		$user_id = (int)$user_id;
+		if($user_id == 0)
 			return false;
 		
 		$userRow = mysql_fetch_array(mysql_query("SELECT * FROM user_login WHERE UserId = " . $user_id . " LIMIT 1"));
 		
 		if(!$userRow)
 			return false;
+		
 		$this->user_id = $user_id;
 		$this->user_name = $userRow['Username'];
 		$this->public_name = $userRow['Name'];
@@ -59,7 +61,7 @@ class user_object {
 		$commish_sql = "SELECT * FROM user_login WHERE UserId = " . $id_int . " LIMIT 1";
 		$commish_row = mysql_fetch_array(mysql_query($commish_sql));
 		
-		$this->user_id = $commish_row['UserId'];
+		$this->user_id = (int)$commish_row['UserId'];
 		$this->user_name = $commish_row['Username'];
 		$this->public_name = $commish_row['Name'];
 		$this->password = $commish_row['Password'];
@@ -103,10 +105,9 @@ class user_object {
 		$user_result = mysql_query("SELECT UserID
 									FROM user_login 
 									WHERE 
-									UserID = '" . $this->user_id . "' AND
-									UserName = '" . $this->user_name . "' AND
-									Password = '" . $this->password . "'
-							   ");
+									UserID = " . (int)$this->user_id . " AND
+									UserName = '" . mysql_real_escape_string($this->user_name) . "' AND
+									Password = '" . mysql_real_escape_string($this->password) . "'");
 		
 		if(!$user_row = mysql_fetch_array($user_result))
 			return false;
@@ -122,12 +123,12 @@ class user_object {
 		//TODO: Remove this hack. This assumes a single user being edited by himself.
 		$this->getLoggedInId();
 		
-		$update_sql = "UPDATE user_login SET Username = '" . $this->user_name . "'";
+		$update_sql = "UPDATE user_login SET Username = '" . mysql_real_escape_string($this->user_name) . "'";
 		
 		if(isset($this->password) && strlen($this->password) > 0)
-				$update_sql .= ",  Password = '" . $this->password . "'";
+				$update_sql .= ",  Password = '" . mysql_real_escape_string($this->password) . "'";
 		
-		$update_sql .= ",  Name = '" . $this->public_name . "' WHERE UserID = " . $this->user_id;
+		$update_sql .= ",  Name = '" . mysql_real_escape_string($this->public_name) . "' WHERE UserID = " . (int)$this->user_id;
 		
 		$success = mysql_query($update_sql);
 		
@@ -141,9 +142,11 @@ class user_object {
 	 * Assuming user information is up-to-date, update the session variables accordingly.
 	 */
 	public function updateAuthentication() {
-		if($this->user_id > 0) $_SESSION['userid'] = $this->user_id;
-		$_SESSION['username'] = $this->user_name;
-		$_SESSION['password'] = $this->password;
+		if($this->user_id > 0) {
+			$_SESSION['userid'] = (int)$this->user_id;
+			$_SESSION['username'] = $this->user_name;
+			$_SESSION['password'] = $this->password;
+		}
 	}
 }
 ?>

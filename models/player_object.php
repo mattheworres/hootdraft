@@ -160,7 +160,7 @@ class player_object {
 			throw new Exception("Must call updatePickDuration on a player object that already has its own pick_time set!");
 		
 		if($this->player_pick == 1) 
-			$start_time = $draft->start_time;
+			$start_time = (int)$draft->start_time;
 		else
 			$start_time = strtotime($previous_pick->pick_time);
 		
@@ -190,21 +190,8 @@ class player_object {
 
 		$players = array();
 
-		while($player_row = mysql_fetch_array($players_result)) {
-			$player = new player_object();
-			$player->player_id = (int)$player_row['player_id'];
-			$player->manager_id = (int)$player_row['manager_id'];
-			$player->draft_id = (int)$player_row['draft_id'];
-			$player->first_name = $player_row['first_name'];
-			$player->last_name = $player_row['last_name'];
-			$player->team = $player_row['team'];
-			$player->position = $player_row['position'];
-			$player->pick_time = strtotime($player_row['pick_time']);
-			$player->pick_duration = (int)$player_row['pick_duration'];
-			$player->player_round = (int)$player_row['player_round'];
-			$player->player_pick = (int)$player_row['player_pick'];
-			$players[] = $player;
-		}
+		while($player_row = mysql_fetch_array($players_result))
+			$players[] = player_object::fillPlayerObject($player_row, $draft_id);
 
 		return $players;
 	}
@@ -251,7 +238,7 @@ class player_object {
 		"FROM players p ".
 		"LEFT OUTER JOIN managers m ".
 		"ON m.manager_id = p.manager_id ".
-		"WHERE p.draft_id = " . $draft->draft_id . " ".
+		"WHERE p.draft_id = " . (int)$draft->draft_id . " ".
 		"AND p.pick_time IS NOT NULL ".
 		"ORDER BY p.player_pick DESC ".
 		"LIMIT 5";
@@ -276,9 +263,9 @@ class player_object {
 		"FROM players p ".
 		"LEFT OUTER JOIN managers m ".
 		"ON m.manager_id = p.manager_id ".
-		"WHERE p.draft_id = " . $draft->draft_id .
-		" AND p.player_round = " . $draft->current_round .
-		" AND p.player_pick = " . ($draft->current_pick - 1) .
+		"WHERE p.draft_id = " . (int)$draft->draft_id .
+		" AND p.player_round = " . (int)$draft->current_round .
+		" AND p.player_pick = " . (int)($draft->current_pick - 1) .
 		" AND p.pick_time IS NOT NULL ".
 		"LIMIT 1";
 		
@@ -302,9 +289,9 @@ class player_object {
 		"FROM players p ".
 		"LEFT OUTER JOIN managers m ".
 		"ON m.manager_id = p.manager_id ".
-		"WHERE p.draft_id = " . $draft->draft_id . " ".
-		"AND p.player_round = " . $draft->current_round . " ".
-		"AND p.player_pick = " . $draft->current_pick . " ".
+		"WHERE p.draft_id = " . (int)$draft->draft_id . " ".
+		"AND p.player_round = " . (int)$draft->current_round . " ".
+		"AND p.player_pick = " . (int)$draft->current_pick . " ".
 		"LIMIT 1";
 		
 		$pick_row = mysql_fetch_array(mysql_query($sql));
@@ -322,8 +309,8 @@ class player_object {
 		"FROM players p " .
 		"LEFT OUTER JOIN managers m " .
 		"ON m.manager_id = p.manager_id " .
-		"WHERE p.draft_id = " . $draft->draft_id . " " .
-		"AND p.player_pick = " . ($draft->current_pick + 1) . " LIMIT 1";
+		"WHERE p.draft_id = " . (int)$draft->draft_id . " " .
+		"AND p.player_pick = " . (int)($draft->current_pick + 1) . " LIMIT 1";
 		
 		$pick_row = mysql_fetch_array(mysql_query($sql));
 		
@@ -340,8 +327,8 @@ class player_object {
 		"FROM players p ".
 		"LEFT OUTER JOIN managers m ".
 		"ON m.manager_id = p.manager_id ".
-		"WHERE p.draft_id = " . $draft->draft_id . " ".
-		"AND p.player_pick > " . $draft->current_pick . " ".
+		"WHERE p.draft_id = " . (int)$draft->draft_id . " ".
+		"AND p.player_pick > " . (int)$draft->current_pick . " ".
 		"ORDER BY p.player_pick ASC ".
 		"LIMIT 5";
 		
@@ -372,9 +359,8 @@ class player_object {
 
 		$players = array();
 
-		while($player_row = mysql_fetch_array($players_result)) {
+		while($player_row = mysql_fetch_array($players_result))
 			$players[] = player_object::fillPlayerObject($player_row);
-		}
 
 		return $players;
 	}
@@ -431,8 +417,8 @@ class player_object {
 		$sql = "SELECT p.*, m.* FROM players p ".
 		"LEFT OUTER JOIN managers m ".
 		"ON m.manager_id = p.manager_id ".
-		"WHERE p.draft_id = " . (int)$draft_id . 
-		" AND p.player_round = " . (int)$round . " ORDER BY p.player_pick " . $sortOrder;
+		"WHERE p.draft_id = " . $draft_id . 
+		" AND p.player_round = " . $round . " ORDER BY p.player_pick " . $sortOrder;
 
 		$players_result = mysql_query($sql);
 
@@ -553,7 +539,7 @@ class player_object {
 	public function pickExists() {
 		$sql = "SELECT player_id FROM players WHERE player_id = ". 
 		(int)$this->player_id . " AND draft_id = " . (int)$this->draft_id . " AND ".
-		"player_pick = " . $this->player_pick . " AND player_round = " . $this->player_round . " LIMIT 1";
+		"player_pick = " . (int)$this->player_pick . " AND player_round = " . (int)$this->player_round . " LIMIT 1";
 		
 		return (mysql_num_rows(mysql_query($sql)) == 1);
 	}

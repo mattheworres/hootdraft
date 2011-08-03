@@ -12,10 +12,9 @@ class loginObject {
 			$user_result = mysql_query("SELECT UserID
 										FROM user_login
 										WHERE
-										UserID = '" . $userObject->user_id . "' AND
-										UserName = '" . $userObject->user_name . "' AND
-										Password = '" . $userObject->password . "'
-									   ");
+										UserID = " . (int)$userObject->user_id . " AND
+										UserName = '" . mysql_real_escape_string($userObject->user_name) . "' AND
+										Password = '" . mysql_real_escape_string($userObject->password) . "'");
 
 			if(mysql_fetch_array($user_result)) {//If we did find a user that matched all of those credentials, we need to forward them to control panel
 				$action = "ALREADY_LOGGED_IN";
@@ -39,7 +38,7 @@ class loginObject {
 		$user_result = mysql_query("SELECT UserID, Username, Password
 									FROM user_login
 									WHERE Username = '" . mysql_real_escape_string($userObject->user_name) . "' AND
-									Password = '" . $userObject->password . "'
+									Password = '" . mysql_real_escape_string($userObject->password) . "'
 							   ");
 		if(!$user_row = mysql_fetch_array($user_result)) {
 			return false;
