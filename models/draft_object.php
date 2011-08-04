@@ -121,7 +121,7 @@ class draft_object {
 	 * @return string String representation of the duration of this draft
 	 */
 	public function getDraftDuration() {
-		if($this->draft_status == "complete") {
+		if($this->isCompleted()) {
 			$duration_seconds = strtotime($this->end_time) - strtotime($this->start_time);
 			return php_draft_library::secondsToWords($duration_seconds);
 		} else
