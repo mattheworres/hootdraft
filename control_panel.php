@@ -42,7 +42,7 @@ switch($_GET['action']) {
 		define("PAGE_HEADER", "Draft Successfully Created");
 		define("P_CLASS", "success");
 		define("PAGE_CONTENT", "Your draft, <em>" . $draft->draft_name . "</em> has been successfully created.  <a href=\"control_panel.php?action=manageDraft&did=" . $draft->draft_id . "\">Click here</a> to manage your new draft.<br/><br/>REMEMBER: Your next step should be to add all managers before you begin drafting players.");
-		require_once("/views/generic_result_view.php");
+		require_once("/views/shared/generic_result_view.php");
 		//</editor-fold>
 		break;
 		
@@ -98,7 +98,7 @@ switch($_GET['action']) {
 		define("PAGE_HEADER", "Profile Successfully Updated");
 		define("P_CLASS", "success");
 		define("PAGE_CONTENT", "Your user account has been successfully updated. <a href=\"control_panel.php?action=manageProfile\">Click here</a> to change your profile again, or <a href=\"control_panel.php\">click here</a> to be taken back to the control panel.");
-		require_once("/views/generic_result_view.php");
+		require_once("/views/shared/generic_result_view.php");
 		// </editor-fold>
 		break;
 

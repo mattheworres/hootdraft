@@ -33,7 +33,7 @@ switch($status) {
 			define("PAGE_HEADER", "You're Logged In!");
 			define("P_CLASS", "success");
 			define("PAGE_CONTENT", "You've been successfully authenticated. Unfortunately, your browser stopped the forward that was attempted.<br/><br/>Good news: You can <a href=\"control_panel.php?action=home\">click here</a> to be taken there right now. Kthxbai.");
-			require_once("/views/generic_result_view.php");
+			require_once("/views/shared/generic_result_view.php");
 			exit(0);
 		}else{
 			$ERRORS[] = "The username/password combination was incorrect. Please try again.";

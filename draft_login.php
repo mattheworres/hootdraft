@@ -17,7 +17,7 @@ if($DRAFT->draft_id == 0 || $DRAFT === false) {
 	define("PAGE_HEADER", "Draft Not Found");
 	define("P_CLASS", "error");
 	define("PAGE_CONTENT", "We're sorry, but the draft could not be loaded. Please try again.");
-	require_once("/views/generic_result_view.php");
+	require_once("/views/shared/generic_result_view.php");
 	exit(1);
 }
 // </editor-fold>

@@ -15,7 +15,7 @@ if($MANAGER->manager_id == 0) {
 	define("PAGE_HEADER", "Manager Not Found");
 	define("P_CLASS", "error");
 	define("PAGE_CONTENT", "We're sorry, but the manager could not be loaded. Please try again.");
-	require_once("/views/generic_result_view.php");
+	require_once("/views/shared/generic_result_view.php");
 	exit(1);
 }
 // </editor-fold>
@@ -66,7 +66,7 @@ switch(ACTION) {
 		define("PAGE_HEADER", $MANAGER->manager_name . " Successfully Updated!");
 		define("P_CLASS", "success");
 		define("PAGE_CONTENT", "<em>" . $MANAGER->manager_name . "</em> has been successfully updated!<br/><br/><a href=\"manager.php?action=editManager&mid=" . $MANAGER->manager_id . "\">Click here</a> to edit this manager again, or <a href=\"draft.php?did=" . $MANAGER->draft_id . "\">click here</a> to go back to managing your draft.");
-		require_once("/views/generic_result_view.php");
+		require_once("/views/shared/generic_result_view.php");
 		// </editor-fold>
 		break;
 	
