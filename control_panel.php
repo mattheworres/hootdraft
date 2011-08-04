@@ -1,6 +1,6 @@
 <?php
-require_once("check_login.php");
-require_once("models/draft_object.php");
+require("/includes/global_setup.php");
+require_once("/includes/check_login.php");
 
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
 
@@ -15,15 +15,13 @@ switch($_GET['action']) {
 
 	case 'addDraft':
 		//<editor-fold defaultstate="collapsed" desc="addDraft Logic">
-
 		$ERRORS = array();
 
-		$draft = new draft_object(array(
-			'draft_name' => CleanString(trim($_POST['draft_name'])),
-			'draft_sport' => CleanString(trim($_POST['draft_sport'])),
-			'draft_style' => CleanString(trim($_POST['draft_style'])),
-			'draft_rounds' => intval($_POST['draft_rounds'])
-		));
+		$draft = new draft_object();
+		$draft->draft_name = trim($_POST['draft_name']);
+		$draft->draft_sport = trim($_POST['draft_sport']);
+		$draft->draft_style = trim($_POST['draft_style']);
+		$draft->draft_rounds = (int)$_POST['draft_rounds'];
 
 		$object_errors = $draft->getValidity();
 
@@ -31,26 +29,25 @@ switch($_GET['action']) {
 			$ERRORS = $object_errors;
 			DEFINE("CONTROL_PANEL_ACTION", "ADD");
 			require_once("/views/control_panel/create_draft.php");
-			break;
+			exit(1);
 		}
 
 		if($draft->saveDraft() == false) {
 			$ERRORS[] = "Draft could not be saved, please try again.";
 			DEFINE("CONTROL_PANEL_ACTION", "ADD");
 			require_once("/views/control_panel/create_draft.php");
-			break;
+			exit(1);
 		}
 
 		define("PAGE_HEADER", "Draft Successfully Created");
-		define("PAGE_CONTENT", "<p class=\"success\">Your draft, <em>" . $draft->draft_name . "</em> has been successfully created.  <a href=\"control_panel.php?action=manageDraft&draftId=" . $draft->draft_id . "\">Click here</a> to manage your new draft.</p><p>REMEMBER: Your next step should be to add all managers before you begin drafting players.</p>");
-		require_once("/views/generic_result_view.php");
+		define("P_CLASS", "success");
+		define("PAGE_CONTENT", "Your draft, <em>" . $draft->draft_name . "</em> has been successfully created.  <a href=\"control_panel.php?action=manageDraft&did=" . $draft->draft_id . "\">Click here</a> to manage your new draft.<br/><br/>REMEMBER: Your next step should be to add all managers before you begin drafting players.");
+		require_once("/views/shared/generic_result_view.php");
 		//</editor-fold>
 		break;
 		
 	case 'manageDrafts':
 		// <editor-fold defaultstate="collapsed" desc="manageDrafts Logic">
-		//TODO: Look to old comm_manage_draft.php for logic to put here; still need to clean
-		//control_panel_manage_draft_view.php into an acceptable view.
 		$DRAFTS = draft_object::getAllDrafts();
 		DEFINE("CONTROL_PANEL_ACTION", "MANAGE");
 		require_once('/views/control_panel/manage_draft.php');
@@ -61,7 +58,6 @@ switch($_GET['action']) {
 		// <editor-fold defaultstate="collapsed" desc="manageProfile Logic">
 		DEFINE("CONTROL_PANEL_ACTION", "MANAGE");
 		require_once("/models/user_edit_model.php");
-		require_once("/models/user_object.php");
 		
 		$loggedInUser = new user_object();
 		$loggedInUser->getCurrentlyLoggedInUser();
@@ -74,7 +70,6 @@ switch($_GET['action']) {
 	case 'saveProfile':
 		// <editor-fold defaultstate="collapsed" desc="saveProfile Logic">
 		require_once("/models/user_edit_model.php");
-		require_once("/models/user_object.php");
 		
 		$ERRORS = array();
 		
@@ -99,14 +94,16 @@ switch($_GET['action']) {
 		}
 		
 		define("PAGE_HEADER", "Profile Successfully Updated");
-		define("PAGE_CONTENT", "<p class=\"success\">Your user account has been successfully updated. <a href=\"control_panel.php?action=manageProfile\">Click here</a> to change your profile again, or <a href=\"control_panel.php\">click here</a> to be taken back to the control panel.</p>");
-		require_once("/views/generic_result_view.php");
+		define("P_CLASS", "success");
+		define("PAGE_CONTENT", "Your user account has been successfully updated. <a href=\"control_panel.php?action=manageProfile\">Click here</a> to change your profile again, or <a href=\"control_panel.php\">click here</a> to be taken back to the control panel.");
+		require_once("/views/shared/generic_result_view.php");
 		// </editor-fold>
 		break;
 
 	case '':
 	case 'home':
 	default:
+		$DRAFTS = draft_object::getAllDrafts();
 		require_once('/views/control_panel/index.php');
 		break;
 }

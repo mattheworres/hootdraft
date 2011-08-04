@@ -62,10 +62,9 @@ class user_edit_model {
 	 * @return boolean success whether or not the MySQL transaction succeeded.
 	 */
 	public function saveUser() {
-		$user_entity_object = new user_object(array (
-			'user_name' => $this->username,
-			'public_name' => $this->public_name
-		));
+		$user_entity_object = new user_object();
+		$user_entity_object->user_name = $this->username;
+		$user_entity_object->public_name = $this->public_name;
 		
 		if(isset($this->oldPassword) && isset($this->newPassword))
 			$user_entity_object->password = $this->newPassword;

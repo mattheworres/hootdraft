@@ -1,24 +1,38 @@
 <?php
-require_once("check_login.php");
+require("/includes/global_setup.php");
+require_once("/includes/check_login.php");
 require_once("models/manager_object.php");
 
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
+DEFINE("ACTION", $_GET['action']);
 
-DEFINE('MANAGER_ID', intval($_GET['mid']));
+//NOTE: This uses _REQUEST because we grab the ID from both POSTs and GETs
+DEFINE('MANAGER_ID', (int)$_REQUEST['mid']);
 
-switch($_GET['action']) {
+$MANAGER = new manager_object(MANAGER_ID);
+
+// <editor-fold defaultstate="collapsed" desc="Error-checking on basic input">
+if($MANAGER->manager_id == 0) {
+	define("PAGE_HEADER", "Manager Not Found");
+	define("P_CLASS", "error");
+	define("PAGE_CONTENT", "We're sorry, but the manager could not be loaded. Please try again.");
+	require_once("/views/shared/generic_result_view.php");
+	exit(1);
+}
+// </editor-fold>
+
+switch(ACTION) {
 	case 'moveManager':
 		// <editor-fold defaultstate="collapsed" desc="moveManager Logic">
-		$manager_id = $_POST['mid'];
 		$direction = $_POST['direction'];
 		
 		switch($direction) {
 			case 'up':
-				$success = manager_object::moveManagerUp($manager_id);
+				$success = $MANAGER->moveManagerUp();
 				break;
 			
 			case 'down':
-				$success = manager_object::moveManagerDown($manager_id);
+				$success = $MANAGER->moveManagerDown();
 				break;
 		}	
 		
@@ -27,23 +41,44 @@ switch($_GET['action']) {
 		break;
 	
 	case 'editManager':
-		//TODO: Implement the view/error screen here
+		// <editor-fold defaultstate="collapsed" desc="editManager Logic">
+		require_once('/views/manager/edit_manager.php');
+		// </editor-fold>
 		break;
 	
 	case 'updateManager':
-		//TODO: Implement the manager save here
+		// <editor-fold defaultstate="collapsed" desc="updateManager Logic">
+		$ERRORS = array();
+		$MANAGER->manager_name = trim($_POST['manager_name']);
+		$MANAGER->manager_email = trim($_POST['manager_email']);
+		
+		$object_errors = $MANAGER->getValidity();
+		
+		if(count($object_errors) > 0) {
+			$ERRORS = $object_errors;
+			require_once('/views/manager/edit_manager.php');
+			exit(1);
+		}
+		
+		if($MANAGER->saveManager() === false) {
+			$ERRORS[] = "The manager was unable to be updated, please try again.";
+			require_once('/views/manager/edit_manager.php');
+			exit(1);
+		}
+		
+		define("PAGE_HEADER", $MANAGER->manager_name . " Successfully Updated!");
+		define("P_CLASS", "success");
+		define("PAGE_CONTENT", "<em>" . $MANAGER->manager_name . "</em> has been successfully updated!<br/><br/><a href=\"manager.php?action=editManager&mid=" . $MANAGER->manager_id . "\">Click here</a> to edit this manager again, or <a href=\"draft.php?did=" . $MANAGER->draft_id . "\">click here</a> to go back to managing your draft.");
+		require_once("/views/shared/generic_result_view.php");
+		// </editor-fold>
 		break;
 	
 	case 'deleteManager':
-		//TODO: Implement the confirm action screen here
-		break;
-	
-	case 'removeManager':
-		//TODO: Implement the manager delete here
-		break;
-	
-	case 'addManagers':
-		//TODO: Implement the bulk add-managers screen here
+		// <editor-fold defaultstate="collapsed" desc="deleteManager Logic">
+		$success = $MANAGER->deleteManager();
+		
+		echo $success ? "SUCCESS" : "FAILURE";
+		// </editor-fold>
 		break;
 }
 ?>

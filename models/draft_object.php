@@ -1,5 +1,8 @@
 <?php
-require_once("php_draft_library.php");
+
+require_once("/libraries/php_draft_library.php");
+require_once("/models/player_object.php");
+
 /**
  * Represents a PHPDraft "draft" object, which is the parent object.
  *
@@ -17,8 +20,12 @@ require_once("php_draft_library.php");
  * @property string $end_time Timestamp of when the draft was put into "completed" status
  * @property int $current_round
  * @property int $current_pick
+ * @property array $sports_teams An array of all of the teams in the pro sport. Capitalized abbreviation is key, full name is value.
+ * @property array $sports_positions An array of all the positions in the pro sport. Capitalized abbreviation is key, full name is value.
+ * @property array $sports_colors An array of all the colors used for each position in the draft. Capitalized position abbreviation is key, hex color string is value (with # prepended)
  */
 class draft_object {
+
 	public $draft_id;
 	public $draft_name;
 	public $draft_status;
@@ -31,11 +38,34 @@ class draft_object {
 	public $end_time;
 	public $current_round;
 	public $current_pick;
+	public $sports_teams;
+	public $sports_positions;
+	public $sports_colors;
 
-	public function __construct(array $properties = array()) {
-		foreach($properties as $property => $value)
-			if(property_exists('draft_object', $property))
-				$this->$property = $value;
+	public function __construct($id = 0) {
+		$id = (int)$id;
+		
+		if($id == 0)
+			return false;
+
+		$draft_result = mysql_query("SELECT * FROM draft WHERE draft_id = " . $id . " LIMIT 1");
+
+		if(!$draft_row = mysql_fetch_array($draft_result))
+			return false;
+
+		$this->draft_id = (int)$draft_row['draft_id'];
+		$this->draft_name = $draft_row['draft_name'];
+		$this->draft_sport = $draft_row['draft_sport'];
+		$this->draft_status = $draft_row['draft_status'];
+		$this->draft_style = $draft_row['draft_style'];
+		$this->draft_rounds = $draft_row['draft_rounds'];
+		$this->draft_password = $draft_row['draft_password'];
+		$this->start_time = $draft_row['draft_start_time'];
+		$this->end_time = $draft_row['draft_end_time'];
+		$this->current_round = (int)$draft_row['draft_current_round'];
+		$this->current_pick = (int)$draft_row['draft_current_pick'];
+
+		return true;
 	}
 
 	/**
@@ -45,42 +75,57 @@ class draft_object {
 	public function getValidity() {
 		$errors = array();
 
-		if(empty($this->draft_name))
+		if(!isset($this->draft_name) || strlen($this->draft_name) == 0)
 			$errors[] = "Draft Name is empty.";
-		if(empty($this->draft_sport))
+		if(!isset($this->draft_name) || strlen($this->draft_sport) == 0)
 			$errors[] = "Draft Sport is empty.";
-		if(empty($this->draft_style))
+		if(!isset($this->draft_style) || strlen($this->draft_style) == 0)
 			$errors[] = "Draft Style is empty.";
 
 		if($this->draft_rounds < 1)
 			$errors[] = "Draft rounds must be at least 1 or more.";
 
-		$name_count = mysql_num_rows(mysql_query("SELECT draft_id FROM draft WHERE draft_name = '" . $this->draft_name . "' AND draft_sport = '" . $this->draft_sport . "'"));
+		if(empty($this->draft_id) || $this->draft_id == 0) {
+			$name_result = mysql_fetch_array(mysql_query("SELECT COUNT(draft_id) as count FROM draft WHERE draft_name = '" . mysql_real_escape_string($this->draft_name) . "' AND draft_sport = '" . mysql_real_escape_string($this->draft_sport) . "'"));
+			$name_count = (int)$name_result['count'];
 
-		if($name_count > 0)
-			$errors[] = "Draft already found with that name and sport.";
+			if($name_count > 0)
+				$errors[] = "Draft already found with that name and sport.";
+		}
 
 		return $errors;
 	}
-	
+
 	/**
-	 * Set the text status of the draft according to arbitrary values stored in DB
+	 * Grab the formatted string corresponding to the draft's status
 	 * @param $draft_status_from_database The textual status stored in the database
 	 */
-	public function setStatus($draft_status_from_database) {
-		switch($draft_status_from_database) {
+	public function getStatus() {
+		switch($this->draft_status) {
 			case "undrafted":
-				$this->draft_status = "Setting Up";
+				return "Setting Up";
 				break;
-			
+
 			case "in_progress":
-				$this->draft_status = "Currently Drafting";
+				return "Currently Drafting";
 				break;
-			
+
 			case "complete":
-				$this->draft_status = "Draft Complete";
+				return "Draft Complete";
 				break;
 		}
+	}
+	
+	/**
+	 * Returns a string representation of the time span of this draft
+	 * @return string String representation of the duration of this draft
+	 */
+	public function getDraftDuration() {
+		if($this->draft_status == "complete") {
+			$duration_seconds = strtotime($this->end_time) - strtotime($this->start_time);
+			return php_draft_library::secondsToWords($duration_seconds);
+		} else
+			return "";
 	}
 
 	/**
@@ -89,51 +134,271 @@ class draft_object {
 	 * TODO: Update this so we so something similar to a Save-or-update, either an INSERT or an UPDATE
 	 */
 	public function saveDraft() {
-		$sql = "INSERT INTO draft "
-		. "(draft_id, draft_name, draft_sport, draft_status, draft_style, draft_rounds) "
-		. "VALUES "
-		. "(NULL, '" . $this->draft_name . "', '" . $this->draft_sport . "', 'undrafted', '" . $this->draft_style . "', " . $this->draft_rounds . ")";
+		if($this->draft_id > 0) {
+			$sql = "UPDATE draft SET " .
+				"draft_name = '" . mysql_real_escape_string($this->draft_name) . "', " .
+				"draft_sport = '" . mysql_real_escape_string($this->draft_sport) . "', " .
+				"draft_status = '" . mysql_real_escape_string($this->draft_status) . "', " .
+				"draft_style = '" . mysql_real_escape_string($this->draft_style) . "', " .
+				"draft_rounds = '" . (int)$this->draft_rounds . "', ";
+			
+			if(isset($this->start_time) && strlen($this->start_time) > 0)
+				if($this->start_time == "NULL")
+					$sql .= "draft_start_time = NULL, ";
 
-		if(!mysql_query($sql))
+			if((int)$this->current_round > 1)
+				$sql .= "draft_current_round = " . (int)$this->current_round . ", ";
+			if((int)$this->current_pick > 1)
+				$sql .= "draft_current_pick = " . (int)$this->current_pick . ", ";
+
+			$sql .= "draft_password = '" . mysql_real_escape_string($this->draft_password) . "' " .
+				"WHERE draft_id = " . (int)$this->draft_id;
+
+			return mysql_query($sql);
+		}else {
+			$sql = "INSERT INTO draft "
+				. "(draft_id, draft_name, draft_sport, draft_status, draft_style, draft_rounds) "
+				. "VALUES "
+				. "(NULL, '" . mysql_real_escape_string($this->draft_name) . "', '" . mysql_real_escape_string($this->draft_sport) . "', 'undrafted', '" . mysql_real_escape_string($this->draft_style) . "', " . (int)$this->draft_rounds . ")";
+
+			if(!mysql_query($sql))
+				return false;
+
+			$this->draft_id = mysql_insert_id();
+
+			return true;
+		}
+	}
+	
+	public function moveDraftForward(player_object $next_pick) {
+		if($next_pick != null) {
+			$this->current_pick = (int)$next_pick->player_pick;
+			$this->current_round = (int)$next_pick->player_round;
+			
+			$sql = "UPDATE draft SET ".
+			"draft_current_pick = " . (int)$this->current_pick . ", ".
+			"draft_current_round = " . (int)$this->current_round . " ".
+			"WHERE draft_id = " . (int)$this->draft_id;
+			
+			return mysql_query($sql);
+		}else {
+			$sql = "UPDATE draft SET ".
+			"draft_status = 'complete', ".
+			"draft_end_time = '" . mysql_real_escape_string(php_draft_library::getNowPhpTime()) . "' ".
+			"WHERE draft_id = " . (int)$this->draft_id;
+		}
+	}
+
+	public function updateStatus($new_status) {
+		if($this->isCompleted())
 			return false;
 
-		$this->draft_id = mysql_insert_id();
+		$old_status = $this->draft_status;
+
+		$this->draft_status = $new_status;
+		$this->current_pick = 1;
+		$this->current_round = 1;
+
+		$draftJustStarted = ($old_status == "undrafted" && $this->isInProgress()) ? true : false;
+
+		if($draftJustStarted)
+			$this->start_time = $this->beginStartTime();
+		else
+			$this->start_time = "NULL";
+
+		$saveSuccess = $this->saveDraft();
+
+		if(!$saveSuccess)
+			return false;
+
+		require_once("/models/player_object.php");
+
+		$deleteCurrentSuccess = player_object::deletePlayersByDraft($this->draft_id);
+
+		if(!$deleteCurrentSuccess)
+			return false;
+
+		if($draftJustStarted) {
+			$setupSuccess = $this->setupPicks();
+
+			if(!$setupSuccess)
+				return false;
+		}
 
 		return true;
 	}
 
 	/**
-	 * Load a specific draft by ID
-	 * @return boolean success whether or not the load succeeded
+	 * Goes through and creates all of the draft's picks as placeholders, triggered when the draft status is set to "in progress"
+	 * @return bool $success True if successful 
 	 */
-	public function loadById($id) {
-		if($id == 0)
-			return false;
+	public function setupPicks() {
+		require_once("/models/manager_object.php");
+		require_once("/models/player_object.php");
+		$pick = 1;
+		$even = true;
 		
-		$draft_result = mysql_query("SELECT * FROM draft WHERE draft_id = " . $id . " LIMIT 1");
-		
-		if(!$draft_result)
-			return false;
-			
-		
-		$draft_row = mysql_fetch_array($draft_result);
-		$this->draft_id = intval($draft_row['draft_id']);
-		$this->draft_name = $draft_row['draft_name'];
-		$this->draft_sport = $draft_row['draft_sport'];
-		$this->draft_status = $draft_row['draft_status'];
-		$this->draft_style = $draft_row['draft_style'];
-		$this->draft_rounds = $draft_row['draft_rounds'];
-		$this->draft_password = $draft_row['draft_password'];
-		//TODO: Figure out how to convert to useable PHP datetimes:
-		//NOTE: Using strtotime, in the first draft page that's what I was using... update if necessary.
-		$this->start_time = strtotime($draft_row['draft_start_time']);
-		$this->end_time = strtotime($draft_row['draft_end_time']);
-		$this->current_round = intval($draft_row['draft_current_round']);
-		$this->current_pick = intval($draft_row['draft_current_pick']);
-		
+		for($current_round = 1; $current_round <= $this->draft_rounds; $current_round++) {
+			if($this->styleIsSerpentine()) {
+				if($even) {
+					$managers = manager_object::getManagersByDraft($this->draft_id, true);
+					$even = false;
+				} else {
+					$managers = manager_object::getManagersByDraft($this->draft_id, true, "DESC");
+				}
+			}else
+				$managers = manager_object::getManagersByDraft($this->draft_id, true);
+
+			foreach($managers as $manager) {
+				$new_pick = new player_object();
+				$new_pick->manager_id = $manager->manager_id;
+				$new_pick->draft_id = $this->draft_id;
+				$new_pick->player_round = $current_round;
+				$new_pick->player_pick = $pick;
+
+				$saveSuccess = $new_pick->savePlayer();
+				
+				if(!$saveSuccess)
+					return false;
+
+				$pick++;
+			}
+		}
 		return true;
 	}
 	
+	public function getAllDraftPicks() {
+		$picks = array();
+		
+		$sort = true;
+		for($i = 1; $i <= $this->draft_rounds; ++$i) {
+			if($this->styleIsSerpentine()) {
+				$picks[] = player_object::getAllPlayersByRound($this->draft_id, $i, $sort);
+				$sort = $sort ? false : true;
+			}else{
+				$picks[] = player_object::getAllPlayersByRound($this->draft_id, $i);
+			}
+		}
+		
+		return $picks;
+	}
+	
+	/**
+	 * Grab proper array values for Teams and Positions dropdowns, and corresponding colors for positions too. Void function, operates on calling object.
+	 */
+	public function setupSport() {
+		require_once("/libraries/sports_values_library.php");
+		$lib = new sports_values_library();
+		$this->sports_teams = $lib->getTeams($this->draft_sport);
+		$this->sports_positions = $lib->getPositions($this->draft_sport);
+		$this->sports_colors = $lib->position_colors;
+	}
+	
+	/**
+	 * Using MySQL's NOW() function, set the draft's start time to NOW in database and return that value.
+	 * @return string MySQL timestamp given to draft 
+	 */
+	public function beginStartTime() {
+		$sql = "UPDATE draft SET draft_start_time = NOW() WHERE draft_id = " . (int)$this->draft_id . " LIMIT 1";
+		mysql_query($sql);
+
+		$time_row = mysql_fetch_array(mysql_query("SELECT draft_start_time FROM draft WHERE draft_id = " . (int)$this->draft_id . " LIMIT 1"));
+
+		return $time_row['draft_start_time'];
+	}
+	
+	/**
+	 * Removes a draft, all of its managers and all of their picks permanently (hard delete)
+	 * @return bool success of delete 
+	 */
+	public function deleteDraft() {
+		if($this->draft_id == 0)
+			return false;
+		
+		require_once("/models/player_object.php");
+		require_once("/models/manager_object.php");
+		
+		$pickRemovalSuccess = player_object::deletePlayersByDraft($this->draft_id);
+		
+		if(!$pickRemovalSuccess)
+			return false;
+		
+		$managerRemovalSuccess = manager_object::deleteManagersByDraft($this->draft_id);
+		
+		if(!$managerRemovalSuccess)
+			return false;
+		
+		$sql = "DELETE FROM draft WHERE draft_id = " . (int)$this->draft_id . " LIMIT 1";
+		
+		return mysql_query($sql);
+	}
+	
+	public function checkDraftPublicLogin() {
+		return isset($_SESSION['did']) && isset($_SESSION['draft_password']) 
+			&& $_SESSION['did'] == $this->draft_id 
+			&& $_SESSION['draft_password'] == $this->draft_password;
+	}
+	
+	// <editor-fold defaultstate="collapsed" desc="Pick-Related Functions">
+	/**
+	 * Returns an array of the last five picks (player_object) 
+	 */
+	public function getLastTenPicks() {
+		return player_object::getLastTenPicks($this->draft_id);
+	}
+	
+	/**
+	 * Returns an array of the last five picks (player_object) 
+	 */
+	public function getLastFivePicks() {
+		return player_object::getLastFivePicks($this);
+	}
+	
+	/**
+	 * Get the last player pick, or false on 0 rows.
+	 * @return player_object Last Player
+	 */
+	public function getLastPick() {
+		return player_object::getLastPick($this);
+	}
+	
+	/**
+	 * Returns the player_object that is the current pick for the draft.
+	 */
+	public function getCurrentPick() {
+		return player_object::getCurrentPick($this);
+	}
+	
+	/**
+	 *
+	 * @return type 
+	 */
+	public function getNextPick() {
+		return player_object::getNextPick($this);
+	}
+	
+	/**
+	 * Returns an array of five player_object that occur in the future
+	 */
+	public function getNextFivePicks() {
+		return player_object::getNextFivePicks($this);
+	}
+	// </editor-fold>
+	
+	/**
+	 * Check to ensure $status is in the correct state to prevent any borking of the database.\
+	 * @param string $status The database value for status to be checked
+	 * @return bool true if status is legitimate, false otherwise
+	 */
+	public static function checkStatus($status) {
+		if($status == "undrafted"
+			|| $status == "in_progress"
+			|| $status == "complete")
+			return true;
+		else
+			return false;
+	}
+
 	/**
 	 * Returns an array of all current drafts in the database
 	 * @return array of all available draft objects
@@ -143,40 +408,29 @@ class draft_object {
 		//TODO: Change draft object to include timestamp for creation; IDs are not technically reliable sortable columns.
 		$sql = "SELECT * FROM draft ORDER BY draft_id";
 		$drafts_result = mysql_query($sql);
-		
+
 		while($draft_row = mysql_fetch_array($drafts_result)) {
-			$drafts[] = new draft_object(array(
-				'draft_id' => $draft_row['draft_id'],
-				'draft_name' => $draft_row['draft_name'],
-				'draft_status' => $draft_row['draft_status'],
-				'visibility' => ($draft_row['draft_password'] != '' ? "locked" : "unlocked"),
-				'draft_password' => $draft_row['draft_password'],
-				'draft_sport' => $draft_row['draft_sport'],
-				'draft_style' => $draft_row['draft_style'],
-				'draft_rounds' => intval($draft_row['draft_rounds']),
-				'start_time' => $draft_row['start_time'],
-				'end_time' => $draft_row['end_time'],
-				'current_round' => intval($draft_row['current_round']),
-				'current_pick' => intval($draft_row['current_pick'])
-			));
+			$draft = new draft_object();
+			$draft->draft_id = (int)$draft_row['draft_id'];
+			$draft->draft_name = $draft_row['draft_name'];
+			$draft->draft_status = $draft_row['draft_status'];
+			$draft->visibility = ($draft_row['draft_password'] != '' ? "locked" : "unlocked");
+			$draft->draft_password = $draft_row['draft_password'];
+			$draft->draft_sport = $draft_row['draft_sport'];
+			$draft->draft_style = $draft_row['draft_style'];
+			$draft->draft_rounds = (int)$draft_row['draft_rounds'];
+			$draft->start_time = $draft_row['start_time'];
+			$draft->end_time = $draft_row['end_time'];
+			$draft->current_round = (int)$draft_row['current_round'];
+			$draft->current_pick = (int)$draft_row['current_pick'];
+			$drafts[] = $draft;
 		}
 
 		return $drafts;
 	}
-	
-	/**
-	 * Returns a string representation of the time span of this draft
-	 * @return string String representation of the duration of this draft
-	 */
-	public function getDraftDuration() {
-		if($this->draft_status == "complete")
-			return secondsToWords($this->start_time - $this->end_time);
-		else
-			return "";
-	}
-	
+
 	// <editor-fold defaultstate="collapsed" desc="Draft State Information">
-	
+
 	/**
 	 * Determines if the draft is completed
 	 * @return bool true if the draft is completed, false otherwise
@@ -184,7 +438,7 @@ class draft_object {
 	public function isCompleted() {
 		return $this->draft_status == "complete";
 	}
-	
+
 	/**
 	 * Determines if draft is undrafted
 	 * @return bool true if the draft is undrafted, false otherwise
@@ -192,7 +446,15 @@ class draft_object {
 	public function isUndrafted() {
 		return $this->draft_status == "undrafted";
 	}
-	
+
+	/**
+	 * Determines if draft is in progress
+	 * @return bool true fi the draft is in progress, false otherwise 
+	 */
+	public function isInProgress() {
+		return $this->draft_status == "in_progress";
+	}
+
 	/**
 	 * Determines if draft is password-protected
 	 * @return bool true if the draft is password-protected, false otherwise
@@ -200,6 +462,23 @@ class draft_object {
 	public function isPasswordProtected() {
 		return (isset($this->draft_password) && strlen($this->draft_password) > 0);
 	}
+
+	/**
+	 * Determines if the draft style is serpentine
+	 * @return bool true if the draft is serpentine style, false otherwise
+	 */
+	public function styleIsSerpentine() {
+		return $this->draft_style == "serpentine";
+	}
+
+	/**
+	 * Determines if the draft style is standard
+	 * @return bool true if the draft is standard style, false otherwise
+	 */
+	public function styleIsStandard() {
+		return $this->draft_sty == "standard";
+	}
 	// </editor-fold>
 }
+
 ?>

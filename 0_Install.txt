@@ -12,14 +12,16 @@ To install, follow these steps.
 
 2) In PHPmyAdmin, create a database called phpdraft (you can rename later). Click on that new database name on the left, and then click the Import tab. Click Browse, and select the newest SQL dump file from /sql_dumps. Click Go.
 
-3) Open dbconn.php in your favorite IDE or text editor (I use Netbeans PHP).  Change $username and $password (lines 13 and 14) to your MySQL username and password. If you changed your database name from the default ("phpdraft"), make sure you change it a few lines down in the "select_db()" function call on line 20. Save and upload to web server.
+3) Open /includes/dbconn.php in your favorite IDE or text editor (I use Netbeans PHP).  Change $username and $password (lines 13 and 14) to your MySQL username and password. If you changed your database name from the default ("phpdraft"), make sure you change it a few lines down in the "select_db()" function call on line 20. Save and upload to web server.
 
-4) If no errors in PHPmyAdmin, goto the base directory of your PHP Draft install: http://www.yoursite.com/
+3A) Please note that if you're using shared hosting, most likely your host has you sharing the same MySQL server with several other users, so they enforce separation of accounts by prepending database names with an account-identifier, which you have no control over. So, your "true" database name would be "johnny_phpdraft" (if your account name is "johnny", for instance).
+
+4) If no errors in PHPmyAdmin, goto the base directory of your PHP Draft install: http://www.yoursite.com/phpdraft/ (If you have errors, please go to http://sourceforge.net/projects/phpdraft/forums/forum/1198073 and create a new thread to get help!)
 
 5) To login as PHPDraft admin, use these default credentials:
 Username: admin_commish
 Password: password
 
-6) Once logged in, be sure to change the default administrator by going to the Control Panel tab, and click "Update Your User Profile" under the "User Management" section. From there you can change the password.
+6) Once logged in, be sure to update the default administrator's name and password by going to the Control Panel tab, and click "Update Your User Profile". From there you can change the password.
 
 7) Enjoy! Any bugs, feature requests, comments or questions please send them to me at http://sourceforge.net/projects/phpdraft/

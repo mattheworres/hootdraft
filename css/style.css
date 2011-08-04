@@ -6,6 +6,10 @@ body {
 	background-color: #E0E0E0;
 }
 
+A {
+	color: #0000FF; text-decoration: none;
+}
+
 A:link {
 	COLOR: #0000FF; text-decoration: none;
 }
@@ -145,7 +149,7 @@ p {
 	line-height: 18px;
 	color: #333333;
 }
-p.error {
+p.error, .error {
 	color: #990000;
 	font-weight: bold;
 }
@@ -317,4 +321,21 @@ table th {
 
 #loadingDialog{
 	display: none;
+}
+
+.center
+{
+	text-align: center;
+}
+
+.inline-icon
+{
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 2px;
+}
+
+span.player-name {
+	font-weight: bold;
+	font-size: 15px;
 }

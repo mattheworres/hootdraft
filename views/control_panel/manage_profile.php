@@ -1,17 +1,15 @@
-<?php require('check_login.php'); ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-	<?php require('meta.php'); ?>
+	<?php require('/includes/meta.php'); ?>
 	</head>
 	<body>
 	<div id="page_wrapper">
-		<?php require('header.php'); ?>
+		<?php require('/includes/header.php'); ?>
 
 		<?php
-		require('comm_draft_menu.php');
-			
-			require_once('models/user_edit_model.php');
+		require('/views/shared/commish_draftless_menu.php');
 			?>
 		<div id="content">
 				<h3>Update User</h3>
@@ -40,7 +38,7 @@
 					</form>
 		</fieldset>
 		</div>
-		<?php require('footer.php'); ?>
+		<?php require('/includes/footer.php');; ?>
 	</div>
 	</body>
 </html>
