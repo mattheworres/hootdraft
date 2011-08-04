@@ -2,14 +2,14 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<?php require('/includes/meta.php');?>
+		<?php require('includes/meta.php');?>
 		<link href="css/public_draft.css" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
 		<div id="page_wrapper">
-			<?php require('/includes/header.php');?>
+			<?php require('includes/header.php');?>
 
-			<?php require('/views/shared/public_draft_menu.php');?>
+			<?php require('views/shared/public_draft_menu.php');?>
 			<div id="content">
 				<h3>Draft Picks Per Round</h3>
 				<p>Select a round from the box below to see the most current draft picks from that round. To get the most up-to-date picks, periodically hit "Refresh" to re-load those picks.</p>
@@ -45,7 +45,7 @@
 				</div>
 			</div>
 			<br/><br/>
-			<?php require('/includes/footer.php');;?>
+			<?php require('includes/footer.php');;?>
 			<script type="text/javascript">
 				var manager_id,
 					$picks = $('#picks');

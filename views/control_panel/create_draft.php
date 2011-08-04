@@ -2,12 +2,12 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-	<?php require('/includes/meta.php'); ?>
+	<?php require('includes/meta.php'); ?>
 	</head>
 	<body>
 	<div id="page_wrapper">
-		<?php require('/includes/header.php'); 
-		require('/views/shared/commish_draftless_menu.php'); ?>
+		<?php require('includes/header.php'); 
+		require('views/shared/commish_draftless_menu.php'); ?>
 		<div id="content">
 		<h3>Create a New Draft</h3>
 		<p>To create a draft, please enter a name for the draft to make it unique and identifiable (such as "Refridgerator Raiders" or "Yoohoo Yuppies"), and select the sport that this fantasy draft is for.  Once you're done, press "Create Draft" to create the draft.</p>
@@ -41,7 +41,7 @@
 					</form>
 		</fieldset>
 		</div>
-		<?php require('/includes/footer.php');; ?>
+		<?php require('includes/footer.php');; ?>
 	</div>
 	</body>
 </html>

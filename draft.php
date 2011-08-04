@@ -1,6 +1,6 @@
 <?php
-require("/includes/global_setup.php");
-require_once("/includes/check_login.php");
+require("includes/global_setup.php");
+require_once("includes/check_login.php");
 require_once("models/manager_object.php");
 
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
@@ -14,7 +14,7 @@ if($DRAFT->draft_id == 0) {
 	define("PAGE_HEADER", "Draft Not Found");
 	define("P_CLASS", "error");
 	define("PAGE_CONTENT", "We're sorry, but the draft could not be loaded. Please try again.");
-	require_once("/views/shared/generic_result_view.php");
+	require_once("views/shared/generic_result_view.php");
 	exit(1);
 }
 // </editor-fold>
@@ -26,7 +26,7 @@ switch(ACTION) {
 		$MANAGERS[] = new manager_object();
 
 		$CURRENT_MANAGERS = manager_object::getManagersByDraft(DRAFT_ID, true);
-		require_once('/views/draft/add_managers.php');
+		require_once('views/draft/add_managers.php');
 		// </editor-fold>
 		break;
 
@@ -69,7 +69,7 @@ switch(ACTION) {
 
 	case 'changeStatus':
 		// <editor-fold defaultstate="collapsed" desc="changeStatus Logic">
-		require_once("/views/draft/edit_status.php");
+		require_once("views/draft/edit_status.php");
 		// </editor-fold>
 		break;
 
@@ -81,14 +81,14 @@ switch(ACTION) {
 			define("PAGE_HEADER", "Status Unchanged");
 			define("P_CLASS", "success");
 			define("PAGE_CONTENT", "Your draft's status was unchanged. <a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to the draft's main page, or <a href=\"draft.php?action=changeStatus&did=" . DRAFT_ID . "\">click here</a> to change it's status.");
-			require_once("/views/shared/generic_result_view.php");
+			require_once("views/shared/generic_result_view.php");
 			exit(0);
 		}
 
 		if(!draft_object::checkStatus($new_status)) {
 			$ERRORS = array();
 			$ERRORS[] = "Draft status is of the incorrect value. Please correct this and try again.";
-			require_once("/views/draft/edit_status.php");
+			require_once("views/draft/edit_status.php");
 			exit(1);
 		}
 
@@ -101,12 +101,12 @@ switch(ACTION) {
 			define("PAGE_HEADER", "Draft Status Updated");
 			define("P_CLASS", "success");
 			define("PAGE_CONTENT", "Your draft's status has been successfully updated. <a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to its main page." . $extra_message);
-			require_once("/views/shared/generic_result_view.php");
+			require_once("views/shared/generic_result_view.php");
 			exit(0);
 		}else {
 			$ERRORS = array();
 			$ERRORS[] = "An error occurred and your draft's status could not be updated.  Please try again.";
-			require_once("/views/draft/edit_status.php");
+			require_once("views/draft/edit_status.php");
 			exit(1);
 		}
 		// </editor-fold>
@@ -118,10 +118,10 @@ switch(ACTION) {
 			define("PAGE_HEADER", "You Cannot Edit This Draft");
 			define("P_CLASS", "success");
 			define("PAGE_CONTENT", "Because this draft is either in progress or completed, you are unable to edit the details of this draft. <a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to go back to the draft\'s homepage.");
-			require_once("/views/shared/generic_result_view.php");
+			require_once("views/shared/generic_result_view.php");
 			exit(1);
 		}
-		require_once("/views/draft/edit_draft.php");
+		require_once("views/draft/edit_draft.php");
 		// </editor-fold>
 		break;
 
@@ -131,7 +131,7 @@ switch(ACTION) {
 			define("PAGE_HEADER", "You Cannot Edit This Draft");
 			define("P_CLASS", "success");
 			define("PAGE_CONTENT", "Because this draft is either in progress or completed, you are unable to edit the details of this draft. <a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to go back to the draft\'s homepage.");
-			require_once("/views/shared/generic_result_view.php");
+			require_once("views/shared/generic_result_view.php");
 			exit(1);
 		}
 
@@ -144,27 +144,27 @@ switch(ACTION) {
 
 		if(count($object_errors) > 0) {
 			$ERRORS = $object_errors;
-			require_once("/views/draft/edit_draft.php");
+			require_once("views/draft/edit_draft.php");
 			exit(1);
 		}
 
 		if($DRAFT->saveDraft() == false) {
 			$ERRORS[] = "Draft could not be saved, please try again.";
-			require_once("/views/control_panel/create_draft.php");
+			require_once("views/control_panel/create_draft.php");
 			exit(1);
 		}
 
 		define("PAGE_HEADER", "Draft Edited Successfully!");
 		define("P_CLASS", "success");
 		define("PAGE_CONTENT", "Your draft " . $DRAFT->draft_name . " has been edited successfully. <a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to the draft's homepage, or <a href=\"draft.php?action=editDraft&did=" . DRAFT_ID . "\">click here</a> to edit the draft again.");
-		require_once("/views/shared/generic_result_view.php");
+		require_once("views/shared/generic_result_view.php");
 		// </editor-fold>
 		break;
 
 	case 'deleteDraft':
 		// <editor-fold defaultstate="collapsed" desc="deleteDraft">
 		DEFINE("ANSWER", "schfourteenteen");
-		require_once('/views/draft/delete_draft.php');
+		require_once('views/draft/delete_draft.php');
 		// </editor-fold>
 		break;
 
@@ -175,7 +175,7 @@ switch(ACTION) {
 		if($answer != 111) {
 			DEFINE("ANSWER", "schfifty five");
 			$ERRORS[] = "You failed the math problem. You basically suck at life.";
-			require_once("/views/draft/delete_draft.php");
+			require_once("views/draft/delete_draft.php");
 			exit(1);
 		}
 
@@ -183,13 +183,13 @@ switch(ACTION) {
 			define("PAGE_HEADER", "Draft Removed Successfully");
 			define("P_CLASS", "success");
 			define("PAGE_CONTENT", "Your draft was successfully removed. <a href=\"control_panel.php\">Click here</a> to go back to the control panel.");
-			require_once("/views/shared/generic_result_view.php");
+			require_once("views/shared/generic_result_view.php");
 			exit(0);
 		} else {
 			define("PAGE_HEADER", "Draft Unable to Be Removed");
 			define("P_CLASS", "error");
 			define("PAGE_CONTENT", "A server side error has occurred and your draft could not be removed.  Please <a href=\"draft.php?action=deleteDraft&did=" . DRAFT_ID . "\">go back</a> and try again.");
-			require_once("/views/shared/generic_result_view.php");
+			require_once("views/shared/generic_result_view.php");
 			exit(1);
 		}
 		// </editor-fold>
@@ -205,7 +205,7 @@ switch(ACTION) {
 		DEFINE('HAS_MANAGERS', NUMBER_OF_MANAGERS > 0);
 		DEFINE('LOWEST_ORDER', $MANAGERS[NUMBER_OF_MANAGERS - 1]->draft_order);
 
-		require_once('/views/draft/index.php');
+		require_once('views/draft/index.php');
 		// </editor-fold>
 		break;
 }

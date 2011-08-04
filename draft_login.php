@@ -1,6 +1,6 @@
 <?php
 //Going to treat this controller as a singleton - one action, then forwards back to whatever user was previously trying to do.
-require("/includes/global_setup.php");
+require("includes/global_setup.php");
 
 DEFINE('ACTIVE_TAB', 'DRAFT_CENTRAL');
 
@@ -14,14 +14,14 @@ if($DRAFT->draft_id == 0 || $DRAFT === false) {
 	define("PAGE_HEADER", "Draft Not Found");
 	define("P_CLASS", "error");
 	define("PAGE_CONTENT", "We're sorry, but the draft could not be loaded. Please try again.");
-	require_once("/views/shared/generic_result_view.php");
+	require_once("views/shared/generic_result_view.php");
 	exit(1);
 }
 // </editor-fold>
 
 if($DRAFT->draft_password != $password) {
 	$ERRORS[] = "The password for the draft was incorrect, please try again.";
-	require_once("/views/shared/draft_login.php");
+	require_once("views/shared/draft_login.php");
 	exit(1);
 }
 

@@ -2,14 +2,14 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<?php require('/includes/meta.php');?>
+		<?php require('includes/meta.php');?>
 	</head>
 	<body>
 		<div id="page_wrapper">
 			<?php DEFINE("ACTIVE_TAB", "DRAFT_CENTRAL");
-			require('/includes/header.php');?>
+			require('includes/header.php');?>
 
-			<?php require('/views/shared/main_menu.php');?>
+			<?php require('views/shared/main_menu.php');?>
 			<div id="content">
 				<h3>Please Enter Draft Password</h3>
 				<p>This draft is password-protected, which means the commissioner must give you a password to enter below to see the draft.</p>
@@ -35,7 +35,7 @@
 					<p class="error">*Required</p>
 				<?php }?>
 			</div>
-			<?php require('/includes/footer.php');;?>
+			<?php require('includes/footer.php');;?>
 		</div>
 	</body>
 </html>

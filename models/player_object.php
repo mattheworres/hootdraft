@@ -1,6 +1,6 @@
 <?php
 
-require_once("/models/search_object.php");
+require_once("models/search_object.php");
 /**
  * Represents a PHPDraft player, or "pick" in the draft.
  * 
@@ -154,7 +154,7 @@ class player_object {
 	}
 	
 	public function updatePickDuration($previous_pick, draft_object $draft) {
-		require_once('/libraries/php_draft_library.php');
+		require_once('libraries/php_draft_library.php');
 		
 		if(!isset($this->pick_time))
 			throw new Exception("Must call updatePickDuration on a player object that already has its own pick_time set!");

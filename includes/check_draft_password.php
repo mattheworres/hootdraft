@@ -16,7 +16,7 @@ $DRAFT = new draft_object($DRAFT_ID);
 
 if($DRAFT->isPasswordProtected()) {
 	if(!$DRAFT->checkDraftPublicLogin()) {
-		require("/views/shared/draft_login.php");
+		require("views/shared/draft_login.php");
 		exit(0);
 	}
 }

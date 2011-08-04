@@ -12,7 +12,7 @@ To install, follow these steps.
 
 2) In PHPmyAdmin, create a database called phpdraft (you can rename later). Click on that new database name on the left, and then click the Import tab. Click Browse, and select the newest SQL dump file from /sql_dumps. Click Go.
 
-3) Open /includes/dbconn.php in your favorite IDE or text editor (I use Netbeans PHP).  Change $username and $password (lines 13 and 14) to your MySQL username and password. If you changed your database name from the default ("phpdraft"), make sure you change it a few lines down in the "select_db()" function call on line 20. Save and upload to web server.
+3) Open includes/dbconn.php in your favorite IDE or text editor (I use Netbeans PHP).  Change $username and $password (lines 13 and 14) to your MySQL username and password. If you changed your database name from the default ("phpdraft"), make sure you change it a few lines down in the "select_db()" function call on line 20. Save and upload to web server.
 
 3A) Please note that if you're using shared hosting, most likely your host has you sharing the same MySQL server with several other users, so they enforce separation of accounts by prepending database names with an account-identifier, which you have no control over. So, your "true" database name would be "johnny_phpdraft" (if your account name is "johnny", for instance).
 

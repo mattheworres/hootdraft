@@ -8,7 +8,7 @@ if(!$LOGGED_IN_USER->userAuthenticated()) {
 	define("PAGE_HEADER", "Access Restricted");
 	define("P_CLASS", "error");
 	define("PAGE_CONTENT", "In order to access this portion of the site, you must be the commissioner. <a href=\"login.php\">Click here</a> to go to the login page.");
-	require_once("/views/shared/generic_result_view.php");
+	require_once("views/shared/generic_result_view.php");
 	exit(1);
 }
 

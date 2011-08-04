@@ -1,9 +1,9 @@
 <?php
-require("/includes/global_setup.php");
+require("includes/global_setup.php");
 
-require('/includes/check_draft_password.php');
+require('includes/check_draft_password.php');
 
-require_once('/models/manager_object.php');
+require_once('models/manager_object.php');
 
 DEFINE("ACTIVE_TAB", "DRAFT_CENTRAL");
 DEFINE("ACTION", $_REQUEST['action']);
@@ -18,7 +18,7 @@ if($DRAFT === false || $DRAFT->draft_id == 0) {
 	define("PAGE_HEADER", "Draft Not Found");
 	define("P_CLASS", "error");
 	define("PAGE_CONTENT", "We're sorry, but the draft could not be loaded. Please try again.");
-	require_once("/views/shared/generic_result_view.php");
+	require_once("views/shared/generic_result_view.php");
 	exit(1);
 }
 // </editor-fold>
@@ -34,7 +34,7 @@ switch(ACTION) {
 		DEFINE("COL_WIDTH", 115);
 		DEFINE("TOTAL_WIDTH", 10 + COL_WIDTH * NUMBER_OF_MANAGERS);
 		
-		require("/views/public_draft/draft_board.php");
+		require("views/public_draft/draft_board.php");
 		// </editor-fold>
 		break;
 	
@@ -57,18 +57,18 @@ switch(ACTION) {
 		DEFINE("COL_WIDTH", 115);
 		DEFINE("TOTAL_WIDTH", 10 + COL_WIDTH * NUMBER_OF_MANAGERS);
 		
-		require("/views/public_draft/draft_board_naked.php");
+		require("views/public_draft/draft_board_naked.php");
 		// </editor-fold>
 		break;
 	
 	case 'picksPerManager':
 		// <editor-fold defaultstate="collapsed" desc="picksPerManager Logic">
-		require_once("/libraries/php_draft_library.php");
+		require_once("libraries/php_draft_library.php");
 		$MANAGERS = manager_object::getManagersByDraft($DRAFT->draft_id);
 		$MANAGER = $MANAGERS[0];
 		$MANAGER_PICKS = player_object::getSelectedPlayersByManager($MANAGER->manager_id);
 		$NOW = php_draft_library::getNowRefreshTime();
-		require("/views/public_draft/picks_per_manager.php");
+		require("views/public_draft/picks_per_manager.php");
 		// </editor-fold>
 		break;
 	
@@ -89,17 +89,17 @@ switch(ACTION) {
 			exit(0);
 		}
 		
-		require("/views/public_draft/picks_per_manager_results.php");
+		require("views/public_draft/picks_per_manager_results.php");
 		// </editor-fold>
 		break;
 	
 	case 'picksPerRound':
 		// <editor-fold defaultstate="collapsed" desc="picksPerRound Logic">
-		require_once("/libraries/php_draft_library.php");
+		require_once("libraries/php_draft_library.php");
 		$ROUND = 1;
 		$ROUND_PICKS = player_object::getSelectedPlayersByRound($DRAFT->draft_id, $ROUND);
 		$NOW = php_draft_library::getNowRefreshTime();
-		require("/views/public_draft/picks_per_round.php");
+		require("views/public_draft/picks_per_round.php");
 		// </editor-fold>
 		break;
 	
@@ -117,53 +117,53 @@ switch(ACTION) {
 			echo "<h4>No draft selections have been made for round #" . $ROUND . " yet.</h4>";
 			exit(0);
 		}
-		require("/views/public_draft/picks_per_round_results.php");
+		require("views/public_draft/picks_per_round_results.php");
 		// </editor-fold>
 		break;
 		
 	case 'searchDraft':
 		// <editor-fold defaultstate="collapsed" desc="searchDraft Logic">
-		require("/views/public_draft/search_draft.php");
+		require("views/public_draft/search_draft.php");
 		// </editor-fold>
 		break;
 	
 	case 'searchResults':
 		// <editor-fold defaultstate="collapsed" desc="searchResults Logics">
-		require_once("/libraries/php_draft_library.php");
-		require_once("/models/search_object.php");
+		require_once("libraries/php_draft_library.php");
+		require_once("models/search_object.php");
 		$team = $_GET['team'];
 		$position = $_GET['position'];
 		$SEARCHER = new search_object($_GET['keywords'], $_GET['team'], $_GET['position']);
 		$SEARCHER->searchDraft($DRAFT->draft_id);
 		
 		$NOW = php_draft_library::getNowRefreshTime();
-		require("/views/public_draft/search_draft_results.php");
+		require("views/public_draft/search_draft_results.php");
 		// </editor-fold>
 		break;
 	
 	case 'draftStats':
-		require_once("/models/draft_statistics_object.php");
-		require_once("/libraries/php_draft_library.php");
+		require_once("models/draft_statistics_object.php");
+		require_once("libraries/php_draft_library.php");
 		$STATS = new draft_statistics_object();
 		$STATS->generateStatistics($DRAFT);
 		$NOW = php_draft_library::getNowRefreshTime();
-		require("/views/public_draft/draft_statistics.php");
+		require("views/public_draft/draft_statistics.php");
 		break;
 	
 	case 'loadStats':
-		require_once("/models/draft_statistics_object.php");
-		require_once("/libraries/php_draft_library.php");
+		require_once("models/draft_statistics_object.php");
+		require_once("libraries/php_draft_library.php");
 		$STATS = new draft_statistics_object();
 		$STATS->generateStatistics($DRAFT);
 		$NOW = php_draft_library::getNowRefreshTime();
-		require("/views/public_draft/draft_statistics_results.php");
+		require("views/public_draft/draft_statistics_results.php");
 		break;
 	
 	default:
 		// <editor-fold defaultstate="collapsed" desc="index logic">
 		$LAST_TEN_PICKS = $DRAFT->getLastTenPicks();
 		$CURRENT_PICK = $DRAFT->getCurrentPick();
-		require("/views/public_draft/index.php");
+		require("views/public_draft/index.php");
 		// </editor-fold>
 		break;
 }

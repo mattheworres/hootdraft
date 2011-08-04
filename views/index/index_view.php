@@ -2,13 +2,13 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-	<?php require('/includes/meta.php'); ?>
+	<?php require('includes/meta.php'); ?>
 	</head>
 	<body>
 	<div id="page_wrapper">
-		<?php require('/includes/header.php'); ?>
+		<?php require('includes/header.php'); ?>
 
-		<?php require('/views/shared/main_menu.php'); ?>
+		<?php require('views/shared/main_menu.php'); ?>
 		<div id="content">
 			<h3>Welcome to PHPDraft!</h3>
 			<div class='featurebox_center'><strong>PHPDraft is now officially released software</strong>!  All of the source code that runs this site is publicly available for free at <a href="http://www.sourceforge.net">SourceForge.net</a>, where the project has <a href="http://sourceforge.net/projects/phpdraft">its own project page</a>, complete with source control integration, bug tracking, and forums for feedback and help!  So please, if you have input, need help, or would like to help, please contact Matt on the project page!</div>
@@ -36,7 +36,7 @@
 			</table>
 			<p style="font-size: 80%;">*Cookies must be enabled</p>
 		</div>
-		<?php require('/includes/footer.php');; ?>
+		<?php require('includes/footer.php');; ?>
 	</div>
 	</body>
 </html>

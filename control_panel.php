@@ -1,6 +1,6 @@
 <?php
-require("/includes/global_setup.php");
-require_once("/includes/check_login.php");
+require("includes/global_setup.php");
+require_once("includes/check_login.php");
 
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
 
@@ -9,7 +9,7 @@ switch($_GET['action']) {
 		//<editor-fold defaultstate="collapsed" desc="createDraft Logic">
 		$draft = new draft_object();
 		DEFINE("CONTROL_PANEL_ACTION", "CREATE");
-		require_once("/views/control_panel/create_draft.php");
+		require_once("views/control_panel/create_draft.php");
 		//</editor-fold>
 		break;
 
@@ -28,21 +28,21 @@ switch($_GET['action']) {
 		if(count($object_errors) > 0) {
 			$ERRORS = $object_errors;
 			DEFINE("CONTROL_PANEL_ACTION", "ADD");
-			require_once("/views/control_panel/create_draft.php");
+			require_once("views/control_panel/create_draft.php");
 			exit(1);
 		}
 
 		if($draft->saveDraft() == false) {
 			$ERRORS[] = "Draft could not be saved, please try again.";
 			DEFINE("CONTROL_PANEL_ACTION", "ADD");
-			require_once("/views/control_panel/create_draft.php");
+			require_once("views/control_panel/create_draft.php");
 			exit(1);
 		}
 
 		define("PAGE_HEADER", "Draft Successfully Created");
 		define("P_CLASS", "success");
 		define("PAGE_CONTENT", "Your draft, <em>" . $draft->draft_name . "</em> has been successfully created.  <a href=\"control_panel.php?action=manageDraft&did=" . $draft->draft_id . "\">Click here</a> to manage your new draft.<br/><br/>REMEMBER: Your next step should be to add all managers before you begin drafting players.");
-		require_once("/views/shared/generic_result_view.php");
+		require_once("views/shared/generic_result_view.php");
 		//</editor-fold>
 		break;
 		
@@ -50,26 +50,26 @@ switch($_GET['action']) {
 		// <editor-fold defaultstate="collapsed" desc="manageDrafts Logic">
 		$DRAFTS = draft_object::getAllDrafts();
 		DEFINE("CONTROL_PANEL_ACTION", "MANAGE");
-		require_once('/views/control_panel/manage_draft.php');
+		require_once('views/control_panel/manage_draft.php');
 		// </editor-fold>
 		break;
 		
 	case 'manageProfile':
 		// <editor-fold defaultstate="collapsed" desc="manageProfile Logic">
 		DEFINE("CONTROL_PANEL_ACTION", "MANAGE");
-		require_once("/models/user_edit_model.php");
+		require_once("models/user_edit_model.php");
 		
 		$loggedInUser = new user_object();
 		$loggedInUser->getCurrentlyLoggedInUser();
 		$user_view_model = new user_edit_model($loggedInUser);
 		
-		require_once("/views/control_panel/manage_profile.php");
+		require_once("views/control_panel/manage_profile.php");
 		// </editor-fold>
 		break;
 		
 	case 'saveProfile':
 		// <editor-fold defaultstate="collapsed" desc="saveProfile Logic">
-		require_once("/models/user_edit_model.php");
+		require_once("models/user_edit_model.php");
 		
 		$ERRORS = array();
 		
@@ -83,20 +83,20 @@ switch($_GET['action']) {
 		
 		if(count($object_errors) > 0) {
 			$ERRORS = $object_errors;
-			require_once("/views/control_panel/manage_profile.php");
+			require_once("views/control_panel/manage_profile.php");
 			break;
 		}
 		
 		if(!$user_view_model->saveUser()) {
 			$ERRORS[] = "An error has occurred and your profile could not be updated. Please try again.";
-			require_once("/views/control_panel/manage_profile.php");
+			require_once("views/control_panel/manage_profile.php");
 			break;
 		}
 		
 		define("PAGE_HEADER", "Profile Successfully Updated");
 		define("P_CLASS", "success");
 		define("PAGE_CONTENT", "Your user account has been successfully updated. <a href=\"control_panel.php?action=manageProfile\">Click here</a> to change your profile again, or <a href=\"control_panel.php\">click here</a> to be taken back to the control panel.");
-		require_once("/views/shared/generic_result_view.php");
+		require_once("views/shared/generic_result_view.php");
 		// </editor-fold>
 		break;
 
@@ -104,7 +104,7 @@ switch($_GET['action']) {
 	case 'home':
 	default:
 		$DRAFTS = draft_object::getAllDrafts();
-		require_once('/views/control_panel/index.php');
+		require_once('views/control_panel/index.php');
 		break;
 }
 

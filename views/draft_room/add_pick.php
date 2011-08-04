@@ -2,14 +2,14 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-	<?php require('/includes/meta.php'); ?>
+	<?php require('includes/meta.php'); ?>
 	<link href="css/draft_room.css" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
 	<div id="page_wrapper">
-		<?php require('/includes/header.php'); ?>
+		<?php require('includes/header.php'); ?>
 
-		<?php require('/views/shared/draft_room_menu.php'); ?>
+		<?php require('views/shared/draft_room_menu.php'); ?>
 		<div id="content">	
 		<?php if(count($SUCCESSES) > 0) {?>
 			<?php foreach($SUCCESSES as $success) {?>
@@ -88,7 +88,7 @@
 			<?php } ?>
 		</fieldset>
 		</div>
-		<?php require('/includes/footer.php');; ?>
+		<?php require('includes/footer.php');; ?>
 		<script type="text/javascript">
 			$(document).ready(function() {
 				$("#first_name").focus();

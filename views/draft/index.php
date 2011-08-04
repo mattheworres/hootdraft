@@ -2,13 +2,13 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<?php require('/includes/meta.php'); ?>
+		<?php require('includes/meta.php'); ?>
 		<link href="css/draft.css" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
 		<div id="page_wrapper">
 			<?php 
-			require('/includes/header.php');
+			require('includes/header.php');
 			require('views/shared/draft_menu.php'); ?>
 			<div id="content">
 				<h3>Manage <?php echo $DRAFT->draft_name; ?> (<?php echo $DRAFT->draft_sport; ?>)</h3>
@@ -82,7 +82,7 @@
 					<?php if(!$DRAFT->isCompleted() && HAS_MANAGERS) { ?><p id="draft-status-link"><strong><a href="draft.php?action=changeStatus&did=<?php echo DRAFT_ID; ?>"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-play"></span>Change Draft Status</a></strong></p><?php } ?>
 				</fieldset>
 			</div>
-			<?php require('/includes/footer.php'); ?>
+			<?php require('includes/footer.php'); ?>
 			<script src="js/draft.index.js" type="text/javascript"></script>
 		</div>
 		<div id="visibilityDialog">

@@ -2,13 +2,13 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-	<?php require('/includes/meta.php'); ?>
+	<?php require('includes/meta.php'); ?>
 	</head>
 	<body>
 	<div id="page_wrapper">
-		<?php require('/includes/header.php'); ?>
+		<?php require('includes/header.php'); ?>
 
-		<?php require('/views/shared/main_menu.php'); ?>
+		<?php require('views/shared/main_menu.php'); ?>
 		<div id="content">
 		<h3>Choose a Draft</h3>
 		<p>To get started, go ahead and click on the name of a draft below.  If a lock icon shows up beside a draft, that means you'll have to get the password from your commissioner*</p>
@@ -33,7 +33,7 @@
 		</table>
 		<p style="font-size: 80%;">*Cookies must be enabled</p>
 		</div>
-		<?php require('/includes/footer.php');; ?>
+		<?php require('includes/footer.php');; ?>
 	</div>
 	</body>
 </html>

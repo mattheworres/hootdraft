@@ -2,17 +2,17 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-	<?php require('/includes/meta.php'); ?>
+	<?php require('includes/meta.php'); ?>
 	</head>
 	<body>
 		<div id="page_wrapper">
-		<?php require('/includes/header.php'); ?>
+		<?php require('includes/header.php'); ?>
 
 		<?php
 		require_once('models/draft_model.php');
 		require_once('models/manager_object.php');
 
-		require('/views/shared/commish_draftless_menu.php'); ?>
+		require('views/shared/commish_draftless_menu.php'); ?>
 			<div id="content">
 		<h3>Select a Draft</h3>
 				<p>To begin managing a draft (either draft details, or editing managers, or editing players), select a draft below by clicking on its name.</p>
@@ -42,7 +42,7 @@
 			}//foreach ?>
 				</table>
 			</div>
-<?php require('/includes/footer.php');; ?>
+<?php require('includes/footer.php');; ?>
 		</div>
 	</body>
 </html>

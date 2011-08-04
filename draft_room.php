@@ -1,6 +1,6 @@
 <?php
-require("/includes/global_setup.php");
-require_once("/includes/check_login.php");
+require("includes/global_setup.php");
+require_once("includes/check_login.php");
 require_once("models/player_object.php");
 require_once("models/manager_object.php");
 
@@ -16,7 +16,7 @@ if($DRAFT->draft_id == 0) {
 	define("PAGE_HEADER", "Draft Not Found");
 	define("P_CLASS", "error");
 	define("PAGE_CONTENT", "We're sorry, but the draft could not be loaded. Please try again.");
-	require_once("/views/shared/generic_result_view.php");
+	require_once("views/shared/generic_result_view.php");
 	exit(1);
 }
 // </editor-fold>
@@ -26,13 +26,13 @@ if($DRAFT->isUndrafted()) {
 	define("PAGE_HEADER", "Draft Not Ready For Picks Yet!");
 	define("P_CLASS", "error");
 	define("PAGE_CONTENT", "Your draft is currently set to \"Setting Up \", which means that the draft room isn't officially open yet. Once you've set your draft to \"In Progress\", come back here and you can begin entering picks for your draft.");
-	require_once("/views/shared/generic_result_view.php");
+	require_once("views/shared/generic_result_view.php");
 	exit(0);
 }elseif($DRAFT->isCompleted()) {
 	define("PAGE_HEADER", "Draft Room is Closed - Your Draft is Over!");
 	define("P_CLASS", "success");
 	define("PAGE_CONTENT", "The draft room is officially closed.  Your draft is officially complete, all picks have been made and now all you have to do is get the results entered into your league.  Take a look at the draft board to see all of the picks.");
-	require_once("/views/shared/generic_result_view.php");
+	require_once("views/shared/generic_result_view.php");
 	exit(0);
 }
 // </editor-fold>
@@ -55,7 +55,7 @@ switch(ACTION) {
 		$NEXT_FIVE_PICKS = $DRAFT->getNextFivePicks();
 		$LAST_FIVE_PICKS = $DRAFT->getLastFivePicks();
 		
-		require("/views/draft_room/add_pick.php");
+		require("views/draft_room/add_pick.php");
 		// </editor-fold>
 		break;
 	
@@ -81,7 +81,7 @@ switch(ACTION) {
 		if(count($object_errors) > 0) {
 			
 			$ERRORS = $object_errors;
-			require("/views/draft_room/add_pick.php");
+			require("views/draft_room/add_pick.php");
 			exit(1);
 		}
 		
@@ -89,13 +89,13 @@ switch(ACTION) {
 		
 		if($submitted_pick->savePlayer(true) === false) {
 			$ERRORS[] = "Unable to update pick, please try again.";
-			require("/views/draft_room/add_pick.php");
+			require("views/draft_room/add_pick.php");
 			exit(1);
 		}
 		
 		if($submitted_pick->updatePickDuration($previous_pick, $DRAFT) === false) {
 			$ERRORS[] = "Unable to update pick duration, your draft has become out of sync. Please see a PHPDraft administrator.";
-			require("/views/draft_room/add_pick.php");
+			require("views/draft_room/add_pick.php");
 			exit(1);
 		}
 		
@@ -104,7 +104,7 @@ switch(ACTION) {
 			define("PAGE_HEADER", "Draft Unable to be Moved Forward");
 			define("P_CLASS", "error");
 			define("PAGE_CONTENT", "An error has occurred and the draft was unable to be moved forward.");
-			require_once("/views/shared/generic_result_view.php");
+			require_once("views/shared/generic_result_view.php");
 			exit(1);
 		}
 		
@@ -114,14 +114,14 @@ switch(ACTION) {
 		$CURRENT_PICK = $DRAFT->getCurrentPick();
 		
 		$SUCCESSES[] = "<em>" . $submitted_pick->casualName() . "</em> was successfully drafted with the #" . $submitted_pick->player_pick . " selection.";
-		require_once("/views/draft_room/add_pick.php");
+		require_once("views/draft_room/add_pick.php");
 		// </editor-fold>
 		break;
 		
 	case 'selectPickToEdit':
 		// <editor-fold defaultstate="collapsed" desc="selectPickToEdit Logic">
 		$ROUND_1_PICKS = player_object::getSelectedPlayersByRound($DRAFT->draft_id, 1);
-		require("/views/draft_room/select_pick_to_edit.php");
+		require("views/draft_room/select_pick_to_edit.php");
 		// </editor-fold>
 		break;
 	
@@ -151,11 +151,11 @@ switch(ACTION) {
 			define("PAGE_HEADER", "Player Unable to be Edited");
 			define("P_CLASS", "error");
 			define("PAGE_CONTENT", "The player you were attempting to edit is un-editable. This may be because the wrong information was passed in, or the fact that the player/pick you were attempting to edit hasn't been selected in your draft.");
-			require_once("/views/shared/generic_result_view.php");
+			require_once("views/shared/generic_result_view.php");
 			exit(1);
 		}
 		
-		require("/views/draft_room/edit_pick.php");
+		require("views/draft_room/edit_pick.php");
 		// </editor-fold>
 		break;
 	
@@ -167,7 +167,7 @@ switch(ACTION) {
 			define("PAGE_HEADER", "Player Unable to be Edited");
 			define("P_CLASS", "error");
 			define("PAGE_CONTENT", "The player you were attempting to edit is un-editable. This may be because the wrong information was passed in, or the fact that the player/pick you were attempting to edit hasn't been selected in your draft.");
-			require_once("/views/shared/generic_result_view.php");
+			require_once("views/shared/generic_result_view.php");
 			exit(1);
 		}
 		
@@ -181,20 +181,20 @@ switch(ACTION) {
 		
 		if(count($object_errors) > 0) {
 			$ERRORS = $object_errors;
-			require("/views/draft_room/edit_pick.php");
+			require("views/draft_room/edit_pick.php");
 			exit(1);
 		}
 		
 		if($EDIT_PLAYER->savePlayer() === false) {
 			$ERRORS[] = "There was an error while saving the pick. Please try again.";
-			require("/views/draft_room/edit_pick.php");
+			require("views/draft_room/edit_pick.php");
 			exit(1);
 		}
 		
 		define("PAGE_HEADER", "Pick Edited Successfully");
 		define("P_CLASS", "success");
 		define("PAGE_CONTENT", "Pick #" . $EDIT_PLAYER->player_pick . " " . $EDIT_PLAYER->casualName() .  " was successfully edited.<br/><br/><a href=\"draft_room.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to the main draft room, or <a href=\"draft_room.php?action=selectPickToEdit&did=" . DRAFT_ID . "\">click here</a> to go back to edit another draft pick.");
-		require_once("/views/shared/generic_result_view.php");
+		require_once("views/shared/generic_result_view.php");
 		// </editor-fold>
 		break;
 	
@@ -208,11 +208,11 @@ switch(ACTION) {
 			define("PAGE_HEADER", "Last 10 Picks Unable to be Loaded");
 			define("P_CLASS", "error");
 			define("PAGE_CONTENT", "An error has occurred and the last 10 picks of your draft were unable to be loaded. Please try again.");
-			require_once("/views/shared/generic_result_view.php");
+			require_once("views/shared/generic_result_view.php");
 			exit(1);
 		}
 		
-		require("/views/draft_room/index.php");
+		require("views/draft_room/index.php");
 		// </editor-fold>
 		break;
 }

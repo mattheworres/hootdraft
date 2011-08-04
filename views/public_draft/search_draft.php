@@ -2,14 +2,14 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<?php require('/includes/meta.php');?>
+		<?php require('includes/meta.php');?>
 		<link href="css/public_draft.css" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
 		<div id="page_wrapper">
-			<?php require('/includes/header.php');?>
+			<?php require('includes/header.php');?>
 
-			<?php require('/views/shared/public_draft_menu.php');?>
+			<?php require('views/shared/public_draft_menu.php');?>
 			<div id="content">
 				<h3>Search Draft Picks - <?php echo $DRAFT->draft_name;?></h3>
 				<fieldset class="public_form">
@@ -41,7 +41,7 @@
 				<div id="search_results"></div>
 				<br/><br/>
 			</div>
-			<?php require('/includes/footer.php');;?>
+			<?php require('includes/footer.php');;?>
 			<script type="text/javascript">
 				function load_search() {
 					var search_terms = $("#search_terms").val(),

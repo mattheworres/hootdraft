@@ -2,14 +2,14 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-	<?php require('/includes/meta.php'); ?>
+	<?php require('includes/meta.php'); ?>
 	</head>
 	<body>
 	<div id="page_wrapper">
-		<?php require('/includes/header.php'); ?>
+		<?php require('includes/header.php'); ?>
 
 		<?php
-		require('/views/shared/commish_draftless_menu.php');
+		require('views/shared/commish_draftless_menu.php');
 			?>
 		<div id="content">
 				<h3>Update User</h3>
@@ -38,7 +38,7 @@
 					</form>
 		</fieldset>
 		</div>
-		<?php require('/includes/footer.php');; ?>
+		<?php require('includes/footer.php');; ?>
 	</div>
 	</body>
 </html>

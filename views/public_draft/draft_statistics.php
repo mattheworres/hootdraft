@@ -2,14 +2,14 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<?php require('/includes/meta.php');?>
+		<?php require('includes/meta.php');?>
 		<link href="css/public_draft.css" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
 		<div id="page_wrapper">
-			<?php require('/includes/header.php');?>
+			<?php require('includes/header.php');?>
 
-			<?php require('/views/shared/public_draft_menu.php');?>
+			<?php require('views/shared/public_draft_menu.php');?>
 			<div id="content">
 				<h3>Draft Statistics</h3>
 				<p>Below are some statistics (for fun) that are updated during the entire draft. If you want to win the coveted Quickie, make sure you have your mind made up by the time you're on the clock, and let the Commish know immediately!</p>
@@ -32,7 +32,7 @@
 					</div>
 				</fieldset>
 			</div>
-			<?php require('/includes/footer.php');;?>
+			<?php require('includes/footer.php');;?>
 			<script type="text/javascript">
 				$(document).ready(function() {
 					$("#refresh").click(function() {

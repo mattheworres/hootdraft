@@ -1,7 +1,7 @@
 <?php
 
-require_once("/libraries/php_draft_library.php");
-require_once("/models/player_object.php");
+require_once("libraries/php_draft_library.php");
+require_once("models/player_object.php");
 
 /**
  * Represents a PHPDraft "draft" object, which is the parent object.
@@ -211,7 +211,7 @@ class draft_object {
 		if(!$saveSuccess)
 			return false;
 
-		require_once("/models/player_object.php");
+		require_once("models/player_object.php");
 
 		$deleteCurrentSuccess = player_object::deletePlayersByDraft($this->draft_id);
 
@@ -233,8 +233,8 @@ class draft_object {
 	 * @return bool $success True if successful 
 	 */
 	public function setupPicks() {
-		require_once("/models/manager_object.php");
-		require_once("/models/player_object.php");
+		require_once("models/manager_object.php");
+		require_once("models/player_object.php");
 		$pick = 1;
 		$even = true;
 		
@@ -287,7 +287,7 @@ class draft_object {
 	 * Grab proper array values for Teams and Positions dropdowns, and corresponding colors for positions too. Void function, operates on calling object.
 	 */
 	public function setupSport() {
-		require_once("/libraries/sports_values_library.php");
+		require_once("libraries/sports_values_library.php");
 		$lib = new sports_values_library();
 		$this->sports_teams = $lib->getTeams($this->draft_sport);
 		$this->sports_positions = $lib->getPositions($this->draft_sport);
@@ -315,8 +315,8 @@ class draft_object {
 		if($this->draft_id == 0)
 			return false;
 		
-		require_once("/models/player_object.php");
-		require_once("/models/manager_object.php");
+		require_once("models/player_object.php");
+		require_once("models/manager_object.php");
 		
 		$pickRemovalSuccess = player_object::deletePlayersByDraft($this->draft_id);
 		

@@ -2,13 +2,13 @@
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<?php require('/includes/meta.php');?>
+		<?php require('includes/meta.php');?>
 		<link href="css/draft.css" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
 		<div id="page_wrapper">
-			<?php require('/includes/header.php');
-			require('/views/shared/draft_menu.php');?>
+			<?php require('includes/header.php');
+			require('views/shared/draft_menu.php');?>
 			<div id="content">
 				<input type="hidden" id="draft_id" value="<?php echo DRAFT_ID;?>" />
 				<fieldset>
@@ -50,7 +50,7 @@
 					</table>
 				</fieldset>
 			</div>
-			<?php require('/includes/footer.php');;?>
+			<?php require('includes/footer.php');;?>
 			<script src="js/draft.add_managers.js" type="text/javascript"></script>
 		</div>
 	</body>
