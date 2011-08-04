@@ -17,6 +17,7 @@
 					<legend><?php echo $DRAFT->draft_name;?> - Statistics Summary</legend>
 					<?php if($DRAFT->isInProgress()) {?><p class="success"><a href="#" id="refresh"><img src="images/icons/refresh.png" class="small_link" alt="Refresh Statistics" />&nbsp;Refresh Statistics</a></p><?php }?>
 					<div id="stats">
+						<p class="success">Last refreshed: <?php echo $NOW; ?></p>
 						<p><strong>Longest Average Pick Time (The &quot;Hooooold Oonnn&quot; Award)</strong><br /><?php echo $STATS->hold_on_manager_name; ?> - <?php echo $STATS->hold_on_pick_time; ?></p>
 						<p><strong>Shortest Average Pick Time (The Quickie Award)</strong><br /><?php echo $STATS->quickie_manager; ?> - <?php echo $STATS->quickie_pick_time; ?></p>
 						<p><strong>Longest Single Pick (The Slowpoke Rodriguez Award)</strong><br /><?php echo $STATS->slowpoke_manager_name; ?> - <?php echo $STATS->slowpoke_pick_time; ?></p>
@@ -35,7 +36,7 @@
 			<script type="text/javascript">
 				$(document).ready(function() {
 					$("#refresh").click(function() {
-						$("#stats").load('draft_stats.php?action=reload_stats&draft_id=<?php echo $draft_id;?>');
+						$("#stats").load('public_draft.php?action=loadStats&did=<?php echo DRAFT_ID;?>');
 					});
 				});
 			</script>

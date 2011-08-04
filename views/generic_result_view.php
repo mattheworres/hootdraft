@@ -8,6 +8,7 @@
 	<div id="page_wrapper">
 		<?php require('header.php'); ?>
 
+		<?php require('/views/shared/main_menu.php'); ?>
 		<div id="content-wide">
 		<h3><?php echo PAGE_HEADER; ?></h3>
 		<p class="<?php echo P_CLASS; ?>"><?php echo PAGE_CONTENT; ?></p>

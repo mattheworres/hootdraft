@@ -146,9 +146,20 @@ switch(ACTION) {
 	
 	case 'draftStats':
 		require_once("/models/draft_statistics_object.php");
+		require_once("/libraries/php_draft_library.php");
 		$STATS = new draft_statistics_object();
 		$STATS->generateStatistics($DRAFT);
+		$NOW = php_draft_library::getNowRefreshTime();
 		require("/views/public_draft/draft_statistics.php");
+		break;
+	
+	case 'loadStats':
+		require_once("/models/draft_statistics_object.php");
+		require_once("/libraries/php_draft_library.php");
+		$STATS = new draft_statistics_object();
+		$STATS->generateStatistics($DRAFT);
+		$NOW = php_draft_library::getNowRefreshTime();
+		require("/views/public_draft/draft_statistics_results.php");
 		break;
 	
 	default:
