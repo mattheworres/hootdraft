@@ -159,8 +159,8 @@ class player_object {
 		if(!isset($this->pick_time))
 			throw new Exception("Must call updatePickDuration on a player object that already has its own pick_time set!");
 		
-		if($this->player_pick == 1) 
-			$start_time = (int)$draft->start_time;
+		if($this->player_pick == 1 || $previous_pick === false) 
+			$start_time = strtotime($draft->start_time);
 		else
 			$start_time = strtotime($previous_pick->pick_time);
 		
