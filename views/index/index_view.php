@@ -8,7 +8,7 @@
 	<div id="page_wrapper">
 		<?php require('header.php'); ?>
 
-		<?php require('menu.php'); ?>
+		<?php require('/views/shared/main_menu.php'); ?>
 		<div id="content">
 		<h3>Welcome to PHPDraft!</h3>
 				<div class='featurebox_center'><strong>PHPDraft is now officially in a public beta phase</strong>!  Private Beta finished with no hiccups or burps, so a public beta was deemed best!  All of the source code that runs this site is publicly available for free at <a href="http://www.sourceforge.net">SourceForge.net</a>, where the project has <a href="http://sourceforge.net/projects/phpdraft">its own project page</a>, complete with source control integration, bug tracking, and forums for feedback and help!  So please, if you have input, need help, or would like to help, please contact Matt on the project page!</div>

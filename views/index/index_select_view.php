@@ -8,7 +8,7 @@
 	<div id="page_wrapper">
 		<?php require('header.php'); ?>
 
-		<?php require('menu.php'); ?>
+		<?php require('/views/shared/main_menu.php'); ?>
 		<div id="content">
 		<h3>Choose a Draft</h3>
 		<p>To get started, go ahead and click on the name of a draft below.  If a lock icon shows up beside a draft, that means you'll have to get the password from your commissioner*</p>

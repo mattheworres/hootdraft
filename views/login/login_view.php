@@ -8,7 +8,7 @@
 	<div id="page_wrapper">
 		<?php require('header.php'); ?>
 
-		<?php require('menu.php'); ?>
+		<?php require('/views/shared/main_menu.php'); ?>
 		<div id="content">
 		<h3>Please Authenticate</h3>
 		<div class="featurebox_center">
