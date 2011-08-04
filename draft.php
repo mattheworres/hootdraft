@@ -196,7 +196,6 @@ switch(ACTION) {
 		// </editor-fold>
 		break;
 
-	case '':
 	default:
 		// <editor-fold defaultstate="collapsed" desc="Main Draft Page Logic">
 		require_once("models/manager_object.php");

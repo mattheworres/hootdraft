@@ -79,26 +79,26 @@
 					<legend><?php echo $DRAFT->draft_name; ?> - Functions</legend>
 					<?php if($DRAFT->isUndrafted()) {?><p><strong><a href="draft.php?action=addManagers&did=<?php echo DRAFT_ID; ?>"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-plusthick"></span>Add Manager(s)</a></strong></p>
 					<?php } ?><p><strong><a id="changeVisibility" href="#"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-key"></span>Change Draft Visibility</a></strong></p>
-					<?php if(!$DRAFT->isCompleted() && HAS_MANAGERS) {?><p id="draft-status-link"><strong><a href="draft.php?action=changeStatus&did=<?php echo DRAFT_ID; ?>"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-play"></span>Change Draft Status</a></strong></p><?php } ?>
+					<?php if(!$DRAFT->isCompleted() && HAS_MANAGERS) { ?><p id="draft-status-link"><strong><a href="draft.php?action=changeStatus&did=<?php echo DRAFT_ID; ?>"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-play"></span>Change Draft Status</a></strong></p><?php } ?>
 				</fieldset>
 			</div>
-			<?php require('/includes/footer.php');; ?>
+			<?php require('/includes/footer.php'); ?>
 			<script src="js/draft.index.js" type="text/javascript"></script>
 		</div>
 		<div id="visibilityDialog">
 			<p>Change whether or not this draft is viewable publicly. If you would like to make it private, you must provide a password.</p>
-				<label for="draft_status">Draft Status:</label>
-				<select id="draft_status" name="draft_status">
-					<option value="1" <?php if($DRAFT->isPasswordProtected()) { echo " selected"; } ?>>Password Protected</option>
-					<option value="0" <?php if(!$DRAFT->isPasswordProtected()) { echo " selected"; } ?>>Public</option>
-				</select>
-				<div id="passwordBox"<?php if(!$DRAFT->isPasswordProtected()) { echo " style=\" display: none;\""; }?>>
-					<label for="draft_password">Draft Password:</label>
-					<input type="text" id="draft_password" value="<?php echo $DRAFT->password; ?>" /><br/>
-					<label for="draft_password_confirm">Confirm Password:</label>
-					<input type="text" id="draft_password_confirm" value="<?php echo $DRAFT->password; ?>" /><br/>
-				</div>
-				<p id="visibilityError" class="errorDescription error"></p>
+			<label for="draft_status">Draft Status:</label>
+			<select id="draft_status" name="draft_status">
+				<option value="1" <?php if($DRAFT->isPasswordProtected()) { echo " selected=\"selected\""; } ?>>Password Protected</option>
+				<option value="0" <?php if(!$DRAFT->isPasswordProtected()) { echo " selected=\"selected\""; } ?>>Public</option>
+			</select>
+			<div id="passwordBox"<?php if(!$DRAFT->isPasswordProtected()) { echo " style=\" display: none;\""; }?>>
+				<label for="draft_password">Draft Password:</label>
+				<input type="text" id="draft_password" value="<?php echo $DRAFT->password; ?>" /><br/>
+				<label for="draft_password_confirm">Confirm Password:</label>
+				<input type="text" id="draft_password_confirm" value="<?php echo $DRAFT->password; ?>" /><br/>
+			</div>
+			<p id="visibilityError" class="errorDescription error"></p>
 		</div>
 	</body>
 </html>
