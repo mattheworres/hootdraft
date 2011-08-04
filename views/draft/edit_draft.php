@@ -6,7 +6,7 @@
 	</head>
 	<body>
 		<div id="page_wrapper">
-			<?php require('header.php');
+			<?php require('/includes/header.php');
 			require('views/shared/draft_menu.php');?>
 			<div id="content">
 				<fieldset>
@@ -49,7 +49,7 @@
 					</form>
 				</fieldset>
 			</div>
-			<?php require('footer.php');?>
+			<?php require('/includes/footer.php');;?>
 		</div>
 	</body>
 </html>

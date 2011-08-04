@@ -7,7 +7,7 @@
 	</head>
 	<body>
 		<div id="page_wrapper">
-			<?php require('header.php');
+			<?php require('/includes/header.php');
 			require('/views/shared/draft_menu.php');?>
 			<div id="content">
 				<input type="hidden" id="draft_id" value="<?php echo DRAFT_ID;?>" />
@@ -50,7 +50,7 @@
 					</table>
 				</fieldset>
 			</div>
-			<?php require('footer.php');?>
+			<?php require('/includes/footer.php');;?>
 			<script src="js/draft.add_managers.js" type="text/javascript"></script>
 		</div>
 	</body>

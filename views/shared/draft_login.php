@@ -7,7 +7,7 @@
 	<body>
 		<div id="page_wrapper">
 			<?php DEFINE("ACTIVE_TAB", "DRAFT_CENTRAL");
-			require('header.php');?>
+			require('/includes/header.php');?>
 
 			<?php require('/views/shared/main_menu.php');?>
 			<div id="content">
@@ -35,7 +35,7 @@
 					<p class="error">*Required</p>
 				<?php }?>
 			</div>
-			<?php require('footer.php');?>
+			<?php require('/includes/footer.php');;?>
 		</div>
 	</body>
 </html>

@@ -49,7 +49,7 @@ class manager_object {
 		if(empty($this->manager_name))
 			$errors[] = "Manager name is empty.";
 
-		$has_a_draft = mysql_num_rows(mysql_query("SELECT draft_id FROM draft WHERE draft_id = " . $this->draft_id)) > 0;
+		$has_a_draft = mysql_num_rows(mysql_query("SELECT draft_id FROM draft WHERE draft_id = " . (int)$this->draft_id)) > 0;
 
 		if(!$has_a_draft)
 			$errors[] = "Manager's draft doesn't exist.";

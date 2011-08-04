@@ -6,7 +6,7 @@
 	</head>
 	<body>
 	<div id="page_wrapper">
-		<?php require('header.php'); ?>
+		<?php require('/includes/header.php'); ?>
 
 		<?php require('/views/shared/main_menu.php'); ?>
 		<div id="content">
@@ -35,7 +35,7 @@
 					}?><p><strong>*<?php echo $message; ?></strong></p>
 				 <?php } ?>
 		</div>
-		<?php require('footer.php'); ?>
+		<?php require('/includes/footer.php');; ?>
 	</div>
 	</body>
 </html>

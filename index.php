@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require_once('dbconn.php');
+require_once('/includes/dbconn.php');
 set_conn();
 
 require_once('models/index_model.php');

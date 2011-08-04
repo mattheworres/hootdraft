@@ -1,7 +1,7 @@
 <?php
 //Going to treat this controller as a singleton - one action, then forwards back to whatever user was previously trying to do.
 session_start();
-require("dbconn.php");
+require('/includes/dbconn.php');
 set_conn();
 
 require_once("models/draft_object.php");

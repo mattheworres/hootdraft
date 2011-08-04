@@ -1,12 +1,12 @@
 <?php
 
-require_once("dbconn.php");
+require_once('/includes/dbconn.php');
 set_conn();
 
-require("check_draft_password.php");
+require('/includes/check_draft_password.php');
 
-require_once("/models/draft_object.php");
-require_once("/models/manager_object.php");
+require_once('/models/draft_object.php');
+require_once('/models/manager_object.php');
 
 DEFINE("ACTIVE_TAB", "DRAFT_CENTRAL");
 DEFINE("ACTION", $_REQUEST['action']);

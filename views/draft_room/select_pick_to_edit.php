@@ -7,7 +7,7 @@
 	</head>
 	<body>
 		<div id="page_wrapper">
-			<?php require('header.php');?>
+			<?php require('/includes/header.php');?>
 
 			<?php require('/views/shared/draft_room_menu.php');?>
 			<div id="content">
@@ -32,7 +32,7 @@
 					</div>
 				</fieldset>
 			</div>
-			<?php require('footer.php');?>
+			<?php require('/includes/footer.php');;?>
 			<script type="text/javascript">
 				$(document).ready(function() {
 					$('#round').live('change', function() {

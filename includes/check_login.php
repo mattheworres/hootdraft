@@ -1,4 +1,4 @@
-<?php	//check_login.php
+<?php
 /*
 	This document shall be included on any page that requires valid login credentials
 	
@@ -8,8 +8,8 @@
 */
 session_start();		//Start/restore user session data
 
-require_once('dbconn.php');
-require_once('models/user_object.php');
+require_once('/includes/dbconn.php');
+require_once('/models/user_object.php');
 
 set_conn();
 

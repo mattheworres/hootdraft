@@ -6,7 +6,7 @@
 	</head>
 	<body>
 	<div id="page_wrapper">
-		<?php require('header.php');
+		<?php require('/includes/header.php');
 		require('views/shared/draft_menu.php');?>
 		<div id="content">
 		<form action="draft.php?action=updateStatus&did=<?php echo DRAFT_ID; ?>" method="POST">
@@ -31,7 +31,7 @@
 			</fieldset>
 		</form>
 		</div>
-		<?php require('footer.php'); ?>
+		<?php require('/includes/footer.php');; ?>
 		<script type="text/javascript">
 			$(document).ready(function() {
 				

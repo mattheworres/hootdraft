@@ -1,6 +1,6 @@
 	<?php
-	include_once("dbconn.php");
-		include_once("models/user_object.php");
+	require_once('/includes/dbconn.php');
+	require_once('models/user_object.php');
 		
 	set_conn();
 	

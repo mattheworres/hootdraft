@@ -1,5 +1,5 @@
 <?php
-require_once("check_login.php");
+require_once("/includes/check_login.php");
 require_once("models/manager_object.php");
 
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
@@ -47,7 +47,7 @@ switch(ACTION) {
 		// <editor-fold defaultstate="collapsed" desc="updateManager Logic">
 		$ERRORS = array();
 		$MANAGER->manager_name = trim($_POST['manager_name']);
-		$MANAGER->team_name = trim($_POST['team_name']);
+		$MANAGER->manager_email = trim($_POST['manager_email']);
 		
 		$object_errors = $MANAGER->getValidity();
 		
