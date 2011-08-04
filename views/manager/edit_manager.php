@@ -8,7 +8,7 @@
 	<div id="page_wrapper">
 		<?php require('header.php');
 		
-		require('comm_draft_menu.php'); ?>
+		require('/views/shared/draft_menu.php'); ?>
 
 		<div id="content">
 		<form action="manager.php?action=updateManager" method="POST">

@@ -9,7 +9,6 @@
 session_start();		//Start/restore user session data
 
 require_once('dbconn.php');
-require_once('cleanstring.php');
 require_once('models/user_object.php');
 
 set_conn();

@@ -1,6 +1,4 @@
-<?php
-include_once("login_fcns.php");
-?><div id="header_wrapper">
+<div id="header_wrapper">
 	<div id="header">
 	<div style="width:50%; float:left;">
 		<h1>PHP<font color="#FFDF8C">Draft</font></h1>
@@ -16,7 +14,7 @@ include_once("login_fcns.php");
 		if(defined("ACTIVE_TAB")/*!empty($ACTIVE_TAB)*/) {?>
 			<li<?php if(ACTIVE_TAB == 'INDEX') echo " id=\"active\"";?>><a href="index.php"<?php if(ACTIVE_TAB == 'INDEX') echo " id=\"current\" name=\"current\"";?>>Welcome!</a></li>
 		<li<?php if(ACTIVE_TAB == 'DRAFT_CENTRAL') echo " id=\"active\"";?>><a href="index.php?action=select"<?php if(ACTIVE_TAB == 'DRAFT_CENTRAL') echo " id=\"current\" name=\"current\"";?>>Draft Central</a></li>
-			<?php  if(!isLoggedIn()) {//if the user is not authenticated?>
+			<?php  if(!$owner->userAuthenticated()) {//if the user is not authenticated?>
 			<li<?php if(ACTIVE_TAB == 'LOGIN') echo " id=\"active\"";?>><a href="login.php"<?php if(ACTIVE_TAB == 'LOGIN') echo " id=\"current\" name=\"current\"";?>>Commissioner Login</a></li>
 	<?php
 		}else {?><li<?php if(ACTIVE_TAB == 'CONTROL_PANEL') echo " id=\"active\"";?>><a href="control_panel.php?action=home"<?php if(ACTIVE_TAB == 'CONTROL_PANEL') echo " id=\"current\" name=\"current\"";?>>Control Panel</a></li>

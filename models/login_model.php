@@ -1,5 +1,4 @@
 <?php
-include_once("cleanstring.php");
 include_once("models/user_object.php");
 
 class loginObject {
@@ -7,7 +6,7 @@ class loginObject {
 		$userObject = new user_object();
 		$userObject->getCurrentlyLoggedInUser();
 
-		if(strlen($userObject->user_id) && strlen($userObject->user_name) && strlen($userObject->password))
+		if($userObject->user_id > 0 && strlen($userObject->user_name) > 0 && strlen($userObject->password) > 0)
 		{
 			$user_result = mysql_query("SELECT UserID
 										FROM user_login

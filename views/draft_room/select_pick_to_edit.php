@@ -16,24 +16,20 @@
 				<p class="error"><?php echo $err_msg;?></p>
 				<fieldset>
 					<legend>Select a Pick to Edit</legend>
-					<form action="comm_draft_picks.php" method="post">
-						<input type="hidden" name="action" value="edit" />
-						<input type="hidden" name="draft_id" value="<?php echo $draft_id;?>" />
-						<p>To edit a pick, select the round you wish to edit first, and any editable picks will show up below. Only picks that have already been made can be edited, so for depending on which round you choose, you may or may not get any rounds listed.</p>
-						<div id="selection">
-							<p><label for="round">Round*:</label>
-								<select name="round" id="round">
-									<?php for($i = 1; $i <= $DRAFT->draft_rounds; ++$i) {
-										?><option value="<?php echo $i;?>"<?php if($i == 1) { ?> selected="selected"<?php } ?>>Round <?php echo $i;?></option>
-									<?php }?>
-								</select></p>
-							<div id="picks">
-								<?php foreach($ROUND_1_PICKS as $editable_pick) { ?>
-								<p><a href="draft_room.php?action=editScreen&did=<?php echo DRAFT_ID;?>&pid=<?php echo $editable_pick->player_id; ?>">Pick # <?php echo $editable_pick->player_pick; ?>, <span class="player-name"><?php echo $editable_pick->casualName(); ?></span> (<?php echo $editable_pick->position . ", " . $editable_pick->team; ?>) - <?php echo $editable_pick->manager_name; ?></a></p>
-								<?php } ?>
-							</div>
+					<p>To edit a pick, select the round you wish to edit first, and any editable picks will show up below. Only picks that have already been made can be edited, so for depending on which round you choose, you may or may not get any rounds listed.</p>
+					<div id="selection">
+						<p><label for="round">Round*:</label>
+							<select name="round" id="round">
+								<?php for($i = 1; $i <= $DRAFT->draft_rounds; ++$i) {
+									?><option value="<?php echo $i;?>"<?php if($i == 1) {?> selected="selected"<?php }?>>Round <?php echo $i;?></option>
+								<?php }?>
+							</select></p>
+						<div id="picks">
+							<?php foreach($ROUND_1_PICKS as $editable_pick) {?>
+								<p><a href="draft_room.php?action=editScreen&did=<?php echo DRAFT_ID;?>&pid=<?php echo $editable_pick->player_id;?>">Pick # <?php echo $editable_pick->player_pick;?>, <span class="player-name"><?php echo $editable_pick->casualName();?></span> (<?php echo $editable_pick->position . ", " . $editable_pick->team;?>) - <?php echo $editable_pick->manager_name;?></a></p>
+							<?php }?>
 						</div>
-					</form>
+					</div>
 				</fieldset>
 			</div>
 			<?php require('footer.php');?>
@@ -41,9 +37,9 @@
 				$(document).ready(function() {
 					$('#round').live('change', function() {
 						var round_number = parseInt($('#round').val(), 10),
-							draft_id = parseInt(<?php echo DRAFT_ID; ?>, 10),
-							$pick_div = $('#picks'),
-							$loadingDialog = $('#loadingDialog');
+						draft_id = parseInt(<?php echo DRAFT_ID;?>, 10),
+						$pick_div = $('#picks'),
+						$loadingDialog = $('#loadingDialog');
 							
 						$loadingDialog.dialog('open');
 						
