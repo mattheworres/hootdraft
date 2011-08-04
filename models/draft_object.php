@@ -419,8 +419,8 @@ class draft_object {
 			$draft->draft_sport = $draft_row['draft_sport'];
 			$draft->draft_style = $draft_row['draft_style'];
 			$draft->draft_rounds = (int)$draft_row['draft_rounds'];
-			$draft->start_time = $draft_row['start_time'];
-			$draft->end_time = $draft_row['end_time'];
+			$draft->start_time = $draft_row['draft_start_time'];
+			$draft->end_time = $draft_row['draft_end_time'];
 			$draft->current_round = (int)$draft_row['current_round'];
 			$draft->current_pick = (int)$draft_row['current_pick'];
 			$drafts[] = $draft;
