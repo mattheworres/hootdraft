@@ -1,6 +1,6 @@
 <?php
+require("/includes/global_setup.php");
 require_once("/includes/check_login.php");
-require_once("models/draft_object.php");
 require_once("models/player_object.php");
 require_once("models/manager_object.php");
 

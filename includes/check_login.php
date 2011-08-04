@@ -1,24 +1,14 @@
 <?php
 /*
-	This document shall be included on any page that requires valid login credentials
-	
-	Note:
-	This document MUST be included BEFORE any output on a page because of it's use of
-	the header() and session_start() functions.
+	Used to ensure commissioner access to the parent file that includes it.
 */
-session_start();		//Start/restore user session data
 
-require_once('/includes/dbconn.php');
-require_once('/models/user_object.php');
-
-set_conn();
-
-$userObject = new user_object();
-$userObject->getCurrentlyLoggedInUser();
-
-if(!$userObject->userAuthenticated()) {
+if(!$LOGGED_IN_USER->userAuthenticated()) {
 	header('Location: login.php');
-	echo "You are not properly logged in. You must <a href='login.php'>login</a> now.\n";
+	define("PAGE_HEADER", "Access Restricted");
+	define("P_CLASS", "error");
+	define("PAGE_CONTENT", "In order to access this portion of the site, you must be the commissioner. <a href=\"login.php\">Click here</a> to go to the login page.");
+	require_once("/views/shared/generic_result_view.php");
 	exit(1);
 }
 

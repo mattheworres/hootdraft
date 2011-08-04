@@ -1,5 +1,4 @@
 <?php
-include_once("models/user_object.php");
 
 class loginObject {
 	public function get_login_status() {

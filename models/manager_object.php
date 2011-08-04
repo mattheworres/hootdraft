@@ -176,7 +176,6 @@ class manager_object {
 	}
 
 	public function deleteManager() {
-		require_once('/models/draft_object.php');
 		$draft = new draft_object($this->draft_id);
 
 		if($draft->draft_id == 0 || !$draft->isUndrafted()) {

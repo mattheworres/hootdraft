@@ -2,7 +2,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-	<?php require('meta.php'); ?>
+	<?php require('/includes/meta.php'); ?>
 	<link href="css/draft_room.css" type="text/css" rel="stylesheet" />
 	</head>
 	<body>

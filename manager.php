@@ -1,4 +1,5 @@
 <?php
+require("/includes/global_setup.php");
 require_once("/includes/check_login.php");
 require_once("models/manager_object.php");
 
@@ -40,7 +41,9 @@ switch(ACTION) {
 		break;
 	
 	case 'editManager':
+		// <editor-fold defaultstate="collapsed" desc="editManager Logic">
 		require_once('/views/manager/edit_manager.php');
+		// </editor-fold>
 		break;
 	
 	case 'updateManager':
@@ -71,9 +74,11 @@ switch(ACTION) {
 		break;
 	
 	case 'deleteManager':
+		// <editor-fold defaultstate="collapsed" desc="deleteManager Logic">
 		$success = $MANAGER->deleteManager();
 		
 		echo $success ? "SUCCESS" : "FAILURE";
+		// </editor-fold>
 		break;
 }
 ?>

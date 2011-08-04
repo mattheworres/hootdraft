@@ -1,5 +1,5 @@
 <?php
-require_once("/models/draft_object.php");
+
 require_once("/models/search_object.php");
 /**
  * Represents a PHPDraft player, or "pick" in the draft.

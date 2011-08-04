@@ -1,6 +1,6 @@
 <?php
+require("/includes/global_setup.php");
 require_once("/includes/check_login.php");
-require_once("models/draft_object.php");
 
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
 
@@ -58,7 +58,6 @@ switch($_GET['action']) {
 		// <editor-fold defaultstate="collapsed" desc="manageProfile Logic">
 		DEFINE("CONTROL_PANEL_ACTION", "MANAGE");
 		require_once("/models/user_edit_model.php");
-		require_once("/models/user_object.php");
 		
 		$loggedInUser = new user_object();
 		$loggedInUser->getCurrentlyLoggedInUser();
@@ -71,7 +70,6 @@ switch($_GET['action']) {
 	case 'saveProfile':
 		// <editor-fold defaultstate="collapsed" desc="saveProfile Logic">
 		require_once("/models/user_edit_model.php");
-		require_once("/models/user_object.php");
 		
 		$ERRORS = array();
 		

@@ -1,7 +1,5 @@
-<?php session_start();	/*Even if we have a false alarm, start the session at least before headers are sent*/
-
-include_once('/includes/dbconn.php');
-set_conn();
+<?php 
+require("/includes/global_setup.php");
 
 require_once('models/login_model.php');
 define("ACTIVE_TAB", "LOGIN");

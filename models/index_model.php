@@ -1,7 +1,5 @@
 <?php
 
-require_once("models/draft_object.php");
-
 /**
  * @property int $number_of_drafts a count of the number of drafts the view model has.
  * @property array $draft_objects An array of all of the draft objects.

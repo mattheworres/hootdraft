@@ -1,9 +1,7 @@
 <?php
-
-session_start();  //Start/restore user session data
-
-require_once('/models/draft_object.php');
-require_once('/models/user_object.php');
+/**
+ * Used to restrict access to "public" draft pages that are password-protected.
+ */
 
 $_SESSION['draft_id'] = (int)$_SESSION['draft_id'];
 $_SESSION['draft_password'] = $_SESSION['draft_password'];

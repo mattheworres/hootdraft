@@ -1,11 +1,7 @@
 <?php
-session_start();
-
-require_once('/includes/dbconn.php');
-set_conn();
+require("/includes/global_setup.php");
 
 require_once('models/index_model.php');
-require_once('models/draft_object.php');
 
 $drafts = new indexObject();
 $drafts->draft_objects = draft_object::getAllDrafts();

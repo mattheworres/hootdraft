@@ -1,7 +1,6 @@
 <?php
 require_once("/models/player_object.php");
 require_once("/models/manager_object.php");
-require_once("/models/draft_object.php");
 require_once("/libraries/php_draft_library.php");
 
 class draft_statistics_object {

@@ -1,10 +1,7 @@
 <?php
 //Going to treat this controller as a singleton - one action, then forwards back to whatever user was previously trying to do.
-session_start();
-require('/includes/dbconn.php');
-set_conn();
+require("/includes/global_setup.php");
 
-require_once("models/draft_object.php");
 DEFINE('ACTIVE_TAB', 'DRAFT_CENTRAL');
 
 $DESTINATION = $_POST['destination'];
