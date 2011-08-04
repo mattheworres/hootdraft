@@ -38,11 +38,11 @@
 					<legend>Recent Picks - Last 10</legend>
 					<table width="100%">
 						<tr>
-							<th width="55">Rd #</th>
+							<th width="50">Rd #</th>
 							<th width="55">Pick #</th>
-							<th>Manager</th>
 							<th>Player</th>
-							<th width="55">Pos.</th>
+							<th>Manager</th>
+							<th width="50">Pos.</th>
 							<th width="55">Team</th>
 						</tr>
 						<?php if(count($LAST_TEN_PICKS) == 0) {
@@ -53,8 +53,8 @@
 								<tr style="background-color:<?php echo $DRAFT->sports_colors[$last_pick->position]; ?>;">
 									<td><?php echo $last_pick->player_round;?></td>
 									<td><?php echo $last_pick->player_pick;?></td>
+									<td><span class="player-name"><?php echo $last_pick->casualName();?></span></td>
 									<td><?php echo $last_pick->manager_name;?></td>
-									<td><?php echo $last_pick->casualName();?></td>
 									<td><?php echo $last_pick->position;?></td>
 									<td><?php echo $last_pick->team;?></td>
 								</tr>
