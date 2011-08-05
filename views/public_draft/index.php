@@ -28,7 +28,7 @@
 						<p><strong>On the Clock: </strong> Pick #<?php echo $CURRENT_PICK->player_pick; ?> (<?php echo $CURRENT_PICK->manager_name; ?>)</p><?php } ?>
 						<?php if($DRAFT->isInProgress() || $DRAFT->isCompleted()) {?><p><strong>Draft Start Time: </strong> <?php echo $DRAFT->start_time;?></p><?php }?>
 						<?php if($DRAFT->isCompleted()) {?><p><strong>Draft End Time: </strong> <?php echo $DRAFT->end_time;?></p>
-							<p><strong>Time Spent Drafting: </strong> <?php echo $DRAFT->getDraftDuration;?></p><?php }?>
+							<p><strong>Time Spent Drafting: </strong> <?php echo $DRAFT->getDraftDuration();?></p><?php }?>
 					</div>
 					<div style="width: 30%; float:right; text-align: right;">
 						<p><img src="images/icons/<?php echo $DRAFT->draft_status;?>.png" alt="<?php echo $DRAFT->draft_status;?>" title="<?php echo $DRAFT->draft_status;?>"/></p>
