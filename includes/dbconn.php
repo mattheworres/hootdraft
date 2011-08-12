@@ -2,37 +2,50 @@
 /*
 	This document implements functions necessary to connect to the MySQL server
 	and also to select a database within that server so that we may operate on it.
-	
-	To avoid multiple declarations of these functions, ALWAYS use include_once()
-	when including the file.
 */
-$my_conn;
-$admin_password = "";
-function set_conn() {//Create a connection to MySQL with proper authentication so we can select a DB
-	global $my_conn;	//Make sure we're using a global var so other fcns can access it
-	$username = "your_username";
-	$password = "your_password";
-	$my_conn = mysql_connect("localhost",$username,$password);
+class php_draft_connect {
+
+	public static function set_conn() {//Create a connection to MySQL with proper authentication so we can select a DB
+		$username = "your_username";
+		$password = "your_password";
+		$connection = mysql_connect("localhost",$username,$password);
+
+		if(!$connection) {
+			die('Could not connect: ' . mysql_error());
+		}
+		
+		php_draft_connect::select_db("phpdraft", $connection);
+	}
+
+	private static function select_db($dbname, $connection) {
+		if(!$connection || !isset($connection)) {
+			die('Could not connect: Connection variable not set!');
+		}
+
+		if(!isset($dbname)) {
+			die('Could not select database: no database name given.');
+		}
+
+		if(!mysql_select_db($dbname, $connection)) {
+			die('Could not select database: ' . mysql_error());
+		}
+	}
 	
-	if(!$my_conn) {
-	die('Could not connect: ' . mysql_error());
-	}
-	select_db("phpdraft");
-}
-
-function select_db($dbname) {
-	global $my_conn;	//Use the global version
-
-	if(!$my_conn || !isset($my_conn)) {
-		die('Could not connect: Connection variable not set!');
-	}
-
-	if(!isset($dbname)) {//We weren't given a DB name
-		die('Could not select database: no database name given.');
-	}
-
-	if(!mysql_select_db($dbname, $my_conn)) {//If we couldn't select that database
-		die('Could not select database: ' . mysql_error());
+	
+	public static function setupPDOHandle() {
+		$database_username = "your_username";
+		$database_password = "your_password";
+		$database_host = "localhost";
+		$database_name = "phpdraft";
+		
+		try {
+			$dbh = new PDO('mysql:host=' . $database_host . ';dbname=' . $database_name, $database_username, $database_password);
+		}catch(PDOException $e) {
+			echo "Error: " . $e->getMessage();
+			die();
+		}
+		
+		return $dbh;
 	}
 }
 ?>

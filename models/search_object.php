@@ -26,7 +26,6 @@ class search_object {
 			exit(1);
 		}
 		
-		require_once("models/player_object.php");
 		$hasName = $this->hasName();
 		
 		if($this->hasName())

@@ -44,26 +44,33 @@ class draft_object {
 
 	public function __construct($id = 0) {
 		$id = (int)$id;
+		global $DBH; /* @var $DBH PDO */
 		
 		if($id == 0)
 			return false;
 
-		$draft_result = mysql_query("SELECT * FROM draft WHERE draft_id = " . $id . " LIMIT 1");
-
-		if(!$draft_row = mysql_fetch_array($draft_result))
+		//$draft_result = mysql_query("SELECT * FROM draft WHERE draft_id = " . $id . " LIMIT 1");
+		
+		$draft_stmt = $DBH->prepare("SELECT * FROM draft WHERE draft_id = ? LIMIT 1");
+		$draft_stmt->bindParam(1, $id);
+		
+		if(!$draft_stmt->execute())
 			return false;
-
-		$this->draft_id = (int)$draft_row['draft_id'];
-		$this->draft_name = $draft_row['draft_name'];
-		$this->draft_sport = $draft_row['draft_sport'];
-		$this->draft_status = $draft_row['draft_status'];
-		$this->draft_style = $draft_row['draft_style'];
-		$this->draft_rounds = $draft_row['draft_rounds'];
-		$this->draft_password = $draft_row['draft_password'];
-		$this->start_time = $draft_row['draft_start_time'];
-		$this->end_time = $draft_row['draft_end_time'];
-		$this->current_round = (int)$draft_row['draft_current_round'];
-		$this->current_pick = (int)$draft_row['draft_current_pick'];
+		
+		if(!$row = $draft_stmt->fetch())
+			return false;
+		
+		$this->draft_id = (int)$row['draft_id'];
+		$this->draft_name = $row['draft_name'];
+		$this->draft_sport = $row['draft_sport'];
+		$this->draft_status = $row['draft_status'];
+		$this->draft_style = $row['draft_style'];
+		$this->draft_rounds = $row['draft_rounds'];
+		$this->draft_password = $row['draft_password'];
+		$this->start_time = $row['draft_start_time'];
+		$this->end_time = $row['draft_end_time'];
+		$this->current_round = (int)$row['draft_current_round'];
+		$this->current_pick = (int)$row['draft_current_pick'];
 
 		return true;
 	}
@@ -86,8 +93,18 @@ class draft_object {
 			$errors[] = "Draft rounds must be at least 1 or more.";
 
 		if(empty($this->draft_id) || $this->draft_id == 0) {
-			$name_result = mysql_fetch_array(mysql_query("SELECT COUNT(draft_id) as count FROM draft WHERE draft_name = '" . mysql_real_escape_string($this->draft_name) . "' AND draft_sport = '" . mysql_real_escape_string($this->draft_sport) . "'"));
-			$name_count = (int)$name_result['count'];
+			global $DBH; /* @var $DBH PDO */
+			
+			$name_stmt = $DBH->prepare("SELECT COUNT(draft_id) as count FROM draft where draft_name = ? AND draft_sport = ?");
+			$name_stmt->bindParam(1, $this->draft_name);
+			$name_stmt->bindParam(2, $this->draft_sport);
+			
+			if(!$name_stmt->execute())
+				$errors[] = "Draft unable to be saved.";
+			if(!$row = $name_stmt->fetch())
+				$errors[] = "Draft unable to be saved.";
+			
+			$name_count = (int)$row['count'];
 
 			if($name_count > 0)
 				$errors[] = "Draft already found with that name and sport.";
@@ -477,6 +494,30 @@ class draft_object {
 	 */
 	public function styleIsStandard() {
 		return $this->draft_sty == "standard";
+	}
+	// </editor-fold>
+	
+	// <editor-fold defaultstate="collapsed" desc="Private Object Helpers">
+	private static function fillDraftObject($mysql_array, $draft_id = 0) {
+		$draft = new draft_object();
+		
+		if($draft_id > 0)
+			$draft->draft_id = (int)$draft_id;
+		else
+			$draft->draft_id = (int)$mysql_array['draft_id'];
+		
+		$draft->draft_name = $mysql_array['draft_name'];
+		$draft->draft_sport = $mysql_array['draft_sport'];
+		$draft->draft_status = $mysql_array['draft_status'];
+		$draft->draft_style = $mysql_array['draft_style'];
+		$draft->draft_rounds = $mysql_array['draft_rounds'];
+		$draft->draft_password = $mysql_array['draft_password'];
+		$draft->start_time = $mysql_array['draft_start_time'];
+		$draft->end_time = $mysql_array['draft_end_time'];
+		$draft->current_round = (int)$mysql_array['draft_current_round'];
+		$draft->current_pick = (int)$mysql_array['draft_current_pick'];
+		
+		return $draft;
 	}
 	// </editor-fold>
 }

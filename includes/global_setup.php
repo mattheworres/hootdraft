@@ -3,7 +3,9 @@
 
 //Require the DB connection file and start the connection
 require('includes/dbconn.php');
-set_conn();
+php_draft_connect::set_conn();
+
+$DBH = php_draft_connect::setupPDOHandle();
 
 //Start the PHP session - important this is done before any output is made
 session_start();

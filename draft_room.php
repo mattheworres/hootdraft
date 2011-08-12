@@ -1,7 +1,6 @@
 <?php
 require("includes/global_setup.php");
 require_once("includes/check_login.php");
-require_once("models/player_object.php");
 require_once("models/manager_object.php");
 
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
@@ -200,7 +199,6 @@ switch(ACTION) {
 	
 	default:
 		// <editor-fold defaultstate="collapsed" desc="Index Logic">
-		require_once("models/player_object.php");
 		$LAST_TEN_PICKS = player_object::getLastTenPicks(DRAFT_ID);
 		$DRAFT->setupSport();
 		
