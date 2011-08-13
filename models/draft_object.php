@@ -11,15 +11,14 @@ require_once("models/player_object.php");
  * @property int $draft_id The unique identifier for this draft
  * @property string $draft_name The string identifier for this draft
  * @property string $draft_status The description of the status is in
- * @property string $visibility Either 'locked' or 'unlocked' depending on existence of a password
  * @property string $draft_password Determines draft visibility
  * @property string $draft_sport
  * @property string $draft_style Either 'serpentine' or 'standard'
  * @property int $draft_rounds Number of rounds draft will have in total
- * @property string $start_time Timestamp of when the draft was put into "started" status
- * @property string $end_time Timestamp of when the draft was put into "completed" status
- * @property int $current_round
- * @property int $current_pick
+ * @property string $draft_start_time datetime of when the draft was put into "started" status
+ * @property string $draft_end_time datetime of when the draft was put into "completed" status
+ * @property int $draft_current_round
+ * @property int $draft_current_pick
  * @property array $sports_teams An array of all of the teams in the pro sport. Capitalized abbreviation is key, full name is value.
  * @property array $sports_positions An array of all the positions in the pro sport. Capitalized abbreviation is key, full name is value.
  * @property array $sports_colors An array of all the colors used for each position in the draft. Capitalized position abbreviation is key, hex color string is value (with # prepended)
@@ -28,49 +27,35 @@ class draft_object {
 
 	public $draft_id;
 	public $draft_name;
-	public $draft_status;
-	public $visibility;
-	public $draft_password;
 	public $draft_sport;
+	public $draft_status;
 	public $draft_style;
 	public $draft_rounds;
-	public $start_time;
-	public $end_time;
-	public $current_round;
-	public $current_pick;
+	public $draft_password;
+	public $draft_start_time;
+	public $draft_end_time;
+	public $draft_current_round;
+	public $draft_current_pick;
 	public $sports_teams;
 	public $sports_positions;
 	public $sports_colors;
 
 	public function __construct($id = 0) {
-		$id = (int)$id;
 		global $DBH; /* @var $DBH PDO */
+		$id = (int)$id;
 		
 		if($id == 0)
 			return false;
-
-		//$draft_result = mysql_query("SELECT * FROM draft WHERE draft_id = " . $id . " LIMIT 1");
 		
 		$draft_stmt = $DBH->prepare("SELECT * FROM draft WHERE draft_id = ? LIMIT 1");
+		$draft_stmt->setFetchMode(PDO::FETCH_INTO, $this);
 		$draft_stmt->bindParam(1, $id);
 		
 		if(!$draft_stmt->execute())
 			return false;
 		
-		if(!$row = $draft_stmt->fetch())
+		if(!$draft_stmt->fetch())
 			return false;
-		
-		$this->draft_id = (int)$row['draft_id'];
-		$this->draft_name = $row['draft_name'];
-		$this->draft_sport = $row['draft_sport'];
-		$this->draft_status = $row['draft_status'];
-		$this->draft_style = $row['draft_style'];
-		$this->draft_rounds = $row['draft_rounds'];
-		$this->draft_password = $row['draft_password'];
-		$this->start_time = $row['draft_start_time'];
-		$this->end_time = $row['draft_end_time'];
-		$this->current_round = (int)$row['draft_current_round'];
-		$this->current_pick = (int)$row['draft_current_pick'];
 
 		return true;
 	}
@@ -139,9 +124,12 @@ class draft_object {
 	 */
 	public function getDraftDuration() {
 		if($this->isCompleted()) {
-			$duration_seconds = (int)strtotime($this->end_time) - (int)strtotime($this->start_time);
+			$duration_seconds = (int)strtotime($this->draft_end_time) - (int)strtotime($this->draft_start_time);
 			return php_draft_library::secondsToWords($duration_seconds);
-		} else
+		} else if($this->isInProgress()) {
+			$duration_seconds = (int)php_draft_library::getNowUnixTimestamp() - (int)strtotime($this->draft_start_time);
+			return php_draft_library::secondsToWords($duration_seconds);
+		}else
 			return "";
 	}
 
@@ -151,37 +139,41 @@ class draft_object {
 	 * TODO: Update this so we so something similar to a Save-or-update, either an INSERT or an UPDATE
 	 */
 	public function saveDraft() {
+		global $DBH; /* @var $DBH PDO */
 		if($this->draft_id > 0) {
-			$sql = "UPDATE draft SET " .
-				"draft_name = '" . mysql_real_escape_string($this->draft_name) . "', " .
-				"draft_sport = '" . mysql_real_escape_string($this->draft_sport) . "', " .
-				"draft_status = '" . mysql_real_escape_string($this->draft_status) . "', " .
-				"draft_style = '" . mysql_real_escape_string($this->draft_style) . "', " .
-				"draft_rounds = '" . (int)$this->draft_rounds . "', ";
+			$update_stmt = $DBH->prepare("UPDATE draft 
+				SET draft_name = ?, draft_sport = ?, draft_status = ?, draft_style = ?,
+					draft_rounds = ?, draft_current_round = ?, draft_current_pick = ?, 
+					draft_password = ? 
+				WHERE draft_id = ?");
 			
-			if(isset($this->start_time) && strlen($this->start_time) > 0)
-				if($this->start_time == "NULL")
-					$sql .= "draft_start_time = NULL, ";
-
-			if((int)$this->current_round > 1)
-				$sql .= "draft_current_round = " . (int)$this->current_round . ", ";
-			if((int)$this->current_pick > 1)
-				$sql .= "draft_current_pick = " . (int)$this->current_pick . ", ";
-
-			$sql .= "draft_password = '" . mysql_real_escape_string($this->draft_password) . "' " .
-				"WHERE draft_id = " . (int)$this->draft_id;
-
-			return mysql_query($sql);
+			$update_stmt->bindParam(1, $this->draft_name);
+			$update_stmt->bindParam(2, $this->draft_sport);
+			$update_stmt->bindParam(3, $this->draft_status);
+			$update_stmt->bindParam(4, $this->draft_style);
+			$update_stmt->bindParam(5, $this->draft_rounds);
+			$update_stmt->bindParam(6, $this->draft_current_round);
+			$update_stmt->bindParam(7, $this->draft_current_pick);
+			$update_stmt->bindParam(8, $this->draft_password);
+			$update_stmt->bindParam(9, $this->draft_id);
+			
+			$result = $update_stmt->execute();
+			return $result;
 		}else {
-			$sql = "INSERT INTO draft "
-				. "(draft_id, draft_name, draft_sport, draft_status, draft_style, draft_rounds) "
-				. "VALUES "
-				. "(NULL, '" . mysql_real_escape_string($this->draft_name) . "', '" . mysql_real_escape_string($this->draft_sport) . "', 'undrafted', '" . mysql_real_escape_string($this->draft_style) . "', " . (int)$this->draft_rounds . ")";
-
-			if(!mysql_query($sql))
+			$insert_stmt = $DBH->prepare("INSERT INTO draft 
+				(draft_id, draft_name, draft_sport, draft_status, draft_style, draft_rounds) 
+				VALUES 
+				(NULL, ?, ?, 'undrafted', ?, ?)");
+			
+			$insert_stmt->bindParam(1, $this->draft_name);
+			$insert_stmt->bindParam(2, $this->draft_sport);
+			$insert_stmt->bindParam(3, $this->draft_style);
+			$insert_stmt->bindParam(4, $this->draft_rounds);
+			
+			if(!$insert_stmt->execute())
 				return false;
-
-			$this->draft_id = mysql_insert_id();
+			
+			$this->draft_id = (int)$DBH->lastInsertId();		
 
 			return true;
 		}
@@ -189,12 +181,12 @@ class draft_object {
 	
 	public function moveDraftForward(player_object $next_pick) {
 		if($next_pick != null) {
-			$this->current_pick = (int)$next_pick->player_pick;
-			$this->current_round = (int)$next_pick->player_round;
+			$this->draft_current_pick = (int)$next_pick->player_pick;
+			$this->draft_current_round = (int)$next_pick->player_round;
 			
 			$sql = "UPDATE draft SET ".
-			"draft_current_pick = " . (int)$this->current_pick . ", ".
-			"draft_current_round = " . (int)$this->current_round . " ".
+			"draft_current_pick = " . (int)$this->draft_current_pick . ", ".
+			"draft_current_round = " . (int)$this->draft_current_round . " ".
 			"WHERE draft_id = " . (int)$this->draft_id;
 			
 			return mysql_query($sql);
@@ -213,15 +205,15 @@ class draft_object {
 		$old_status = $this->draft_status;
 
 		$this->draft_status = $new_status;
-		$this->current_pick = 1;
-		$this->current_round = 1;
+		$this->draft_current_pick = 1;
+		$this->draft_current_round = 1;
 
 		$draftJustStarted = ($old_status == "undrafted" && $this->isInProgress()) ? true : false;
 
 		if($draftJustStarted)
-			$this->start_time = $this->beginStartTime();
+			$this->draft_start_time = $this->beginStartTime();
 		else
-			$this->start_time = "NULL";
+			$this->draft_start_time = "NULL";
 
 		$saveSuccess = $this->saveDraft();
 
@@ -431,15 +423,14 @@ class draft_object {
 			$draft->draft_id = (int)$draft_row['draft_id'];
 			$draft->draft_name = $draft_row['draft_name'];
 			$draft->draft_status = $draft_row['draft_status'];
-			$draft->visibility = ($draft_row['draft_password'] != '' ? "locked" : "unlocked");
 			$draft->draft_password = $draft_row['draft_password'];
 			$draft->draft_sport = $draft_row['draft_sport'];
 			$draft->draft_style = $draft_row['draft_style'];
 			$draft->draft_rounds = (int)$draft_row['draft_rounds'];
-			$draft->start_time = $draft_row['draft_start_time'];
-			$draft->end_time = $draft_row['draft_end_time'];
-			$draft->current_round = (int)$draft_row['current_round'];
-			$draft->current_pick = (int)$draft_row['current_pick'];
+			$draft->draft_start_time = $draft_row['draft_start_time'];
+			$draft->draft_end_time = $draft_row['draft_end_time'];
+			$draft->draft_current_round = (int)$draft_row['draft_current_round'];
+			$draft->draft_current_pick = (int)$draft_row['draft_current_pick'];
 			$drafts[] = $draft;
 		}
 
@@ -448,6 +439,13 @@ class draft_object {
 
 	// <editor-fold defaultstate="collapsed" desc="Draft State Information">
 
+	/**
+	 * Contains the logic to determine a draft's visibility.
+	 */
+	public function getVisibility() {
+		return ($this->draft_password != '' ? "locked" : "unlocked");
+	}
+	
 	/**
 	 * Determines if the draft is completed
 	 * @return bool true if the draft is completed, false otherwise
@@ -512,10 +510,10 @@ class draft_object {
 		$draft->draft_style = $mysql_array['draft_style'];
 		$draft->draft_rounds = $mysql_array['draft_rounds'];
 		$draft->draft_password = $mysql_array['draft_password'];
-		$draft->start_time = $mysql_array['draft_start_time'];
-		$draft->end_time = $mysql_array['draft_end_time'];
-		$draft->current_round = (int)$mysql_array['draft_current_round'];
-		$draft->current_pick = (int)$mysql_array['draft_current_pick'];
+		$draft->draft_start_time = $mysql_array['draft_start_time'];
+		$draft->draft_end_time = $mysql_array['draft_end_time'];
+		$draft->draft_current_round = (int)$mysql_array['draft_current_round'];
+		$draft->draft_current_pick = (int)$mysql_array['draft_current_pick'];
 		
 		return $draft;
 	}

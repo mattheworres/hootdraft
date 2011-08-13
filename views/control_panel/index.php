@@ -34,10 +34,11 @@
 						$alt_row = false;
 
 						foreach($DRAFTS as $draft) {
+							/* @var $draft draft_object */
 							$numberOfManagers = manager_object::getCountOfManagersByDraft($draft->draft_id);
 							?>
 							<tr<?php echo ($alt_row ? " style=\"background-color: #cccccc;\"" : "");?>>
-								<td><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-<?php echo $draft->visibility; ?>"></span></td>
+								<td><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-<?php echo $draft->getVisibility(); ?>"></span></td>
 								<td><a href="draft.php?did=<?php echo $draft->draft_id;?>"><?php echo $draft->draft_name;?></a></td>
 								<td><?php echo $draft->draft_sport;?></td>
 								<td><?php echo $numberOfManagers;?></td>

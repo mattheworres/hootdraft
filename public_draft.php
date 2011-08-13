@@ -44,7 +44,7 @@ switch(ACTION) {
 		if($DRAFT->isCompleted())
 			echo "9999";
 		else
-			echo (int)$DRAFT->current_pick;
+			echo (int)$DRAFT->draft_current_pick;
 		// </editor-fold>
 		break;
 	

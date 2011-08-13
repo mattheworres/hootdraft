@@ -24,10 +24,10 @@
 						<p><strong>Drafting Style: </strong> <?php echo $DRAFT->draft_style;?></p>
 						<p><strong># of Rounds: </strong> <?php echo $DRAFT->draft_rounds;?></p>
 						<p><strong>Status: </strong> <?php echo $DRAFT->getStatus();?> </p>
-						<?php if($DRAFT->isInProgress()) { ?><p><strong>Current Round: </strong><?php echo $DRAFT->current_round; ?></p>
+						<?php if($DRAFT->isInProgress()) { ?><p><strong>Current Round: </strong><?php echo $DRAFT->draft_current_round; ?></p>
 						<p><strong>On the Clock: </strong> Pick #<?php echo $CURRENT_PICK->player_pick; ?> (<?php echo $CURRENT_PICK->manager_name; ?>)</p><?php } ?>
-						<?php if($DRAFT->isInProgress() || $DRAFT->isCompleted()) {?><p><strong>Draft Start Time: </strong> <?php echo $DRAFT->start_time;?></p><?php }?>
-						<?php if($DRAFT->isCompleted()) {?><p><strong>Draft End Time: </strong> <?php echo $DRAFT->end_time;?></p>
+						<?php if($DRAFT->isInProgress() || $DRAFT->isCompleted()) {?><p><strong>Draft Start Time: </strong> <?php echo $DRAFT->draft_start_time;?></p><?php }?>
+						<?php if($DRAFT->isCompleted()) {?><p><strong>Draft End Time: </strong> <?php echo $DRAFT->draft_end_time;?></p>
 							<p><strong>Time Spent Drafting: </strong> <?php echo $DRAFT->getDraftDuration();?></p><?php }?>
 					</div>
 					<div style="width: 30%; float:right; text-align: right;">

@@ -160,7 +160,7 @@ class player_object {
 			throw new Exception("Must call updatePickDuration on a player object that already has its own pick_time set!");
 		
 		if($this->player_pick == 1 || $previous_pick === false) 
-			$start_time = strtotime($draft->start_time);
+			$start_time = strtotime($draft->draft_start_time);
 		else
 			$start_time = strtotime($previous_pick->pick_time);
 		
@@ -264,8 +264,8 @@ class player_object {
 		"LEFT OUTER JOIN managers m ".
 		"ON m.manager_id = p.manager_id ".
 		"WHERE p.draft_id = " . (int)$draft->draft_id .
-		" AND p.player_round = " . (int)$draft->current_round .
-		" AND p.player_pick = " . (int)($draft->current_pick - 1) .
+		" AND p.player_round = " . (int)$draft->draft_current_round .
+		" AND p.player_pick = " . (int)($draft->draft_current_pick - 1) .
 		" AND p.pick_time IS NOT NULL ".
 		"LIMIT 1";
 		
@@ -290,8 +290,8 @@ class player_object {
 		"LEFT OUTER JOIN managers m ".
 		"ON m.manager_id = p.manager_id ".
 		"WHERE p.draft_id = " . (int)$draft->draft_id . " ".
-		"AND p.player_round = " . (int)$draft->current_round . " ".
-		"AND p.player_pick = " . (int)$draft->current_pick . " ".
+		"AND p.player_round = " . (int)$draft->draft_current_round . " ".
+		"AND p.player_pick = " . (int)$draft->draft_current_pick . " ".
 		"LIMIT 1";
 		
 		$pick_row = mysql_fetch_array(mysql_query($sql));
@@ -310,7 +310,7 @@ class player_object {
 		"LEFT OUTER JOIN managers m " .
 		"ON m.manager_id = p.manager_id " .
 		"WHERE p.draft_id = " . (int)$draft->draft_id . " " .
-		"AND p.player_pick = " . (int)($draft->current_pick + 1) . " LIMIT 1";
+		"AND p.player_pick = " . (int)($draft->draft_current_pick + 1) . " LIMIT 1";
 		
 		$pick_row = mysql_fetch_array(mysql_query($sql));
 		
@@ -328,7 +328,7 @@ class player_object {
 		"LEFT OUTER JOIN managers m ".
 		"ON m.manager_id = p.manager_id ".
 		"WHERE p.draft_id = " . (int)$draft->draft_id . " ".
-		"AND p.player_pick > " . (int)$draft->current_pick . " ".
+		"AND p.player_pick > " . (int)$draft->draft_current_pick . " ".
 		"ORDER BY p.player_pick ASC ".
 		"LIMIT 5";
 		

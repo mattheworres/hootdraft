@@ -41,7 +41,7 @@
 	<script type="text/javascript" src="js/jquery-ui-1.8.14.custom.min.js"></script>
 	<script type="text/javascript">
 			var poll_time = 1000 * 8,
-			our_pick = <?php echo $DRAFT->current_pick;?>,
+			our_pick = <?php echo $DRAFT->draft_current_pick;?>,
 			last_pick = <?php echo $DRAFT->draft_rounds * NUMBER_OF_MANAGERS;?>,
 			intervalID;
 

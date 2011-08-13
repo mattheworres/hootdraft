@@ -18,7 +18,7 @@
 		<?php }?>
 		<h3>Enter the Next Draft Pick</h3>
 		<fieldset id="add_pick" class="enter_pick">
-			<legend>Round <?php echo $DRAFT->current_round; ?>, Pick #<?php echo $DRAFT->current_pick; ?></legend>
+			<legend>Round <?php echo $DRAFT->draft_current_round; ?>, Pick #<?php echo $DRAFT->draft_current_pick; ?></legend>
 			<form action="draft_room.php?action=addPick" method="post">
 			<input type="hidden" name="did" value="<?php echo DRAFT_ID; ?>" />
 			<input type="hidden" name="pid" value="<?php echo $CURRENT_PICK->player_id; ?>" />
