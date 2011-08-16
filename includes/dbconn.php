@@ -2,12 +2,24 @@
 /*
 	This document implements functions necessary to connect to the MySQL server
 	and also to select a database within that server so that we may operate on it.
+ * 
+ * NOTE: You only have to define the username & password once below. For the time being, these will be global (BAD!)
 */
+$username = "your_username";
+$password = "your_password";
+$host = "localhost";
+$database = "phpdraft";
+
 class php_draft_connect {
 
 	public static function set_conn() {//Create a connection to MySQL with proper authentication so we can select a DB
-		$username = "your_username";
-		$password = "your_password";
+		/*$username = "your_username";
+		$password = "your_password";*/
+		global $username;
+		global $password;
+		global $host;
+		global $database;
+		
 		$connection = mysql_connect("localhost",$username,$password);
 
 		if(!$connection) {
@@ -31,15 +43,22 @@ class php_draft_connect {
 		}
 	}
 	
-	
+	/**
+	 * NOTE: 
+	 */
 	public static function setupPDOHandle() {
-		$database_username = "your_username";
-		$database_password = "your_password";
+		/*$database_username = "phpdraft";
+		$database_password = "mypass";
 		$database_host = "localhost";
-		$database_name = "phpdraft";
+		$database_name = "phpdraft";*/
+		
+		global $username;
+		global $password;
+		global $host;
+		global $database;
 		
 		try {
-			$dbh = new PDO('mysql:host=' . $database_host . ';dbname=' . $database_name, $database_username, $database_password);
+			$dbh = new PDO('mysql:host=' . $host . ';dbname=' . $database, $username, $password);
 		}catch(PDOException $e) {
 			echo "Error: " . $e->getMessage();
 			die();
