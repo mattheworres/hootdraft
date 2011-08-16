@@ -142,21 +142,25 @@ switch(ACTION) {
 		break;
 	
 	case 'draftStats':
+		// <editor-fold defaultstate="collapsed" desc="draftStats Logic">
 		require_once("models/draft_statistics_object.php");
 		require_once("libraries/php_draft_library.php");
 		$STATS = new draft_statistics_object();
 		$STATS->generateStatistics($DRAFT);
 		$NOW = php_draft_library::getNowRefreshTime();
 		require("views/public_draft/draft_statistics.php");
+		// </editor-fold>
 		break;
 	
 	case 'loadStats':
+		// <editor-fold defaultstate="collapsed" desc="loadStats Logic">
 		require_once("models/draft_statistics_object.php");
 		require_once("libraries/php_draft_library.php");
 		$STATS = new draft_statistics_object();
 		$STATS->generateStatistics($DRAFT);
 		$NOW = php_draft_library::getNowRefreshTime();
 		require("views/public_draft/draft_statistics_results.php");
+		// </editor-fold>
 		break;
 	
 	default:

@@ -264,7 +264,6 @@ class player_object {
 		"LEFT OUTER JOIN managers m ".
 		"ON m.manager_id = p.manager_id ".
 		"WHERE p.draft_id = " . (int)$draft->draft_id .
-		" AND p.player_round = " . (int)$draft->draft_current_round .
 		" AND p.player_pick = " . (int)($draft->draft_current_pick - 1) .
 		" AND p.pick_time IS NOT NULL ".
 		"LIMIT 1";
@@ -312,7 +311,12 @@ class player_object {
 		"WHERE p.draft_id = " . (int)$draft->draft_id . " " .
 		"AND p.player_pick = " . (int)($draft->draft_current_pick + 1) . " LIMIT 1";
 		
-		$pick_row = mysql_fetch_array(mysql_query($sql));
+		$pick_result = mysql_query($sql);
+		
+		if(mysql_num_rows($pick_result) == 0)
+			return false;
+		
+		$pick_row = mysql_fetch_array($pick_result);
 		
 		return player_object::fillPlayerObject($pick_row, $draft->draft_id);
 	}

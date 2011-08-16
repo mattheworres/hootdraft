@@ -179,22 +179,30 @@ class draft_object {
 		}
 	}
 	
-	public function moveDraftForward(player_object $next_pick) {
-		if($next_pick != null) {
+	public function moveDraftForward($next_pick) {
+		global $DBH; /* @var $DBH PDO */
+		if($next_pick !== false) {
 			$this->draft_current_pick = (int)$next_pick->player_pick;
 			$this->draft_current_round = (int)$next_pick->player_round;
 			
-			$sql = "UPDATE draft SET ".
-			"draft_current_pick = " . (int)$this->draft_current_pick . ", ".
-			"draft_current_round = " . (int)$this->draft_current_round . " ".
-			"WHERE draft_id = " . (int)$this->draft_id;
+			$stmt = $DBH->prepare("UPDATE draft SET draft_current_pick = ?, draft_current_round = ? WHERE draft_id = ?");
+			$stmt->bindParam(1, $this->draft_current_pick);
+			$stmt->bindParam(2, $this->draft_current_round);
+			$stmt->bindParam(3, $this->draft_id);
 			
-			return mysql_query($sql);
+			$success = $stmt->execute();
+			
+			return $success;
 		}else {
-			$sql = "UPDATE draft SET ".
-			"draft_status = 'complete', ".
-			"draft_end_time = '" . mysql_real_escape_string(php_draft_library::getNowPhpTime()) . "' ".
-			"WHERE draft_id = " . (int)$this->draft_id;
+			$this->draft_status = 'complete';
+			$stmt = $DBH->prepare("UPDATE draft SET draft_status = ?, draft_end_time = ? WHERE draft_id = ?");
+			$stmt->bindParam(1, $this->draft_status);
+			$stmt->bindParam(2, php_draft_library::getNowPhpTime());
+			$stmt->bindParam(3, $this->draft_id);
+			
+			$success = $stmt->execute();
+			
+			return $success;
 		}
 	}
 

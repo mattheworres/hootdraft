@@ -30,7 +30,7 @@ if($DRAFT->isUndrafted()) {
 }elseif($DRAFT->isCompleted()) {
 	define("PAGE_HEADER", "Draft Room is Closed - Your Draft is Over!");
 	define("P_CLASS", "success");
-	define("PAGE_CONTENT", "The draft room is officially closed.  Your draft is officially complete, all picks have been made and now all you have to do is get the results entered into your league.  Take a look at the draft board to see all of the picks.");
+	define("PAGE_CONTENT", "The draft room is officially closed.  Your draft is officially complete, all picks have been made and now all you have to do is get the results entered into your league.<br /><br /><a href=\"public_draft.php?did=" . DRAFT_ID . "\">Click here</a> to be taken to the draft's summary page, or <a href=\"public_draft.php?action=draftBoard&did=" . DRAFT_ID . "\">take a look at the draft board</a> to see all of the picks.");
 	require_once("views/shared/generic_result_view.php");
 	exit(0);
 }
@@ -84,7 +84,7 @@ switch(ACTION) {
 			exit(1);
 		}
 		
-		$previous_pick = player_object::getLastPick($DRAFT);
+		$previous_pick = $DRAFT->getLastPick();
 		
 		if($submitted_pick->savePlayer(true) === false) {
 			$ERRORS[] = "Unable to update pick, please try again.";
