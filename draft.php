@@ -38,6 +38,14 @@ switch(ACTION) {
 			$new_manager->draft_id = DRAFT_ID;
 			$new_manager->manager_name = $manager_request['manager_name'];
 			$new_manager->manager_email = $manager_request['manager_email'];
+			
+			$object_errors = $new_manager->getValidity();
+			
+			if(count($object_errors) > 0) {
+				$ERRORS = $object_errors;
+				return "SERVER_ERROR";
+				exit(1);
+			}
 
 			if(!$new_manager->saveManager()) {
 				return "SERVER_ERROR";
