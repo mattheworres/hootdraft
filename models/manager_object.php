@@ -22,20 +22,19 @@ class manager_object {
 	public function __construct($manager_id = 0) {
 		if((int)$manager_id == 0)
 			return false;
-
-		$sql = "SELECT * FROM managers WHERE manager_id = " . $manager_id . " LIMIT 1";
-		$manager_result = mysql_query($sql);
-		if(!$manager_result)
+		
+		global $DBH; /* @var $DBH PDO */
+		
+		$stmt = $DBH->prepare("SELECT * FROM managers WHERE manager_id = ? LIMIT 1");
+		$stmt->bindParam(1, $manager_id);
+		$stmt->setFetchMode(PDO::FETCH_INTO, $this);
+		
+		if(!$stmt->execute())
 			return false;
-
-		$manager_row = mysql_fetch_array($manager_result);
-
-		$this->manager_id = (int)$manager_row['manager_id'];
-		$this->draft_id = (int)$manager_row['draft_id'];
-		$this->manager_name = $manager_row['manager_name'];
-		$this->manager_email = $manager_row['manager_email'];
-		$this->draft_order = (int)$manager_row['draft_order'];
-
+		
+		if(!$stmt->fetch())
+			return false;
+		
 		return true;
 	}
 
@@ -46,14 +45,23 @@ class manager_object {
 	public function getValidity() {
 		$errors = array();
 
-		if(empty($this->manager_name))
+		if(!isset($this->manager_name) || strlen($this->manager_name) == 0)
 			$errors[] = "Manager name is empty.";
-
-		$has_a_draft = mysql_num_rows(mysql_query("SELECT draft_id FROM draft WHERE draft_id = " . (int)$this->draft_id)) > 0;
-
-		if(!$has_a_draft)
+		
+		global $DBH; /* @var $DBH PDO */
+		
+		$has_draft_stmt = $DBH->prepare("SELECT COUNT(draft_id) as count FROM draft WHERE draft_id = ?");
+		$has_draft_stmt->bindParam(1, $this->draft_id);
+		
+		if(!$has_draft_stmt->execute())
+			$errors[] = $this->draft_name . " unable to be added";
+		
+		if(!$row = $has_draft_stmt->fetch())
+			$errors[] = $this->draft_name . " unable to be added";
+		
+		if((int)$row['count'] == 0)
 			$errors[] = "Manager's draft doesn't exist.";
-
+		
 		return $errors;
 	}
 
@@ -63,6 +71,8 @@ class manager_object {
 	 * @return bool success on whether the move was completed successfully 
 	 */
 	public function moveManagerUp() {
+		global $DBH; /* @var $DBH PDO */
+		
 		if($this->draft_order == 0)
 			return false;
 
@@ -72,22 +82,36 @@ class manager_object {
 			return true;
 
 		$new_place = $old_place - 1;
-
-		$swap_manager_result = mysql_query("SELECT manager_id FROM managers WHERE draft_id = " . $this->draft_id . " AND manager_id != " . $this->manager_id . " AND draft_order = " . $new_place);
-
-		if(!$swap_manager_result)
+		
+		$swap_mgr_stmt = $DBH->prepare("SELECT manager_id FROM managers WHERE draft_id = ? AND manager_id != ? AND draft_order = ?");
+		$swap_mgr_stmt->bindParam(1, $this->draft_id);
+		$swap_mgr_stmt->bindParam(2, $this->manager_id);
+		$swap_mgr_stmt->bindParam(3, $new_place);
+		
+		if(!$swap_mgr_stmt->execute())
+			return false;
+		
+		if(!$swap_manager_row = $swap_mgr_stmt->fetch())
 			return false;
 
-		$swap_manager_row = mysql_fetch_array($swap_manager_result);
-
 		$swap_manager_id = (int)$swap_manager_row['manager_id'];
+		
+		$swap_stmt = $DBH->prepare("UPDATE managers SET draft_order = ? WHERE draft_id = ? AND manager_id = ?");
+		$swap_stmt->bindParam(1, $draft_order);
+		$swap_stmt->bindParam(2, $this->draft_id);
+		$swap_stmt->bindParam(3, $manager_id);
+		
+		$draft_order = $new_place;
+		$manager_id = $this->manager_id;
+		
+		$swap_1_success = $swap_stmt->execute();
+		
+		$draft_order = $old_place;
+		$manager_id = $swap_manager_id;
+		
+		$swap_2_success = $swap_stmt->execute();
 
-		$sql1 = "UPDATE managers SET draft_order = " . $new_place . " WHERE draft_id = " . $this->draft_id . " AND manager_id = " . $this->manager_id;
-		$sql2 = "UPDATE managers SET draft_order = " . $old_place . " WHERE draft_id = " . $this->draft_id . " AND manager_id = " . $swap_manager_id;
-		$manager_success = mysql_query($sql1);
-		$swap_success = mysql_query($sql2);
-
-		if(!$manager_success || !$swap_success)
+		if(!$swap_1_success || !$swap_2_success)
 			return false;
 
 		return true;
@@ -99,37 +123,58 @@ class manager_object {
 	 * @return bool Success on whether the move was completed successfully 
 	 */
 	public function moveManagerDown() {
+		global $DBH; /* @var $DBH PDO */
+		
 		if($this->draft_order == 0)
 			return false;
 
 		$old_place = $this->draft_order;
-
-		$lowest_order_result = mysql_query("SELECT draft_order FROM managers WHERE draft_id = " . $this->draft_id . " ORDER BY draft_order DESC LIMIT 1");
-
-		if(!$lowest_order_row = mysql_fetch_array($lowest_order_result))
+		
+		$lowest_order_stmt = $DBH->prepare("SELECT draft_order FROM managers WHERE draft_id = ? ORDER BY draft_order DESC LIMIT 1");
+		$lowest_order_stmt->bindParam(1, $this->draft_id);
+		
+		if(!$lowest_order_stmt->execute())
 			return false;
-
+		
+		if(!$lowest_order_row = $lowest_order_stmt->fetch())
+			return false;
+		
 		$lowest_order = (int)$lowest_order_row['draft_order'];
 
 		if($old_place == $lowest_order)
 			return true;
 
 		$new_place = $old_place + 1;
-
-		$swap_manager_result = mysql_query("SELECT draft_order, manager_id FROM managers WHERE draft_id = " . $this->draft_id . " AND manager_id != " . $this->manager_id . " AND draft_order = " . $new_place);
-
-		if(!$swap_manager_result)
+		
+		$swap_mgr_stmt = $DBH->prepare("SELECT draft_order, manager_id FROM managers WHERE draft_id = ? AND manager_id != ? AND draft_order = ?");
+		$swap_mgr_stmt->bindParam(1, $this->draft_id);
+		$swap_mgr_stmt->bindParam(2, $this->manager_id);
+		$swap_mgr_stmt->bindParam(3, $new_place);
+		
+		if(!$swap_mgr_stmt->execute())
+			return false;
+		
+		if(!$swap_mgr_row = $swap_mgr_stmt->fetch())
 			return false;
 
-		$swap_manager_row = mysql_fetch_array($swap_manager_result);
-		$swap_manager_id = (int)$swap_manager_row['manager_id'];
-
-		$sql1 = "UPDATE managers SET draft_order = " . $new_place . " WHERE draft_id = " . $this->draft_id . " AND manager_id = " . $this->manager_id;
-		$sql2 = "UPDATE managers SET draft_order = " . $old_place . " WHERE draft_id = " . $this->draft_id . " AND manager_id = " . $swap_manager_id;
-		$manager_success = mysql_query($sql1);
-		$swap_success = mysql_query($sql2);
-
-		if(!$manager_success || !$swap_success)
+		$swap_manager_id = (int)$swap_mgr_row['manager_id'];
+		
+		$swap_stmt = $DBH->prepare("UPDATE managers SET draft_order = ? WHERE draft_id = ? AND manager_id = ?");
+		$swap_stmt->bindParam(1, $draft_order);
+		$swap_stmt->bindParam(2, $this->draft_id);
+		$swap_stmt->bindParam(3, $manager_id);
+		
+		$draft_order = $new_place;
+		$manager_id = $this->manager_id;
+		
+		$swap_1_success = $swap_stmt->execute();
+		
+		$draft_order = $old_place;
+		$manager_id = $swap_manager_id;
+		
+		$swap_2_success = $swap_stmt->execute();
+		
+		if(!$swap_1_success || !$swap_2_success)
 			return false;
 
 		return true;
