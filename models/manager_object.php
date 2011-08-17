@@ -152,7 +152,7 @@ class manager_object {
 			$sql = "INSERT INTO managers " .
 				"(manager_id, draft_id, manager_name, manager_email, draft_order) " .
 				"VALUES " .
-				"(NULL, " . $this->draft_id . ", '" . mysql_real_escape_string($this->manager_name) . "', '" . mysql_real_escape_string($this->manager_email) . "', " . ((int)$this->getLowestDraftorder( + 1)) . ")";
+				"(NULL, " . $this->draft_id . ", '" . mysql_real_escape_string($this->manager_name) . "', '" . mysql_real_escape_string($this->manager_email) . "', " . ($this->getLowestDraftorder() + 1) . ")";
 
 			$result = mysql_query($sql);
 			if(!$result)
