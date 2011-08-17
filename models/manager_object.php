@@ -11,6 +11,7 @@
  * @property string $manager_email Email address of manager
  * @property int $draft_order The order in which the manager makes a pick in the draft.
  */
+
 class manager_object {
 
 	public $manager_id;
@@ -43,10 +44,19 @@ class manager_object {
 	 * @return array/string errors
 	 */
 	public function getValidity() {
+		$email_regex = "/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/";
+		
 		$errors = array();
 
 		if(!isset($this->manager_name) || strlen($this->manager_name) == 0)
 			$errors[] = "Manager name is empty.";
+		
+		
+		if(isset($this->manager_email) && strlen($this->manager_email) > 0) {
+			$is_invalid_email = (bool)preg_match($email_regex, $this->manager_email);
+			if($is_invalid_email)
+				$errors[] = "Manager email is not in the correct format";
+		}
 		
 		global $DBH; /* @var $DBH PDO */
 		
@@ -185,25 +195,29 @@ class manager_object {
 	 * @return bool Success of the operation, be it an insert or update.
 	 */
 	public function saveManager() {
+		global $DBH; /* @var $DBH PDO */
 		if($this->manager_id > 0) {
-			$sql = "UPDATE managers SET " .
-				"manager_name = '" . mysql_real_escape_string($this->manager_name) . "', " .
-				"manager_email = '" . mysql_real_escape_string($this->manager_email) . "' " .
-				"WHERE manager_id = " . (int)$this->manager_id . " " .
-				"AND draft_id = " . (int)$this->draft_id;
-
-			return mysql_query($sql);
+			$update_stmt = $DBH->prepare("UPDATE managers SET manager_name = ?, manager_email = ? WHERE manager_id = ? AND draft_id = ?");
+			$update_stmt->bindParam(1, $this->manager_name);
+			$update_stmt->bindParam(2, $this->manager_email);
+			$update_stmt->bindParam(3, $this->manager_id);
+			$update_stmt->bindParam(4, $this->draft_id);
+			
+			return $update_stmt->execute();
 		} elseif($this->draft_id > 0) {
-			$sql = "INSERT INTO managers " .
-				"(manager_id, draft_id, manager_name, manager_email, draft_order) " .
-				"VALUES " .
-				"(NULL, " . $this->draft_id . ", '" . mysql_real_escape_string($this->manager_name) . "', '" . mysql_real_escape_string($this->manager_email) . "', " . ($this->getLowestDraftorder() + 1) . ")";
-
-			$result = mysql_query($sql);
-			if(!$result)
+			$save_stmt = $DBH->prepare("INSERT INTO managers (manager_id, draft_id, manager_name, manager_email, draft_order) VALUES (?, ?, ?, ?, ?)");
+			$save_stmt->bindParam(1, $this->manager_id);
+			$save_stmt->bindParam(2, $this->draft_id);
+			$save_stmt->bindParam(3, $this->manager_name);
+			$save_stmt->bindParam(4, $this->manager_email);
+			$save_stmt->bindParam(5, $lowest_draft_order);
+			
+			$lowest_draft_order = (int)($this->getLowestDraftorder() + 1);
+			
+			if(!$save_stmt->execute())
 				return false;
 
-			$this->manager_id = mysql_insert_id();
+			$this->manager_id = (int)$DBH->lastInsertId();
 
 			return true;
 		}else
