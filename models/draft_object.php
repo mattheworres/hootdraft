@@ -228,8 +228,6 @@ class draft_object {
 		if(!$saveSuccess)
 			return false;
 
-		require_once("models/player_object.php");
-
 		$deleteCurrentSuccess = player_object::deletePlayersByDraft($this->draft_id);
 
 		if(!$deleteCurrentSuccess)
@@ -336,7 +334,6 @@ class draft_object {
 		if($this->draft_id == 0)
 			return false;
 		
-		require_once("models/player_object.php");
 		require_once("models/manager_object.php");
 		
 		$pickRemovalSuccess = player_object::deletePlayersByDraft($this->draft_id);
@@ -349,9 +346,14 @@ class draft_object {
 		if(!$managerRemovalSuccess)
 			return false;
 		
-		$sql = "DELETE FROM draft WHERE draft_id = " . (int)$this->draft_id . " LIMIT 1";
+		global $DBH; /* @var $DBH PDO */
 		
-		return mysql_query($sql);
+		$stmt = $DBH->prepare("DELETE FROM draft WHERE draft_id = ? LIMIT 1");
+		$stmt->bindParam(1, $this->draft_id);
+		
+		$success = $stmt->execute();
+		
+		return $success;
 	}
 	
 	public function checkDraftPublicLogin() {
