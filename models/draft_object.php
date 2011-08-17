@@ -429,24 +429,15 @@ class draft_object {
 	public static function getAllDrafts() {
 		$drafts = array();
 		//TODO: Change draft object to include timestamp for creation; IDs are not technically reliable sortable columns.
-		$sql = "SELECT * FROM draft ORDER BY draft_id";
-		$drafts_result = mysql_query($sql);
-
-		while($draft_row = mysql_fetch_array($drafts_result)) {
-			$draft = new draft_object();
-			$draft->draft_id = (int)$draft_row['draft_id'];
-			$draft->draft_name = $draft_row['draft_name'];
-			$draft->draft_status = $draft_row['draft_status'];
-			$draft->draft_password = $draft_row['draft_password'];
-			$draft->draft_sport = $draft_row['draft_sport'];
-			$draft->draft_style = $draft_row['draft_style'];
-			$draft->draft_rounds = (int)$draft_row['draft_rounds'];
-			$draft->draft_start_time = $draft_row['draft_start_time'];
-			$draft->draft_end_time = $draft_row['draft_end_time'];
-			$draft->draft_current_round = (int)$draft_row['draft_current_round'];
-			$draft->draft_current_pick = (int)$draft_row['draft_current_pick'];
-			$drafts[] = $draft;
-		}
+		global $DBH; /* @var $DBH PDO */
+		
+		$stmt = $DBH->prepare("SELECT * FROM draft ORDER BY draft_id");
+		
+		$stmt->setFetchMode(PDO::FETCH_CLASS, 'draft_object');
+		$stmt->execute();
+		
+		while($draft_row = $stmt->fetch())
+			$drafts[] = $draft_row;
 
 		return $drafts;
 	}
