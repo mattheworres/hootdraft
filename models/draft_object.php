@@ -210,13 +210,13 @@ class draft_object {
 		if($this->isCompleted())
 			return false;
 
-		$old_status = $this->draft_status;
+		$was_undrafted = $this->isUndrafted();
 
 		$this->draft_status = $new_status;
 		$this->draft_current_pick = 1;
 		$this->draft_current_round = 1;
 
-		$draftJustStarted = ($old_status == "undrafted" && $this->isInProgress()) ? true : false;
+		$draftJustStarted = $was_undrafted && $this->isInProgress() ? true : false;
 
 		if($draftJustStarted)
 			$this->draft_start_time = $this->beginStartTime();
@@ -251,7 +251,6 @@ class draft_object {
 	 */
 	public function setupPicks() {
 		require_once("models/manager_object.php");
-		require_once("models/player_object.php");
 		$pick = 1;
 		$even = true;
 		
@@ -316,12 +315,17 @@ class draft_object {
 	 * @return string MySQL timestamp given to draft 
 	 */
 	public function beginStartTime() {
-		$sql = "UPDATE draft SET draft_start_time = NOW() WHERE draft_id = " . (int)$this->draft_id . " LIMIT 1";
-		mysql_query($sql);
-
-		$time_row = mysql_fetch_array(mysql_query("SELECT draft_start_time FROM draft WHERE draft_id = " . (int)$this->draft_id . " LIMIT 1"));
-
-		return $time_row['draft_start_time'];
+		require_once('libraries/php_draft_library.php');
+		global $DBH; /* @var $DBH PDO */
+		$draft_start_time = php_draft_library::getNowPhpTime();
+		
+		$update_statement = $DBH->prepare("UPDATE draft set draft_start_time = ? WHERE draft_id = ? LIMIT 1");
+		$update_statement->bindParam(1, $draft_start_time);
+		$update_statement->bindParam(2, $this->draft_id);
+		
+		$update_statement->execute();
+		
+		return $draft_start_time;
 	}
 	
 	/**
