@@ -499,30 +499,5 @@ class draft_object {
 		return $this->draft_sty == "standard";
 	}
 	// </editor-fold>
-	
-	// <editor-fold defaultstate="collapsed" desc="Private Object Helpers">
-	private static function fillDraftObject($mysql_array, $draft_id = 0) {
-		$draft = new draft_object();
-		
-		if($draft_id > 0)
-			$draft->draft_id = (int)$draft_id;
-		else
-			$draft->draft_id = (int)$mysql_array['draft_id'];
-		
-		$draft->draft_name = $mysql_array['draft_name'];
-		$draft->draft_sport = $mysql_array['draft_sport'];
-		$draft->draft_status = $mysql_array['draft_status'];
-		$draft->draft_style = $mysql_array['draft_style'];
-		$draft->draft_rounds = $mysql_array['draft_rounds'];
-		$draft->draft_password = $mysql_array['draft_password'];
-		$draft->draft_start_time = $mysql_array['draft_start_time'];
-		$draft->draft_end_time = $mysql_array['draft_end_time'];
-		$draft->draft_current_round = (int)$mysql_array['draft_current_round'];
-		$draft->draft_current_pick = (int)$mysql_array['draft_current_pick'];
-		
-		return $draft;
-	}
-	// </editor-fold>
 }
-
 ?>
