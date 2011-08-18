@@ -1,6 +1,6 @@
 <?php
 require("includes/global_setup.php");
-require_once("includes/check_login.php");
+require("includes/check_login.php");
 
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
 
