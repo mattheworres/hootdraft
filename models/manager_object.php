@@ -280,9 +280,7 @@ class manager_object {
 		$stmt = $DBH->prepare("DELETE FROM managers WHERE manager_id IN (?)");
 		$stmt->bindParam(1, $id_string);
 		
-		$success = $stmt->execute();
-		
-		return $success;
+		return $stmt->execute();
 	}
 
 	/**
@@ -292,21 +290,25 @@ class manager_object {
 	 * @return array of manager objects
 	 */
 	public static function getManagersByDraft($draft_id, $draft_order_sort = false, $order_sort = "ASC") {
+		global $DBH; /* @var $DBH PDO */
 		$managers = array();
-		$sql = "SELECT * FROM managers WHERE draft_id = '" . $draft_id . "' ORDER BY ";
-		$sql .= $draft_order_sort ? "draft_order" : "manager_name";
-
-		$managers_result = mysql_query($sql);
-
-		while($manager_row = mysql_fetch_array($managers_result)) {
-			$new_manager = new manager_object();
-			$new_manager->manager_id = (int)$manager_row['manager_id'];
-			$new_manager->draft_id = (int)$manager_row['draft_id'];
-			$new_manager->manager_name = $manager_row['manager_name'];
-			$new_manager->manager_email = $manager_row['manager_email'];
-			$new_manager->draft_order = (int)$manager_row['draft_order'];
-			$managers[] = $new_manager;
-		}
+		$draft_id = (int)$draft_id;
+		
+		if($order_sort != "ASC" && $order_sort != "DESC")
+			$order_sort = "ASC";
+		
+		$stmt = $DBH->prepare("SELECT * FROM managers WHERE draft_id = ? ORDER BY ? ?");
+		$stmt->bindParam(1, $draft_id);
+		$stmt->bindParam(2, $sort_by);
+		$stmt->bindParam(3, $order_sort);
+		
+		$sort_by = $draft_order_sort ? "draft_order" : "manager_name";
+		
+		$stmt->setFetchMode(PDO::FETCH_CLASS, 'manager_object');
+		$stmt->execute();
+		
+		while($manager = $stmt->fetch())
+			$managers[] = $manager;
 
 		return $managers;
 	}
@@ -317,9 +319,16 @@ class manager_object {
 	 * @return int $number_of_managers
 	 */
 	public static function getCountOfManagersByDraft($draft_id) {
-		$sql = "SELECT manager_id FROM managers WHERE draft_id = " . $draft_id . " ORDER BY manager_name";
-
-		return mysql_num_rows(mysql_query($sql));
+		global $DBH; /* @var $DBH PDO */
+		$draft_id = (int)$draft_id;
+		
+		$stmt = $DBH->prepare("SELECT COUNT(manager_id) as count FROM managers WHERE draft_id = ? ORDER BY manager_name");
+		$stmt->bindParam(1, $draft_id);
+		
+		$stmt->execute();
+		$row = $stmt->fetch();
+		
+		return (int)$row['count'];
 	}
 
 	/**
