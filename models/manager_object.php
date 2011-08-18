@@ -337,14 +337,24 @@ class manager_object {
 	 * @return boolean success
 	 */
 	private function cascadeNewDraftOrder($old_order) {
-		$sql = "SELECT manager_id FROM managers WHERE manager_id != " . $this->manager_id . " AND draft_id = " . $this->draft_id . " AND draft_order > " . $old_order . " ORDER BY draft_order ASC";
-		$managers_result = mysql_query($sql);
+		global $DBH; /* @var $DBH PDO */
+		
+		$manager_stmt = $DBH->prepare("SELECT manager_id FROM managers WHERE manager_id != ? AND draft_id = ? AND draft_order > ? ORDER BY draft_order ASC");
+		$manager_stmt->bindParam(1, $this->manager_id);
+		$manager_stmt->bindParam(2, $this->draft_id);
+		$manager_stmt->bindParam(3, $old_order);
+		
+		$manager_stmt->execute();
 
 		$success = true;
+		
+		$inner_stmt = $DBH->prepare("UPDATE managers SET draft_order = ? WHERE manager_id = ?");
+		$inner_stmt->bindParam(1, $old_order);
+		$inner_stmt->bindParam(2, $inner_manager_id);
 
-		while($manager_row = mysql_fetch_array($managers_result)) {
-			$inner_sql = "UPDATE managers SET draft_order = " . $old_order . " WHERE manager_id = " . (int)$manager_row['manager_id'];
-			if(!mysql_query($inner_sql))
+		while($manager_row = $manager_stmt->fetch()) {
+			$inner_manager_id = (int)$manager_row['manager_id'];
+			if(!$inner_stmt->execute())
 				$success = false;
 			$old_order++;
 		}
