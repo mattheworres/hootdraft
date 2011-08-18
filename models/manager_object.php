@@ -246,11 +246,14 @@ class manager_object {
 		}
 
 		$old_order = $this->draft_order;
-
-		$sql = "DELETE FROM managers WHERE manager_id = " . $this->manager_id . " AND draft_id = " . $this->draft_id . " LIMIT 1";
-
-		$success = mysql_query($sql);
-		if(!$success)
+		
+		global $DBH; /* @var $DBH PDO */
+		
+		$stmt = $DBH->prepare("DELETE FROM managers WHERE manager_id = ? AND draft_id = ? LIMIT 1");
+		$stmt->bindParam(1, $this->manager_id);
+		$stmt->bindParam(2, $this->draft_id);
+		
+		if(!$stmt->execute())
 			return false;
 
 		$success = $this->cascadeNewDraftOrder($old_order);
