@@ -210,9 +210,9 @@ class manager_object {
 			$save_stmt->bindParam(2, $this->draft_id);
 			$save_stmt->bindParam(3, $this->manager_name);
 			$save_stmt->bindParam(4, $this->manager_email);
-			$save_stmt->bindParam(5, $lowest_draft_order);
+			$save_stmt->bindParam(5, $new_draft_order);
 			
-			$lowest_draft_order = (int)($this->getLowestDraftorder() + 1);
+			$new_draft_order = (int)($this->getLowestDraftorder() + 1);
 			
 			if(!$save_stmt->execute())
 				return false;
@@ -229,8 +229,12 @@ class manager_object {
 	 * @return int Lowest draft order for the given draft 
 	 */
 	public function getLowestDraftorder() {
-		$sql = "SELECT draft_order FROM managers WHERE draft_id = " . $this->draft_id . " ORDER BY draft_order DESC LIMIT 1";
-		$row = mysql_fetch_array(mysql_query($sql));
+		global $DBH; /* @var $DBH PDO */
+		$stmt = $DBH->prepare("SELECT draft_order FROM managers WHERE draft_id = ? ORDER BY draft_order DESC LIMIT 1");
+		$stmt->bindParam(1, $this->draft_id);
+		$stmt->execute();
+		$row = $stmt->fetch();
+		
 		return (int)$row['draft_order'];
 	}
 
