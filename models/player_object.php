@@ -56,27 +56,23 @@ class player_object {
 	// </editor-fold>
 
 	public function __construct($id = 0) {
-		if((int)$id == 0)
-			return false;
-
 		$id = (int)$id;
-
-		$player_result = mysql_query("SELECT * FROM players WHERE player_id = " . $id . " LIMIT 1");
-
-		if(!$player_row = mysql_fetch_array($player_result))
+		
+		if($id == 0)
 			return false;
-
-		$this->player_id = (int)$player_row['player_id'];
-		$this->manager_id = (int)$player_row['manager_id'];
-		$this->draft_id = (int)$player_row['draft_id'];
-		$this->first_name = $player_row['first_name'];
-		$this->last_name = $player_row['last_name'];
-		$this->team = $player_row['team'];
-		$this->position = $player_row['position'];
-		$this->pick_time = $player_row['pick_time'];
-		$this->pick_duration = (int)$player_row['pick_duration'];
-		$this->player_round = (int)$player_row['player_round'];
-		$this->player_pick = (int)$player_row['player_pick'];
+		
+		global $DBH; /* @var $DBH PDO */
+		
+		$stmt = $DBH->prepare("SELECT * FROM players WHERE player_id = ? LIMIT 1");
+		$stmt->bindParam(1, $id);
+		
+		$stmt->setFetchMode(PDO::FETCH_INTO, $this);
+		
+		if(!$stmt->execute())
+			return false;
+		
+		if(!$stmt->fetch())
+			return false;
 
 		return true;
 	}
@@ -86,37 +82,49 @@ class player_object {
 	 * @return bool true on success, false otherwise 
 	 */
 	public function savePlayer($setPickToNow = false) {
+		global $DBH; /* @var $DBH PDO */
 		if($this->player_id > 0) {
-			$sql = "UPDATE players SET " .
-				"manager_id = " . (int)$this->manager_id . ", " .
-				"draft_id = " . (int)$this->draft_id . ", " .
-				"first_name = '" . mysql_real_escape_string($this->first_name) . "', " .
-				"last_name = '" . mysql_real_escape_string($this->last_name) . "', " .
-				"team = '" . mysql_real_escape_string($this->team) . "', " .
-				"position = '" . mysql_real_escape_string($this->position) . "', " .
-				"player_round = " . (int)$this->player_round . ", " .
-				"player_pick = " . (int)$this->player_pick . " ";
+			//NOTE: I don't care for this... But I had to use a param counter to get around the statement needing to be dynamic. There are instances
+			//like when an already-made pick doesn't need the pick_time updated. Always up for a more elegant solution.
 			
-			if($setPickToNow == true) {
-				$now = php_draft_library::getNowPhpTime();
-				$this->pick_time = $now;
-				$sql .= ", pick_time = '" . mysql_real_escape_string($now) . "' ";
+			$param_number = 9;
+			
+			$sql = "UPDATE players SET manager_id = ?, draft_id = ?, first_name = ?, last_name = ?, team = ?, position = ?, player_round = ?, player_pick = ? ";
+			if($setPickToNow === true) {
+				$this->pick_time = php_draft_library::getNowPhpTime();
+				$sql .= ", pick_time = ? ";
 			}
+			$sql .= "WHERE player_id = ?";
 			
-			$sql .= "WHERE player_id = " . (int)$this->player_id;
-			return mysql_query($sql);
+			$stmt = $DBH->prepare($sql);
+			$stmt->bindParam(1, $this->manager_id);
+			$stmt->bindParam(2, $this->draft_id);
+			$stmt->bindParam(3, $this->first_name);
+			$stmt->bindParam(4, $this->last_name);
+			$stmt->bindParam(5, $this->team);
+			$stmt->bindParam(6, $this->position);
+			$stmt->bindParam(7, $this->player_round);
+			$stmt->bindParam(8, $this->player_pick);
+			if($setPickToNow === true) {
+				$stmt->bindParam($param_number, $this->pick_time);
+				$param_number++;
+			}
+			$stmt->bindParam($param_number, $this->player_id);
+			
+			$success = $stmt->execute();
+			
+			return $success;
 		} elseif($this->draft_id > 0 && $this->manager_id > 0) {
-			//TODO: Investigate how to insert with empty fields.
-			$sql = "INSERT INTO players " .
-				"(manager_id, draft_id, player_round, player_pick) " .
-				"VALUES " .
-				"(" . (int)$this->manager_id . ", " . (int)$this->draft_id . ", " . (int)$this->player_round . ", " . (int)$this->player_pick . ")";
-
-			$result = mysql_query($sql);
-			if(!$result)
+			$stmt = $DBH->prepare("INSERT INTO players (manager_id, draft_id, player_round, player_pick) VALUES (?, ?, ?, ?)");
+			$stmt->bindParam(1, $this->manager_id);
+			$stmt->bindParam(2, $this->draft_id);
+			$stmt->bindParam(3, $this->player_round);
+			$stmt->bindParam(4, $this->player_pick);
+			
+			if(!$stmt->execute())
 				return false;
 
-			$this->player_id = mysql_insert_id();
+			$this->player_id = (int)$DBH->lastInsertId();
 
 			return true;
 		}else
@@ -154,9 +162,10 @@ class player_object {
 	}
 	
 	public function updatePickDuration($previous_pick, draft_object $draft) {
+		global $DBH; /* @var $DBH PDO */
 		require_once('libraries/php_draft_library.php');
 		
-		if(!isset($this->pick_time))
+		if(!isset($this->pick_time) || strlen($this->pick_time) == 0)
 			throw new Exception("Must call updatePickDuration on a player object that already has its own pick_time set!");
 		
 		if($this->player_pick == 1 || $previous_pick === false) 
@@ -170,9 +179,11 @@ class player_object {
 		
 		$this->pick_duration = (int)$alloted_time;
 		
-		$sql = "UPDATE players SET pick_duration = " . (int)$alloted_time . " WHERE player_id = " . (int)$this->player_id;
+		$stmt = $DBH->prepare("UPDATE players SET pick_duration = ? WHERE player_id = ?");
+		$stmt->bindParam(1, $alloted_time);
+		$stmt->bindParam(2, $this->player_id);
 		
-		return mysql_query($sql);
+		return $stmt->execute();
 	}
 
 	/**
