@@ -192,17 +192,24 @@ class player_object {
 	 * @return array Player objects that belong to given draft. false on failure
 	 */
 	public static function getPlayersByDraft($draft_id) {
+		global $DBH; /* @var $DBH PDO */
 		$draft_id = (int)$draft_id;
 
 		if($draft_id == 0)
 			return false;
 
-		$players_result = mysql_query("SELECT * FROM players WHERE draft_id = " . $draft_id . " ORDER BY player_pick ASC");
+		$players_stmt = $DBH->prepare("SELECT * FROM players WHERE draft_id = ? ORDER BY player_pick ASC");
+		$players_stmt->bindParam(1, $draft_id);
+		
+		$players_stmt->setFetchMode(PDO::FETCH_CLASS, 'player_object');
 
 		$players = array();
-
-		while($player_row = mysql_fetch_array($players_result))
-			$players[] = player_object::fillPlayerObject($player_row, $draft_id);
+		
+		if(!$players_stmt->execute())
+			return false;
+		
+		while($player = $players_stmt->fetch())
+			$players[] = $player;
 
 		return $players;
 	}
@@ -214,27 +221,31 @@ class player_object {
 	 * @return array picks Array of picks, or false on error.
 	 */
 	public static function getLastTenPicks($draft_id) {
+		global $DBH; /* @var $DBH PDO */
 		$draft_id = (int)$draft_id;
+		$picks = array();
 
 		if($draft_id == 0)
 			return false;
 
-		$sql = "SELECT p.*, m.manager_name, m.manager_id ".
+		$stmt = $DBH->prepare("SELECT p.*, m.manager_name, m.manager_id ".
 				"FROM players p ".
 				"LEFT OUTER JOIN managers m ".
 				"ON m.manager_id = p.manager_id ".
-				"WHERE p.draft_id = " . $draft_id . " ".
+				"WHERE p.draft_id = ? ".
 				"AND p.pick_time IS NOT NULL ".
 				"AND p.pick_duration IS NOT NULL ".
-				"ORDER BY p.player_pick DESC LIMIT 10";
-
-		$pick_result = mysql_query($sql);
+				"ORDER BY p.player_pick DESC LIMIT 10");
 		
-		$picks = array();
+		$stmt->bindParam(1, $draft_id);
 		
-		while($pick_row = mysql_fetch_array($pick_result)) {
-			$picks[] = player_object::fillPlayerObject($pick_row, $draft_id);
-		}
+		$stmt->setFetchMode(PDO::FETCH_CLASS, 'player_object');
+		
+		if(!$stmt->execute())
+			return false;
+		
+		while($player = $stmt->fetch())
+			$picks[] = $player;
 		
 		return $picks;
 	}
@@ -245,21 +256,27 @@ class player_object {
 	 * @return array last five picks 
 	 */
 	public static function getLastFivePicks(draft_object $draft) {
-		$sql = "SELECT p.*, m.* ".
+		global $DBH; /* @var $DBH PDO */
+		$picks = array();
+		
+		$stmt = $DBH->prepare("SELECT p.*, m.* ".
 		"FROM players p ".
 		"LEFT OUTER JOIN managers m ".
 		"ON m.manager_id = p.manager_id ".
-		"WHERE p.draft_id = " . (int)$draft->draft_id . " ".
+		"WHERE p.draft_id = ? ".
 		"AND p.pick_time IS NOT NULL ".
 		"ORDER BY p.player_pick DESC ".
-		"LIMIT 5";
+		"LIMIT 5");
 		
-		$pick_result = mysql_query($sql);
+		$stmt->bindParam(1, $draft->draft_id);
 		
-		$picks = array();
+		$stmt->setFetchMode(PDO::FETCH_CLASS, 'player_object');
 		
-		while($pick_row = mysql_fetch_array($pick_result))
-			$picks[] = player_object::fillPlayerObject($pick_row, $draft->draft_id);
+		if(!$stmt->execute())
+			return false;
+		
+		while($player = $stmt->fetch())
+			$picks[] = $player;
 		
 		return $picks;
 	}
@@ -270,23 +287,28 @@ class player_object {
 	 * @return player_object $last_player, or false on 0 rows
 	 */
 	public static function getLastPick(draft_object $draft) {
-		$sql = "SELECT p.*, m.* ".
+		global $DBH; /* @var $DBH PDO */
+		
+		$stmt = $DBH->prepare("SELECT p.*, m.* ".
 		"FROM players p ".
 		"LEFT OUTER JOIN managers m ".
 		"ON m.manager_id = p.manager_id ".
-		"WHERE p.draft_id = " . (int)$draft->draft_id .
-		" AND p.player_pick = " . (int)($draft->draft_current_pick - 1) .
-		" AND p.pick_time IS NOT NULL ".
-		"LIMIT 1";
+		"WHERE p.draft_id = ? ".
+		"AND p.player_pick = ? ".
+		"AND p.pick_time IS NOT NULL ".
+		"LIMIT 1");
 		
-		$pick_result = mysql_query($sql);
+		$stmt->bindParam(1, $draft->draft_id);
+		$stmt->bindParam(2, $current_pick);
 		
-		if(mysql_num_rows($pick_result) == 0)
+		$current_pick = ($draft->draft_current_pick - 1);
+		
+		$stmt->setFetchMode(PDO::FETCH_CLASS, 'player_object');
+		
+		if(!$stmt->execute())
 			return false;
 		
-		$pick_row = mysql_fetch_array($pick_result);
-		
-		return player_object::fillPlayerObject($pick_row, $draft->draft_id);
+		return $stmt->fetch();
 	}
 	
 	/**
@@ -295,18 +317,27 @@ class player_object {
 	 * @return player_object The current pick
 	 */
 	public static function getCurrentPick(draft_object $draft) {
-		$sql = "SELECT p.*, m.* ".
+		global $DBH; /* @var $DBH PDO */
+		
+		$stmt = $DBH->prepare("SELECT p.*, m.* ".
 		"FROM players p ".
 		"LEFT OUTER JOIN managers m ".
 		"ON m.manager_id = p.manager_id ".
-		"WHERE p.draft_id = " . (int)$draft->draft_id . " ".
-		"AND p.player_round = " . (int)$draft->draft_current_round . " ".
-		"AND p.player_pick = " . (int)$draft->draft_current_pick . " ".
-		"LIMIT 1";
+		"WHERE p.draft_id = ? ".
+		"AND p.player_round = ? ".
+		"AND p.player_pick = ? ".
+		"LIMIT 1");
 		
-		$pick_row = mysql_fetch_array(mysql_query($sql));
+		$stmt->bindParam(1, $draft->draft_id);
+		$stmt->bindParam(2, $draft->draft_current_round);
+		$stmt->bindParam(3, $draft->draft_current_pick);
 		
-		return player_object::fillPlayerObject($pick_row, $draft->draft_id);
+		$stmt->setFetchMode(PDO::FETCH_CLASS, 'player_object');
+		
+		if(!$stmt->execute())
+			return false;
+		
+		return $stmt->fetch();
 	}
 	
 	/**

@@ -197,6 +197,7 @@ switch(ACTION) {
 		// </editor-fold>
 		break;
 	
+	case 'home':
 	default:
 		// <editor-fold defaultstate="collapsed" desc="Index Logic">
 		$LAST_TEN_PICKS = player_object::getLastTenPicks(DRAFT_ID);

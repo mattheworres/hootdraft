@@ -72,7 +72,7 @@
 			<legend>Looking Ahead - Next Five Picks</legend>
 			<?php $current_round = $CURRENT_PICK->player_round;
 			$i = 0;
-			if(count($NEXT_FIVE_PICKS == 0)) { ?>
+			if(count($NEXT_FIVE_PICKS) == 0) { ?>
 				<p class="success">No more draft picks left! Just enter this last pick, and you're done!</p>
 			<?php } else { 
 				foreach($NEXT_FIVE_PICKS as $next_pick) { ?>
