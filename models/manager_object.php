@@ -274,10 +274,15 @@ class manager_object {
 		foreach($managers as $manager) {
 			$id_string .= "," . $manager->manager_id;
 		}
-
-		$sql = "DELETE FROM managers WHERE manager_id IN (" . mysql_escape_string($id_string) . ")";
-
-		return mysql_query($sql);
+		
+		global $DBH; /* @var $DBH PDO */
+		
+		$stmt = $DBH->prepare("DELETE FROM managers WHERE manager_id IN (?)");
+		$stmt->bindParam(1, $id_string);
+		
+		$success = $stmt->execute();
+		
+		return $success;
 	}
 
 	/**
