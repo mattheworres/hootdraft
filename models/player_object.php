@@ -453,11 +453,13 @@ class player_object {
 	 * Get all selected players for a given round.
 	 * @param int $draft_id ID of the draft for the given round
 	 * @param int $round Round to get players for
-	 * @param bool $sort Whether to sort by ASC or not. False == DESC
+	 * @param bool $sort_ascending Whether to sort by ASC or not. False == DESC
 	 * @return array Player objects that belong in a given round. false on failure
 	 */
-	public static function getSelectedPlayersByRound($draft_id, $round, $sort = true) {
-		$sortOrder = $sort ? "ASC" : "DESC";
+	public static function getSelectedPlayersByRound($draft_id, $round, $sort_ascending = true) {
+		global $DBH; /* @var $DBH PDO */
+		$players = array();
+		$sortOrder = $sort_ascending ? "ASC" : "DESC";
 		
 		$draft_id = (int)$draft_id;
 		$round = (int)$round;
@@ -465,20 +467,26 @@ class player_object {
 		if($draft_id == 0 || $round == 0)
 			return false;
 		
-		$sql = "SELECT p.*, m.* FROM players p ".
+		$stmt = $DBH->prepare("SELECT p.*, m.manager_name FROM players p ".
 		"LEFT OUTER JOIN managers m ".
 		"ON m.manager_id = p.manager_id ".
-		"WHERE p.draft_id = " . (int)$draft_id . 
-		" AND p.player_round = " . (int)$round . " AND p.pick_time IS NOT NULL ORDER BY p.player_pick " . $sortOrder;
-
-		$players_result = mysql_query($sql);
-
-		$players = array();
-
-		while($player_row = mysql_fetch_array($players_result)) {
-			$players[] = player_object::fillPlayerObject($player_row, $draft_id);
-		}
-
+		"WHERE p.draft_id = ? ".
+		" AND p.player_round = ? AND p.pick_time IS NOT NULL ORDER BY p.player_pick " . $sortOrder);
+		
+		$stmt->bindParam(1, $draft_id);
+		$stmt->bindParam(2, $round);
+		
+		$stmt->setFetchMode(PDO::FETCH_CLASS, 'player_object');
+		
+		if(!$stmt->execute())
+			return false;
+		
+		if($stmt->rowCount() == 0)
+			return false;
+		
+		while($player = $stmt->fetch())
+			$players[] = $player;
+		
 		return $players;
 	}
 	
@@ -490,6 +498,8 @@ class player_object {
 	 * @return array Player objects that belong in a given round. false on failure
 	 */
 	public static function getAllPlayersByRound($draft_id, $round, $sort = true) {
+		global $DBH; /* @var $DBH PDO */
+		$players = array();
 		$sortOrder = $sort ? "ASC" : "DESC";
 		
 		$draft_id = (int)$draft_id;
@@ -498,24 +508,31 @@ class player_object {
 		if($draft_id == 0 || $round == 0)
 			return false;
 		
-		$sql = "SELECT p.*, m.* FROM players p ".
+		$stmt = $DBH->prepare("SELECT p.*, m.manager_name FROM players p ".
 		"LEFT OUTER JOIN managers m ".
 		"ON m.manager_id = p.manager_id ".
-		"WHERE p.draft_id = " . $draft_id . 
-		" AND p.player_round = " . $round . " ORDER BY p.player_pick " . $sortOrder;
+		"WHERE p.draft_id = ? ". 
+		" AND p.player_round = ? ORDER BY p.player_pick " . $sortOrder);
+		
+		$stmt->bindParam(1, $draft_id);
+		$stmt->bindParam(2, $round);
+		
+		$stmt->setFetchMode(PDO::FETCH_CLASS, 'player_object');
+		
+		if(!$stmt->execute())
+			return false;
+		
+		if($stmt->rowCount() == 0)
+			return false;
 
-		$players_result = mysql_query($sql);
-
-		$players = array();
-
-		while($player_row = mysql_fetch_array($players_result)) {
-			$players[] = player_object::fillPlayerObject($player_row, $draft_id);
-		}
+		while($player = $stmt->fetch())
+			$players[] = $player;
 
 		return $players;
 	}
 
 	public static function deletePlayersByDraft($draft_id) {
+		global $DBH; /* @var $DBH PDO */
 		$draft_id = (int)$draft_id;
 
 		if($draft_id == 0)
@@ -528,12 +545,14 @@ class player_object {
 		foreach($players as $player) {
 			$id_string .= "," . $player->player_id;
 		}
+		
+		$stmt = $DBH->prepare("DELETE FROM players WHERE player_id IN (?)");
+		$stmt->bindParam(1, $id_string);
 
-		$sql = "DELETE FROM players WHERE player_id IN (" . mysql_escape_string($id_string) . ")";
-
-		return mysql_query($sql);
+		return $stmt->execute();
 	}
 	
+	//TODO: Rethink placing these two static methods in the player object. Most of the logic seems to belong more to the search object, not the player.
 	/**
 	 * Searches for picked players with strict criteria, using the MATCH() and score method. Sorts by score ASC first, then pick DESC last.
 	 * @param search_object $search Criteria object searched on
