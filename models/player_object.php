@@ -244,6 +244,9 @@ class player_object {
 		if(!$stmt->execute())
 			return false;
 		
+		if($stmt->rowCount() == 0)
+			return false;
+		
 		while($player = $stmt->fetch())
 			$picks[] = $player;
 		
@@ -273,6 +276,9 @@ class player_object {
 		$stmt->setFetchMode(PDO::FETCH_CLASS, 'player_object');
 		
 		if(!$stmt->execute())
+			return false;
+		
+		if($stmt->rowCount() == 0)
 			return false;
 		
 		while($player = $stmt->fetch())
@@ -308,6 +314,9 @@ class player_object {
 		if(!$stmt->execute())
 			return false;
 		
+		if($stmt->rowCount() == 0)
+			return false;
+		
 		return $stmt->fetch();
 	}
 	
@@ -337,6 +346,9 @@ class player_object {
 		if(!$stmt->execute())
 			return false;
 		
+		if($stmt->rowCount() == 0)
+			return false;
+		
 		return $stmt->fetch();
 	}
 	
@@ -346,21 +358,29 @@ class player_object {
 	 * @return player_object the next pick 
 	 */
 	public static function getNextPick(draft_object $draft) {
-		$sql = "SELECT p.*, m.* " .
+		global $DBH; /* @var $DBH PDO */
+		
+		$stmt = $DBH->prepare("SELECT p.*, m.* " .
 		"FROM players p " .
 		"LEFT OUTER JOIN managers m " .
 		"ON m.manager_id = p.manager_id " .
-		"WHERE p.draft_id = " . (int)$draft->draft_id . " " .
-		"AND p.player_pick = " . (int)($draft->draft_current_pick + 1) . " LIMIT 1";
+		"WHERE p.draft_id = ? " .
+		"AND p.player_pick = ? LIMIT 1");
 		
-		$pick_result = mysql_query($sql);
+		$stmt->bindParam(1, $draft->draft_id);
+		$stmt->bindParam(2, $current_pick);
 		
-		if(mysql_num_rows($pick_result) == 0)
+		$current_pick = $draft->draft_current_pick + 1;
+		
+		$stmt->setFetchMode(PDO::FETCH_CLASS, 'player_object');
+		
+		if(!$stmt->execute())
 			return false;
 		
-		$pick_row = mysql_fetch_array($pick_result);
+		if($stmt->rowCount() == 0)
+			return false;
 		
-		return player_object::fillPlayerObject($pick_row, $draft->draft_id);
+		return $stmt->fetch();
 	}
 	
 	/**
@@ -369,21 +389,31 @@ class player_object {
 	 * @return array of player_objects 
 	 */
 	public static function getNextFivePicks(draft_object $draft) {
-		$sql = "SELECT p.*, m.* ".
+		global $DBH; /* @var $DBH PDO */
+		$picks = array();
+		
+		$stmt = $DBH->prepare("SELECT p.*, m.* ".
 		"FROM players p ".
 		"LEFT OUTER JOIN managers m ".
 		"ON m.manager_id = p.manager_id ".
-		"WHERE p.draft_id = " . (int)$draft->draft_id . " ".
-		"AND p.player_pick > " . (int)$draft->draft_current_pick . " ".
+		"WHERE p.draft_id = ? ".
+		"AND p.player_pick > ? ".
 		"ORDER BY p.player_pick ASC ".
-		"LIMIT 5";
+		"LIMIT 5");
 		
-		$pick_result = mysql_query($sql);
+		$stmt->bindParam(1, $draft->draft_id);
+		$stmt->bindParam(2, $draft->draft_current_pick);
 		
-		$picks = array();
+		$stmt->setFetchMode(PDO::FETCH_CLASS, 'player_object');
 		
-		while($pick_row = mysql_fetch_array($pick_result))
-			$picks[] = player_object::fillPlayerObject($pick_row, $draft->draft_id);
+		if(!$stmt->execute())
+			return false;
+		
+		if($stmt->rowCount() == 0)
+			return false;
+		
+		while($player = $stmt->fetch())
+			$picks[] = $player;
 		
 		return $picks;
 	}
@@ -396,18 +426,26 @@ class player_object {
 	 * @return array Player objects that belong to given manager. false on failure
 	 */
 	public static function getSelectedPlayersByManager($manager_id) {
+		global $DBH; /* @var $DBH PDO */
 		$manager_id = (int)$manager_id;
 
 		if($manager_id == 0)
 			return false;
-
-		$players_result = mysql_query("SELECT * FROM players WHERE manager_id = " . $manager_id . " AND pick_time IS NOT NULL ORDER BY player_pick ASC");
-
-		$players = array();
-
-		while($player_row = mysql_fetch_array($players_result))
-			$players[] = player_object::fillPlayerObject($player_row);
-
+		
+		$stmt = $DBH->prepare("SELECT * FROM players WHERE manager_id = ? AND pick_time IS NOT NULL ORDER BY player_pick ASC");
+		$stmt->bindParam(1, $manager_id);
+		
+		$stmt->setFetchMode(PDO::FETCH_CLASS, 'player_object');
+		
+		if(!$stmt->execute())
+			return false;
+		
+		if($stmt->rowCount() == 0)
+			return false;
+		
+		while($player = $stmt->fetch())
+			$players[] = $player;
+		
 		return $players;
 	}
 
