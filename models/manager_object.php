@@ -53,8 +53,8 @@ class manager_object {
 		
 		
 		if(isset($this->manager_email) && strlen($this->manager_email) > 0) {
-			$is_invalid_email = (bool)preg_match($email_regex, $this->manager_email);
-			if($is_invalid_email)
+			$is_valid_email = (bool)preg_match($email_regex, $this->manager_email);
+			if(!$is_valid_email)
 				$errors[] = "Manager email is not in the correct format";
 		}
 		

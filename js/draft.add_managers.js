@@ -28,8 +28,10 @@ $(document).ready(function() {
 						
 		$('p.errorDescription').hide();
 						
-		if(!validateManagers())
+		if(!validateManagers()) {
+			$('p.errorDescription').html('One or more of the managers are invalid. Please fix highlighted fields to continue.').show();
 			return;
+		}
 						
 		//Build array of JSON objects
 		var managers = [];
@@ -52,7 +54,7 @@ $(document).ready(function() {
 				action: 'saveManagers', 
 				managers: managers
 			},
-			url: 'draft.php?saveManagers',
+			url: 'draft.php?action=saveManagers',
 			success: function(data) {
 				if(data == "SUCCESS") {
 					$loadingDialog.dialog('close');
@@ -73,6 +75,8 @@ $(document).ready(function() {
 });
 				
 function validateManagers() {
+	$('input.error').removeClass('error');
+	
 	$.each($('input.manager_name'), function() {
 		var name = $(this).val();
 		if(name.length == 0)
