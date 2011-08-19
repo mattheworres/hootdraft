@@ -217,9 +217,6 @@ class player_object {
 		if(!$stmt->execute())
 			return false;
 		
-		if($stmt->rowCount() == 0)
-			return false;
-		
 		while($player = $stmt->fetch())
 			$picks[] = $player;
 		
