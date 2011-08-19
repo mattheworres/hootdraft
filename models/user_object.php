@@ -17,19 +17,22 @@ class user_object {
 	public $Password;
 	
 	public function __construct($user_id = 0) {
+		global $DBH; /* @var $DBH PDO */
 		$user_id = (int)$user_id;
+		
 		if($user_id == 0)
 			return false;
 		
-		$userRow = mysql_fetch_array(mysql_query("SELECT * FROM user_login WHERE UserId = " . $user_id . " LIMIT 1"));
+		$stmt = $DBH->prepare("SELECT * FROM user_login WHERE UserId = ? LIMIT 1");
+		$stmt->bindParam(1, $user_id);
 		
-		if(!$userRow)
+		$stmt->setFetchMode(PDO::FETCH_INTO, $this);
+		
+		if(!$stmt->execute())
 			return false;
 		
-		$this->UserId = $user_id;
-		$this->Username = $userRow['Username'];
-		$this->Name = $userRow['Name'];
-		$this->Password = $userRow['Password'];
+		if(!$stmt->fetch())
+			return false;
 		
 		return true;
 	}
@@ -186,7 +189,5 @@ class user_object {
 	private function getLoggedInId() {
 		$this->UserId = (int)$_SESSION['userid'];
 	}
-	
-	
 }
 ?>

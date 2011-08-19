@@ -93,10 +93,6 @@ class search_object {
 		$param_number = 2;
 		$loose_search_score = -1;
 		
-		$this->keywords = mysql_real_escape_string($this->keywords);
-		$this->team = mysql_real_escape_string($this->team);
-		$this->position = mysql_real_escape_string($this->position);
-		
 		$sql = "SELECT p.*, m.manager_name FROM players p LEFT OUTER JOIN managers m ON m.manager_id = p.manager_id WHERE p.draft_id = ? ";
 		
 		if($this->hasName())	
