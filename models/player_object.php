@@ -586,37 +586,6 @@ class player_object {
 			&& strlen($this->pick_time) > 0 && $this->pick_duration > 0;
 	}
 	// </editor-fold>
-	
-	// <editor-fold defaultstate="collapsed" desc="Private Object Helpers">
-	/**
-	 * This might be bad practice, but seemed that I was duplicating a TON of code for each query I ran on players and managers.
-	 * Given a single mysql row, fill a new player object and return it.
-	 * @param array $mysql_array Filled mysql row of player-manager data
-	 * @return player_object new player_object filled with data.
-	 */
-	private static function fillPlayerObject($mysql_array, $draft_id = 0) {
-		$player = new player_object();
-		
-		if($draft_id > 0)
-			$player->draft_id = $draft_id;
-		else
-			$player->draft_id = (int)$mysql_array['draft_id'];
-		
-		$player->player_id = (int)$mysql_array['player_id'];
-		$player->manager_id = (int)$mysql_array['manager_id'];
-		$player->manager_name = $mysql_array['manager_name'];
-		$player->first_name = $mysql_array['first_name'];
-		$player->last_name = $mysql_array['last_name'];
-		$player->position = $mysql_array['position'];
-		$player->team = $mysql_array['team'];
-		$player->pick_time = $mysql_array['pick_time'];
-		$player->pick_duration = (int)$mysql_array['pick_duration'];
-		$player->player_round = (int)$mysql_array['player_round'];
-		$player->player_pick = (int)$mysql_array['player_pick'];
-		
-		return $player;
-	}
-	// </editor-fold>
 }
 
 ?>
