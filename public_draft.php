@@ -134,7 +134,7 @@ switch(ACTION) {
 		$team = $_GET['team'];
 		$position = $_GET['position'];
 		$SEARCHER = new search_object($_GET['keywords'], $_GET['team'], $_GET['position']);
-		$SEARCHER->searchDraft($DRAFT->draft_id);
+		$SEARCHER->searchDraft(DRAFT_ID);
 		
 		$NOW = php_draft_library::getNowRefreshTime();
 		require("views/public_draft/search_draft_results.php");

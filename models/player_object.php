@@ -36,6 +36,7 @@ class player_object {
 	public $player_round;
 	public $player_pick;
 	public $manager_name;
+	public $search_score;
 	
 	// <editor-fold defaultstate="collapsed" desc="Dynamic Properties">
 	/**
@@ -550,84 +551,6 @@ class player_object {
 		$stmt->bindParam(1, $id_string);
 
 		return $stmt->execute();
-	}
-	
-	//TODO: Rethink placing these two static methods in the player object. Most of the logic seems to belong more to the search object, not the player.
-	/**
-	 * Searches for picked players with strict criteria, using the MATCH() and score method. Sorts by score ASC first, then pick DESC last.
-	 * @param search_object $search Criteria object searched on
-	 * @param int $draft_id 
-	 */
-	public static function searchPlayersByStrictCriteria(search_object $search, $draft_id) {
-		$draft_id = (int)$draft_id;
-		$search->keywords = mysql_real_escape_string($search->keywords);
-		$search->team = mysql_real_escape_string($search->team);
-		$search->position = mysql_real_escape_string($search->position);
-		
-		$sql = "SELECT p.*, m.*, MATCH (p.first_name, p.last_name) AGAINST ('" . $search->keywords . "') as score ".
-			"FROM players p ".
-			"LEFT OUTER JOIN managers m ".
-			"ON m.manager_id = p.manager_id ".
-			"WHERE MATCH (p.first_name, p.last_name) AGAINST ('" . $search->keywords . "') ".
-			"AND p.draft_id = " . $draft_id . " ";
-		
-		if($search->hasTeam())
-			$sql .= "AND p.team = '" . $search->team . "' ";
-		
-		if($search->hasPosition())
-			$sql .= "AND p.position = '" . $search->position . "' ";
-		
-		$sql .= "AND p.pick_time IS NOT NULL ORDER BY score ASC, p.player_pick DESC";
-		
-		$search_result = mysql_query($sql);
-		
-		$players = array();
-		
-		while($player_row = mysql_fetch_array($search_result))
-			$players[] = player_object::fillPlayerObject($player_row, $draft_id);
-		
-		$search->player_results = $players;
-		$search->search_count = count($players);
-	}
-	
-	/**
-	 * Search picked players by a loose criteria that uses a LIKE %% query. Used if strict query returns 0 results. Sorts by pick DESC.
-	 * @param search_object $search Criteria object searched on
-	 * @param int $draft_id 
-	 */
-	public static function searchPlayersByLooseCriteria(search_object $search, $draft_id) {
-		$draft_id = (int)$draft_id;
-		$search->keywords = mysql_real_escape_string($search->keywords);
-		$search->team = mysql_real_escape_string($search->team);
-		$search->position = mysql_real_escape_string($search->position);
-		
-		$sql = "SELECT p.*, m.* ".
-			"FROM players p ".
-			"LEFT OUTER JOIN managers m ".
-			"ON m.manager_id = p.manager_id ".
-			"WHERE p.draft_id = " . $draft_id . " ";
-		
-		if($search->hasName())	
-			$sql .= "AND (p.first_name LIKE '%" . $search->keywords . "%'".
-				"OR p.last_name LIKE '%" . $search->keywords . "%')";
-		
-		if($search->hasTeam())
-			$sql .= "AND p.team = '" . $search->team . "' ";
-		
-		if($search->hasPosition())
-			$sql .= "AND p.position = '" . $search->position . "' ";
-		
-		$sql .= "AND p.pick_time IS NOT NULL ORDER BY p.player_pick DESC";
-		
-		$search_result = mysql_query($sql);
-		
-		$players = array();
-		
-		while($player_row = mysql_fetch_array($search_result))
-			$players[] = player_object::fillPlayerObject($player_row, $draft_id);
-		
-		$search->player_results = $players;
-		$search->search_count = count($players);
 	}
 	
 	// <editor-fold defaultstate="collapsed" desc="State Information">
