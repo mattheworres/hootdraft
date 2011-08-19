@@ -563,11 +563,18 @@ class player_object {
 	 * @return bool 
 	 */
 	public function pickExists() {
-		$sql = "SELECT player_id FROM players WHERE player_id = ". 
-		(int)$this->player_id . " AND draft_id = " . (int)$this->draft_id . " AND ".
-		"player_pick = " . (int)$this->player_pick . " AND player_round = " . (int)$this->player_round . " LIMIT 1";
+		global $DBH; /* @var $DBH PDO */
 		
-		return (mysql_num_rows(mysql_query($sql)) == 1);
+		$stmt = $DBH->prepare("SELECT player_id FROM players WHERE player_id = ? AND draft_id = ? AND player_pick = ? AND player_round = ? LIMIT 1");
+		$stmt->bindParam(1, $this->player_id);
+		$stmt->bindParam(2, $this->draft_id);
+		$stmt->bindParam(3, $this->player_pick);
+		$stmt->bindParam(4, $this->player_round);
+		
+		if(!$stmt->execute())
+			return false;
+		
+		return $stmt->rowCount() == 1;
 	}
 	
 	/**
