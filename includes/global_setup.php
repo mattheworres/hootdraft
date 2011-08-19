@@ -1,23 +1,33 @@
 <?php
-// Global code include file - used to setup site in a consistent manner
+require('includes/php_draft_class.php');
+/**
+ * This is the main settings file for PHP Draft. There are five lines that you need to edit in order to get started,
+ * the server hostname that the database exists on, the name of the database on that server, the username & password
+ * for the user that can read/write to that database, and the timezone that PHPDraft will exist on. Do not edit any lines
+ * below that, unless you know what you're doing!
+ */
 
-//Require the DB connection file and start the connection
-require('includes/dbconn.php');
-php_draft_connect::set_conn();
+$PHPD = new PHPDRAFT();
 
-$DBH = php_draft_connect::setupPDOHandle();
+$PHPD->setDatabaseHostname	("localhost");
+$PHPD->setDatabaseName		("phpdraft");
+$PHPD->setDatabaseUsername	("your_username");
+$PHPD->setDatabasePassword	("your_password");
+$PHPD->setLocalTimezone(PHPDRAFT::TIMEZONE_EST);
 
-//Start the PHP session - important this is done before any output is made
+/*************************************************
+ ******** DO NOT EDIT BELOW THIS LINE ************
+ *************************************************/
+
+$DBH = $PHPD->setupPDOHandle();
+
 session_start();
 
-//Set the application's timezone to EST
-date_default_timezone_set('America/New_York');
-
-//Require the draft object on every page - used everywhere
+//Require the draft and user objects used on every page
 require('models/draft_object.php');
-
-//Global-level commissioner object
 require('models/user_object.php');
+
+//Global-level commissioner object - used for printing commissioner's name publicly
 $COMMISH = new user_object();
 $COMMISH->getDefaultCommissioner(99999);
 
