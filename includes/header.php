@@ -2,7 +2,7 @@
 	<div id="header">
 	<div style="width:50%; float: left;">
 		<h1>PHP<font color="#FFDF8C">Draft</font></h1>
-		<h2>Commissioner <?php echo $COMMISH->public_name;?></h2>
+		<h2>Commissioner <?php echo $COMMISH->Name;?></h2>
 	</div>
 	<div style="width:50%; float: right;">
 		<h3>Web-Based Fantasy Draft Software</h3>

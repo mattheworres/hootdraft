@@ -1,20 +1,20 @@
 <?php
 
 class loginObject {
-	public function get_login_status() {
-		$userObject = new user_object();
-		$userObject->getCurrentlyLoggedInUser();
-
-		if($userObject->user_id > 0 && strlen($userObject->user_name) > 0 && strlen($userObject->password) > 0)
+	public static function get_login_status() {
+		global $LOGGED_IN_USER; /* @var $LOGGED_IN_USER user_object */
+		$authed = $LOGGED_IN_USER->userAuthenticated();
+		if($authed || ($LOGGED_IN_USER->UserId > 0 && strlen($LOGGED_IN_USER->Username) > 0 && strlen($LOGGED_IN_USER->Password) > 0))
 		{
-			$user_result = mysql_query("SELECT UserID
-										FROM user_login
-										WHERE
-										UserID = " . (int)$userObject->user_id . " AND
-										UserName = '" . mysql_real_escape_string($userObject->user_name) . "' AND
-										Password = '" . mysql_real_escape_string($userObject->password) . "'");
+			global $DBH; /* @var $DBH PDO */
+			$user_stmt = $DBH->prepare("SELECT UserID FROM user_login WHERE UserID = ? AND UserName = ? AND Password = ?");
+			$user_stmt->bindParam(1, $LOGGED_IN_USER->UserId);
+			$user_stmt->bindParam(2, $LOGGED_IN_USER->Username);
+			$user_stmt->bindParam(3, $LOGGED_IN_USER->Password);
 
-			if(mysql_fetch_array($user_result)) {//If we did find a user that matched all of those credentials, we need to forward them to control panel
+			if(!$user_stmt->execute())
+				$action = "INCORRECT_CREDENTIALS";
+			else if($user_stmt->rowCount() == 1) {//If we did find a user that matched all of those credentials, we need to forward them to control panel
 				$action = "ALREADY_LOGGED_IN";
 			}else{
 				$action = "INCORRECT_CREDENTIALS";
@@ -28,23 +28,29 @@ class loginObject {
 		return $action;
 	}
 
-	public function authenticate_user($raw_username, $raw_password) {
-		$userObject = new user_object();
-		$userObject->user_name = $raw_username;
-		$userObject->password = user_object::getHashedPassword($raw_password);
-
-		$user_result = mysql_query("SELECT UserID, Username, Password
-									FROM user_login
-									WHERE Username = '" . mysql_real_escape_string($userObject->user_name) . "' AND
-									Password = '" . mysql_real_escape_string($userObject->password) . "'
-							   ");
-		if(!$user_row = mysql_fetch_array($user_result)) {
+	public static function authenticate_user($raw_username, $raw_password) {
+		global $LOGGED_IN_USER; /* @var $LOGGED_IN_USER user_object */
+		global $DBH; /* @var $DBH PDO */
+		
+		$LOGGED_IN_USER->Username = $raw_username;
+		$LOGGED_IN_USER->Password = user_object::getHashedPassword($raw_password);
+		
+		$user_stmt = $DBH->prepare("SELECT UserID, Username, Password FROM user_login WHERE Username = ? AND Password = ?");
+		$user_stmt->bindParam(1, $LOGGED_IN_USER->Username);
+		$user_stmt->bindParam(2, $LOGGED_IN_USER->Password);
+		
+		if(!$user_stmt->execute())
+			return false;
+		
+		if($user_stmt->rowCount() == 0) {
 			return false;
 		}else{
-			$userObject->user_id = $user_row['UserID'];
-			$userObject->user_name = $user_row['Username'];
-			$userObject->password = $user_row['Password'];
-			$userObject->updateAuthentication();
+			$user_row = $user_stmt->fetch();
+			
+			$LOGGED_IN_USER->UserId = $user_row['UserID'];
+			$LOGGED_IN_USER->Username = $user_row['Username'];
+			$LOGGED_IN_USER->Password = $user_row['Password'];
+			$LOGGED_IN_USER->updateAuthentication();
 			return true;
 		}
 	}

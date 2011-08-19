@@ -3,48 +3,63 @@
 /**
  * Represents a PHPDraft "user" object, which currently there is only one: the Commish
  * 
- * @property int $user_id The unique identifier for this user
- * @property string $user_name The handle with which user logged in with
- * @property string $public_name The public-visible name for the Commissioner
- * @property string $password User's password
+ * @property int $UserId The unique identifier for this user
+ * @property string $Username The handle with which user logged in with
+ * @property string $Name The public-visible name for the Commissioner
+ * @property string $Password User's password
  * 
  * @method void getCurrentlyLoggedInUser() Grab whatever information is available for the currently logged in user
  */
 class user_object {
-	public $user_id;
-	public $user_name;
-	public $public_name;
-	public $password;
+	public $UserId;
+	public $Username;
+	public $Name;
+	public $Password;
 	
 	public function __construct($user_id = 0) {
+		global $DBH; /* @var $DBH PDO */
 		$user_id = (int)$user_id;
+		
 		if($user_id == 0)
 			return false;
 		
-		$userRow = mysql_fetch_array(mysql_query("SELECT * FROM user_login WHERE UserId = " . $user_id . " LIMIT 1"));
+		$stmt = $DBH->prepare("SELECT * FROM user_login WHERE UserId = ? LIMIT 1");
+		$stmt->bindParam(1, $user_id);
 		
-		if(!$userRow)
+		$stmt->setFetchMode(PDO::FETCH_INTO, $this);
+		
+		if(!$stmt->execute())
 			return false;
 		
-		$this->user_id = $user_id;
-		$this->user_name = $userRow['Username'];
-		$this->public_name = $userRow['Name'];
-		$this->password = $userRow['Password'];
+		if(!$stmt->fetch())
+			return false;
 		
 		return true;
 	}
 	
 	public function getCurrentlyLoggedInUser() {
-		$this->user_id = (int)$_SESSION['userid'];
-		$this->user_name = $_SESSION['username'];
-		$this->password = $_SESSION['password'];
+		global $DBH; /* @var $DBH PDO */
 		
-		if($this->user_id == 0)
+		$this->UserId = (int)$_SESSION['userid'];
+		$this->Username = $_SESSION['username'];
+		$this->Password = $_SESSION['password'];
+		
+		if($this->UserId == 0)
 			return;
 		
-		$nameResult = mysql_fetch_array(mysql_query("SELECT Name FROM user_login WHERE UserID = " . $this->user_id . " AND Username = '" . $this->user_name . "' AND Password = '" . $this->password . "' LIMIT 1"));
+		$stmt = $DBH->prepare("SELECT Name FROM user_login WHERE UserID = ? AND Username = ? AND Password = ? LIMIT 1");
+		$stmt->bindParam(1, $this->UserId);
+		$stmt->bindParam(2, $this->Username);
+		$stmt->bindParam(3, $this->Password);
 		
-		$this->public_name = strlen($nameResult['Name']) > 0 ? $nameResult['Name'] : "The Commish";
+		if(!$stmt->execute())
+			return;
+		
+		$name_row = $stmt->fetch();
+		
+		$name = $name_row['Name'];
+		
+		$this->Name = strlen($name) > 0 ? $name : "The Commish";
 	}
 	
 	/**
@@ -53,25 +68,21 @@ class user_object {
 	 * @return void 
 	 */
 	public function getDefaultCommissioner($commish_id) {
-		$id_int = (int)$commish_id;
+		global $DBH; /* @var $DBH PDO */
+		$commish_id = (int)$commish_id;
 		
-		if($id_int == 0)
+		if($commish_id == 0)
 			return;
 		
-		$commish_sql = "SELECT * FROM user_login WHERE UserId = " . $id_int . " LIMIT 1";
-		$commish_row = mysql_fetch_array(mysql_query($commish_sql));
+		$stmt = $DBH->prepare("SELECT * FROM user_login WHERE UserId = ? LIMIT 1");
+		$stmt->bindParam(1, $commish_id);
 		
-		$this->user_id = (int)$commish_row['UserId'];
-		$this->user_name = $commish_row['Username'];
-		$this->public_name = $commish_row['Name'];
-		$this->password = $commish_row['Password'];
-	}
-	
-	/**
-	 * To set the current user's ID for the currently logged in user
-	 */
-	private function getLoggedInId() {
-		$this->user_id = (int)$_SESSION['userid'];
+		$stmt->setFetchMode(PDO::FETCH_INTO, $this);
+		
+		if(!$stmt->execute())
+			return;
+		
+		$stmt->fetch();
 	}
 	
 	/**
@@ -87,7 +98,7 @@ class user_object {
 	 * Given a raw plaintext password and use the specified hashing method and store it in the object
 	 */
 	public function setHashedPassword($rawPassword) {
-		$this->password = sha1($rawPassword);
+		$this->Password = sha1($rawPassword);
 	}
 	
 	/**
@@ -95,23 +106,25 @@ class user_object {
 	 * @return bool If the user is authenticated or not
 	 */
 	public function userAuthenticated() {
-		if($this->user_id == 0 
-			|| !isset($this->user_name) 
-			|| strlen($this->user_name) == 0 
-			|| !isset($this->password) 
-			|| strlen($this->password) == 0)
+		global $DBH; /* @var $DBH PDO */
+		if($this->UserId == 0 
+			|| !isset($this->Username) 
+			|| strlen($this->Username) == 0 
+			|| !isset($this->Password) 
+			|| strlen($this->Password) == 0)
 			return false;
 		
-		$user_result = mysql_query("SELECT UserID
-									FROM user_login 
-									WHERE 
-									UserID = " . (int)$this->user_id . " AND
-									UserName = '" . mysql_real_escape_string($this->user_name) . "' AND
-									Password = '" . mysql_real_escape_string($this->password) . "'");
+		$stmt = $DBH->prepare("SELECT UserID FROM user_login WHERE UserID = ? AND UserName = ? AND Password = ?");
+		$stmt->bindParam(1, $this->UserId);
+		$stmt->bindParam(2, $this->Username);
+		$stmt->bindParam(3, $this->Password);
 		
-		if(!$user_row = mysql_fetch_array($user_result))
+		if(!$stmt->execute())
 			return false;
-	   
+		
+		if($stmt->rowCount() == 0)
+			return false;
+		
 		return true;
 	}
 	
@@ -120,33 +133,61 @@ class user_object {
 	 * @return boolean success whether or not the MySQL transaction succeeded.
 	 */
 	public function saveUser() {
-		//TODO: Remove this hack. This assumes a single user being edited by himself.
+		global $DBH; /* @var $DBH PDO */
+		$param_number = 2;
+		//TODO: Remove this hack. This assumes a single user being edited by himself:
 		$this->getLoggedInId();
 		
-		$update_sql = "UPDATE user_login SET Username = '" . mysql_real_escape_string($this->user_name) . "'";
+		$update_sql = "UPDATE user_login SET Username = ?";
 		
-		if(isset($this->password) && strlen($this->password) > 0)
-				$update_sql .= ",  Password = '" . mysql_real_escape_string($this->password) . "'";
+		if($this->hasPassword())
+			$update_sql .= ",  Password = ?";
 		
-		$update_sql .= ",  Name = '" . mysql_real_escape_string($this->public_name) . "' WHERE UserID = " . (int)$this->user_id;
+		$update_sql .= ",  Name = ? WHERE UserID = ? LIMIT 1";
 		
-		$success = mysql_query($update_sql);
+		$stmt = $DBH->prepare($update_sql);
+		$stmt->bindParam(1, $this->Username);
 		
-		if($success)
+		if($this->hasPassword()) {
+			$stmt->bindParam($param_number, $this->Password);
+			$param_number++;
+		}
+		
+		$stmt->bindParam($param_number, $this->Name);
+		$param_number++;
+		$stmt->bindParam($param_number, $this->UserId);
+		$param_number++;
+		
+		if(!$stmt->execute())
+			return false;
+		
+		if($stmt->rowCount() == 1) {
 			$this->updateAuthentication();
-		
-		return $success;
+			return true;
+		} else
+			return false;
 	}
 	
 	/**
 	 * Assuming user information is up-to-date, update the session variables accordingly.
 	 */
 	public function updateAuthentication() {
-		if($this->user_id > 0) {
-			$_SESSION['userid'] = (int)$this->user_id;
-			$_SESSION['username'] = $this->user_name;
-			$_SESSION['password'] = $this->password;
+		if($this->UserId > 0) {
+			$_SESSION['userid'] = (int)$this->UserId;
+			$_SESSION['username'] = $this->Username;
+			$_SESSION['password'] = $this->Password;
 		}
+	}
+	
+	public function hasPassword() {
+		return isset($this->Password) && strlen($this->Password) > 0;
+	}
+	
+	/**
+	 * To set the current user's ID for the currently logged in user
+	 */
+	private function getLoggedInId() {
+		$this->UserId = (int)$_SESSION['userid'];
 	}
 }
 ?>

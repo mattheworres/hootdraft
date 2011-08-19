@@ -1,5 +1,4 @@
 <?php
-require_once("models/player_object.php");
 require_once("models/manager_object.php");
 require_once("libraries/php_draft_library.php");
 
@@ -47,169 +46,219 @@ class draft_statistics_object {
 	
 	// <editor-fold defaultstate="collapsed" desc="Private Stat Generators">
 	private function generateHoldOnAward() {
-		$sql = "SELECT p.pick_duration, m.manager_name, avg(pick_duration) as pick_average
+		global $DBH; /* @var $DBH PDO */
+		$stmt = $DBH->prepare("SELECT p.pick_duration, m.manager_name, avg(pick_duration) as pick_average
 		FROM players p
 		LEFT OUTER JOIN managers m
 		ON m.manager_id = p.manager_id
-		WHERE p.draft_id = " . $this->draft_id . "
+		WHERE p.draft_id = ?
 		GROUP BY m.manager_name 
 		ORDER BY pick_average DESC
-		LIMIT 1";
+		LIMIT 1");
 		
-		$result = mysql_query($sql);
-		$row = mysql_fetch_array($result);
+		$stmt->bindParam(1, $this->draft_id);
+		
+		$stmt->execute();
+		
+		$row = $stmt->fetch();
 		
 		$this->hold_on_manager_name = $row['manager_name'];
 		$this->hold_on_pick_time = php_draft_library::secondsToWords((int)$row['pick_average']);
 	}
 	
 	private function generateQuickieAward() {
-		$sql = "SELECT p.pick_duration, m.manager_name, avg(pick_duration) as pick_average
+		global $DBH; /* @var $DBH PDO */
+		
+		$stmt = $DBH->prepare("SELECT p.pick_duration, m.manager_name, avg(pick_duration) as pick_average
 		FROM players p
 		LEFT OUTER JOIN managers m
 		ON m.manager_id = p.manager_id
-		WHERE p.draft_id = " . $this->draft_id . "
+		WHERE p.draft_id = ?
 		GROUP BY m.manager_name
 		ORDER BY pick_average ASC
-		LIMIT 1";
+		LIMIT 1");
 		
-		$result = mysql_query($sql);
-		$row = mysql_fetch_array($result);
+		$stmt->bindParam(1, $this->draft_id);
+		
+		$stmt->execute();
+		
+		$row = $stmt->fetch();
 		
 		$this->quickie_manager = $row['manager_name'];
 		$this->quickie_pick_time = php_draft_library::secondsToWords((int)$row['pick_average']);
 	}
 	
 	private function generateSlowpokeAward() {
-		$sql = "SELECT p.pick_duration, p.player_pick, m.manager_name, max(pick_duration) as pick_max
+		global $DBH; /* @var $DBH PDO */
+		
+		$stmt = $DBH->prepare("SELECT p.pick_duration, p.player_pick, m.manager_name, max(pick_duration) as pick_max
 		FROM players p
 		LEFT OUTER JOIN managers m
 		ON m.manager_id = p.manager_id
-		WHERE p.draft_id = " . $this->draft_id . "
+		WHERE p.draft_id = ?
 		GROUP BY m.manager_name
 		ORDER BY pick_max DESC
-		LIMIT 1";
+		LIMIT 1");
 		
-		$result = mysql_query($sql);
-		$row = mysql_fetch_array($result);
+		$stmt->bindParam(1, $this->draft_id);
+		
+		$stmt->execute();
+		
+		$row = $stmt->fetch();
 		
 		$this->slowpoke_manager_name = $row['manager_name'];
 		$this->slowpoke_pick_time = php_draft_library::secondsToWords((int)$row['pick_max']);
 	}
 	
 	private function generateSpeedyAward() {
-		$sql = "SELECT p.pick_duration, p.player_pick, m.manager_name, min(pick_duration) as pick_min
+		global $DBH; /* @var $DBH PDO */
+		
+		$stmt = $DBH->prepare("SELECT p.pick_duration, p.player_pick, m.manager_name, min(pick_duration) as pick_min
 		FROM players p
 		LEFT OUTER JOIN managers m
 		ON m.manager_id = p.manager_id
-		WHERE p.draft_id = " . $this->draft_id . "
+		WHERE p.draft_id = ?
 		GROUP BY m.manager_name
 		ORDER BY pick_min ASC
-		LIMIT 1";
+		LIMIT 1");
 		
-		$result = mysql_query($sql);
-		$row = mysql_fetch_array($result);
+		$stmt->bindParam(1, $this->draft_id);
+		
+		$stmt->execute();
+		
+		$row = $stmt->fetch();
 		
 		$this->speedy_manager_name = $row['manager_name'];
 		$this->speedy_pick_time = php_draft_library::secondsToWords((int)$row['pick_min']);
 	}
 	
 	private function generateAveragePickTime() {
-		$sql = "SELECT avg(pick_duration) as pick_average
-		FROM players p
-		WHERE p.draft_id = " . $this->draft_id . "
-		LIMIT 1";
+		global $DBH; /* @var $DBH PDO */
 		
-		$result = mysql_query($sql);
-		$row = mysql_fetch_array($result);
+		$stmt = $DBH->prepare("SELECT avg(pick_duration) as pick_average
+		FROM players p
+		WHERE p.draft_id = ?
+		LIMIT 1");
+		
+		$stmt->bindParam(1, $this->draft_id);
+		
+		$stmt->execute();
+		
+		$row = $stmt->fetch();
+		
 		$this->average_pick_time = php_draft_library::secondsToWords((int)$row['pick_average']);
 	}
 	
 	private function generateRoundTimes() {
-		$sql = "SELECT DISTINCT p.player_round, sum( p.pick_duration ) AS round_time
+		global $DBH; /* @var $DBH PDO */
+		
+		$stmt = $DBH->prepare("SELECT DISTINCT p.player_round, sum( p.pick_duration ) AS round_time
 		FROM players p
-		WHERE p.draft_id = " . $this->draft_id . "
+		WHERE p.draft_id = ?
 		AND p.pick_duration IS NOT NULL
 		GROUP BY player_round
 		ORDER BY round_time DESC
-		LIMIT 1";
+		LIMIT 1");
 		
-		$result = mysql_query($sql);
-		$row = mysql_fetch_array($result);
+		$stmt->bindParam(1, $this->draft_id);
+		
+		$stmt->execute();
+		
+		$row = $stmt->fetch();
 		
 		$this->longest_round = (int)$row['player_round'];
 		$this->longest_round_time = php_draft_library::secondsToWords((int)$row['round_time']);
 		
-		$sql = "SELECT DISTINCT p.player_round, sum( p.pick_duration ) AS round_time
+		//Stupid that I can't just re-use the above statement. All that changes is DESC to ASC. Stupid.
+		$stmt = $DBH->prepare("SELECT DISTINCT p.player_round, sum( p.pick_duration ) AS round_time
 		FROM players p
-		WHERE p.draft_id = " . $this->draft_id . "
+		WHERE p.draft_id = ?
 		AND p.pick_duration IS NOT NULL
 		GROUP BY player_round
 		ORDER BY round_time ASC
-		LIMIT 1";
+		LIMIT 1");
 		
-		$result = mysql_query($sql);
-		$row = mysql_fetch_array($result);
+		$stmt->bindParam(1, $this->draft_id);
+		
+		$stmt->execute();
+		
+		$row = $stmt->fetch();
 		
 		$this->shortest_round = (int)$row['player_round'];
 		$this->shortest_round_time = php_draft_library::secondsToWords((int)$row['round_time']);
 	}
 	
 	private function generateTeamSuperlatives() {
-		$sql = "SELECT DISTINCT p.team, count(team) as team_occurences
+		global $DBH; /* @var $DBH PDO */
+		
+		$stmt = $DBH->prepare("SELECT DISTINCT p.team, count(team) as team_occurences
 		FROM players p
-		WHERE p.draft_id = " . $this->draft_id . "
+		WHERE p.draft_id = ?
 		AND p.team IS NOT NULL
 		GROUP BY team
 		ORDER BY team_occurences DESC
-		LIMIT 1";
+		LIMIT 1");
 		
-		$result = mysql_query($sql);
-		$row = mysql_fetch_array($result);
+		$stmt->bindParam(1, $this->draft_id);
+		
+		$stmt->execute();
+		
+		$row = $stmt->fetch();
 		
 		$this->most_drafted_team = $this->sports_teams[$row['team']];
 		$this->most_drafted_team_count = (int)$row['team_occurences'];
 		
-		$sql = "SELECT DISTINCT p.team, count(team) as team_occurences
+		$stmt = $DBH->prepare("SELECT DISTINCT p.team, count(team) as team_occurences
 		FROM players p
-		WHERE p.draft_id = " . $this->draft_id . "
+		WHERE p.draft_id = ?
 		AND p.team IS NOT NULL
 		GROUP BY team
 		ORDER BY team_occurences ASC
-		LIMIT 1";
+		LIMIT 1");
 		
-		$result = mysql_query($sql);
-		$row = mysql_fetch_array($result);
+		$stmt->bindParam(1, $this->draft_id);
+		
+		$stmt->execute();
+		
+		$row = $stmt->fetch();
 		
 		$this->least_drafted_team = $this->sports_teams[$row['team']];
 		$this->least_drafted_team_count = (int)$row['team_occurences'];
 	}
 	
 	private function generatePositionSuperlatives() {
-		$sql = "SELECT DISTINCT p.position, count(position) as position_occurences
+		global $DBH; /* @var $DBH PDO */
+		
+		$stmt = $DBH->prepare("SELECT DISTINCT p.position, count(position) as position_occurences
 		FROM players p
-		WHERE p.draft_id = " . $this->draft_id . "
+		WHERE p.draft_id = ?
 		AND p.position IS NOT NULL
 		GROUP BY position
 		ORDER BY position_occurences DESC
-		LIMIT 1";
+		LIMIT 1");
 		
-		$result = mysql_query($sql);
-		$row = mysql_fetch_array($result);
+		$stmt->bindParam(1, $this->draft_id);
+		
+		$stmt->execute();
+		
+		$row = $stmt->fetch();
 		
 		$this->most_drafted_position = $this->sports_positions[$row['position']];
 		$this->most_drafted_position_count = (int)$row['position_occurences'];
 		
-		$sql = "SELECT DISTINCT p.position, count(position) as position_occurences
+		$stmt = $DBH->prepare("SELECT DISTINCT p.position, count(position) as position_occurences
 		FROM players p
-		WHERE p.draft_id = " . $this->draft_id . "
+		WHERE p.draft_id = ?
 		AND p.position IS NOT NULL
 		GROUP BY position
 		ORDER BY position_occurences ASC
-		LIMIT 1";
+		LIMIT 1");
 		
-		$result = mysql_query($sql);
-		$row = mysql_fetch_array($result);
+		$stmt->bindParam(1, $this->draft_id);
+		
+		$stmt->execute();
+		
+		$row = $stmt->fetch();
 		
 		$this->least_drafted_position = $this->sports_positions[$row['position']];
 		$this->least_drafted_position_count = (int)$row['position_occurences'];

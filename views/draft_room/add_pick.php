@@ -18,7 +18,7 @@
 		<?php }?>
 		<h3>Enter the Next Draft Pick</h3>
 		<fieldset id="add_pick" class="enter_pick">
-			<legend>Round <?php echo $DRAFT->current_round; ?>, Pick #<?php echo $DRAFT->current_pick; ?></legend>
+			<legend>Round <?php echo $DRAFT->draft_current_round; ?>, Pick #<?php echo $DRAFT->draft_current_pick; ?></legend>
 			<form action="draft_room.php?action=addPick" method="post">
 			<input type="hidden" name="did" value="<?php echo DRAFT_ID; ?>" />
 			<input type="hidden" name="pid" value="<?php echo $CURRENT_PICK->player_id; ?>" />
@@ -72,20 +72,28 @@
 			<legend>Looking Ahead - Next Five Picks</legend>
 			<?php $current_round = $CURRENT_PICK->player_round;
 			$i = 0;
-			foreach($NEXT_FIVE_PICKS as $next_pick) { ?>
-			<?php if($next_pick->player_round > $current_round) {
-				?><p class="round"><strong>Round #<?php echo $next_pick->player_round; ?></strong></p>
-			<?php $current_round = $next_pick->player_round; } ?>
-			<p><strong><?php echo $kooky_labels[$i]; ?></strong><?php  echo "Pick #" . $next_pick->player_pick . " - " . $next_pick->manager_name; ?></p>
-			<?php 
-				$i++;
-			} ?>
+			if(count($NEXT_FIVE_PICKS) == 0) { ?>
+				<p class="success">No more draft picks left! Just enter this last pick, and you're done!</p>
+			<?php } else { 
+				foreach($NEXT_FIVE_PICKS as $next_pick) { ?>
+				<?php if($next_pick->player_round > $current_round) {
+					?><p class="round"><strong>Round #<?php echo $next_pick->player_round; ?></strong></p>
+				<?php $current_round = $next_pick->player_round; } ?>
+				<p><strong><?php echo $kooky_labels[$i]; ?></strong><?php  echo "Pick #" . $next_pick->player_pick . " - " . $next_pick->manager_name; ?></p>
+				<?php 
+					$i++; 
+				}
+			}?>
 		</fieldset>
 		<fieldset>
 			<legend>Looking Back - Last Five Picks</legend>
-			<?php foreach($LAST_FIVE_PICKS as $last_pick) { ?>
+			<?php if(count($LAST_FIVE_PICKS) == 0) { ?>
+			<p><strong>No picks have been made yet.</strong></p>
+			<?php } else {
+				foreach($LAST_FIVE_PICKS as $last_pick) { ?>
 			<p style="background-color: <?php echo $DRAFT->sports_colors[$last_pick->position]; ?>;"><span class="player-name"><?php echo $last_pick->casualName(); ?></span><?php echo " (Pick #" . $last_pick->player_pick . ", " . $last_pick->team . " - " . $last_pick->position . ")<br/><strong>Manager:</strong> " . $last_pick->manager_name . "<br/>"; ?></p>
-			<?php } ?>
+			<?php }
+			}?>
 		</fieldset>
 		</div>
 		<?php require('includes/footer.php');; ?>

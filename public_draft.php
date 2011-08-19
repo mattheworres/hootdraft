@@ -44,7 +44,7 @@ switch(ACTION) {
 		if($DRAFT->isCompleted())
 			echo "9999";
 		else
-			echo (int)$DRAFT->current_pick;
+			echo (int)$DRAFT->draft_current_pick;
 		// </editor-fold>
 		break;
 	
@@ -134,7 +134,7 @@ switch(ACTION) {
 		$team = $_GET['team'];
 		$position = $_GET['position'];
 		$SEARCHER = new search_object($_GET['keywords'], $_GET['team'], $_GET['position']);
-		$SEARCHER->searchDraft($DRAFT->draft_id);
+		$SEARCHER->searchDraft(DRAFT_ID);
 		
 		$NOW = php_draft_library::getNowRefreshTime();
 		require("views/public_draft/search_draft_results.php");
@@ -142,21 +142,25 @@ switch(ACTION) {
 		break;
 	
 	case 'draftStats':
+		// <editor-fold defaultstate="collapsed" desc="draftStats Logic">
 		require_once("models/draft_statistics_object.php");
 		require_once("libraries/php_draft_library.php");
 		$STATS = new draft_statistics_object();
 		$STATS->generateStatistics($DRAFT);
 		$NOW = php_draft_library::getNowRefreshTime();
 		require("views/public_draft/draft_statistics.php");
+		// </editor-fold>
 		break;
 	
 	case 'loadStats':
+		// <editor-fold defaultstate="collapsed" desc="loadStats Logic">
 		require_once("models/draft_statistics_object.php");
 		require_once("libraries/php_draft_library.php");
 		$STATS = new draft_statistics_object();
 		$STATS->generateStatistics($DRAFT);
 		$NOW = php_draft_library::getNowRefreshTime();
 		require("views/public_draft/draft_statistics_results.php");
+		// </editor-fold>
 		break;
 	
 	default:

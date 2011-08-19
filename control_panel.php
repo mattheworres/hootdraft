@@ -1,6 +1,6 @@
 <?php
 require("includes/global_setup.php");
-require_once("includes/check_login.php");
+require("includes/check_login.php");
 
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
 
@@ -41,7 +41,7 @@ switch($_GET['action']) {
 
 		define("PAGE_HEADER", "Draft Successfully Created");
 		define("P_CLASS", "success");
-		define("PAGE_CONTENT", "Your draft, <em>" . $draft->draft_name . "</em> has been successfully created.  <a href=\"control_panel.php?action=manageDraft&did=" . $draft->draft_id . "\">Click here</a> to manage your new draft.<br/><br/>REMEMBER: Your next step should be to add all managers before you begin drafting players.");
+		define("PAGE_CONTENT", "Your draft, <em>" . $draft->draft_name . "</em> has been successfully created.  <a href=\"draft.php?did=" . $draft->draft_id . "\">Click here</a> to manage your new draft.<br/><br/>REMEMBER: Your next step should be to add all managers before you begin drafting players.");
 		require_once("views/shared/generic_result_view.php");
 		//</editor-fold>
 		break;

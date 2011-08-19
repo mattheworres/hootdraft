@@ -1,11 +1,10 @@
 <?php 
 require("includes/global_setup.php");
-
 require_once('models/login_model.php');
-define("ACTIVE_TAB", "LOGIN");
-$login = new loginObject();
 
-$status = $login->get_login_status();
+define("ACTIVE_TAB", "LOGIN");
+
+$status = loginObject::get_login_status();
 
 switch($status) {
 	case "SHOW_FIRST_FORM":
@@ -24,7 +23,7 @@ switch($status) {
 		break;
 
 	case "AUTHENTICATE_USER":
-		$authenticated = $login->authenticate_user($_POST['txt_user'], $_POST['txt_pass']);
+		$authenticated = loginObject::authenticate_user($_POST['txt_user'], $_POST['txt_pass']);
 
 		if($authenticated) {
 			header('Location: control_panel.php?action=home');
