@@ -3,8 +3,8 @@
 class loginObject {
 	public static function get_login_status() {
 		global $LOGGED_IN_USER; /* @var $LOGGED_IN_USER user_object */
-
-		if($LOGGED_IN_USER->userAuthenticated() || ($LOGGED_IN_USER->user_id > 0 && strlen($LOGGED_IN_USER->user_name) > 0 && strlen($LOGGED_IN_USER->password) > 0))
+		$authed = $LOGGED_IN_USER->userAuthenticated();
+		if($authed || ($LOGGED_IN_USER->user_id > 0 && strlen($LOGGED_IN_USER->user_name) > 0 && strlen($LOGGED_IN_USER->password) > 0))
 		{
 			global $DBH; /* @var $DBH PDO */
 			$user_stmt = $DBH->prepare("SELECT UserID FROM user_login WHERE UserID = ? AND UserName = ? AND Password = ?");
@@ -12,7 +12,9 @@ class loginObject {
 			$user_stmt->bindParam(2, $LOGGED_IN_USER->user_name);
 			$user_stmt->bindParam(3, $LOGGED_IN_USER->password);
 
-			if($user_stmt->execute()) {//If we did find a user that matched all of those credentials, we need to forward them to control panel
+			if(!$user_stmt->execute())
+				$action = "INCORRECT_CREDENTIALS";
+			else if($user_stmt->rowCount() == 1) {//If we did find a user that matched all of those credentials, we need to forward them to control panel
 				$action = "ALREADY_LOGGED_IN";
 			}else{
 				$action = "INCORRECT_CREDENTIALS";
@@ -37,9 +39,14 @@ class loginObject {
 		$user_stmt->bindParam(1, $LOGGED_IN_USER->user_name);
 		$user_stmt->bindParam(2, $LOGGED_IN_USER->password);
 		
-		if(!$user_stmt->execute()) {
+		if(!$user_stmt->execute())
+			return false;
+		
+		if($user_stmt->rowCount() == 0) {
 			return false;
 		}else{
+			$user_row = $user_stmt->fetch();
+			
 			$LOGGED_IN_USER->user_id = $user_row['UserID'];
 			$LOGGED_IN_USER->user_name = $user_row['Username'];
 			$LOGGED_IN_USER->password = $user_row['Password'];
