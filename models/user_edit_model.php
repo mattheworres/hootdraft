@@ -14,8 +14,8 @@ class user_edit_model {
 		if($user_object === null)
 			return;
 		
-		$this->username = $user_object->user_name;
-		$this->public_name = $user_object->public_name;
+		$this->username = $user_object->Username;
+		$this->public_name = $user_object->Name;
 	}
 	
 	public function getFormValues() {
@@ -44,7 +44,7 @@ class user_edit_model {
 			$current_user = new user_object();
 			$current_user->getCurrentlyLoggedInUser();
 			
-			if($current_user->password != $this->oldPassword)
+			if($current_user->Password != $this->oldPassword)
 					$errors[] = "You have entered your old password incorrectly.";
 			
 			if(!isset($this->newPassword) || strlen(trim($this->newPassword)) == 0 || !isset($this->newVerifiedPassword) || strlen(trim($this->newVerifiedPassword)) == 0)
@@ -63,11 +63,11 @@ class user_edit_model {
 	 */
 	public function saveUser() {
 		$user_entity_object = new user_object();
-		$user_entity_object->user_name = $this->username;
-		$user_entity_object->public_name = $this->public_name;
+		$user_entity_object->Username = $this->username;
+		$user_entity_object->Name = $this->public_name;
 		
 		if(isset($this->oldPassword) && isset($this->newPassword))
-			$user_entity_object->password = $this->newPassword;
+			$user_entity_object->Password = $this->newPassword;
 		
 		return $user_entity_object->saveUser();
 	}

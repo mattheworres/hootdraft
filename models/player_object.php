@@ -187,34 +187,6 @@ class player_object {
 		return $stmt->execute();
 	}
 
-	/**
-	 * Get all players/picks for a given draft.
-	 * @param int $draft_id ID of the draft to get players for
-	 * @return array Player objects that belong to given draft. false on failure
-	 */
-	public static function getPlayersByDraft($draft_id) {
-		global $DBH; /* @var $DBH PDO */
-		$draft_id = (int)$draft_id;
-
-		if($draft_id == 0)
-			return false;
-
-		$players_stmt = $DBH->prepare("SELECT * FROM players WHERE draft_id = ? ORDER BY player_pick ASC");
-		$players_stmt->bindParam(1, $draft_id);
-		
-		$players_stmt->setFetchMode(PDO::FETCH_CLASS, 'player_object');
-
-		$players = array();
-		
-		if(!$players_stmt->execute())
-			return false;
-		
-		while($player = $players_stmt->fetch())
-			$players[] = $player;
-
-		return $players;
-	}
-
 	// <editor-fold defaultstate="collapsed" desc="Draft-Related Pick Functions">
 	/**
 	 * For a draft get the ten most recent picks that have occurred.
@@ -420,6 +392,34 @@ class player_object {
 	}
 	
 	// </editor-fold>
+	
+	/**
+	 * Get all players/picks for a given draft.
+	 * @param int $draft_id ID of the draft to get players for
+	 * @return array Player objects that belong to given draft. false on failure
+	 */
+	public static function getPlayersByDraft($draft_id) {
+		global $DBH; /* @var $DBH PDO */
+		$draft_id = (int)$draft_id;
+
+		if($draft_id == 0)
+			return false;
+
+		$players_stmt = $DBH->prepare("SELECT * FROM players WHERE draft_id = ? ORDER BY player_pick ASC");
+		$players_stmt->bindParam(1, $draft_id);
+		
+		$players_stmt->setFetchMode(PDO::FETCH_CLASS, 'player_object');
+
+		$players = array();
+		
+		if(!$players_stmt->execute())
+			return false;
+		
+		while($player = $players_stmt->fetch())
+			$players[] = $player;
+
+		return $players;
+	}
 
 	/**
 	 * Get all players/picks for a given manager that have been selected.
@@ -553,7 +553,6 @@ class player_object {
 		return $stmt->execute();
 	}
 	
-	// <editor-fold defaultstate="collapsed" desc="State Information">
 	public function hasName() {
 		return (strlen($this->first_name) + strlen($this->last_name) > 1);
 	}
@@ -585,7 +584,5 @@ class player_object {
 		return isset($this->pick_time) && isset($this->pick_duration)
 			&& strlen($this->pick_time) > 0 && $this->pick_duration > 0;
 	}
-	// </editor-fold>
 }
-
 ?>
