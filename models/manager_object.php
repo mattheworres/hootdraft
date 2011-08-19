@@ -297,12 +297,10 @@ class manager_object {
 		if($order_sort != "ASC" && $order_sort != "DESC")
 			$order_sort = "ASC";
 		
-		$stmt = $DBH->prepare("SELECT * FROM managers WHERE draft_id = ? ORDER BY ? ?");
-		$stmt->bindParam(1, $draft_id);
-		$stmt->bindParam(2, $sort_by);
-		$stmt->bindParam(3, $order_sort);
-		
 		$sort_by = $draft_order_sort ? "draft_order" : "manager_name";
+		
+		$stmt = $DBH->prepare("SELECT * FROM managers WHERE draft_id = ? ORDER BY " . $sort_by . " " . $order_sort);
+		$stmt->bindParam(1, $draft_id);
 		
 		$stmt->setFetchMode(PDO::FETCH_CLASS, 'manager_object');
 		$stmt->execute();
