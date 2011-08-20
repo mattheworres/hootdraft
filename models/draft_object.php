@@ -230,7 +230,7 @@ class draft_object {
 
 		$deleteCurrentSuccess = player_object::deletePlayersByDraft($this->draft_id);
 
-		if(!$deleteCurrentSuccess)
+		if($deleteCurrentSuccess === false)
 			return false;
 
 		if($draftJustStarted) {
@@ -259,6 +259,7 @@ class draft_object {
 					$even = false;
 				} else {
 					$managers = manager_object::getManagersByDraft($this->draft_id, true, "DESC");
+					$even = true;
 				}
 			}else
 				$managers = manager_object::getManagersByDraft($this->draft_id, true);

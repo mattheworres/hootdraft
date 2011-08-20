@@ -532,10 +532,10 @@ class player_object {
 			$id_string .= "," . $player->player_id;
 		}
 		
-		$stmt = $DBH->prepare("DELETE FROM players WHERE player_id IN (?)");
-		$stmt->bindParam(1, $id_string);
+		//$stmt = $DBH->prepare("DELETE FROM players WHERE player_id IN (?)");
+		//$stmt->bindParam(1, $id_string);
 
-		return $stmt->execute();
+		return $DBH->exec("DELETE FROM players WHERE player_id IN (" . $id_string . ")");
 	}
 	
 	public function hasName() {
