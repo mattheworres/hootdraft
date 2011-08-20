@@ -8,6 +8,7 @@ require_once('models/manager_object.php');
 DEFINE("ACTIVE_TAB", "DRAFT_CENTRAL");
 DEFINE("ACTION", $_REQUEST['action']);
 DEFINE('DRAFT_ID', (int)$_REQUEST['did']);
+DEFINE("BOARD_RELOAD", 5);
 
 //Draft password may have pre-loaded this for us.
 if(!isset($DRAFT) || get_class($DRAFT) != "draft_object")
