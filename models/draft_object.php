@@ -339,22 +339,19 @@ class draft_object {
 		
 		$pickRemovalSuccess = player_object::deletePlayersByDraft($this->draft_id);
 		
-		if(!$pickRemovalSuccess)
+		if($pickRemovalSuccess === false)
 			return false;
 		
 		$managerRemovalSuccess = manager_object::deleteManagersByDraft($this->draft_id);
 		
-		if(!$managerRemovalSuccess)
+		if($managerRemovalSuccess === false)
 			return false;
 		
 		global $DBH; /* @var $DBH PDO */
 		
-		$stmt = $DBH->prepare("DELETE FROM draft WHERE draft_id = ? LIMIT 1");
-		$stmt->bindParam(1, $this->draft_id);
+		$sql = "DELETE FROM draft WHERE draft_id = " . (int)$this->draft_id . " LIMIT 1";
 		
-		$success = $stmt->execute();
-		
-		return $success;
+		return $DBH->exec($sql);
 	}
 	
 	public function checkDraftPublicLogin() {

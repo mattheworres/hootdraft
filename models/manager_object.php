@@ -249,11 +249,9 @@ class manager_object {
 		
 		global $DBH; /* @var $DBH PDO */
 		
-		$stmt = $DBH->prepare("DELETE FROM managers WHERE manager_id = ? AND draft_id = ? LIMIT 1");
-		$stmt->bindParam(1, $this->manager_id);
-		$stmt->bindParam(2, $this->draft_id);
+		$sql = "DELETE FROM managers WHERE manager_id = " . (int)$this->manager_id . " AND draft_id = " . (int)$this->draft_id . " LIMIT 1";
 		
-		if(!$stmt->execute())
+		if($DBH->exec($sql) === false)
 			return false;
 
 		$success = $this->cascadeNewDraftOrder($old_order);
@@ -272,15 +270,14 @@ class manager_object {
 		$id_string = "0"; //TODO: Update this so it's cleaner? This is hacky.	
 
 		foreach($managers as $manager) {
-			$id_string .= "," . $manager->manager_id;
+			$id_string .= "," . (int)$manager->manager_id;
 		}
 		
 		global $DBH; /* @var $DBH PDO */
 		
-		$stmt = $DBH->prepare("DELETE FROM managers WHERE manager_id IN (?)");
-		$stmt->bindParam(1, $id_string);
+		$sql = "DELETE FROM managers WHERE manager_id IN (" . $id_string . ")";
 		
-		return $stmt->execute();
+		return $DBH->exec($sql);
 	}
 
 	/**

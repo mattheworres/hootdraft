@@ -529,11 +529,8 @@ class player_object {
 		$id_string = "0"; //TODO: Update this so it's cleaner? This is hacky.	
 
 		foreach($players as $player) {
-			$id_string .= "," . $player->player_id;
+			$id_string .= "," . (int)$player->player_id;
 		}
-		
-		//$stmt = $DBH->prepare("DELETE FROM players WHERE player_id IN (?)");
-		//$stmt->bindParam(1, $id_string);
 
 		return $DBH->exec("DELETE FROM players WHERE player_id IN (" . $id_string . ")");
 	}
