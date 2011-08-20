@@ -248,9 +248,6 @@ class player_object {
 		if(!$stmt->execute())
 			return false;
 		
-		if($stmt->rowCount() == 0)
-			return false;
-		
 		while($player = $stmt->fetch())
 			$picks[] = $player;
 		
@@ -379,9 +376,6 @@ class player_object {
 		if(!$stmt->execute())
 			return false;
 		
-		if($stmt->rowCount() == 0)
-			return false;
-		
 		while($player = $stmt->fetch())
 			$picks[] = $player;
 		
@@ -438,9 +432,6 @@ class player_object {
 		if(!$stmt->execute())
 			return false;
 		
-		if($stmt->rowCount() == 0)
-			return false;
-		
 		while($player = $stmt->fetch())
 			$players[] = $player;
 		
@@ -477,9 +468,6 @@ class player_object {
 		$stmt->setFetchMode(PDO::FETCH_CLASS, 'player_object');
 		
 		if(!$stmt->execute())
-			return false;
-		
-		if($stmt->rowCount() == 0)
 			return false;
 		
 		while($player = $stmt->fetch())
