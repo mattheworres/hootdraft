@@ -80,13 +80,26 @@ switch(ACTION) {
 		$object_errors = $submitted_pick->getValidity($DRAFT);
 		
 		if(count($object_errors) > 0) {
-			
 			$ERRORS = $object_errors;
 			require("views/draft_room/add_pick.php");
 			exit(1);
 		}
 		
 		$previous_pick = $DRAFT->getLastPick();
+		
+		//Fixes defect for a refresh POSTing already-added picks:
+		if($previous_pick->player_id == $submitted_pick->player_id) {
+			$ERRORS[] = "Pick #" . $previous_pick->player_pick . " was already added, please enter the #" . $DRAFT->draft_current_pick . " pick now.";
+			require("views/draft_room/add_pick.php");
+			exit(1);
+		}
+		
+		//Ensure future picks can't be selected (extra safety):
+		if($previous_pick->player_pick + 1 != $submitted_pick->player_pick) {
+			$ERRORS[] = "Synchronization issue, you are attempting to enter a pick after an undrafted pick - unable to enter pick #" . $submitted_pick->player_pick . " at this moment. Try going back to the draft room, and re-entering this screen.";
+			require("views/draft_room/add_pick.php");
+			exit(1);
+		}
 		
 		if($submitted_pick->savePlayer(true) === false) {
 			$ERRORS[] = "Unable to update pick, please try again.";
