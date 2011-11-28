@@ -1,8 +1,5 @@
 <?php
 
-require_once("libraries/php_draft_library.php");
-require_once("models/player_object.php");
-
 /**
  * Represents a PHPDraft "draft" object, which is the parent object.
  *
@@ -248,7 +245,6 @@ class draft_object {
 	 * @return bool $success True if successful 
 	 */
 	public function setupPicks() {
-		require_once("models/manager_object.php");
 		$pick = 1;
 		$even = true;
 		
@@ -314,7 +310,6 @@ class draft_object {
 	 * @return string MySQL timestamp given to draft 
 	 */
 	public function beginStartTime() {
-		require_once('libraries/php_draft_library.php');
 		global $DBH; /* @var $DBH PDO */
 		$draft_start_time = php_draft_library::getNowPhpTime();
 		
@@ -334,8 +329,6 @@ class draft_object {
 	public function deleteDraft() {
 		if($this->draft_id == 0)
 			return false;
-		
-		require_once("models/manager_object.php");
 		
 		$pickRemovalSuccess = player_object::deletePlayersByDraft($this->draft_id);
 		

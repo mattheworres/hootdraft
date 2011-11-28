@@ -26,6 +26,11 @@ session_start();
 //Require the draft and user objects used on every page
 require('models/draft_object.php');
 require('models/user_object.php');
+require('models/manager_object.php');
+require('models/player_object.php');
+require('models/search_object.php');
+require('models/draft_statistics_object.php');
+require('libraries/php_draft_library.php');
 
 //Global-level commissioner object - used for printing commissioner's name publicly
 $COMMISH = new user_object();

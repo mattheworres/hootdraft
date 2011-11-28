@@ -3,8 +3,6 @@ require("includes/global_setup.php");
 
 require('includes/check_draft_password.php');
 
-require_once('models/manager_object.php');
-
 DEFINE("ACTIVE_TAB", "DRAFT_CENTRAL");
 DEFINE("ACTION", $_REQUEST['action']);
 DEFINE('DRAFT_ID', (int)$_REQUEST['did']);
@@ -64,7 +62,6 @@ switch(ACTION) {
 	
 	case 'picksPerManager':
 		// <editor-fold defaultstate="collapsed" desc="picksPerManager Logic">
-		require_once("libraries/php_draft_library.php");
 		$MANAGERS = manager_object::getManagersByDraft($DRAFT->draft_id);
 		$MANAGER = $MANAGERS[0];
 		$MANAGER_PICKS = player_object::getSelectedPlayersByManager($MANAGER->manager_id);
@@ -96,7 +93,6 @@ switch(ACTION) {
 	
 	case 'picksPerRound':
 		// <editor-fold defaultstate="collapsed" desc="picksPerRound Logic">
-		require_once("libraries/php_draft_library.php");
 		$ROUND = 1;
 		$ROUND_PICKS = player_object::getSelectedPlayersByRound($DRAFT->draft_id, $ROUND);
 		$NOW = php_draft_library::getNowRefreshTime();
@@ -130,8 +126,6 @@ switch(ACTION) {
 	
 	case 'searchResults':
 		// <editor-fold defaultstate="collapsed" desc="searchResults Logics">
-		require_once("libraries/php_draft_library.php");
-		require_once("models/search_object.php");
 		$team = $_GET['team'];
 		$position = $_GET['position'];
 		$SEARCHER = new search_object($_GET['keywords'], $_GET['team'], $_GET['position']);
@@ -144,8 +138,6 @@ switch(ACTION) {
 	
 	case 'draftStats':
 		// <editor-fold defaultstate="collapsed" desc="draftStats Logic">
-		require_once("models/draft_statistics_object.php");
-		require_once("libraries/php_draft_library.php");
 		$STATS = new draft_statistics_object();
 		$STATS->generateStatistics($DRAFT);
 		$NOW = php_draft_library::getNowRefreshTime();
@@ -155,8 +147,6 @@ switch(ACTION) {
 	
 	case 'loadStats':
 		// <editor-fold defaultstate="collapsed" desc="loadStats Logic">
-		require_once("models/draft_statistics_object.php");
-		require_once("libraries/php_draft_library.php");
 		$STATS = new draft_statistics_object();
 		$STATS->generateStatistics($DRAFT);
 		$NOW = php_draft_library::getNowRefreshTime();

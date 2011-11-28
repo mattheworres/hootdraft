@@ -10,7 +10,6 @@
 
 		<?php
 		require_once('models/draft_model.php');
-		require_once('models/manager_object.php');
 
 		require('views/shared/commish_draftless_menu.php'); ?>
 			<div id="content">
