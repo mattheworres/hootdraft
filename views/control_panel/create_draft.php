@@ -31,7 +31,7 @@
 							<p><label for="draft_name"># of Rounds*:</label>
 							<input type="text" name="draft_rounds" id="draft_rounds" size="2" maxlength="2" value="<?php echo $draft->draft_rounds ?>" /> (players per team)</p>
 							<p><input type="submit" name="submit" class="button" value="Create Draft" /></p>
-							<?php if(count($ERRORS) > 0) { ?>
+							<?php if(isset($ERRORS) && count($ERRORS) > 0) { ?>
 							<?php foreach($ERRORS as $error) { ?>
 							<p class="error">* <?php echo $error; ?></p>
 							<?php } ?>

@@ -23,7 +23,10 @@ switch($status) {
 		break;
 
 	case "AUTHENTICATE_USER":
-		$authenticated = loginObject::authenticate_user($_POST['txt_user'], $_POST['txt_pass']);
+		$user = isset($_POST['txt_user']) ? $_POST['txt_user'] : "";
+		$pass = isset($_POST['txt_pass']) ? $_POST['txt_pass'] : "";
+		
+		$authenticated = loginObject::authenticate_user($user, $pass);
 
 		if($authenticated) {
 			header('Location: control_panel.php?action=home');

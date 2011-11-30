@@ -3,8 +3,9 @@ require("includes/global_setup.php");
 require("includes/check_login.php");
 
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
+DEFINE("ACTION", isset($_GET['action']) ? $_GET['action'] : "");
 
-switch($_GET['action']) {
+switch(ACTION) {
 	case 'createDraft':
 		//<editor-fold defaultstate="collapsed" desc="createDraft Logic">
 		$draft = new draft_object();
@@ -16,12 +17,17 @@ switch($_GET['action']) {
 	case 'addDraft':
 		//<editor-fold defaultstate="collapsed" desc="addDraft Logic">
 		$ERRORS = array();
+		
+		$draft_name = isset($_POST['draft_name']) ? trim($_POST['draft_name']) : "";
+		$draft_sport = isset($_POST['draft_sport']) ? trim($_POST['draft_sport']) : "";
+		$draft_style = isset($_POST['draft_style']) ? trim($_POST['draft_style']) : "";
+		$draft_rounds = isset($_POST['draft_rounds']) ? (int)$_POST['draft_rounds'] : "";
 
 		$draft = new draft_object();
-		$draft->draft_name = trim($_POST['draft_name']);
-		$draft->draft_sport = trim($_POST['draft_sport']);
-		$draft->draft_style = trim($_POST['draft_style']);
-		$draft->draft_rounds = (int)$_POST['draft_rounds'];
+		$draft->draft_name = $draft_name;
+		$draft->draft_sport = $draft_sport;
+		$draft->draft_style = $draft_style;
+		$draft->draft_rounds = $draft_rounds;
 
 		$object_errors = $draft->getValidity();
 

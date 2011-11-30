@@ -11,7 +11,7 @@
 
 		<?php require('views/shared/draft_room_menu.php'); ?>
 		<div id="content">	
-		<?php if(count($SUCCESSES) > 0) {?>
+		<?php if(isset($SUCCESSES) && count($SUCCESSES) > 0) {?>
 			<?php foreach($SUCCESSES as $success) {?>
 				<p class="success">* <?php echo $success;?></p>
 			<?php }?>
@@ -59,7 +59,7 @@
 				</select>
 			</p>
 			<p><input type="submit" name="submit" class="button" value="Enter Draft Pick"  tabindex="6"/></p>
-			<?php if(count($ERRORS) > 0) {?>
+			<?php if(isset($ERRORS) && count($ERRORS) > 0) {?>
 				<?php foreach($ERRORS as $error) {?>
 					<p class="error">* <?php echo $error;?></p>
 				<?php }?>

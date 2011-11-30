@@ -3,8 +3,8 @@ require("includes/global_setup.php");
 require("includes/check_login.php");
 
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
-DEFINE("ACTION", $_REQUEST['action']);
-DEFINE('DRAFT_ID', (int)$_REQUEST['did']);
+DEFINE("ACTION", isset($_REQUEST['action']) ? $_REQUEST['action'] : "");
+DEFINE("DRAFT_ID", isset($_REQUEST['did']) ? (int)$_REQUEST['did'] : "");
 
 $DRAFT = new draft_object(DRAFT_ID);
 
@@ -31,7 +31,8 @@ switch(ACTION) {
 
 	case 'saveManagers':
 		// <editor-fold defaultstate="collapsed" desc="saveManagers Logic">
-		$managers = $_POST['managers'];
+		$managers = isset($_POST['managers']) ? $_POST['managers'] : "";
+		
 		foreach($managers as $manager_request) {
 			$new_manager = new manager_object();
 			$new_manager->draft_id = DRAFT_ID;
@@ -58,7 +59,7 @@ switch(ACTION) {
 
 	case 'updateVisibility':
 		// <editor-fold defaultstate="collapsed" desc="updateVisibility Logic">
-		$new_password = $_POST['password'];
+		$new_password = isset($_POST['password']) ? $_POST['password'] : "";
 
 		if($DRAFT->draft_password == $new_password) {
 			echo "SUCCESS";
@@ -82,7 +83,7 @@ switch(ACTION) {
 
 	case 'updateStatus':
 		// <editor-fold defaultstate="collapsed" desc="updateStatus Logic">
-		$new_status = $_POST['draft_status'];
+		$new_status = isset($_POST['draft_status']) ? $_POST['draft_status'] : "";
 
 		if($DRAFT->draft_status == $new_status) {
 			define("PAGE_HEADER", "Status Unchanged");
@@ -141,11 +142,15 @@ switch(ACTION) {
 			require_once("views/shared/generic_result_view.php");
 			exit(1);
 		}
+		$draft_name = isset($_POST['draft_name']) ? trim($_POST['draft_name']) : "";
+		$draft_sport = isset($_POST['draft_sport']) ? trim($_POST['draft_sport']) : "";
+		$draft_style = isset($_POST['draft_style']) ? trim($_POST['draft_style']) : "";
+		$draft_rounds = isset($_POST['draft_rounds']) ? (int)$_POST['draft_rounds'] : "";
 
-		$DRAFT->draft_name = trim($_POST['draft_name']);
-		$DRAFT->draft_sport = trim($_POST['draft_sport']);
-		$DRAFT->draft_style = trim($_POST['draft_style']);
-		$DRAFT->draft_rounds = (int)$_POST['draft_rounds'];
+		$DRAFT->draft_name = $draft_name;
+		$DRAFT->draft_sport = $draft_sport;
+		$DRAFT->draft_style = $draft_style;
+		$DRAFT->draft_rounds = $draft_rounds;
 
 		$object_errors = $DRAFT->getValidity();
 
@@ -177,7 +182,7 @@ switch(ACTION) {
 
 	case 'confirmDelete':
 		// <editor-fold defaultstate="collapsed" desc="confirmDelete Logic">
-		$answer = (int)$_POST['txt_answer'];
+		$answer = isset($_POST['txt_answer']) ? (int)$_POST['txt_answer'] : 0;
 
 		if($answer != 111) {
 			DEFINE("ANSWER", "schfifty five");

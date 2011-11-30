@@ -26,9 +26,9 @@
 						<p><label for="verify_password">New Password (verify):</label>
 						<input type="password" name="verify_password" id="verify_password" value="" autocomplete="off" /></p>
 						<p><label for="name">Your Public Name*:</label>
-						<input type="text" name="name" id="name" value="<?php echo $user_view_model->Name; ?>" size="15" maxlength="15" /> (visible everywhere on PHPDraft)</p>
+						<input type="text" name="name" id="name" value="<?php echo $user_view_model->username; ?>" size="15" maxlength="15" /> (visible everywhere on PHPDraft)</p>
 						<p><input type="submit" name="submit" class="button" value="Update User" /></p>
-						<?php if(count($ERRORS) > 0) { ?>
+						<?php if(isset($ERRORS) && count($ERRORS) > 0) { ?>
 						<?php foreach($ERRORS as $error) { ?>
 						<p class="error">* <?php echo $error; ?></p>
 						<?php } ?>
@@ -38,7 +38,7 @@
 					</form>
 		</fieldset>
 		</div>
-		<?php require('includes/footer.php');; ?>
+		<?php require('includes/footer.php'); ?>
 	</div>
 	</body>
 </html>

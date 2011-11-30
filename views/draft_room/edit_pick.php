@@ -43,7 +43,7 @@
 				<?php } ?>
 				</select></p>
 			<p><input type="submit" name="submit" class="button" value="Edit Draft Pick" /></p>
-			<?php if(count($ERRORS) > 0) {?>
+			<?php if(isset($ERRORS) && count($ERRORS) > 0) {?>
 				<?php foreach($ERRORS as $error) {?>
 					<p class="error">* <?php echo $error;?></p>
 				<?php }?>

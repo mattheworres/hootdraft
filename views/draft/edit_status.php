@@ -21,7 +21,7 @@
 			</p>
 			<p id="info" class="error">NOTE: If you switch from "In Progress" to "Undrafted" and have already started to draft, all data related to picks <em>will</em> be immediately deleted.<br />Are you sure?</p>
 			<p><input type="submit" name="submit" id="submit" class="button" value="Change Draft Status" /></p>
-			<?php if(count($ERRORS) > 0) {?>
+			<?php if(isset($ERRORS) && count($ERRORS) > 0) {?>
 				<?php foreach($ERRORS as $error) {?>
 					<p class="error">* <?php echo $error;?></p>
 				<?php }?>

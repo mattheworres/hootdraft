@@ -21,7 +21,7 @@
 				<label for="manager_email">Manager Email:</label>
 				<input type="text" name="manager_email" id="manager_email" value="<?php echo $MANAGER->manager_email; ?>" /></p>
 				<p><input type="submit" name="submit" class="button" value="Edit Manager" /></p>
-				<?php if(count($ERRORS) > 0) { ?>
+				<?php if(isset($ERRORS) && count($ERRORS) > 0) { ?>
 				<?php foreach($ERRORS as $error) { ?>
 				<p class="error">* <?php echo $error; ?></p>
 				<?php } ?>

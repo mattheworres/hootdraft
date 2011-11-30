@@ -6,8 +6,9 @@ require_once('models/index_model.php');
 $drafts = new indexObject();
 $drafts->draft_objects = draft_object::getAllDrafts();
 $drafts->number_of_drafts = count($drafts->draft_objects);
+DEFINE("ACTION", isset($_GET['action']) ? $_GET['action'] : "");
 
-switch($_GET['action']) {
+switch(ACTION) {
 	case 'select':
 		DEFINE("ACTIVE_TAB", "DRAFT_CENTRAL");
 		require_once('views/index/index_select_view.php');

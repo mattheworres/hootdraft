@@ -40,9 +40,9 @@ class user_object {
 	public function getCurrentlyLoggedInUser() {
 		global $DBH; /* @var $DBH PDO */
 		
-		$this->UserId = (int)$_SESSION['userid'];
-		$this->Username = $_SESSION['username'];
-		$this->Password = $_SESSION['password'];
+		$this->UserId = isset($_SESSION['userid']) ? (int)$_SESSION['userid'] : 0;
+		$this->Username = isset($_SESSION['username']) ? $_SESSION['username'] : "";
+		$this->Password = isset($_SESSION['password']) ? $_SESSION['password'] : "";
 		
 		if($this->UserId == 0)
 			return;

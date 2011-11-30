@@ -27,7 +27,7 @@
 						</fieldset>
 					</form>
 				</div>
-				<?php if(count($ERRORS) > 0) {?>
+				<?php if(isset($ERRORS) && count($ERRORS) > 0) {?>
 					<?php foreach($ERRORS as $error) {?>
 						<p class="error">* <?php echo $error;?></p>
 					<?php }?>

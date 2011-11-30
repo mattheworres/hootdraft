@@ -19,7 +19,7 @@ class loginObject {
 			}else{
 				$action = "INCORRECT_CREDENTIALS";
 			}
-		}elseif($_GET['q'] != 1 || (!isset($_POST['txt_user']) || !isset($_POST['txt_pass']))) //If we haven't submitted a form, then we must show the initial form
+		}elseif(!isset($_GET['q']) || $_GET['q'] != 1 || !isset($_POST['txt_user']) || !isset($_POST['txt_pass'])) //If we haven't submitted a form, then we must show the initial form
 		{
 			$action = "SHOW_FIRST_FORM";
 		}else

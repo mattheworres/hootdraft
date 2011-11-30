@@ -4,8 +4,8 @@ require("includes/global_setup.php");
 require('includes/check_draft_password.php');
 
 DEFINE("ACTIVE_TAB", "DRAFT_CENTRAL");
-DEFINE("ACTION", $_REQUEST['action']);
-DEFINE('DRAFT_ID', (int)$_REQUEST['did']);
+DEFINE("ACTION", isset($_REQUEST['action']) ? $_REQUEST['action'] : "");
+DEFINE('DRAFT_ID', isset($_REQUEST['did']) ? (int)$_REQUEST['did'] : 0);
 DEFINE("BOARD_RELOAD", 5);
 
 //Draft password may have pre-loaded this for us.
@@ -75,7 +75,7 @@ switch(ACTION) {
 		$manager_id = (int)$_REQUEST['mid'];
 		$MANAGER = new manager_object($manager_id);
 		
-		if($manager_id == 0 || $manager === false) {
+		if($manager_id == 0 || $MANAGER === false) {
 			exit(1);
 		}
 		
@@ -126,9 +126,11 @@ switch(ACTION) {
 	
 	case 'searchResults':
 		// <editor-fold defaultstate="collapsed" desc="searchResults Logics">
-		$team = $_GET['team'];
-		$position = $_GET['position'];
-		$SEARCHER = new search_object($_GET['keywords'], $_GET['team'], $_GET['position']);
+		$team = isset($_GET['team']) ? $_GET['team'] : "";
+		$position = isset($_GET['position']) ? $_GET['position'] : "";
+		$keywords = isset($_GET['keywords']) ? $_GET['keywords'] : "";
+		
+		$SEARCHER = new search_object($keywords, $team, $position);
 		$SEARCHER->searchDraft(DRAFT_ID);
 		
 		$NOW = php_draft_library::getNowRefreshTime();

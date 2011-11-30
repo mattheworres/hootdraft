@@ -3,9 +3,9 @@ require("includes/global_setup.php");
 require("includes/check_login.php");
 
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
-DEFINE("ACTION", $_REQUEST['action']);
-DEFINE('DRAFT_ID', (int)$_REQUEST['did']);
-DEFINE('PLAYER_ID', (int)$_REQUEST['pid']);
+DEFINE("ACTION", isset($_REQUEST['action']) ? $_REQUEST['action'] : "");
+DEFINE('DRAFT_ID', isset($_REQUEST['did']) ? (int)$_REQUEST['did'] : 0);
+DEFINE('PLAYER_ID', isset($_REQUEST['pid']) ? (int)$_REQUEST['pid'] : 0);
 
 $DRAFT = new draft_object(DRAFT_ID);
 
@@ -63,14 +63,14 @@ switch(ACTION) {
 		// <editor-fold defaultstate="collapsed" desc="addPick Logic">
 		$submitted_pick = new player_object();
 		$submitted_pick->draft_id = DRAFT_ID;
-		$submitted_pick->player_id = (int)$_POST['pid'];
-		$submitted_pick->manager_id = (int)$_POST['mid'];
-		$submitted_pick->first_name = $_POST['first_name'];
-		$submitted_pick->last_name = $_POST['last_name'];
-		$submitted_pick->team = $_POST['team'];
-		$submitted_pick->position = $_POST['position'];
-		$submitted_pick->player_round = (int)$_POST['player_round'];
-		$submitted_pick->player_pick = (int)$_POST['player_pick'];
+		$submitted_pick->player_id = isset($_POST['pid']) ? (int)$_POST['pid'] : 0;
+		$submitted_pick->manager_id = isset($_POST['mid']) ? (int)$_POST['mid'] : 0;
+		$submitted_pick->first_name = isset($_POST['first_name']) ? $_POST['first_name'] : "";
+		$submitted_pick->last_name = isset($_POST['last_name']) ? $_POST['last_name'] : "";
+		$submitted_pick->team = isset($_POST['team']) ? $_POST['team'] : "";
+		$submitted_pick->position = isset($_POST['position']) ? $_POST['position'] : "";
+		$submitted_pick->player_round = isset($_POST['player_round']) ? (int)$_POST['player_round'] : 0;
+		$submitted_pick->player_pick = isset($_POST['player_pick']) ? (int)$_POST['player_pick'] : 0;
 		
 		$NEXT_FIVE_PICKS = $DRAFT->getNextFivePicks();
 		$LAST_FIVE_PICKS = $DRAFT->getLastFivePicks();
@@ -148,7 +148,7 @@ switch(ACTION) {
 	
 	case 'getEditablePicks':
 		// <editor-fold defaultstate="collapsed" desc="getEditablePicks Logic">
-		$round_number = (int)$_POST['round'];
+		$round_number = isset($_POST['round']) ? (int)$_POST['round'] : 0;
 		if($round_number == 0) {
 			echo "ERROR";
 			exit(1);
@@ -192,11 +192,11 @@ switch(ACTION) {
 			exit(1);
 		}
 		
-		$EDIT_PLAYER->manager_id = (int)$_POST['manager_id'];
-		$EDIT_PLAYER->first_name = $_POST['first_name'];
-		$EDIT_PLAYER->last_name = $_POST['last_name'];
-		$EDIT_PLAYER->team = $_POST['team'];
-		$EDIT_PLAYER->position = $_POST['position'];
+		$EDIT_PLAYER->manager_id = isset($_POST['manager_id']) ? (int)$_POST['manager_id'] : 0;
+		$EDIT_PLAYER->first_name = isset($_POST['first_name']) ? $_POST['first_name'] : "";
+		$EDIT_PLAYER->last_name = isset($_POST['last_name']) ? $_POST['last_name'] : "";
+		$EDIT_PLAYER->team = isset($_POST['team']) ? $_POST['team'] : "";
+		$EDIT_PLAYER->position = isset($_POST['position']) ? $_POST['position'] : "";
 		
 		$object_errors = $EDIT_PLAYER->getValidity($DRAFT);
 		

@@ -3,10 +3,10 @@ require("includes/global_setup.php");
 require("includes/check_login.php");
 
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
-DEFINE("ACTION", $_GET['action']);
+DEFINE("ACTION", isset($_GET['action']) ? $_GET['action'] : "");
 
 //NOTE: This uses _REQUEST because we grab the ID from both POSTs and GETs
-DEFINE('MANAGER_ID', (int)$_REQUEST['mid']);
+DEFINE('MANAGER_ID', isset($_REQUEST['mid']) ? (int)$_REQUEST['mid'] : 0);
 
 $MANAGER = new manager_object(MANAGER_ID);
 
@@ -23,7 +23,7 @@ if($MANAGER->manager_id == 0) {
 switch(ACTION) {
 	case 'moveManager':
 		// <editor-fold defaultstate="collapsed" desc="moveManager Logic">
-		$direction = $_POST['direction'];
+		$direction = isset($_POST['direction']) ? $_POST['direction'] : "";
 		
 		switch($direction) {
 			case 'up':
@@ -48,8 +48,12 @@ switch(ACTION) {
 	case 'updateManager':
 		// <editor-fold defaultstate="collapsed" desc="updateManager Logic">
 		$ERRORS = array();
-		$MANAGER->manager_name = trim($_POST['manager_name']);
-		$MANAGER->manager_email = trim($_POST['manager_email']);
+		
+		$manager_name = isset($_POST['manager_name']) ? trim($_POST['manager_name']) : "";
+		$manager_email = isset($_POST['manager_email']) ? trim($_POST['manager_email']) : "";
+		
+		$MANAGER->manager_name = $manager_name;
+		$MANAGER->manager_email = $manager_email;
 		
 		$object_errors = $MANAGER->getValidity();
 		

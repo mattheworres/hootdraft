@@ -4,10 +4,10 @@ require("includes/global_setup.php");
 
 DEFINE('ACTIVE_TAB', 'DRAFT_CENTRAL');
 
-$DESTINATION = $_POST['destination'];
-$DRAFT_ID = (int)$_POST['did'];
+$DESTINATION = isset($_POST['destination']) ? $_POST['destination'] : "";
+$DRAFT_ID = isset($_POST['did']) ? (int)$_POST['did'] : 0;
 $DRAFT = new draft_object($DRAFT_ID);
-$password = $_POST['draft_password'];
+$password = isset($_POST['draft_password']) ? $_POST['draft_password'] : "";
 
 // <editor-fold defaultstate="collapsed" desc="Error checking on basic input">
 if($DRAFT->draft_id == 0 || $DRAFT === false) {
