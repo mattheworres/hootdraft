@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<?php require('includes/meta.php'); ?>
+		<link href="css/trades.css" type="text/css" rel="stylesheet" />
+	</head>
+	<body>
+	<div id="page_wrapper">
+		<?php require('includes/header.php'); ?>
+
+		<?php require('views/shared/draft_room_menu.php'); ?>
+		<div id="content">
+			<h3><?php echo $DRAFT->draft_name; ?> - Enter Trade</h3>
+			<p>Once two managers have decided on exactly what to trade amongst themselves, this page will allow you to enter it into the draft immediately.</p>
+			<p><strong>Note:</strong> Each manager must receive at least one asset in return.</p>
+			<p><strong>To get started, choose a manager on both sides below:</strong></p>
+			<div class="manager_1">
+				<h4>Manager One</h4><br/>
+				<select id="manager1">
+					<option>(choose a manager)</option>
+					<?php foreach($MANAGERS as $manager) {/*@var $manager manager_object */ ?>
+					<option value="<?PHP echo $manager->manager_id; ?>"><?php echo $manager->manager_name; ?></option>
+					<?php } ?>
+				</select>
+			</div>
+			<div class="manager_2">
+				<h4>Manager Two</h4><br/>
+				<select id="manager2">
+					<option>(choose a manager)</option>
+					<?php foreach($MANAGERS as $manager) {/*@var $manager manager_object */ ?>
+					<option value="<?PHP echo $manager->manager_id; ?>"><?php echo $manager->manager_name; ?></option>
+					<?php } ?>
+				</select>
+			</div>
+			<!-- TODO: Finish writing JS interaction, add jQuery multiselect to this mix, test all DB stuff -->
+		</div>
+		<?php require('includes/footer.php'); ?>
+	</div>
+	</body>
+</html>

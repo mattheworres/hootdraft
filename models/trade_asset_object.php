@@ -7,6 +7,7 @@
  */
 
 class trade_asset_object {
+	// <editor-fold defaultstate="collapsed" desc="Properties">
 	/**
 	 * @var int 
 	 */
@@ -42,7 +43,8 @@ class trade_asset_object {
 	/**
 	 * @var bool
 	 */
-	public $was_undrafted;
+	public $was_drafted;
+	// </editor-fold>
 	
 	public function __construct($trade_asset_id = 0) {
 		if((int)$trade_asset_id == 0)
@@ -114,6 +116,7 @@ class trade_asset_object {
 			$asset->player = new player_object($asset->player_id);
 			$asset->newmanager = $asset->newmanager_id == $manager1->manager_id ? $manager1 : $manager2;
 			$asset->oldmanager = $asset->oldmanager_id == $manager1->manager_id ? $manager1 : $manager2;
+			$asset->was_drafted = $asset->player->hasBeenSelected();
 			
 			if($asset->player == false || $asset->newmanager == false || $asset->oldmanager == false)
 				return false;

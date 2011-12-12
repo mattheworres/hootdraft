@@ -128,6 +128,8 @@ class trade_object {
 			$errors[] = "Trade doesn't have a first manager.";
 		if(empty($this->manager2->manager_id) || $this->manager2->manager_id == 0)
 			$errors[] = "Trade doesn't have a second manager.";
+		if($this->manager1->manager_id == $this->manager2->manager_id)
+			$errors[] = "Trade must be between two separate managers.";
 		if(empty($this->trade_assets) || count($this->trade_assets) < 2)
 			$errors[] = "Trade must have at least two assets involved.";
 		
