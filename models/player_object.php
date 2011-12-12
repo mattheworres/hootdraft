@@ -435,6 +435,32 @@ class player_object {
 		
 		return $players;
 	}
+	
+	/**
+	 * Get all players/picks for a given manager, regardless of selection
+	 * @param int $manager_id 
+	 * @return array Player objects that belong to a given manager, or false on failure.
+	 */
+	public static function getAllPlayersByManager($manager_id) {
+		global $DBH; /* @var $DBH PDO */
+		$manager_id = (int)$manager_id;
+		
+		if($manager_id == 0)
+			return false;
+		
+		$stmt = $DBH->prepare("SELECT * FROM players WHERE manager_id = ?");
+		$stmt->bindParam(1, $manager_id);
+		
+		$stmt->setFetchMode(PDO::FETCH_CLASS, 'player_object');
+		
+		if(!$stmt->execute())
+			return false;
+		
+		while($player = $stmt->fetch())
+			$players[] = $player;
+		
+		return $players;
+	}
 
 	/**
 	 * Get all selected players for a given round.

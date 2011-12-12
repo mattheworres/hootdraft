@@ -19,7 +19,7 @@ class trade_object {
 	public $draft_id;
 	
 	/**
-	 * @var int $manager1_id
+	 * @var int $manager1_id Used for loading from DB. Access Manager ID from manager object.
 	 */
 	protected $manager1_id;
 	
@@ -29,7 +29,7 @@ class trade_object {
 	public $manager1;
 	
 	/**
-	 * @var int $manager2_id
+	 * @var int $manager2_id Used for loading DB. Access Manager ID from manager object.
 	 */
 	protected $manager2_id;
 	
@@ -44,10 +44,14 @@ class trade_object {
 	public $trade_time;
 	
 	/**
-	 *
 	 * @var array All assets involved in this trade 
 	 */
 	public $trade_assets;
+	
+	/**
+	 * @var array Error messages from validation of asset ownership 
+	 */
+	private $ownership_errors;
 	
 	public function __construct($trade_id = 0) {
 		if((int)$trade_id == 0)
@@ -65,11 +69,79 @@ class trade_object {
 		if(!$stmt->fetch())
 			return false;
 		
+		$this->manager1 = new manager_object($this->manager1_id);
+		$this->manager2 = new manager_object($this->manager2_id);
+		$this->trade_assets = trade_asset_object::GetAssetsByTrade($this->trade_id, $this->manager1, $this->manager2);
+		
+		if($trade->manager1 == false || $trade->manager2 == false || $trade->trade_assets == false)
+			return false;
+		
 		return true;
 	}
 	
 	public function saveTrade() {
-		//TODO: Implement.
+		global $DBH; /* @var $DBH PDO */
+		
+		if($this->trade_id > 0 && $this->draft_id > 0) {//Update
+			//TODO: Implement update - must think carefully about assumptions data model has about what presenter does with (the data model)
+			return false;
+		}elseif($this->draft_id > 0) {//Save
+			//Exchange Assets
+			if(!$this->ExchangeAssets())
+				return false;
+			
+			//Save the trade
+			$stmt = $DBH->prepare("INSERT INTO trades (draft_id, manager1_id, manager2_id, trade_time) VALUES (?, ?, ?, ?)");
+			$stmt->bindParam(1, $this->draft_id);
+			$stmt->bindParam(2, $this->manager1->manager_id);
+			$stmt->bindParam(3, $this->manager2->manager_id);
+			$stmt->bindParam(4, php_draft_library::getNowPhpTime());
+			
+			if(!$stmt->execute())
+				return false;
+			
+			$this->trade_id = (int)$DBH->lastInsertId();
+			
+			//Save all of the assets
+			foreach($this->trade_assets as $asset) {
+				/* @var $asset trade_asset_object */
+				if(!$asset->saveAsset())
+					return false;
+			}
+			
+			return true;
+		}else
+			return false;
+	}
+	
+	/**
+	 * Get the validity of this object as it stands to ensure it can be updated as a pick
+	 * @param draft_object $draft The draft this pick is being submitted for
+	 * @return array $errors Array of string error messages 
+	 */
+	public function getValidity(draft_object $draft) {
+		$errors = array();
+		
+		if(empty($this->draft_id) || $this->draft_id == 0)
+			$errors[] = "Trade doesn't belong to a draft.";
+		if(empty($this->manager1->manager_id) || $this->manager1->manager_id == 0)
+			$errors[] = "Trade doesn't have a first manager.";
+		if(empty($this->manager2->manager_id) || $this->manager2->manager_id == 0)
+			$errors[] = "Trade doesn't have a second manager.";
+		if(empty($this->trade_assets) || count($this->trade_assets) < 2)
+			$errors[] = "Trade must have at least two assets involved.";
+		
+		//Check to make sure each asset is truly owned by the old manager
+		if(!$this->AssetOwnershipIsCorrect()) {
+			foreach($this->ownership_errors as $ownership_error_message)
+				$errors[] = $ownership_error_message;
+		}
+		
+		//Ensure each manager is getting at least one asset in return.
+		if(!$this->EachManagerHasOneAsset())
+			$errors[] = "Trade must include each manager receiving at least one asset.";
+		
+		return $errors;
 	}
 	
 	/**
@@ -77,7 +149,7 @@ class trade_object {
 	 * @param int $draft_id ID of draft to get trades for
 	 * @return array Trades for given draft, or false on error. 
 	 */
-	public function GetDraftTrades($draft_id) {
+	public function getDraftTrades($draft_id) {
 		if((int)$draft_id = 0)
 			return false;
 		
@@ -93,6 +165,7 @@ class trade_object {
 		if(!$stmt->execute())
 			return false;
 		
+		//For each trade pass the manager object in so we dont thrash when loading assets from DB
 		while($trade = $stmt->fetch()) {
 			/* @var $trade trade_object*/
 			$trade->manager1 = new manager_object($trade->manager1_id);
@@ -106,6 +179,71 @@ class trade_object {
 		}
 		
 		return $trades;
+	}
+	
+	/**
+	 * Perform the core swap of ownership of each pick in the database for a trade.
+	 * @return bool True on success, false otherwise 
+	 */
+	private function ExchangeAssets() {
+		foreach($this->trade_assets as $asset) {
+			/* @var $asset trade_asset_object */
+			$asset->player->manager_id = $asset->newmanager->manager_id;
+			if(!$asset->player->savePlayer())
+				return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Run through all assets involved in a potential trade and ensure they are owned by said managers.
+	 * @return bool True on success, an array of error messages otherwise. 
+	 */
+	private function AssetOwnershipIsCorrect() {
+		$manager1_current_assets = player_object::getAllPlayersByManager($this->manager1->manager_id);
+		$manager2_current_assets = player_object::getAllPlayersByManager($this->manager2->manager_id);
+		
+		$this->ownership_errors = array();
+		
+		foreach($this->trade_assets as $asset) {
+			/* @var $asset trade_asset_object */
+			if($asset->oldmanager->manager_id == $this->manager1_id) {
+				if(!in_array($asset->player, $manager1_current_assets))
+					$this->ownership_errors[] = "Pick #" . $asset->player->player_pick . " is not owned by first manager.";
+			}else if($asset->oldmanager->manager_id == $this->manager2_id) {
+				if(!in_array($asset->player, $manager2_current_assets))
+					$this->ownership_errors[] = "Pick #" . $asset->player->player_pick . " is not owned by the second manager.";
+			}else {
+				$this->ownership_errors[] = "Pick #" . $asset->palyer->player_pick . " is not owned by either of the managers.";
+			}
+		}
+		
+		return empty($this->ownership_errors);
+	}
+	
+	/**
+	 * Checks to ensure that each manager is receiving at least one asset in the potential trade.
+	 * @return bool 
+	 */
+	private function EachManagerHasOneAsset() {
+		$manager2_has_one = false;
+		$manager1_has_one = false;
+		
+		foreach($this->trade_assets as $asset) {
+			/* @var $asset trade_asset_object */
+			switch($asset->newmanager->manager_id) {
+				case $this->manager1_id:
+					$manager1_has_one = true;
+					break;
+				case $this->manager2_id:
+					$manager2_has_one = true;
+					break;
+			}
+			if($manager1_has_one && $manager2_has_one)
+				return true;
+		}
+		
+		return $manager1_has_one && $manager2_has_one;
 	}
 }
 ?>

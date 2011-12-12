@@ -14,13 +14,17 @@ class trade_asset_object {
 	/**
 	 * @var int 
 	 */
+	public $trade_id;
+	/**
+	 * @var int 
+	 */
 	protected $player_id;
 	/**
 	 * @var player_object 
 	 */
 	public $player;
 	/**
-	 * @var int 
+	 * @var int Used for loading from the DB
 	 */
 	protected $oldmanager_id;
 	/**
@@ -28,13 +32,17 @@ class trade_asset_object {
 	 */
 	public $oldmanager;
 	/**
-	 * @var int
+	 * @var int Used for loading from the DB
 	 */
 	protected $newmanager_id;
 	/**
 	 * @var manager_object 
 	 */
 	public $newmanager;
+	/**
+	 * @var bool
+	 */
+	public $was_undrafted;
 	
 	public function __construct($trade_asset_id = 0) {
 		if((int)$trade_asset_id == 0)
@@ -56,7 +64,18 @@ class trade_asset_object {
 	}
 	
 	public function saveAsset() {
-		//TODO: Implement.
+		global $DBH; /* @var $DBH PDO */
+		
+		if($this->trade_asset_id > 0) {
+			//TODO: implement update
+			return false;
+		}else {
+			$stmt = $DBH->prepare("INSERT INTO trade_assets (trade_id, oldmanager_id, newmanager_id, player_id, was_drafted");
+			$stmt->bindParam(1, $this->trade_id);
+			$stmt->bindParam(2, $this->oldmanager->manager_id);
+			$stmt->bindParam(3, $this->newmanager->manager_id);
+			$stmt->bindParam(4, $this->player_id);
+		}
 	}
 	
 	/**
@@ -73,7 +92,7 @@ class trade_asset_object {
 		/* @var $manager1 manager_object */
 		/* @var $manager2 manager_object */
 		/* @var $DBH PDO */
-		global $DBH; 
+		global $DBH;
 		$assets = array();
 		
 		$stmt = $DBH->prepare("SELECT * FROM trade_assets WHERE trade_id = ?");
@@ -85,12 +104,13 @@ class trade_asset_object {
 		
 		while($asset = $stmt->fetch()) {
 			/* @var $asset trade_asset_object */
-			if($asset->newmanager_id != $manager1->manager_id || $asset->newmanager_id != $manager2->manager_id)
+			if($asset->newmanager->manager_id != $manager1->manager_id || $asset->newmanager->manager_id != $manager2->manager_id)
 				return false;
 			
-			if($asset->oldmanager_id != $manager1->manager_id || $asset->oldmanager_id != $manager2->manager_id)
+			if($asset->oldmanager->manager_id != $manager1->manager_id || $asset->oldmanager->manager_id != $manager2->manager_id)
 				return false;
 			
+			//Use passed in manager_objects to prevent unneccessary SELECTs to the db:
 			$asset->player = new player_object($asset->player_id);
 			$asset->newmanager = $asset->newmanager_id == $manager1->manager_id ? $manager1 : $manager2;
 			$asset->oldmanager = $asset->oldmanager_id == $manager1->manager_id ? $manager1 : $manager2;
