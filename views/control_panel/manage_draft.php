@@ -41,7 +41,7 @@
 			}//foreach ?>
 				</table>
 			</div>
-<?php require('includes/footer.php');; ?>
+<?php require('includes/footer.php'); ?>
 		</div>
 	</body>
 </html>

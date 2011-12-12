@@ -40,7 +40,7 @@
 					</div>
 				</fieldset>
 			</div>
-			<?php require('includes/footer.php');;?>
+			<?php require('includes/footer.php');?>
 			<script type="text/javascript">
 				$(document).ready(function() {
 					$('#round').live('change', function() {

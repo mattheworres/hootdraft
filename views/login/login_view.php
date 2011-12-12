@@ -35,7 +35,7 @@
 					}?><p><strong>*<?php echo $message; ?></strong></p>
 				 <?php } ?>
 		</div>
-		<?php require('includes/footer.php');; ?>
+		<?php require('includes/footer.php'); ?>
 	</div>
 	</body>
 </html>

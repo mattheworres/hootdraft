@@ -31,7 +31,7 @@
 			</fieldset>
 		</form>
 		</div>
-		<?php require('includes/footer.php');; ?>
+		<?php require('includes/footer.php'); ?>
 		<script type="text/javascript">
 			$(document).ready(function() {
 				
