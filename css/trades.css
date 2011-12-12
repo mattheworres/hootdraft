@@ -1,0 +1,13 @@
+div.manager_1
+{
+	width: 50%;
+	float: left;
+	text-align: center;
+}
+
+div.manager_2
+{
+	width: 50%;
+	float: right;
+	text-align: center;
+}
