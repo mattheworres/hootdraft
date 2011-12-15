@@ -6,6 +6,7 @@ DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
 DEFINE("ACTION", isset($_REQUEST['action']) ? $_REQUEST['action'] : "");
 DEFINE("DRAFT_ID", isset($_REQUEST['did']) ? (int)$_REQUEST['did'] : 0);
 DEFINE("TRADE_ID", isset($_REQUEST['tid']) ? (int)$_REQUEST['tid'] : 0);
+DEFINE("MANAGER_ID", isset($_REQUEST['mid']) ? (int)$_REQUEST['mid'] : 0);
 
 $DRAFT = new draft_object(DRAFT_ID);
 
@@ -39,7 +40,23 @@ if($DRAFT->isCompleted()) {
 
 switch(ACTION) {
 	case 'getManagerPlayers':
+		if(MANAGER_ID == 0) {
+			echo "FAILURE";
+			exit(1);
+		}
 		
+		$players = player_object::getAllPlayersByManager(MANAGER_ID, true);
+		
+		if(isset($players) && count($players) > 0) {
+			header('Cache-Control: no-cache, must-revalidate');
+			header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+			header('Content-type: application/json');
+			echo json_encode($players);
+			exit(0);
+		}else {
+			echo "FAILURE";
+			exit(1);
+		}
 		break;
 	
 	default:

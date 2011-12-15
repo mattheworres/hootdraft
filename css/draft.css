@@ -37,11 +37,6 @@ input.manager_info
 	cursor: pointer;
 }
 
-p.errorDescription
-{
-	display: none;
-}
-
 input.error
 {
 	font-weight: bold;

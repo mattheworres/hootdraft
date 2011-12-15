@@ -468,14 +468,19 @@ class player_object {
 	 * @param int $manager_id 
 	 * @return array Player objects that belong to a given manager, or false on failure.
 	 */
-	public static function getAllPlayersByManager($manager_id) {
+	public static function getAllPlayersByManager($manager_id, $sort_by_pick = false) {
 		global $DBH; /* @var $DBH PDO */
 		$manager_id = (int)$manager_id;
+		$players = array();
 		
 		if($manager_id == 0)
 			return false;
 		
-		$stmt = $DBH->prepare("SELECT * FROM players WHERE manager_id = ?");
+		$sql = "SELECT * FROM players WHERE manager_id = ?";
+		if($sort_by_pick)
+			$sql .= " ORDER BY player_pick";
+		
+		$stmt = $DBH->prepare($sql);
 		$stmt->bindParam(1, $manager_id);
 		
 		$stmt->setFetchMode(PDO::FETCH_CLASS, 'player_object');

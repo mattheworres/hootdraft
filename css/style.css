@@ -153,6 +153,10 @@ p.error, .error {
 	color: #990000;
 	font-weight: bold;
 }
+p.errorDescription
+{
+	display: none;
+}
 
 p.success{
 	color: #009900;
