@@ -213,7 +213,7 @@ switch(ACTION) {
 
 		DEFINE('NUMBER_OF_MANAGERS', count($MANAGERS));
 		DEFINE('HAS_MANAGERS', NUMBER_OF_MANAGERS > 0);
-		DEFINE('LOWEST_ORDER', $MANAGERS[NUMBER_OF_MANAGERS - 1]->draft_order);
+		DEFINE('LOWEST_ORDER', NUMBER_OF_MANAGERS > 0 ? $MANAGERS[NUMBER_OF_MANAGERS - 1]->draft_order : 0);
 
 		require_once('views/draft/index.php');
 		// </editor-fold>

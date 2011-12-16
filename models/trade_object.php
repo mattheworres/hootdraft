@@ -119,7 +119,7 @@ class trade_object {
 	 * @param draft_object $draft The draft this pick is being submitted for
 	 * @return array $errors Array of string error messages 
 	 */
-	public function getValidity(draft_object $draft) {
+	public function getValidity() {
 		$errors = array();
 		
 		if(empty($this->draft_id) || $this->draft_id == 0)
@@ -181,6 +181,74 @@ class trade_object {
 		}
 		
 		return $trades;
+	}
+	
+	/**
+	 * Builds a new trade object (must be validated separately!)
+	 * @param type $draft_id
+	 * @param type $manager1_id
+	 * @param type $manager2_id
+	 * @param type $manager1PlayerIds
+	 * @param type $manager2PlayerIds
+	 * @return trade_object 
+	 */
+	public static function BuildTrade($draft_id, $manager1_id, $manager2_id, $manager1PlayerIds, $manager2PlayerIds) {
+		$newTrade = new trade_object();
+		$newTrade->draft_id = $draft_id;
+		$newTrade->manager1 = new manager_object($manager1_id);
+		$newTrade->manager2 = new manager_object($manager2_id);
+		$newTrade->trade_assets = trade_object::BuildTradeAssets($manager1PlayerIds, $manager2PlayerIds, $newTrade->manager1, $newTrade->manager2);
+		
+		return $newTrade;
+	}
+	
+	/**
+	 * Build up all of the trade asset objects for a trade
+	 * @param array $manager1AssetIds
+	 * @param manager_object $manager1
+	 * @param manager_object $manager2
+	 * @return array Array of trade asset objects, or false on failure 
+	 */
+	private static function BuildTradeAssets(array $manager1AssetIds, array $manager2AssetIds, manager_object $manager1, manager_object $manager2) {
+		$tradeAssets = array();
+		
+		foreach($manager1AssetIds as $playerId) {
+			$playerId = (int)$playerId;
+			
+			if($playerId == 0)
+				return false;
+			
+			$newAsset = new trade_asset_object();
+			$newAsset->oldmanager = $manager1;
+			$newAsset->newManager = $manager2;
+			$newAsset->player = new player_object($playerId);
+			
+			if(!isset($newAsset->player) || $newAsset->player == false) {
+				return false;
+			}
+			
+			$tradeAssets[] = $newAsset;
+		}
+		
+		foreach($manager2AssetIds as $playerId) {
+			$playerId = (int)$playerId;
+			
+			if($playerId == 0)
+				return false;
+			
+			$newAsset = new trade_asset_object();
+			$newAsset->oldmanager = $manager2;
+			$newAsset->newManager = $manager1;
+			$newAsset->player = new player_object($playerId);
+			
+			if(!isset($newAsset->player) || $newAsset->player == false) {
+				return false;
+			}
+			
+			$tradeAssets[] = $newAsset;
+		}
+		
+		return $tradeAssets;
 	}
 	
 	/**

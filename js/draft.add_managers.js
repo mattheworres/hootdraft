@@ -56,13 +56,13 @@ $(document).ready(function() {
 			},
 			url: 'draft.php?action=saveManagers',
 			success: function(data) {
+				$loadingDialog.dialog('close');
+				
 				if(data == "SUCCESS") {
-					$loadingDialog.dialog('close');
 					$informationDialog.html('Congratulations! Your new managers have been added to the draft.').dialog('open');
 					removeAllExtraRows();
 					updateCurrentTable(managers);
 				}else {
-					$loadingDialog.dialog('close');
 					$('p.errorDescription').html('A server-side error has occurred. Please try again.').show();
 				}
 			},

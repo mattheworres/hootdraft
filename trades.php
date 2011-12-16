@@ -40,6 +40,7 @@ if($DRAFT->isCompleted()) {
 
 switch(ACTION) {
 	case 'getManagerPlayers':
+		// <editor-fold defaultstate="collapsed" desc="getManagerPlayers Logic">
 		if(MANAGER_ID == 0) {
 			echo "FAILURE";
 			exit(1);
@@ -57,6 +58,37 @@ switch(ACTION) {
 			echo "FAILURE";
 			exit(1);
 		}
+		// </editor-fold>
+		break;
+		
+	case 'submitTrade':
+		$manager1_id = isset($_POST['manager1']) ? (int)$_POST['manager1'] : 0;
+		$manager2_id = isset($_POST['manager2']) ? (int)$_POST['manager2'] : 0;
+		$manager1_assets = isset($_POST['manager1assets']) ? $_POST['manager1assets'] : array();
+		$manager2_assets = isset($_POST['manager2assets']) ? $_POST['manager2assets'] : array();
+		
+		if($manager1_id == 0 || $manager2_id == 0 || empty($manager1_assets) || empty($manager2_assets)) {
+			echo "FAILURE";
+			exit(1);
+		}
+		
+		//TODO: Find a way to make this shorter in presenter:
+		$newTrade = trade_object::BuildTrade(DRAFT_ID, $manager1_id, $manager2_id, $manager1_assets, $manager2_assets);
+		
+		$object_errors = $newTrade->getValidity();
+		
+		if(count($object_errors) > 0) {
+			echo json_encode($object_errors);
+			exit(1);
+		}
+		
+		if($newTrade->saveTrade() === false) {
+			echo "Failure saving trade object, please try again.";
+			exit(1);
+		}
+		
+		echo "SUCCESS";
+		exit(0);
 		break;
 	
 	default:
