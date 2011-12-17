@@ -15,7 +15,7 @@
 				<p>This is the main page for this draft.  Below is some summary information for the draft. Use the links to the right for more functionality.</p>
 				<fieldset>
 					<legend><?php echo $DRAFT->draft_name;?> - Links</legend>
-					<h3><a href="public_draft.php?action=draftBoard&did=<?php echo DRAFT_ID;?>"><img src="images/icons/draft_board.png" alt="View Full Draft Board" class="small_link" />&nbsp;View Full Draft Board</a></h3>
+					<h4><a href="public_draft.php?action=draftBoard&did=<?php echo DRAFT_ID;?>"><span class="phpdraft-icon ui-icon ui-icon-calculator"></span>&nbsp;View Full Draft Board</a></h4>
 				</fieldset>
 				<fieldset>
 					<legend><?php echo $DRAFT->draft_name;?> - Current Status</legend>
