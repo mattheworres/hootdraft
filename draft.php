@@ -215,6 +215,7 @@ switch(ACTION) {
 		if($DRAFT->isInProgress() || $DRAFT->isCompleted()) {
 			$DRAFT->setupSport();
 			$LAST_TEN_PICKS = player_object::getLastTenPicks(DRAFT_ID);
+			DEFINE('NUMBER_OF_LAST_PICKS', count($LAST_TEN_PICKS));
 			
 			if($LAST_TEN_PICKS === false) {
 				define("PAGE_HEADER", "Last 10 Picks Unable to be Loaded");

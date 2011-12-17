@@ -86,30 +86,16 @@
 				?>
 				<fieldset>
 					<legend>Recent Picks - Last 10</legend>
-					<table width="100%">
-						<tr>
-							<th width="55">Rd #</th>
-							<th width="55">Pick #</th>
-							<th>Manager</th>
-							<th>Player</th>
-							<th width="55">Pos.</th>
-							<th width="55">Team</th>
-						</tr>
-						<?php if(count($LAST_TEN_PICKS) == 0) {
-							?><td colspan="5"><h2>No picks have been made yet.</h2></td><?php
-						}else {
-							foreach($LAST_TEN_PICKS as $player) { ?>
-						<tr style="background-color:<?php echo $DRAFT->sports_colors[$player->position]; ?>;">
-							<td><?php echo $player->player_round; ?></td>
-							<td><?php echo $player->player_pick; ?></td>
-							<td><?php echo $player->manager_name; ?></td>
-							<td><?php if($player->hasName()) { echo $player->properName(); } else { echo "&nbsp;";}?></td>
-							<td><?php echo $player->position; ?></td>
-							<td><?php echo $player->team; ?></td>
-						</tr>
-							<?php }
-						}?>
-					</table>
+					<?php if(NUMBER_OF_LAST_PICKS == 0) { ?>
+					<p><strong>No picks have been made yet.</strong></p>
+					<?php } else { 
+						foreach($LAST_TEN_PICKS as $player) { ?>
+					<p style="background-color: <?php echo $DRAFT->sports_colors[$player->position]; ?>;">
+						<span class="player-name"><?php echo $player->casualName(); ?></span>
+						<?php echo " (Pick #" . $player->player_pick . ", " . $player->team . " - " . $player->position . ")<br/><strong>Manager:</strong> " . $player->manager_name . "<br/>"; ?>
+					</p>
+					<?php } ?>
+					<?php } ?>
 				</fieldset>
 				<?php } ?>
 			</div>

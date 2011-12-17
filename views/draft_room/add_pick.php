@@ -88,7 +88,10 @@
 			<p><strong>No picks have been made yet.</strong></p>
 			<?php } else {
 				foreach($LAST_FIVE_PICKS as $last_pick) { ?>
-			<p style="background-color: <?php echo $DRAFT->sports_colors[$last_pick->position]; ?>;"><span class="player-name"><?php echo $last_pick->casualName(); ?></span><?php echo " (Pick #" . $last_pick->player_pick . ", " . $last_pick->team . " - " . $last_pick->position . ")<br/><strong>Manager:</strong> " . $last_pick->manager_name . "<br/>"; ?></p>
+			<p style="background-color: <?php echo $DRAFT->sports_colors[$last_pick->position]; ?>;">
+				<span class="player-name"><?php echo $last_pick->casualName(); ?></span>
+				<?php echo " (Pick #" . $last_pick->player_pick . ", " . $last_pick->team . " - " . $last_pick->position . ")<br/><strong>Manager:</strong> " . $last_pick->manager_name . "<br/>"; ?>
+			</p>
 			<?php }
 			}?>
 		</fieldset>
