@@ -22,7 +22,7 @@
 			<?php if($drafts->number_of_drafts == 0) { ?><tr><td colspan="4"><h2>There are currently no drafts available.</h2></td></tr><?php
 			}else {
 			foreach($drafts->draft_objects as $draft) {?><tr>
-				<td><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-<?php echo $draft->getVisibility(); ?>"></span></td>
+				<td><span class="phpdraft-icon ui-icon ui-icon-<?php echo $draft->getVisibility(); ?>"></span></td>
 			<?php if(!$draft->isUndrafted()) {?><td><a href="public_draft.php?did=<?php echo $draft->draft_id; ?>"><?php echo $draft->draft_name; ?></a></td>
 						<?php } else {?><td><?php echo $draft->draft_name; ?></td><?php }?>
 			<td><?php echo $draft->draft_sport; ?></td>
@@ -33,7 +33,7 @@
 		</table>
 		<p style="font-size: 80%;">*Cookies must be enabled</p>
 		</div>
-		<?php require('includes/footer.php');; ?>
+		<?php require('includes/footer.php'); ?>
 	</div>
 	</body>
 </html>

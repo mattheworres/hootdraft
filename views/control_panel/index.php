@@ -14,8 +14,8 @@
 
 				<fieldset>
 					<legend>Commissioner Functions</legend>
-					<p><strong><a href="control_panel.php?action=createDraft"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-plusthick"></span>Create a New Draft</a></strong> - Create a brand new draft from scratch, and then add managers to that draft afterwards</p>
-					<p><strong><a href="control_panel.php?action=manageProfile"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-person"></span>Update Your User Profile</a></strong> - Change your login, password and name here for PHPDraft</p>
+					<p><strong><a href="control_panel.php?action=createDraft"><span class="phpdraft-icon ui-icon ui-icon-plusthick"></span>Create a New Draft</a></strong> - Create a brand new draft from scratch, and then add managers to that draft afterwards</p>
+					<p><strong><a href="control_panel.php?action=manageProfile"><span class="phpdraft-icon ui-icon ui-icon-person"></span>Update Your User Profile</a></strong> - Change your login, password and name here for PHPDraft</p>
 				</fieldset>
 
 				<fieldset>
@@ -37,7 +37,7 @@
 							$numberOfManagers = manager_object::getCountOfManagersByDraft($draft->draft_id);
 							?>
 							<tr<?php echo ($alt_row ? " style=\"background-color: #cccccc;\"" : "");?>>
-								<td><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-<?php echo $draft->getVisibility(); ?>"></span></td>
+								<td><span class="phpdraft-icon ui-icon ui-icon-<?php echo $draft->getVisibility(); ?>"></span></td>
 								<td><a href="draft.php?did=<?php echo $draft->draft_id;?>"><?php echo $draft->draft_name;?></a></td>
 								<td><?php echo $draft->draft_sport;?></td>
 								<td><?php echo $numberOfManagers;?></td>
@@ -50,7 +50,7 @@
 					</table>
 				</fieldset>
 			</div>
-			<?php require('includes/footer.php');;?>
+			<?php require('includes/footer.php');?>
 		</div>
 	</body>
 </html>

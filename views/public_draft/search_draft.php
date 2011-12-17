@@ -41,7 +41,7 @@
 				<div id="search_results"></div>
 				<br/><br/>
 			</div>
-			<?php require('includes/footer.php');;?>
+			<?php require('includes/footer.php');?>
 			<script type="text/javascript">
 				function load_search() {
 					var search_terms = $("#search_terms").val(),

@@ -45,7 +45,7 @@
 				</div>
 			</div>
 			<br/><br/>
-			<?php require('includes/footer.php');;?>
+			<?php require('includes/footer.php');?>
 			<script type="text/javascript">
 				var manager_id,
 					$picks = $('#picks');

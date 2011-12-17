@@ -153,6 +153,10 @@ p.error, .error {
 	color: #990000;
 	font-weight: bold;
 }
+p.errorDescription
+{
+	display: none;
+}
 
 p.success{
 	color: #009900;
@@ -338,4 +342,10 @@ table th {
 span.player-name {
 	font-weight: bold;
 	font-size: 15px;
+}
+
+.phpdraft-icon {
+	display: inline-block !important;
+	vertical-align: middle !important;
+	margin-right: 2px !important;
 }

@@ -51,6 +51,7 @@ switch(ACTION) {
 	case 'addScreen':
 		// <editor-fold defaultstate="collapsed" desc="addScreen Logic">
 		$CURRENT_PICK = $DRAFT->getCurrentPick();
+		$CURRENT_PICK_MANAGER = new manager_object($CURRENT_PICK->manager_id);
 		
 		$NEXT_FIVE_PICKS = $DRAFT->getNextFivePicks();
 		$LAST_FIVE_PICKS = $DRAFT->getLastFivePicks();
@@ -87,14 +88,14 @@ switch(ACTION) {
 		$previous_pick = $DRAFT->getLastPick();
 		
 		//Fixes defect for a refresh POSTing already-added picks:
-		if($previous_pick->player_id == $submitted_pick->player_id) {
+		if($previous_pick != null && $previous_pick->player_id == $submitted_pick->player_id) {
 			$ERRORS[] = "Pick #" . $previous_pick->player_pick . " was already added, please enter the #" . $DRAFT->draft_current_pick . " pick now.";
 			require("views/draft_room/add_pick.php");
 			exit(1);
 		}
 		
 		//Ensure future picks can't be selected (extra safety):
-		if($previous_pick->player_pick + 1 != $submitted_pick->player_pick) {
+		if($previous_pick != null && $previous_pick->player_pick + 1 != $submitted_pick->player_pick) {
 			$ERRORS[] = "Synchronization issue, you are attempting to enter a pick after an undrafted pick - unable to enter pick #" . $submitted_pick->player_pick . " at this moment. Try going back to the draft room, and re-entering this screen.";
 			require("views/draft_room/add_pick.php");
 			exit(1);
@@ -133,6 +134,7 @@ switch(ACTION) {
 		$LAST_FIVE_PICKS = $DRAFT->getLastFivePicks();
 		unset($CURRENT_PICK);
 		$CURRENT_PICK = $DRAFT->getCurrentPick();
+		$CURRENT_PICK_MANAGER = new manager_object($CURRENT_PICK->manager_id);
 		
 		$SUCCESSES[] = "<em>" . $submitted_pick->casualName() . "</em> was successfully drafted with the #" . $submitted_pick->player_pick . " selection.";
 		require_once("views/draft_room/add_pick.php");
@@ -167,6 +169,7 @@ switch(ACTION) {
 	case 'editScreen':
 		// <editor-fold defaultstate="collapsed" desc="editScreen Logic">
 		$EDIT_PLAYER = new player_object(PLAYER_ID);
+		$EDIT_PLAYER_MANAGER = new manager_object($EDIT_PLAYER->manager_id);
 		
 		if($EDIT_PLAYER === false || PLAYER_ID == 0 || !$EDIT_PLAYER->hasBeenSelected() || !$EDIT_PLAYER->pickExists()) {
 			define("PAGE_HEADER", "Player Unable to be Edited");
@@ -214,26 +217,19 @@ switch(ACTION) {
 		
 		define("PAGE_HEADER", "Pick Edited Successfully");
 		define("P_CLASS", "success");
-		define("PAGE_CONTENT", "Pick #" . $EDIT_PLAYER->player_pick . " " . $EDIT_PLAYER->casualName() .  " was successfully edited.<br/><br/><a href=\"draft_room.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to the main draft room, or <a href=\"draft_room.php?action=selectPickToEdit&did=" . DRAFT_ID . "\">click here</a> to go back to edit another draft pick.");
+		define("PAGE_CONTENT", "Pick #" . $EDIT_PLAYER->player_pick . " " . $EDIT_PLAYER->casualName() .  " was successfully edited.<br/><br/><a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to the main draft page, or <a href=\"draft_room.php?action=selectPickToEdit&did=" . DRAFT_ID . "\">click here</a> to go back to edit another draft pick.");
 		require_once("views/shared/generic_result_view.php");
 		// </editor-fold>
 		break;
 	
 	case 'home':
 	default:
-		// <editor-fold defaultstate="collapsed" desc="Index Logic">
-		$LAST_TEN_PICKS = player_object::getLastTenPicks(DRAFT_ID);
-		$DRAFT->setupSport();
-		
-		if($LAST_TEN_PICKS === false) {
-			define("PAGE_HEADER", "Last 10 Picks Unable to be Loaded");
-			define("P_CLASS", "error");
-			define("PAGE_CONTENT", "An error has occurred and the last 10 picks of your draft were unable to be loaded. Please try again.");
-			require_once("views/shared/generic_result_view.php");
-			exit(1);
-		}
-		
-		require("views/draft_room/index.php");
+		// <editor-fold defaultstate="collapsed" desc="Index Logic (now obsolete - shows error)">
+		define("PAGE_HEADER", "Page No Longer Exists");
+		define("P_CLASS", "error");
+		define("PAGE_CONTENT", "This page no longer exists - functionality from this page can now be found on <a href=\"draft.php?did=" . DRAFT_ID . "\">the draft's main page</a>.");
+		require_once("views/shared/generic_result_view.php");
+		exit(1);
 		// </editor-fold>
 		break;
 }

@@ -35,7 +35,7 @@
 					<p class="error">*Required</p>
 				<?php }?>
 			</div>
-			<?php require('includes/footer.php');;?>
+			<?php require('includes/footer.php');?>
 		</div>
 	</body>
 </html>

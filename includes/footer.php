@@ -9,7 +9,7 @@
 
 <div id="informationDialog"></div>
 
-<script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.8.14.custom.min.js"></script>
 <script type="text/javascript">
 	$('#loadingDialog').dialog({

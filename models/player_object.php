@@ -7,35 +7,62 @@
  * 
  * Players carry draft information on them - such as which round and which pick
  * they exist at (player information will be blank if they are unchecked)
- * 
- * @property int $player_id The unique ID for this player
- * @property int $manager_id The ID of the manager this player belongs to
- * @property int $draft_id The ID of the draft this player belongs to
- * @property string $first_name The first name of the player
- * @property string $last_name The last name of the player
- * @property string $team The professional team the player plays for. Stored as three character abbreviation
- * @property string $position The position the player plays. Stored as one or three character abbreviation.
- * @property string $pick_time Timestamp of when the player was picked. Use strtotime to compare to other dates.
- * @property int $pick_duration Amount of seconds that were consumed during this pick
- * @property int $player_round Round the player was selected in
- * @property int $player_pick Pick the player was selected at
- * @property string $manager_name Name of the manager that made the pick. NOTE: Only available on selected picks, and is kind've a cheat.
  */
 class player_object {
-
+	// <editor-fold defaultstate="collapsed" desc="Properties">
+	/**
+	 * @var int The unique ID for this player
+	 */
 	public $player_id;
+	/**
+	 * @var int The ID of the manager this player belongs to
+	 */
 	public $manager_id;
+	/**
+	 * @var int The ID of the draft this player belongs to
+	 */
 	public $draft_id;
+	/**
+	 * @var string The first name of the player
+	 */
 	public $first_name;
+	/**
+	 * @var string The last name of the player 
+	 */
 	public $last_name;
+	/**
+	 * @var string The professional team the player plays for. Stored as three character abbreviation 
+	 */
 	public $team;
+	/**
+	 * @var string The position the player plays. Stored as one or three character abbreviation. 
+	 */
 	public $position;
+	/**
+	 * @var string Timestamp of when the player was picked. Use strtotime to compare to other dates. 
+	 */
 	public $pick_time;
+	/**
+	 * @var int Amount of seconds that were consumed during this pick 
+	 */
 	public $pick_duration;
+	/**
+	 * @var int Round the player was selected in 
+	 */
 	public $player_round;
+	/**
+	 * @var int Pick the player was selected at 
+	 */
 	public $player_pick;
+	/**
+	 * @var string Name of the manager that made the pick. NOTE: Only available on selected picks, and is kind've a cheat. 
+	 */
 	public $manager_name;
+	/**
+	 * @var int 
+	 */
 	public $search_score;
+	// </editor-fold>
 	
 	// <editor-fold defaultstate="collapsed" desc="Dynamic Properties">
 	/**
@@ -422,7 +449,40 @@ class player_object {
 		if($manager_id == 0)
 			return false;
 		
+		$players = array();
+		
 		$stmt = $DBH->prepare("SELECT * FROM players WHERE manager_id = ? AND pick_time IS NOT NULL ORDER BY player_pick ASC");
+		$stmt->bindParam(1, $manager_id);
+		
+		$stmt->setFetchMode(PDO::FETCH_CLASS, 'player_object');
+		
+		if(!$stmt->execute())
+			return false;
+		
+		while($player = $stmt->fetch())
+			$players[] = $player;
+		
+		return $players;
+	}
+	
+	/**
+	 * Get all players/picks for a given manager, regardless of selection
+	 * @param int $manager_id 
+	 * @return array Player objects that belong to a given manager, or false on failure.
+	 */
+	public static function getAllPlayersByManager($manager_id, $sort_by_pick = false) {
+		global $DBH; /* @var $DBH PDO */
+		$manager_id = (int)$manager_id;
+		$players = array();
+		
+		if($manager_id == 0)
+			return false;
+		
+		$sql = "SELECT * FROM players WHERE manager_id = ?";
+		if($sort_by_pick)
+			$sql .= " ORDER BY player_pick";
+		
+		$stmt = $DBH->prepare($sql);
 		$stmt->bindParam(1, $manager_id);
 		
 		$stmt->setFetchMode(PDO::FETCH_CLASS, 'player_object');

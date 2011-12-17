@@ -1,6 +1,6 @@
 Thank you for downloading PHP Draft! PHP Draft allows commissioners to setup web-based real-time drafts for their fantasy sports leagues. If your leagues do "offline" drafts (instead of using your fantasy provider's online drafting tools), PHP Draft is just for you! You log in to PHP Draft, add managers, determine the number of rounds, style of draft (standard or serpentine), the sport and the name, and then when you're ready to begin drafting. Your managers will come to you once they make a selection, and you enter it. As you enter picks, your managers will see real-time the picks being made, in a large, easy-to-read color-coded draft board.
 
-REQUIREMENTS for PHP Draft:
+REQUIREMENTS for PHP Draft 1.1.0:
 -Web server with sufficient bandwidth
 -PHP 5+ installed (5.3.0+ preferred)
 -MySQL and the ability to add a new database
@@ -25,3 +25,33 @@ Password: password
 6) Once logged in, be sure to update the default administrator's name and password by going to the Control Panel tab, and click "Update Your User Profile". From there you can change the password.
 
 7) Enjoy! Any bugs, feature requests, comments or questions please send them to me at http://sourceforge.net/projects/phpdraft/
+
+***CHANGELOG***
+v1.1.0 - Official Release
+ADDED: Trades feature
+FIXED: "Undefined index" errors on high error level reporting settings
+FIXED: Updated jQuery from 1.6.2 to 1.7.1
+REQUIRED: Migration from previous versions (new tables): see /sql/Migration and Legacy Scripts/ folder
+ADDED/FIXED: TBD
+
+v1.0.4 - Critical Fixes Release
+FIXED: Minor defects related to commissioner pick entry
+FIXED: Move several (not all) class includes to includes/global_setup.php
+
+v1.0.3 - Critical Fixes Release
+FIXED: Several minor to severe fixes.
+
+v1.0.2 - Critical Fixes Release
+ADDED: PDO replaces MySQL driver
+FIXED: Several critical fixes
+
+v1.0.1 - Critical Fixes Release
+Includes a few minor to severe fixes.
+
+v1.0.0 - Official Release
+ADDED: New Javascript-driven add managers UI
+ADDED: New streamlined pick entry screen
+FIXED: Re-write of entire codebase into MVP code pattern, OOP
+
+v0.9.0 - Beta Release
+ADDED: Everything (initial public release!)

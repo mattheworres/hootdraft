@@ -14,7 +14,7 @@
 		<p class="<?php echo P_CLASS; ?>"><?php echo PAGE_CONTENT; ?></p>
 		<br/>
 		</div>
-		<?php require('includes/footer.php');; ?>
+		<?php require('includes/footer.php'); ?>
 	</div>
 	</body>
 </html>

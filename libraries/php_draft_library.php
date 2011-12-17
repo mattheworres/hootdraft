@@ -6,7 +6,6 @@
  */
 
 class php_draft_library {
-
 	public static function secondsToWords($seconds) {
 		$words = "";
 
@@ -69,6 +68,14 @@ class php_draft_library {
 	public static function getNowRefreshTime() {
 		return date("h:i:s A");
 	}
-
+	
+	/**
+	 * Format a date from a string stored in the DB in a readable way.
+	 * @param type $date_string 
+	 */
+	public static function parseObjectDate($date_string) {
+		$time = strtotime($date_string);
+		return date("M j Y \a\\t g:i a", $time);
+	}
 }
 ?>

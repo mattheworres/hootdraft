@@ -77,10 +77,28 @@
 				</fieldset>
 				<fieldset>
 					<legend><?php echo $DRAFT->draft_name; ?> - Functions</legend>
-					<?php if($DRAFT->isUndrafted()) {?><p><strong><a href="draft.php?action=addManagers&did=<?php echo DRAFT_ID; ?>"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-plusthick"></span>Add Manager(s)</a></strong></p>
-					<?php } ?><p><strong><a id="changeVisibility" href="#"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-key"></span>Change Draft Visibility</a></strong></p>
-					<?php if(!$DRAFT->isCompleted() && HAS_MANAGERS) { ?><p id="draft-status-link"><strong><a href="draft.php?action=changeStatus&did=<?php echo DRAFT_ID; ?>"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-play"></span>Change Draft Status</a></strong></p><?php } ?>
+					<?php if($DRAFT->isUndrafted()) {?><p><strong><a href="draft.php?action=addManagers&did=<?php echo DRAFT_ID; ?>"><span class="phpdraft-icon ui-icon ui-icon-plusthick"></span>Add Manager(s)</a></strong></p>
+					<?php } ?><p><strong><a id="changeVisibility" href="#"><span class="phpdraft-icon ui-icon ui-icon-key"></span>Change Draft Visibility</a></strong></p>
+					<?php if(!$DRAFT->isCompleted() && HAS_MANAGERS) { ?><p id="draft-status-link"><strong><a href="draft.php?action=changeStatus&did=<?php echo DRAFT_ID; ?>"><span class="phpdraft-icon ui-icon ui-icon-play"></span>Change Draft Status</a></strong></p><?php } ?>
 				</fieldset>
+				<?php
+				if($DRAFT->isInProgress() || $DRAFT->isCompleted()) {
+				?>
+				<fieldset>
+					<legend>Recent Picks - Last 10</legend>
+					<?php if(NUMBER_OF_LAST_PICKS == 0) { ?>
+					<p><strong>No picks have been made yet.</strong></p>
+					<?php } else { 
+						foreach($LAST_TEN_PICKS as $player) { ?>
+					<p style="background-color: <?php echo $DRAFT->sports_colors[$player->position]; ?>;">
+						<span class="player-name"><?php echo $player->casualName(); ?></span>
+						<?php echo " (Pick #" . $player->player_pick . ", " . $player->team . " - " . $player->position . ")"; ?><br/>
+						<strong>Manager:</strong> <?php echo $player->manager_name; ?><br/>
+					</p>
+					<?php } ?>
+					<?php } ?>
+				</fieldset>
+				<?php } ?>
 			</div>
 			<?php require('includes/footer.php'); ?>
 			<script src="js/draft.index.js" type="text/javascript"></script>
@@ -94,9 +112,9 @@
 			</select>
 			<div id="passwordBox"<?php if(!$DRAFT->isPasswordProtected()) { echo " style=\" display: none;\""; }?>>
 				<label for="draft_password">Draft Password:</label>
-				<input type="text" id="draft_password" value="<?php echo $DRAFT->Password; ?>" /><br/>
+				<input type="text" id="draft_password" value="<?php echo $DRAFT->draft_password; ?>" /><br/>
 				<label for="draft_password_confirm">Confirm Password:</label>
-				<input type="text" id="draft_password_confirm" value="<?php echo $DRAFT->Password; ?>" /><br/>
+				<input type="text" id="draft_password_confirm" value="<?php echo $DRAFT->draft_password; ?>" /><br/>
 			</div>
 			<p id="visibilityError" class="errorDescription error"></p>
 		</div>

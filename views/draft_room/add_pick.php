@@ -9,7 +9,7 @@
 	<div id="page_wrapper">
 		<?php require('includes/header.php'); ?>
 
-		<?php require('views/shared/draft_room_menu.php'); ?>
+		<?php require('views/shared/draft_menu.php'); ?>
 		<div id="content">	
 		<?php if(isset($SUCCESSES) && count($SUCCESSES) > 0) {?>
 			<?php foreach($SUCCESSES as $success) {?>
@@ -25,24 +25,21 @@
 			<input type="hidden" name="player_round" value="<?php echo $CURRENT_PICK->player_round; ?>" />
 			<input type="hidden" name="player_pick" value="<?php echo $CURRENT_PICK->player_pick; ?>" />
 			<p>
-				<label for="mid">Manager*:</label>
-				<select name="mid" id="mid" tabindex="1">
-				<?php foreach($MANAGERS as $manager) {?>
-					<option value="<?php echo $manager->manager_id; ?>"<?php if($manager->manager_id == $CURRENT_PICK->manager_id) { echo " selected=\"selected\""; }?>><?php echo $manager->manager_name; ?><?php if($manager->manager_id == $CURRENT_PICK->manager_id) { echo " (on the clock)"; }?></option>
-				<?php } ?>
-				</select>
+				<label for="mid">Manager:</label>
+				<input type="hidden" value="<?php echo $CURRENT_PICK_MANAGER->manager_id; ?>" name="mid" id="mid" />
+				<?php echo $CURRENT_PICK_MANAGER->manager_name; ?>
 			</p>
 			<p>
 				<label for="first_name">First Name*:</label>
-				<input type="text" name="first_name" id="first_name" value="<?php echo $CURRENT_PICK->first_name; ?>" tabindex="2"/>
+				<input type="text" name="first_name" id="first_name" value="<?php echo $CURRENT_PICK->first_name; ?>" tabindex="1"/>
 			</p>
 			<p>
 				<label for="last_name">Last Name*:</label>
-				<input type="text" name="last_name" id="last_name" value="<?php echo $CURRENT_PICK->last_name; ?>" tabindex="3"/>
+				<input type="text" name="last_name" id="last_name" value="<?php echo $CURRENT_PICK->last_name; ?>" tabindex="2"/>
 			</p>
 			<p>
 				<label for="team">Team*:</label>
-				<select name="team" tabindex="4">
+				<select name="team" tabindex="3">
 				<?php if(strlen($CURRENT_PICK->team) == 0) {?><option selected="selected"></option><?php } ?>
 				<?php foreach($DRAFT->sports_teams as $abbr => $sports_team_name) {
 					?><option value="<?php echo $abbr; ?>"<?php if($CURRENT_PICK->team == $abbr) { echo " selected=\"selected\"";}?>><?php echo $sports_team_name; ?></option>
@@ -51,14 +48,14 @@
 			</p>
 			<p>
 				<label for="position">Position*:</label>
-				<select name="position" tabindex="5">
+				<select name="position" tabindex="4">
 					<?php if(strlen($CURRENT_PICK->position) == 0) {?><option selected="selected"></option><?php } ?>
 				<?php foreach($DRAFT->sports_positions as $abbr => $sports_position) {
 					?><option style="background-color: <?php echo $DRAFT->sports_colors[$abbr]; ?>" value="<?php echo $abbr; ?>"<?php if($CURRENT_PICK->position == $abbr) { echo " selected=\"selected\"";}?>><?php echo $sports_position; ?></option>
 				<?php } ?>
 				</select>
 			</p>
-			<p><input type="submit" name="submit" class="button" value="Enter Draft Pick"  tabindex="6"/></p>
+			<p><input type="submit" name="submit" class="button" value="Enter Draft Pick"  tabindex="5"/></p>
 			<?php if(isset($ERRORS) && count($ERRORS) > 0) {?>
 				<?php foreach($ERRORS as $error) {?>
 					<p class="error">* <?php echo $error;?></p>
@@ -91,12 +88,15 @@
 			<p><strong>No picks have been made yet.</strong></p>
 			<?php } else {
 				foreach($LAST_FIVE_PICKS as $last_pick) { ?>
-			<p style="background-color: <?php echo $DRAFT->sports_colors[$last_pick->position]; ?>;"><span class="player-name"><?php echo $last_pick->casualName(); ?></span><?php echo " (Pick #" . $last_pick->player_pick . ", " . $last_pick->team . " - " . $last_pick->position . ")<br/><strong>Manager:</strong> " . $last_pick->manager_name . "<br/>"; ?></p>
+			<p style="background-color: <?php echo $DRAFT->sports_colors[$last_pick->position]; ?>;">
+				<span class="player-name"><?php echo $last_pick->casualName(); ?></span>
+				<?php echo " (Pick #" . $last_pick->player_pick . ", " . $last_pick->team . " - " . $last_pick->position . ")<br/><strong>Manager:</strong> " . $last_pick->manager_name . "<br/>"; ?>
+			</p>
 			<?php }
 			}?>
 		</fieldset>
 		</div>
-		<?php require('includes/footer.php');; ?>
+		<?php require('includes/footer.php'); ?>
 		<script type="text/javascript">
 			$(document).ready(function() {
 				$("#first_name").focus();
