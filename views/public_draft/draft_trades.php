@@ -28,7 +28,7 @@
 						<div class="manager-details manager1-assets">
 							<h3><?php echo $trade->manager1->manager_name; ?> received:</h3>
 							<?php foreach($manager1_assets as $asset) {/* @var $asset trade_asset_object */ ?>
-								<p style="background-color: <?php if($asset->WasDrafted()) { echo $DRAFT->sports_colors[$asset->player->position]; } else { echo "#888888"; } ?>">
+								<p style="background-color: <?php if($asset->WasDrafted()) { echo $DRAFT->sports_colors[$asset->player->position]; } else { echo "#AAAAAA"; } ?>">
 									<span class="player-name"><?php if($asset->WasDrafted()) { echo $asset->player->casualName(); } else { echo "Round #" . $asset->player->player_round . " Pick (#" . $asset->player->player_pick . ")"; } ?></span>
 									<?php if($asset->WasDrafted()) { echo "(Pick #" . $asset->player->player_pick . ", " . $asset->player->team . " - " . $asset->player->position . ")<br/>"; }?>
 								</p>
@@ -37,7 +37,7 @@
 						<div class="manager-details manager2-assets">
 							<h3><?php echo $trade->manager2->manager_name; ?> received:</h3>
 							<?php foreach($manager2_assets as $asset) {/* @var $asset trade_asset_object */ ?>
-								<p style="background-color: <?php if($asset->WasDrafted()) { echo $DRAFT->sports_colors[$asset->player->position]; } else { echo "#888888"; } ?>">
+								<p style="background-color: <?php if($asset->WasDrafted()) { echo $DRAFT->sports_colors[$asset->player->position]; } else { echo "#AAAAAA"; } ?>">
 									<span class="player-name"><?php if($asset->WasDrafted()) { echo $asset->player->casualName(); } else { echo "Round #" . $asset->player->player_round . " Pick (#" . $asset->player->player_pick . ")"; } ?></span>
 									<?php if($asset->WasDrafted()) { echo "(Pick #" . $asset->player->player_pick . ", " . $asset->player->team . " - " . $asset->player->position . ")<br/>"; }?>
 								</p>
