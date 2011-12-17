@@ -2,18 +2,23 @@
 
 /**
  * Represents a PHPDraft "user" object, which currently there is only one: the Commish
- * 
- * @property int $UserId The unique identifier for this user
- * @property string $Username The handle with which user logged in with
- * @property string $Name The public-visible name for the Commissioner
- * @property string $Password User's password
- * 
- * @method void getCurrentlyLoggedInUser() Grab whatever information is available for the currently logged in user
  */
 class user_object {
+	/**
+	 * @var int $UserId The unique identifier for this user 
+	 */
 	public $UserId;
+	/**
+	 * @var string $Username The handle with which user logged in with 
+	 */
 	public $Username;
+	/**
+	 * @var string $Name The public-visible name for the Commissioner 
+	 */
 	public $Name;
+	/**
+	 * @var string $Password User's password 
+	 */
 	public $Password;
 	
 	public function __construct($user_id = 0) {
@@ -37,6 +42,10 @@ class user_object {
 		return true;
 	}
 	
+	/**
+	 * Grab whatever information is available for the currently logged in user
+	 * @return void 
+	 */
 	public function getCurrentlyLoggedInUser() {
 		global $DBH; /* @var $DBH PDO */
 		

@@ -5,7 +5,6 @@
  *
  * Managers have many players (picks), and belong to a single draft.
  */
-
 class manager_object {
 
 	/**

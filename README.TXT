@@ -31,6 +31,7 @@ v1.1.0 - Official Release
 ADDED: Trades feature
 FIXED: "Undefined index" errors on high error level reporting settings
 FIXED: Updated jQuery from 1.6.2 to 1.7.1
+REQUIRED: Migration from previous versions (new tables): see /sql/Migration and Legacy Scripts/ folder
 ADDED/FIXED: TBD
 
 v1.0.4 - Critical Fixes Release
