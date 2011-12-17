@@ -101,6 +101,14 @@ $(document).ready(function() {
 		else
 			$passwordBox.hide();
 	});
+	
+	$('#draft_password, #draft_password_confirm').live('blur', function() {
+		checkMatchingPasswords($('#draft_status'), $('#draft_password'), $('#draft_password_confirm'));
+	});
+
+	$('#draft_password, #draft_password_confirm').live('keyup', function(e) {
+		checkMatchingPasswords($('#draft_status'), $('#draft_password'), $('#draft_password_confirm'));
+	});
 });
 
 function checkForOtherManagers() {
@@ -209,4 +217,21 @@ function savePassword(draft_pass) {
 	});
 	
 	return result;
+}
+
+function checkMatchingPasswords($statusSelect, $password, $confirmPassword) {
+	var $visibilityError = $('#visibilityError');
+	$visibilityError.hide();
+	
+	if($statusSelect.val() == 0)
+		return;
+	
+	console.log('Password len: ' + $password.val().length + ' ; Confirm length: ' + $confirmPassword.val().length);
+	if($password.val().length > 0 && $confirmPassword.val().length > 0)
+		if($password.val() != $confirmPassword.val())
+			$visibilityError.html('Passwords entered do not match!').show();
+		else
+			$visibilityError.hide();
+	else
+		$visibilityError.hide();
 }

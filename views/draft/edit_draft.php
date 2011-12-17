@@ -12,7 +12,7 @@
 				<fieldset>
 					<legend>Edit Draft</legend>
 					<p>To change your draft's details, use the form below.</p>
-					<p class="error">NOTE: You will not be able to edit this draft's details once you begin the draft (change it's status to &quot;in progress&quot;);</p>
+					<p class="error">NOTE: You will not be able to edit this draft's details once you begin the draft (change it's status to &quot;in progress&quot;)</p>
 					<form action="draft.php?action=updateDraft" method="post">
 						<input type="hidden" name="did" value="<?php echo DRAFT_ID;?>" />
 						<p>

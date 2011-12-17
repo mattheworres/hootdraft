@@ -94,9 +94,9 @@
 			</select>
 			<div id="passwordBox"<?php if(!$DRAFT->isPasswordProtected()) { echo " style=\" display: none;\""; }?>>
 				<label for="draft_password">Draft Password:</label>
-				<input type="text" id="draft_password" value="<?php echo $DRAFT->Password; ?>" /><br/>
+				<input type="text" id="draft_password" value="<?php echo $DRAFT->draft_password; ?>" /><br/>
 				<label for="draft_password_confirm">Confirm Password:</label>
-				<input type="text" id="draft_password_confirm" value="<?php echo $DRAFT->Password; ?>" /><br/>
+				<input type="text" id="draft_password_confirm" value="<?php echo $DRAFT->draft_password; ?>" /><br/>
 			</div>
 			<p id="visibilityError" class="errorDescription error"></p>
 		</div>
