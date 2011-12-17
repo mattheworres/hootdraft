@@ -214,26 +214,19 @@ switch(ACTION) {
 		
 		define("PAGE_HEADER", "Pick Edited Successfully");
 		define("P_CLASS", "success");
-		define("PAGE_CONTENT", "Pick #" . $EDIT_PLAYER->player_pick . " " . $EDIT_PLAYER->casualName() .  " was successfully edited.<br/><br/><a href=\"draft_room.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to the main draft room, or <a href=\"draft_room.php?action=selectPickToEdit&did=" . DRAFT_ID . "\">click here</a> to go back to edit another draft pick.");
+		define("PAGE_CONTENT", "Pick #" . $EDIT_PLAYER->player_pick . " " . $EDIT_PLAYER->casualName() .  " was successfully edited.<br/><br/><a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to the main draft page, or <a href=\"draft_room.php?action=selectPickToEdit&did=" . DRAFT_ID . "\">click here</a> to go back to edit another draft pick.");
 		require_once("views/shared/generic_result_view.php");
 		// </editor-fold>
 		break;
 	
 	case 'home':
 	default:
-		// <editor-fold defaultstate="collapsed" desc="Index Logic">
-		$LAST_TEN_PICKS = player_object::getLastTenPicks(DRAFT_ID);
-		$DRAFT->setupSport();
-		
-		if($LAST_TEN_PICKS === false) {
-			define("PAGE_HEADER", "Last 10 Picks Unable to be Loaded");
-			define("P_CLASS", "error");
-			define("PAGE_CONTENT", "An error has occurred and the last 10 picks of your draft were unable to be loaded. Please try again.");
-			require_once("views/shared/generic_result_view.php");
-			exit(1);
-		}
-		
-		require("views/draft_room/index.php");
+		// <editor-fold defaultstate="collapsed" desc="Index Logic (now obsolete - shows error)">
+		define("PAGE_HEADER", "Page No Longer Exists");
+		define("P_CLASS", "error");
+		define("PAGE_CONTENT", "This page no longer exists - functionality from this page can now be found on <a href=\"draft.php?did=" . DRAFT_ID . "\">the draft's main page</a>.");
+		require_once("views/shared/generic_result_view.php");
+		exit(1);
 		// </editor-fold>
 		break;
 }

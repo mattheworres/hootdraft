@@ -103,12 +103,9 @@ switch(ACTION) {
 		$success = $DRAFT->updateStatus($new_status);
 
 		if($success) {
-			if($DRAFT->isInProgress())
-				$extra_message = "<br/><br/><a href=\"draft_room.php?did=" . DRAFT_ID . "\">Click here to be taken to the Draft Room - Your Draft Has Started!</a>";
-
 			define("PAGE_HEADER", "Draft Status Updated");
 			define("P_CLASS", "success");
-			define("PAGE_CONTENT", "Your draft's status has been successfully updated. <a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to its main page." . $extra_message);
+			define("PAGE_CONTENT", "Your draft's status has been successfully updated. <a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to its main page.");
 			require_once("views/shared/generic_result_view.php");
 			exit(0);
 		}else {
@@ -214,6 +211,19 @@ switch(ACTION) {
 		DEFINE('NUMBER_OF_MANAGERS', count($MANAGERS));
 		DEFINE('HAS_MANAGERS', NUMBER_OF_MANAGERS > 0);
 		DEFINE('LOWEST_ORDER', NUMBER_OF_MANAGERS > 0 ? $MANAGERS[NUMBER_OF_MANAGERS - 1]->draft_order : 0);
+		
+		if($DRAFT->isInProgress() || $DRAFT->isCompleted()) {
+			$DRAFT->setupSport();
+			$LAST_TEN_PICKS = player_object::getLastTenPicks(DRAFT_ID);
+			
+			if($LAST_TEN_PICKS === false) {
+				define("PAGE_HEADER", "Last 10 Picks Unable to be Loaded");
+				define("P_CLASS", "error");
+				define("PAGE_CONTENT", "An error has occurred and the last 10 picks of your draft were unable to be loaded. Please try again.");
+				require_once("views/shared/generic_result_view.php");
+				exit(1);
+			}
+		}
 
 		require_once('views/draft/index.php');
 		// </editor-fold>

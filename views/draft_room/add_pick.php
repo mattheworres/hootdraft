@@ -9,7 +9,7 @@
 	<div id="page_wrapper">
 		<?php require('includes/header.php'); ?>
 
-		<?php require('views/shared/draft_room_menu.php'); ?>
+		<?php require('views/shared/draft_menu.php'); ?>
 		<div id="content">	
 		<?php if(isset($SUCCESSES) && count($SUCCESSES) > 0) {?>
 			<?php foreach($SUCCESSES as $success) {?>

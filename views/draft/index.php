@@ -82,8 +82,36 @@
 					<?php if(!$DRAFT->isCompleted() && HAS_MANAGERS) { ?><p id="draft-status-link"><strong><a href="draft.php?action=changeStatus&did=<?php echo DRAFT_ID; ?>"><span class="phpdraft-icon ui-icon ui-icon-play"></span>Change Draft Status</a></strong></p><?php } ?>
 				</fieldset>
 				<?php
-				if($DRAFT->)
+				if($DRAFT->isInProgress() || $DRAFT->isCompleted()) {
 				?>
+				<fieldset>
+					<legend>Recent Picks - Last 10</legend>
+					<table width="100%">
+						<tr>
+							<th width="55">Rd #</th>
+							<th width="55">Pick #</th>
+							<th>Manager</th>
+							<th>Player</th>
+							<th width="55">Pos.</th>
+							<th width="55">Team</th>
+						</tr>
+						<?php if(count($LAST_TEN_PICKS) == 0) {
+							?><td colspan="5"><h2>No picks have been made yet.</h2></td><?php
+						}else {
+							foreach($LAST_TEN_PICKS as $player) { ?>
+						<tr style="background-color:<?php echo $DRAFT->sports_colors[$player->position]; ?>;">
+							<td><?php echo $player->player_round; ?></td>
+							<td><?php echo $player->player_pick; ?></td>
+							<td><?php echo $player->manager_name; ?></td>
+							<td><?php if($player->hasName()) { echo $player->properName(); } else { echo "&nbsp;";}?></td>
+							<td><?php echo $player->position; ?></td>
+							<td><?php echo $player->team; ?></td>
+						</tr>
+							<?php }
+						}?>
+					</table>
+				</fieldset>
+				<?php } ?>
 			</div>
 			<?php require('includes/footer.php'); ?>
 			<script src="js/draft.index.js" type="text/javascript"></script>

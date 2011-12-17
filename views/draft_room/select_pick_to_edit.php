@@ -9,7 +9,7 @@
 		<div id="page_wrapper">
 			<?php require('includes/header.php');?>
 
-			<?php require('views/shared/draft_room_menu.php');?>
+			<?php require('views/shared/draft_menu.php');?>
 			<div id="content">
 				<h3>Edit a Draft Pick</h3>
 				<p class="success"><?php if(isset($msg)) echo $msg;?></p>

@@ -9,7 +9,7 @@
 	<div id="page_wrapper">
 		<?php require('includes/header.php'); ?>
 
-		<?php require('views/shared/draft_room_menu.php'); ?>
+		<?php require('views/shared/draft_menu.php'); ?>
 		<div id="content">
 			<h3><?php echo $DRAFT->draft_name; ?> - Enter Trade</h3>
 			<p>Once two managers have decided on exactly what to trade amongst themselves, this page will allow you to enter it into the draft immediately.</p>
