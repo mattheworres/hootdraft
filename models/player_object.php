@@ -449,6 +449,8 @@ class player_object {
 		if($manager_id == 0)
 			return false;
 		
+		$players = array();
+		
 		$stmt = $DBH->prepare("SELECT * FROM players WHERE manager_id = ? AND pick_time IS NOT NULL ORDER BY player_pick ASC");
 		$stmt->bindParam(1, $manager_id);
 		
