@@ -110,17 +110,20 @@ class trade_asset_object {
 		
 		$stmt = $DBH->prepare("SELECT * FROM trade_assets WHERE trade_id = ?");
 		$stmt->bindParam(1, $trade_id);
-		$stmt->setFetchMode(PDO::FETCH_CLASS);
+		$stmt->setFetchMode(PDO::FETCH_CLASS, "trade_asset_object");
 		
-		if(!$stmt->execute())
+		if(!$stmt->execute()) {
+			$error_info = $stmt->errorInfo();
 			return false;
+		}
 		
 		while($asset = $stmt->fetch()) {
 			/* @var $asset trade_asset_object */
-			if($asset->newmanager->manager_id != $manager1->manager_id || $asset->newmanager->manager_id != $manager2->manager_id)
+			//We must use the protected $newmanager_id and $oldmanager_id because we have just pulled from DB, objs aren't automatic:
+			if($asset->newmanager_id != $manager1->manager_id && $asset->newmanager_id != $manager2->manager_id)
 				return false;
 			
-			if($asset->oldmanager->manager_id != $manager1->manager_id || $asset->oldmanager->manager_id != $manager2->manager_id)
+			if($asset->oldmanager_id != $manager1->manager_id && $asset->oldmanager_id != $manager2->manager_id)
 				return false;
 			
 			//Use passed in manager_objects to prevent unneccessary SELECTs to the db:

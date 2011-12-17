@@ -92,7 +92,8 @@
 						foreach($LAST_TEN_PICKS as $player) { ?>
 					<p style="background-color: <?php echo $DRAFT->sports_colors[$player->position]; ?>;">
 						<span class="player-name"><?php echo $player->casualName(); ?></span>
-						<?php echo " (Pick #" . $player->player_pick . ", " . $player->team . " - " . $player->position . ")<br/><strong>Manager:</strong> " . $player->manager_name . "<br/>"; ?>
+						<?php echo " (Pick #" . $player->player_pick . ", " . $player->team . " - " . $player->position . ")"; ?><br/>
+						<strong>Manager:</strong> <?php echo $player->manager_name; ?><br/>
 					</p>
 					<?php } ?>
 					<?php } ?>

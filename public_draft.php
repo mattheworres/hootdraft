@@ -138,6 +138,14 @@ switch(ACTION) {
 		// </editor-fold>
 		break;
 	
+	case 'viewTrades':
+		$DRAFT_TRADES = trade_object::getDraftTrades(DRAFT_ID);
+		DEFINE("NUMBER_OF_TRADES", count($DRAFT_TRADES));
+		$DRAFT->setupSport();
+		
+		require("/views/public_draft/draft_trades.php");
+		break;
+	
 	case 'draftStats':
 		// <editor-fold defaultstate="collapsed" desc="draftStats Logic">
 		$STATS = new draft_statistics_object();
@@ -164,5 +172,4 @@ switch(ACTION) {
 		// </editor-fold>
 		break;
 }
-
 ?>

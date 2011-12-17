@@ -153,7 +153,7 @@ class trade_object {
 	 * @return array Trades for given draft, or false on error. 
 	 */
 	public function getDraftTrades($draft_id) {
-		if((int)$draft_id = 0)
+		if((int)$draft_id == 0)
 			return false;
 		
 		$trades = array();
@@ -173,7 +173,7 @@ class trade_object {
 			/* @var $trade trade_object*/
 			$trade->manager1 = new manager_object($trade->manager1_id);
 			$trade->manager2 = new manager_object($trade->manager2_id);
-			$trade->trade_assets = trade_asset_object::GetAssetsByTrade($this->trade_id, $trade->manager1, $trade->manager2);
+			$trade->trade_assets = trade_asset_object::GetAssetsByTrade($trade->trade_id, $trade->manager1, $trade->manager2);
 				
 			if($trade->manager1 == false || $trade->manager2 == false || $trade->trade_assets == false)
 				return false;
@@ -182,6 +182,29 @@ class trade_object {
 		}
 		
 		return $trades;
+	}
+	
+	/**
+	 * Used to get the portion of assets that currently belong to given manager.
+	 * Does local search on object (doesn't hit DB)
+	 * @param int $manager_id The manager to get assets for
+	 * @return array
+	 */
+	public function getTradeManagerAssets($manager_id) {
+		$manager_number = (int)$manager_id;
+		
+		if($manager_number == 0)
+			return false;
+		
+		$manager_assets = array();
+		
+		foreach($this->trade_assets as $asset) {
+			/* @var $asset trade_asset_object */
+			if($asset->newmanager->manager_id == $manager_id)
+				$manager_assets[] = $asset;
+		}
+		
+		return $manager_assets;
 	}
 	
 	/**

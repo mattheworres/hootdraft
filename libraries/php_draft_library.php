@@ -6,7 +6,6 @@
  */
 
 class php_draft_library {
-
 	public static function secondsToWords($seconds) {
 		$words = "";
 
@@ -69,6 +68,53 @@ class php_draft_library {
 	public static function getNowRefreshTime() {
 		return date("h:i:s A");
 	}
+	
+	/**
+	 * Parse a string (from getNowPhpTime) into a date object
+	 * @return php_draft_date_object $date_object
+	 */
+	public static function parseStringDate($date_string) {
+		$parsed_date = date_parse($date_string);
+		
+		$date_object = new php_draft_date_object();
+		$date_object->year = $parsed_date['year'];
+		$date_object->month = $parsed_date['month'];
+		$date_object->day = $parsed_date['day'];
+		$date_object->hour = $parsed_date['hour'];
+		$date_object->minute = $parsed_date['minute'];
+		$date_object->second = $parsed_date['second'];
+		
+		return $date_object;
+	}
+}
 
+/**
+ * Class to contain data about a parsed date
+ */
+class php_draft_date_object {
+	/**
+	 * @var int
+	 */
+	public $year;
+	/**
+	 * @var int
+	 */
+	public $month;
+	/**
+	 * @var int
+	 */
+	public $day;
+	/**
+	 * @var int
+	 */
+	public $hour;
+	/**
+	 * @var int
+	 */
+	public $minute;
+	/**
+	 * @var int
+	 */
+	public $second;
 }
 ?>
