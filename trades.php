@@ -85,7 +85,7 @@ switch(ACTION) {
 		
 		if($newTrade->saveTrade() === false) {
 			$save_errors = array();
-			$save_errors[] = "Encountered an error when saving trade. PDO Error " . $DBH->errorCode();
+			$save_errors[] = "Encountered an error when saving trade.";
 			echo json_encode($save_errors);
 			exit(1);
 		}

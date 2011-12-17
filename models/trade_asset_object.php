@@ -71,14 +71,23 @@ class trade_asset_object {
 			//TODO: implement update
 			return false;
 		}else {
-			$stmt = $DBH->prepare("INSERT INTO trade_assets (trade_id, oldmanager_id, newmanager_id, player_id, was_drafted) VALUES (?, ?, ?, ?, ?)");
-			$stmt->bindParam(1, $this->trade_id);
-			$stmt->bindParam(2, $this->oldmanager->manager_id);
-			$stmt->bindParam(3, $this->newmanager->manager_id);
-			$stmt->bindParam(4, $this->player_id);
-			$stmt->bindParam(5, $this->WasDrafted());
+			$wasDrafted = $this->WasDrafted() ? 1 : 0;
+			$mgr1 = $this->oldmanager;
+			$mgr2 = $this->newmanager;
 			
-			return $stmt->execute();
+			$stmt = $DBH->prepare("INSERT INTO trade_assets (trade_id, player_id, oldmanager_id, newmanager_id, was_drafted) VALUES (?, ?, ?, ?, ?)");
+			$stmt->bindParam(1, $this->trade_id);
+			$stmt->bindParam(2, $this->player->player_id);
+			$stmt->bindParam(3, $this->oldmanager->manager_id);
+			$stmt->bindParam(4, $this->newmanager->manager_id);
+			$stmt->bindParam(5, $wasDrafted);
+			
+			$success = $stmt->execute();
+			$error_code = "blart";
+			if(!$success)
+				$error_code = $stmt->errorInfo();
+			
+			return $success;
 		}
 	}
 	
@@ -88,9 +97,9 @@ class trade_asset_object {
 	 * @param int $trade_id
 	 * @param manager_object $manager1
 	 * @param manager_object $manager2
-	 * @return array 
+	 * @return array
 	 */
-	public function GetAssetsByTrade($trade_id, $manager1, $manager2) {
+	public function GetAssetsByTrade($trade_id, manager_object $manager1, manager_object $manager2) {
 		if((int)$trade_id == 0)
 			return false;
 		/* @var $manager1 manager_object */
