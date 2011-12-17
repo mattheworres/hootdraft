@@ -124,16 +124,28 @@ function handleAjaxError() {
 function handleFormSubmit($loadingDialog, $informationDialog) {
 	if(checkTradeValidity()){
 		$loadingDialog.dialog('open');
+		var $submitData = $('#trade_box').formSerialize();
 		$.ajax({
 			type: 'POST',
-			data: $('#trade_box').fieldSerialize(),
+			data: $submitData,
 			url: 'trades.php?action=submitTrade',
 			success: function(data) {
 				$loadingDialog.dialog('close');
 				if(data != "SUCCESS") {
-					$informationDialog.html('There was a server error with the submission. More details:<br/><br/>')
-						.append(data)
-						.dialog('open');
+					try{
+						var jsonObject = JSON.parse(data);
+						$informationDialog.html('There were issues with your submission. More details:<br/><br/>');
+						
+						$.each(jsonObject, function() {
+							$informationDialog.append(this + '<br/>');
+						});
+						
+						$informationDialog.dialog('open');
+					}catch(e) {
+						$informationDialog.html('There was a server error with the submission. More details: Error L#135')
+							.dialog('open');
+					}
+					
 					return;
 				}
 				wipeForm();

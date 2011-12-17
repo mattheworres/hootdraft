@@ -17,7 +17,7 @@ class trade_asset_object {
 	 */
 	public $trade_id;
 	/**
-	 * @var int 
+	 * @var int Used for loading from the DB
 	 */
 	protected $player_id;
 	/**
@@ -41,10 +41,9 @@ class trade_asset_object {
 	 */
 	public $newmanager;
 	/**
-	 * @var bool
+	 *@var bool Used for loading from the DB
 	 */
-	public $was_drafted;
-	// </editor-fold>
+	protected $was_drafted;
 	
 	public function __construct($trade_asset_id = 0) {
 		if((int)$trade_asset_id == 0)
@@ -72,11 +71,14 @@ class trade_asset_object {
 			//TODO: implement update
 			return false;
 		}else {
-			$stmt = $DBH->prepare("INSERT INTO trade_assets (trade_id, oldmanager_id, newmanager_id, player_id, was_drafted");
+			$stmt = $DBH->prepare("INSERT INTO trade_assets (trade_id, oldmanager_id, newmanager_id, player_id, was_drafted) VALUES (?, ?, ?, ?, ?)");
 			$stmt->bindParam(1, $this->trade_id);
 			$stmt->bindParam(2, $this->oldmanager->manager_id);
 			$stmt->bindParam(3, $this->newmanager->manager_id);
 			$stmt->bindParam(4, $this->player_id);
+			$stmt->bindParam(5, $this->WasDrafted());
+			
+			return $stmt->execute();
 		}
 	}
 	
@@ -125,6 +127,14 @@ class trade_asset_object {
 		}
 		
 		return $assets;
+	}
+	
+	/**
+	 * Whether or not the player is considered "drafted" or not.
+	 * @return bool 
+	 */
+	public function WasDrafted() {
+		return isset($this->was_drafted) && $this->was_drafted != null ? $this->was_drafted : $this->player->hasBeenSelected();
 	}
 }
 ?>

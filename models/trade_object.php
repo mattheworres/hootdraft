@@ -105,6 +105,7 @@ class trade_object {
 			//Save all of the assets
 			foreach($this->trade_assets as $asset) {
 				/* @var $asset trade_asset_object */
+				$asset->trade_id = $this->trade_id;
 				if(!$asset->saveAsset())
 					return false;
 			}
@@ -212,6 +213,9 @@ class trade_object {
 	private static function BuildTradeAssets(array $manager1AssetIds, array $manager2AssetIds, manager_object $manager1, manager_object $manager2) {
 		$tradeAssets = array();
 		
+		if($manager1 == null || $manager2 == null)
+			return false;
+		
 		foreach($manager1AssetIds as $playerId) {
 			$playerId = (int)$playerId;
 			
@@ -220,7 +224,7 @@ class trade_object {
 			
 			$newAsset = new trade_asset_object();
 			$newAsset->oldmanager = $manager1;
-			$newAsset->newManager = $manager2;
+			$newAsset->newmanager = $manager2;
 			$newAsset->player = new player_object($playerId);
 			
 			if(!isset($newAsset->player) || $newAsset->player == false) {
@@ -238,7 +242,7 @@ class trade_object {
 			
 			$newAsset = new trade_asset_object();
 			$newAsset->oldmanager = $manager2;
-			$newAsset->newManager = $manager1;
+			$newAsset->newmanager = $manager1;
 			$newAsset->player = new player_object($playerId);
 			
 			if(!isset($newAsset->player) || $newAsset->player == false) {
@@ -277,14 +281,20 @@ class trade_object {
 		
 		foreach($this->trade_assets as $asset) {
 			/* @var $asset trade_asset_object */
-			if($asset->oldmanager->manager_id == $this->manager1_id) {
-				if(!in_array($asset->player, $manager1_current_assets))
-					$this->ownership_errors[] = "Pick #" . $asset->player->player_pick . " is not owned by first manager.";
-			}else if($asset->oldmanager->manager_id == $this->manager2_id) {
-				if(!in_array($asset->player, $manager2_current_assets))
-					$this->ownership_errors[] = "Pick #" . $asset->player->player_pick . " is not owned by the second manager.";
-			}else {
-				$this->ownership_errors[] = "Pick #" . $asset->palyer->player_pick . " is not owned by either of the managers.";
+			switch($asset->oldmanager->manager_id) {
+				case $this->manager1->manager_id:
+					if(!in_array($asset->player, $manager1_current_assets))
+						$this->ownership_errors[] = "Pick #" . $asset->player->player_pick . " is not owned by first manager.";
+					break;
+				
+				case $this->manager2->manager_id:
+					if(!in_array($asset->player, $manager2_current_assets))
+						$this->ownership_errors[] = "Pick #" . $asset->player->player_pick . " is not owned by the second manager.";
+					break;
+				
+				default:
+					$this->ownership_errors[] = "Pick #" . $asset->player->player_pick . " is not owned by either of the managers.";
+					break;
 			}
 		}
 		
@@ -301,11 +311,14 @@ class trade_object {
 		
 		foreach($this->trade_assets as $asset) {
 			/* @var $asset trade_asset_object */
+			if($asset->newmanager == null)
+				return false;
+			
 			switch($asset->newmanager->manager_id) {
-				case $this->manager1_id:
+				case $this->manager1->manager_id:
 					$manager1_has_one = true;
 					break;
-				case $this->manager2_id:
+				case $this->manager2->manager_id:
 					$manager2_has_one = true;
 					break;
 			}

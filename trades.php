@@ -62,6 +62,7 @@ switch(ACTION) {
 		break;
 		
 	case 'submitTrade':
+		global $DBH; /* @var $DBH PDO */
 		$manager1_id = isset($_POST['manager1']) ? (int)$_POST['manager1'] : 0;
 		$manager2_id = isset($_POST['manager2']) ? (int)$_POST['manager2'] : 0;
 		$manager1_assets = isset($_POST['manager1assets']) ? $_POST['manager1assets'] : array();
@@ -83,7 +84,9 @@ switch(ACTION) {
 		}
 		
 		if($newTrade->saveTrade() === false) {
-			echo "Failure saving trade object, please try again.";
+			$save_errors = array();
+			$save_errors[] = "Encountered an error when saving trade. PDO Error " . $DBH->errorCode();
+			echo json_encode($save_errors);
 			exit(1);
 		}
 		

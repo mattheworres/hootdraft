@@ -15,11 +15,11 @@
 			<p>Once two managers have decided on exactly what to trade amongst themselves, this page will allow you to enter it into the draft immediately.</p>
 			<p><strong>Note:</strong> Each manager must receive at least one asset in return.</p>
 			<p><strong>To get started, choose the managers involved in this trade:</strong></p>
-			<div id="trade_box">
-				<input type="hidden" id="did" value="<?php echo DRAFT_ID; ?>" />
+			<form id="trade_box">
+				<input type="hidden" id="did" name="did" value="<?php echo DRAFT_ID; ?>" />
 				<div class="manager_1">
 					<h4>Manager One</h4><br/>
-					<select id="manager1" class="manager_select" data-manager-id="1">
+					<select id="manager1" name="manager1" class="manager_select" data-manager-id="1">
 						<option>(choose a manager)</option>
 						<?php foreach($MANAGERS as $manager) {/*@var $manager manager_object */ ?>
 						<option value="<?PHP echo $manager->manager_id; ?>"><?php echo $manager->manager_name; ?></option>
@@ -29,7 +29,7 @@
 				</div>
 				<div class="manager_2">
 					<h4>Manager Two</h4><br/>
-					<select id="manager2" class="manager_select" data-manager-id="2">
+					<select id="manager2" name="manager2" class="manager_select" data-manager-id="2">
 						<option>(choose a manager)</option>
 						<?php foreach($MANAGERS as $manager) {/*@var $manager manager_object */ ?>
 						<option value="<?PHP echo $manager->manager_id; ?>"><?php echo $manager->manager_name; ?></option>
@@ -37,7 +37,7 @@
 					</select>
 					<div id="manager2Players" class="managerPlayers"></div>
 				</div>
-			</div>
+			</form>
 			<div class="button_box">
 				<input type="button" id="submit" value="Enter Trade" disabled="disabled" />
 			</div>
@@ -45,6 +45,7 @@
 		</div>
 		<?php require('includes/footer.php'); ?>
 		<script src="js/jquery.form.js" type="text/javascript"></script>
+		<script src="js/json.parse.min.js" type="text/javascript"></script>
 		<script src="js/draft.trades.js" type="text/javascript"></script>
 	</div>
 	</body>
