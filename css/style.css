@@ -343,3 +343,9 @@ span.player-name {
 	font-weight: bold;
 	font-size: 15px;
 }
+
+.phpdraft-icon {
+	display: inline-block !important;
+	vertical-align: middle !important;
+	margin-right: 2px !important;
+}

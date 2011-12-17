@@ -13,10 +13,11 @@
 		<h3><?php echo $DRAFT->draft_name; ?></h3>
 		<fieldset>
 			<legend>Draft Room Functions</legend>
-			<h3><a href="draft_room.php?action=addScreen&did=<?php echo DRAFT_ID; ?>"><img src="images/icons/add.png" alt="Add Pick" border="0" />&nbsp;Make a Pick</a></h3><br />
-			<h3><a href="draft_room.php?action=selectPickToEdit&did=<?php echo DRAFT_ID; ?>"><img src="images/icons/edit.png" alt="Edit Pick" border="0" />&nbsp;Edit a Pick</a></h3><br />
-			<h3><a href="draft.php?did=<?php echo DRAFT_ID; ?>"><img src="images/icons/back_blue.png" alt="Back to Manage Page" border="0" />&nbsp;Back to Manage Page</a></h3><br />
-			<h3><a href="public_draft.php?action=draftBoard&did=<?php echo DRAFT_ID; ?>"><img src="images/icons/draft_board.png" alt="View Public Draft Board" border="0" />&nbsp;View Public Draft Board</a></h3>
+			<h4><a href="draft_room.php?action=addScreen&did=<?php echo DRAFT_ID; ?>"><span class="phpdraft-icon ui-icon ui-icon-plusthick"></span>&nbsp;Make a Pick</a></h4><br />
+			<h4><a href="draft_room.php?action=selectPickToEdit&did=<?php echo DRAFT_ID; ?>"><span class="phpdraft-icon ui-icon ui-icon-pencil"></span>&nbsp;Edit a Pick</a></h4><br />
+			<h4><a href="trades.php?did=<?php echo DRAFT_ID; ?>"><span class="phpdraft-icon ui-icon ui-icon-transferthick-e-w"></span>&nbsp;Enter a Trade</a></h4><br />
+			<h4><a href="draft.php?did=<?php echo DRAFT_ID; ?>"><span class="phpdraft-icon ui-icon ui-icon-arrowreturnthick-1-w"></span>&nbsp;Back to Manage Page</a></h4><br />
+			<h4><a href="public_draft.php?action=draftBoard&did=<?php echo DRAFT_ID; ?>"><span class="phpdraft-icon ui-icon ui-icon-calculator"></span>&nbsp;View Public Draft Board</a></h4>
 		</fieldset>
 		<fieldset>
 			<legend>Recent Picks - Last 10</legend>
