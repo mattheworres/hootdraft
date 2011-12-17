@@ -51,6 +51,7 @@ switch(ACTION) {
 	case 'addScreen':
 		// <editor-fold defaultstate="collapsed" desc="addScreen Logic">
 		$CURRENT_PICK = $DRAFT->getCurrentPick();
+		$CURRENT_PICK_MANAGER = new manager_object($CURRENT_PICK->manager_id);
 		
 		$NEXT_FIVE_PICKS = $DRAFT->getNextFivePicks();
 		$LAST_FIVE_PICKS = $DRAFT->getLastFivePicks();
@@ -133,6 +134,7 @@ switch(ACTION) {
 		$LAST_FIVE_PICKS = $DRAFT->getLastFivePicks();
 		unset($CURRENT_PICK);
 		$CURRENT_PICK = $DRAFT->getCurrentPick();
+		$CURRENT_PICK_MANAGER = new manager_object($CURRENT_PICK->manager_id);
 		
 		$SUCCESSES[] = "<em>" . $submitted_pick->casualName() . "</em> was successfully drafted with the #" . $submitted_pick->player_pick . " selection.";
 		require_once("views/draft_room/add_pick.php");
@@ -167,6 +169,7 @@ switch(ACTION) {
 	case 'editScreen':
 		// <editor-fold defaultstate="collapsed" desc="editScreen Logic">
 		$EDIT_PLAYER = new player_object(PLAYER_ID);
+		$EDIT_PLAYER_MANAGER = new manager_object($EDIT_PLAYER->manager_id);
 		
 		if($EDIT_PLAYER === false || PLAYER_ID == 0 || !$EDIT_PLAYER->hasBeenSelected() || !$EDIT_PLAYER->pickExists()) {
 			define("PAGE_HEADER", "Player Unable to be Edited");
