@@ -70,51 +70,12 @@ class php_draft_library {
 	}
 	
 	/**
-	 * Parse a string (from getNowPhpTime) into a date object
-	 * @return php_draft_date_object $date_object
+	 * Format a date from a string stored in the DB in a readable way.
+	 * @param type $date_string 
 	 */
-	public static function parseStringDate($date_string) {
-		$parsed_date = date_parse($date_string);
-		
-		$date_object = new php_draft_date_object();
-		$date_object->year = $parsed_date['year'];
-		$date_object->month = $parsed_date['month'];
-		$date_object->day = $parsed_date['day'];
-		$date_object->hour = $parsed_date['hour'];
-		$date_object->minute = $parsed_date['minute'];
-		$date_object->second = $parsed_date['second'];
-		
-		return $date_object;
+	public static function parseObjectDate($date_string) {
+		$time = strtotime($date_string);
+		return date("M j Y \a\\t g:i a", $time);
 	}
-}
-
-/**
- * Class to contain data about a parsed date
- */
-class php_draft_date_object {
-	/**
-	 * @var int
-	 */
-	public $year;
-	/**
-	 * @var int
-	 */
-	public $month;
-	/**
-	 * @var int
-	 */
-	public $day;
-	/**
-	 * @var int
-	 */
-	public $hour;
-	/**
-	 * @var int
-	 */
-	public $minute;
-	/**
-	 * @var int
-	 */
-	public $second;
 }
 ?>

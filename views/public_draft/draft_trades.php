@@ -18,12 +18,12 @@
 				<h2>No trades have been made yet.</h2>
 				<?php } else { 
 					foreach($DRAFT_TRADES as $trade) {/* @var $trade trade_object */
-						$trade_date = php_draft_library::parseStringDate($trade->trade_time);
+						$trade_date = php_draft_library::parseObjectDate($trade->trade_time);
 						$manager1_assets = $trade->getTradeManagerAssets($trade->manager1->manager_id);
 						$manager2_assets = $trade->getTradeManagerAssets($trade->manager2->manager_id);
 					?>
 				<fieldset>
-					<legend><?php echo $trade->manager1->manager_name; ?> and <?php echo $trade->manager2->manager_name; ?> (<?php echo $trade_date->month; ?>-<?php echo $trade_date->day; ?>-<?php echo $trade_date->year; ?> @ <?php echo $trade_date->hour; ?>:<?php echo $trade_date->minute; ?>) </legend>
+					<legend><?php echo $trade->manager1->manager_name; ?> and <?php echo $trade->manager2->manager_name; ?> (<?php echo $trade_date; ?>) </legend>
 					<div class="trade-details">
 						<div class="manager-details manager1-assets">
 							<h3><?php echo $trade->manager1->manager_name; ?> received:</h3>
