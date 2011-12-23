@@ -143,7 +143,7 @@ switch(ACTION) {
 		DEFINE("NUMBER_OF_TRADES", count($DRAFT_TRADES));
 		$DRAFT->setupSport();
 		
-		require("/views/public_draft/draft_trades.php");
+		require("views/public_draft/draft_trades.php");
 		break;
 	
 	case 'draftStats':
