@@ -130,7 +130,6 @@ class trade_asset_object {
 			$asset->player = new player_object($asset->player_id);
 			$asset->newmanager = $asset->newmanager_id == $manager1->manager_id ? $manager1 : $manager2;
 			$asset->oldmanager = $asset->oldmanager_id == $manager1->manager_id ? $manager1 : $manager2;
-			$asset->was_drafted = $asset->player->hasBeenSelected();
 			
 			if($asset->player == false || $asset->newmanager == false || $asset->oldmanager == false)
 				return false;
@@ -146,7 +145,7 @@ class trade_asset_object {
 	 * @return bool 
 	 */
 	public function WasDrafted() {
-		return isset($this->was_drafted) && $this->was_drafted != null ? $this->was_drafted : $this->player->hasBeenSelected();
+		return $this->was_drafted != null ? (bool)$this->was_drafted : $this->player->hasBeenSelected();
 	}
 }
 ?>
