@@ -105,6 +105,108 @@ switch(ACTION) {
 		require_once("views/shared/generic_result_view.php");
 		// </editor-fold>
 		break;
+		
+	case 'updateProPlayers':
+		require_once("views/control_panel/update_pro_players.php");
+		exit(0);
+		break;
+	
+	case 'uploadProPlayers':
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+		header('Content-type: application/json');
+		
+		if(!isset($_POST['sport'])) {
+			$obj = array();
+			$obj["Success"] = "false";
+			$obj["Message"] = "Must provide a sport.";
+			echo json_encode($obj);
+			exit(1);
+		}
+			
+		$sport = $_POST['sport'];
+		
+		if($sport != "NFL" && $sport != "MLB" && $sport != "NHL" && $sport != "NBA") {
+			$obj = array();
+			$obj["Success"] = "false";
+			$obj["Message"] = "Invalid value for sport.";
+			echo json_encode($obj);
+			exit(1);
+		}
+		
+		if(!isset($_FILES['csv_file'])) {
+			$obj = array();
+			$obj["Success"] = "false";
+			$obj["Message"] = "Must upload a CSV file";
+			echo json_encode($obj);
+			exit(1);
+		}
+		
+		if($_FILES['csv_file']['error'] > 0) {
+			$obj = array();
+			$obj["Success"] = "false";
+			$obj["Message"] = "Upload error - " . $_FILES['csv_file']['error'];
+			echo json_encode($obj);
+			exit(1);
+		}
+		
+		$extension = $ext = strtolower(end(explode('.', $_FILES['csv_file']['name'])));
+		
+		if($extension != "csv") {
+			$obj = array();
+			$obj["Success"] = "false";
+			$obj["Message"] = "File uploaded must be a CSV!";
+			echo json_encode($obj);
+			exit(1);
+		}
+		
+		$tempName = $_FILES['csv_file']['tmp_name'];
+		$players = array();
+		
+		if(($handle = fopen($tempName, 'r')) !== FALSE) {
+			set_time_limit(0);
+			
+			while(($data = fgetcsv($handle, 1000, ';')) !== FALSE) {
+				if($data[0] == "Player")
+					continue;
+				
+				$new_player = new pro_player_object();
+				$new_player->league = $sport;
+				$name_column = explode(",", $data[0]);
+				if(count($name_column) == 2) {
+					$new_player->last_name = trim($name_column[0]);
+					$new_player->first_name = trim($name_column[1]);
+				}
+				$new_player->position = trim($data[1]);
+				$new_player->team = trim($data[2]);
+
+				$players[] = $new_player;
+			}
+			
+			fclose($handle);
+			
+			if(!pro_player_object::savePlayers($sport, $players)) {
+				$obj = array();
+				$obj["Success"] = "false";
+				$obj["Message"] = "Error encountered when updating new players to database.";
+				echo json_encode($obj);
+				exit(1);
+			}
+			
+			$obj = array();
+			$obj["Success"] = "true";
+			$obj["Message"] = "";
+			echo json_encode($obj);
+			exit(0);
+		} else {
+			$obj = array();
+			$obj["Success"] = "false";
+			$obj["Message"] = "Files permission issue: unable to open CSV on server.";
+			echo json_encode($obj);
+			exit(1);
+		}
+		
+		break;
 
 	case '':
 	case 'home':

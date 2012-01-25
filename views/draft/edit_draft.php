@@ -22,9 +22,10 @@
 						<p>
 							<label for="draft_sport">Draft Sport*:</label>
 							<select name="draft_sport">
-								<option value="football"<?php echo $DRAFT->draft_sport == "football" ? " selected" : "";?>>Football</option>
-								<option value="baseball"<?php echo $DRAFT->draft_sport == "baseball" ? " selected" : "";?>>Baseball</option>
-								<option value="hockey"<?php echo $DRAFT->draft_sport == "hockey" ? " selected" : "";?>>Hockey</option>
+								<option value="NFL"<?php echo $DRAFT->draft_sport == "NFL" ? " selected" : "";?>>Football (NFL)</option>
+								<option value="MLB"<?php echo $DRAFT->draft_sport == "MLB" ? " selected" : "";?>>Baseball (MLB)</option>
+								<option value="NHL"<?php echo $DRAFT->draft_sport == "NHL" ? " selected" : "";?>>Hockey (NHL)</option>
+								<option value="NBA"<?php echo $DRAFT->draft_sport == "NBA" ? " selected" : "";?>>Basketball (NBA)</option>
 							</select>
 						</p>
 						<p>

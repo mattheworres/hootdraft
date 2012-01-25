@@ -54,7 +54,9 @@ class sports_values_library {
 			"light_purple" => "#CCCCFF",
 			"light_green" => "#CCFFCC",
 			"light_pink" => "#FFCCFF",
-			"taupe" => "#99CCCC"
+			"seafoam" => "#99CCCC",
+			"switchgrass" => "#DAFF7F",
+			"gray" => "#99CCCC"
 		);
 
 		// <editor-fold defaultstate="collapsed" desc="Position Colors">
@@ -72,6 +74,10 @@ class sports_values_library {
 			"TE" => $this->colors['light_red'], //LT RED
 			"DEF" => $this->colors['dark_green'], //DK GREEN
 			"K" => $this->colors['light_purple'], //LT PURPLE		*
+			"DL" => $this->colors['light_green'],
+			"LB" => $this->colors['light_pink'],
+			"DB" => $this->colors['seafoam'],
+			"OL" => $this->colors['switchgrass'],
 			//Baseball/MLB
 			//CATCHER ALREADY DONE: LT BLUE
 			"1B" => $this->colors['light_orange'], //LT ORANGE
@@ -81,7 +87,7 @@ class sports_values_library {
 			"OF" => $this->colors['light_green'], //LT GREEN		*
 			"UTIL" => $this->colors['light_pink'], //LT PINK		*
 			"SP" => $this->colors['light_purple'], //LT PURPLE
-			"RP" => $this->colors['taupe'], //TAUPE?				*
+			"RP" => $this->colors['seafoam'], //SEAFOAM				*
 			//Basketball/NBA
 			"PG" => $this->colors['light_orange'], //LT ORANGE
 			"SH" => $this->colors['dark_green'], //DK GREEN
@@ -99,7 +105,7 @@ class sports_values_library {
 			"CAR" => "Carolina Hurricanes",
 			"CHI" => "Chicago Blackhawks",
 			"COL" => "Colorado Avalanche",
-			"CBS" => "Columbus Bluejackets",
+			"CBS" => "Columbus Blue Jackets",
 			"DAL" => "Dallas Stars",
 			"DET" => "Detroit Red Wings",
 			"EDM" => "Edmonton Oilers",
@@ -140,7 +146,7 @@ class sports_values_library {
 			"BUF" => "Buffalo Bills",
 			"CAR" => "Carolina Panthers",
 			"CHI" => "Chicago Bears",
-			"CIN" => "Cincinatti Bengals",
+			"CIN" => "Cincinnati Bengals",
 			"CLE" => "Cleveland Browns",
 			"DAL" => "Dallas Cowboys",
 			"DEN" => "Denver Broncos",
@@ -162,7 +168,7 @@ class sports_values_library {
 			"SDG" => "San Diego Chargers",
 			"SFO" => "San Francisco 49ers",
 			"SEA" => "Seattle Seahawks",
-			"STL" => "St Louis Rams",
+			"STL" => "St. Louis Rams",
 			"TAM" => "Tampa Bay Buccaneers",
 			"TEN" => "Tennessee Titans",
 			"WAS" => "Washington Redskins"
@@ -175,10 +181,10 @@ class sports_values_library {
 			"TE" => "Tight End",
 			"DEF" => "Defense",
 			"K" => "Kicker"
-			/* "DL" => "Defensive Lineman",
-			  "LB" => "Linebacker",
-			  "DB" => "Defensive Back",
-			  "OL" => "Offensive Lineman" */
+//			"DL" => "Defensive Lineman",
+//			"LB" => "Linebacker",
+//			"DB" => "Defensive Back",
+//			"OL" => "Offensive Lineman" 
 		);
 		// </editor-fold>
 		// <editor-fold defaultstate="collapsed" desc="MLB Teams Positions">
@@ -186,18 +192,18 @@ class sports_values_library {
 			"ARI" => "Arizona Diamondbacks",
 			"ATL" => "Atlanta Braves",
 			"BAL" => "Baltimore Orioles",
-			"BOS" => "Boston Redsox",
+			"BOS" => "Boston Red Sox",
 			"CHC" => "Chicago Cubs",
 			"CWS" => "Chicago White Sox",
-			"CIN" => "Cincinatti Reds",
+			"CIN" => "Cincinnati Reds",
 			"CLE" => "Cleveland Indians",
 			"COL" => "Colorado Rockies",
 			"DET" => "Detroit Tigers",
-			"FLA" => "Florida Marlins",
 			"HOU" => "Houston Astros",
 			"K.C" => "Kansas City Royals",
 			"LAA" => "Los Angeles Angels",
 			"LAD" => "Los Angeles Dodgers",
+			"MIA" => "Miami Marlins",
 			"MIL" => "Milwaukee Brewers",
 			"MIN" => "Minnesota Twins",
 			"NYM" => "New York Mets",
@@ -211,7 +217,7 @@ class sports_values_library {
 			"STL" => "St Louis Cardinals",
 			"TAM" => "Tampa Bay Rays",
 			"TEX" => "Texas Rangers",
-			"TOR" => "Toronto Bluejays",
+			"TOR" => "Toronto Blue Jays",
 			"WAS" => "Washington Nationals"
 		);
 
@@ -236,6 +242,7 @@ class sports_values_library {
 			"CLE" => "Cleveland Cavaliers",
 			"DAL" => "Dallas Mavericks",
 			"DEN" => "Denver Nuggets",
+			"DET" => "Detroit Pistons",
 			"GSW" => "Golden State Warriors",
 			"HOU" => "Houston Rockets",
 			"IND" => "Indiana Pacers",
@@ -244,9 +251,9 @@ class sports_values_library {
 			"MIL" => "Milwaukee Bucks",
 			"NJN" => "New Jersey Nets",
 			"NYK" => "New York Knicks",
-			"PHI" => "Philadelphia Sixers",
+			"PHI" => "Philadelphia 76ers",
 			"PHO" => "Phoenix Suns",
-			"POR" => "Portland Blazers",
+			"POR" => "Portland Trail Blazers",
 			"SAC" => "Sacramento Kings",
 			"SAS" => "San Antonio Spurs",
 			"OKC" => "Oklahoma City Thunder",
@@ -254,7 +261,7 @@ class sports_values_library {
 			"WAS" => "Washington Wizards",
 			"NOR" => "New Orleans Hornets",
 			"MIA" => "Miami Heat",
-			"MIN" => "Minnesota Wolves",
+			"MIN" => "Minnesota Timberwolves",
 			"ORL" => "Orlando Magic",
 			"TOR" => "Toronto Raptors",
 			"MEM" => "Memphis Grizzlies"
@@ -262,7 +269,7 @@ class sports_values_library {
 
 		$this->nba_positions = array(
 			"PG" => "Point Guard",
-			"SH" => "Shooting Guard",
+			"SG" => "Shooting Guard",
 			"SF" => "Small Forward",
 			"PF" => "Power Forward",
 			"C" => "Center"

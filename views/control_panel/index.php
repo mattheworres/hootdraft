@@ -16,6 +16,7 @@
 					<legend>Commissioner Functions</legend>
 					<p><strong><a href="control_panel.php?action=createDraft"><span class="phpdraft-icon ui-icon ui-icon-plusthick"></span>Create a New Draft</a></strong> - Create a brand new draft from scratch, and then add managers to that draft afterwards</p>
 					<p><strong><a href="control_panel.php?action=manageProfile"><span class="phpdraft-icon ui-icon ui-icon-person"></span>Update Your User Profile</a></strong> - Change your login, password and name here for PHPDraft</p>
+					<p><strong><a href="control_panel.php?action=updateProPlayers"><span class="phpdraft-icon ui-icon ui-icon-wrench"></span>Update Pro Players Database</a></strong> - Update the database for commissioner autocomplete containing pro player names</p>
 				</fieldset>
 
 				<fieldset>

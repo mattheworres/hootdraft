@@ -125,3 +125,20 @@ CREATE TABLE IF NOT EXISTS `trade_assets` (
 `was_drafted` TINYINT( 1 ) NOT NULL COMMENT 'Boolean whether the asset was a drafted player or not at the time of trade',
 INDEX ( `trade_id` , `player_id` , `oldmanager_id` , `newmanager_id` )
 ) ENGINE = MYISAM DEFAULT CHARSET=latin1 COMMENT = 'Table that tracks the assets that exchanged hands in a trade.' AUTO_INCREMENT=1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pro_players`
+--
+CREATE TABLE IF NOT EXISTS `pro_players` (
+  `pro_player_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique ID of the player',
+  `league` text NOT NULL COMMENT 'Three character abbreviation of league player belongs to.',
+  `first_name` text NOT NULL COMMENT 'First name of the player',
+  `last_name` text NOT NULL COMMENT 'Last name of the player',
+  `position` text NOT NULL COMMENT 'Abbreviation of the position the player plays',
+  `team` text NOT NULL COMMENT 'Abbreviation of the city of the team the player plays for',
+  PRIMARY KEY (`pro_player_id`),
+  KEY `league_idx` (`league`(4)),
+  FULLTEXT KEY `firstname_idx` (`first_name`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Pro players used for auto-complete for pick entry' AUTO_INCREMENT=1 ;

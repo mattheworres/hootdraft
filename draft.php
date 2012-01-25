@@ -203,6 +203,25 @@ switch(ACTION) {
 		}
 		// </editor-fold>
 		break;
+		
+	case 'searchProPlayers':
+		$league = trim($_GET['league']);
+		
+		$first = trim($_GET['first']);
+		$last = trim($_GET['last']);
+		$team = trim($_GET['team']);
+		$position = trim($_GET['position']);
+		
+		$first = strlen($first) == 0 ? "NA" : $first;
+		$last = strlen($last) == 0 ? "NA" : $last;
+		$team = strlen($team) == 0 ? "NA" : $team;
+		$position = strlen($position) == 0 ? "NA" : $position;
+		
+		$players = pro_player_object::SearchPlayers($league, $first, $last, $team, $position);
+		
+		echo json_encode($players);
+		exit(0);
+		break;
 
 	default:
 		// <editor-fold defaultstate="collapsed" desc="Main Draft Page Logic">
