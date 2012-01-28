@@ -6,26 +6,15 @@
  * Managers have many players (picks), and belong to a single draft.
  */
 class manager_object {
-
-	/**
-	 * @var int $manager_id The unique identifier for this manager
-	 */
+	/** @var int $manager_id The unique identifier for this manager */
 	public $manager_id;
-	/**
-	 * @var int $draft_id Foreign key to the draft this manager belongs to
-	 */
+	/** @var int $draft_id Foreign key to the draft this manager belongs to */
 	public $draft_id;
-	/**
-	 * @var string $manager_name Textual display name for each manager
-	 */
+	/** @var string $manager_name Textual display name for each manager */
 	public $manager_name;
-	/**
-	 * @var string $manager_email Email address of manager
-	 */
+	/** @var string $manager_email Email address of manager */
 	public $manager_email;
-	/**
-	 * @var int $draft_order The order in which the manager makes a pick in the draft.
-	 */
+	/** @var int $draft_order The order in which the manager makes a pick in the draft. */
 	public $draft_order;
 
 	public function __construct($manager_id = 0) {
@@ -246,6 +235,12 @@ class manager_object {
 		return (int)$row['draft_order'];
 	}
 
+	/**
+	 * Delete this manager, ensuring draft is not in
+	 * progress or completed (use static deleteManagersByDraft() instead
+	 * if deleting a draft)
+	 * @return boolean Success
+	 */
 	public function deleteManager() {
 		$draft = new draft_object($this->draft_id);
 
@@ -267,6 +262,11 @@ class manager_object {
 		return $success;
 	}
 	
+	/**
+	 * Delete all managers associated with a single draft.
+	 * @param int $draft_id
+	 * @return boolean 
+	 */
 	public static function deleteManagersByDraft($draft_id) {
 		$draft_id = (int)$draft_id;
 

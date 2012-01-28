@@ -6,64 +6,34 @@
  * A draft has many managers, and managers have many players (picks).
  */
 class draft_object {
-	// <editor-fold defaultstate="collapsed" desc="Properties">
-	/**
-	 * @var int $draft_id The unique identifier for this draft
-	 */
+	/** @var int $draft_id The unique identifier for this draft */
 	public $draft_id;
-	/**
-	 * @var string $draft_name The string identifier for this draft 
-	 */
+	/** @var string $draft_name The string identifier for this draft */
 	public $draft_name;
-	/**
-	 * @var string $draft_sport 
-	 */
+	/** @var string $draft_sport */
 	public $draft_sport;
-	/**
-	 * @var string $draft_status The description of the status is in 
-	 */
+	/** @var string $draft_status The description of the status is in */
 	public $draft_status;
-	/**
-	 * @var string $draft_style Either 'serpentine' or 'standard' 
-	 */
+	/** @var string $draft_style Either 'serpentine' or 'standard' */
 	public $draft_style;
-	/**
-	 * @var int $draft_rounds Number of rounds draft will have in total 
-	 */
+	/** @var int $draft_rounds Number of rounds draft will have in total */
 	public $draft_rounds;
-	/**
-	 * @var string $draft_password Determines draft visibility 
-	 */
+	/** @var string $draft_password Determines draft visibility */
 	public $draft_password;
-	/**
-	 * @var string $draft_start_time datetime of when the draft was put into "started" status 
-	 */
+	/** @var string $draft_start_time datetime of when the draft was put into "started" status */
 	public $draft_start_time;
-	/**
-	 * @var string $draft_end_time datetime of when the draft was put into "completed" status 
-	 */
+	/** @var string $draft_end_time datetime of when the draft was put into "completed" status */
 	public $draft_end_time;
-	/**
-	 * @var int $draft_current_round 
-	 */
+	/** @var int $draft_current_round */
 	public $draft_current_round;
-	/**
-	 * @var int $draft_current_pick 
-	 */
+	/** @var int $draft_current_pick */
 	public $draft_current_pick;
-	/**
-	 * @var array $sports_teams An array of all of the teams in the pro sport. Capitalized abbreviation is key, full name is value. 
-	 */
+	/** @var array $sports_teams An array of all of the teams in the pro sport. Capitalized abbreviation is key, full name is value. */
 	public $sports_teams;
-	/**
-	 * @var array $sports_positions An array of all the positions in the pro sport. Capitalized abbreviation is key, full name is value. 
-	 */
+	/** @var array $sports_positions An array of all the positions in the pro sport. Capitalized abbreviation is key, full name is value. */
 	public $sports_positions;
-	/**
-	 * @var array $sports_colors An array of all the colors used for each position in the draft. Capitalized position abbreviation is key, hex color string is value (with # prepended) 
-	 */
+	/** @var array $sports_colors An array of all the colors used for each position in the draft. Capitalized position abbreviation is key, hex color string is value (with # prepended) */
 	public $sports_colors;
-	// </editor-fold>
 
 	public function __construct($id = 0) {
 		global $DBH; /* @var $DBH PDO */
@@ -204,6 +174,11 @@ class draft_object {
 		}
 	}
 	
+	/**
+	 * Shifts all draft counters forward to the next pick
+	 * @param player_object $next_pick
+	 * @return boolean Success
+	 */
 	public function moveDraftForward($next_pick) {
 		global $DBH; /* @var $DBH PDO */
 		if($next_pick !== false) {
@@ -231,6 +206,11 @@ class draft_object {
 		}
 	}
 
+	/**
+	 * Move the draft into drafting or undrafted status
+	 * @param string $new_status
+	 * @return boolean Success
+	 */
 	public function updateStatus($new_status) {
 		if($this->isCompleted())
 			return false;
@@ -253,6 +233,8 @@ class draft_object {
 		if(!$saveSuccess)
 			return false;
 
+		//Were either going from UNDRAFTED to IN PROGRESS, or vice versa, cannot move
+		//out of "COMPLETED", so either way we want to wipe clean any players.
 		$deleteCurrentSuccess = player_object::deletePlayersByDraft($this->draft_id);
 
 		if($deleteCurrentSuccess === false)
@@ -306,6 +288,10 @@ class draft_object {
 		return true;
 	}
 	
+	/**
+	 * Loads all draft picks and sorts them for suitable display
+	 * @return array 
+	 */
 	public function getAllDraftPicks() {
 		$picks = array();
 		
@@ -352,7 +338,7 @@ class draft_object {
 	
 	/**
 	 * Removes a draft, all of its managers and all of their picks permanently (hard delete)
-	 * @return bool success of delete 
+	 * @return bool Success
 	 */
 	public function deleteDraft() {
 		if($this->draft_id == 0)
@@ -375,22 +361,30 @@ class draft_object {
 		return $DBH->exec($sql);
 	}
 	
+	/**
+	 * Check whether or not current user is authenticated to view this draft.
+	 * @return boolean 
+	 */
 	public function checkDraftPublicLogin() {
+		if(!$this->isPasswordProtected())
+			return true;
+		
 		return isset($_SESSION['did']) && isset($_SESSION['draft_password']) 
 			&& $_SESSION['did'] == $this->draft_id 
 			&& $_SESSION['draft_password'] == $this->draft_password;
 	}
 	
-	// <editor-fold defaultstate="collapsed" desc="Pick-Related Functions">
 	/**
-	 * Returns an array of the last five picks (player_object) 
+	 * Returns an array of the last five picks (player_object)
+	 * @return player_object
 	 */
 	public function getLastTenPicks() {
 		return player_object::getLastTenPicks($this->draft_id);
 	}
 	
 	/**
-	 * Returns an array of the last five picks (player_object) 
+	 * Returns an array of the last five picks (player_object)
+	 * @return player_object 
 	 */
 	public function getLastFivePicks() {
 		return player_object::getLastFivePicks($this);
@@ -398,7 +392,7 @@ class draft_object {
 	
 	/**
 	 * Get the last player pick, or false on 0 rows.
-	 * @return player_object Last Player
+	 * @return player_object
 	 */
 	public function getLastPick() {
 		return player_object::getLastPick($this);
@@ -406,14 +400,15 @@ class draft_object {
 	
 	/**
 	 * Returns the player_object that is the current pick for the draft.
+	 * @return player_object
 	 */
 	public function getCurrentPick() {
 		return player_object::getCurrentPick($this);
 	}
 	
 	/**
-	 *
-	 * @return type 
+	 * Get the next pick in the draft
+	 * @return player_object 
 	 */
 	public function getNextPick() {
 		return player_object::getNextPick($this);
@@ -425,7 +420,6 @@ class draft_object {
 	public function getNextFivePicks() {
 		return player_object::getNextFivePicks($this);
 	}
-	// </editor-fold>
 	
 	/**
 	 * Check to ensure $status is in the correct state to prevent any borking of the database.\

@@ -9,62 +9,34 @@
  * they exist at (player information will be blank if they are unchecked)
  */
 class player_object {
-	// <editor-fold defaultstate="collapsed" desc="Properties">
-	/**
-	 * @var int The unique ID for this player
-	 */
+
+	/** @var int */
 	public $player_id;
-	/**
-	 * @var int The ID of the manager this player belongs to
-	 */
+	/** @var int The ID of the manager this player belongs to */
 	public $manager_id;
-	/**
-	 * @var int The ID of the draft this player belongs to
-	 */
+	/** @var int The ID of the draft this player belongs to */
 	public $draft_id;
-	/**
-	 * @var string The first name of the player
-	 */
+	/** @var string */
 	public $first_name;
-	/**
-	 * @var string The last name of the player 
-	 */
+	/** @var string */
 	public $last_name;
-	/**
-	 * @var string The professional team the player plays for. Stored as three character abbreviation 
-	 */
+	/** @var string The professional team the player plays for. Stored as three character abbreviation */
 	public $team;
-	/**
-	 * @var string The position the player plays. Stored as one or three character abbreviation. 
-	 */
+	/** @var string The position the player plays. Stored as one to three character abbreviation. */
 	public $position;
-	/**
-	 * @var string Timestamp of when the player was picked. Use strtotime to compare to other dates. 
-	 */
+	/** @var string Timestamp of when the player was picked. Use strtotime to convert for comparisons, NULL for undrafted */
 	public $pick_time;
-	/**
-	 * @var int Amount of seconds that were consumed during this pick 
-	 */
+	/** @var int Amount of seconds that were consumed during this pick since previous pick */
 	public $pick_duration;
-	/**
-	 * @var int Round the player was selected in 
-	 */
+	/** @var int Round the player was selected in */
 	public $player_round;
-	/**
-	 * @var int Pick the player was selected at 
-	 */
+	/** @var int Pick the player was selected at */
 	public $player_pick;
-	/**
-	 * @var string Name of the manager that made the pick. NOTE: Only available on selected picks, and is kind've a cheat. 
-	 */
+	/** @var string Name of the manager that made the pick. NOTE: Only available on selected picks, and is kind've a cheat. */
 	public $manager_name;
-	/**
-	 * @var int 
-	 */
+	/** @var int */
 	public $search_score;
-	// </editor-fold>
 	
-	// <editor-fold defaultstate="collapsed" desc="Dynamic Properties">
 	/**
 	 * Returns a properly formatted player name in this format: "Last, First"
 	 * @return string Player's proper name. 
@@ -80,7 +52,6 @@ class player_object {
 	public function casualName() {
 		return $this->first_name . " " . $this->last_name;
 	}
-	// </editor-fold>
 
 	public function __construct($id = 0) {
 		$id = (int)$id;
@@ -216,7 +187,7 @@ class player_object {
 	/**
 	 * For a draft get the ten most recent picks that have occurred.
 	 * @param int $draft_id
-	 * @return array picks Array of picks, or false on error.
+	 * @return array|boolean Array of picks, or false on error.
 	 */
 	public static function getLastTenPicks($draft_id) {
 		global $DBH; /* @var $DBH PDO */
@@ -593,13 +564,9 @@ class player_object {
 		return $DBH->exec("DELETE FROM players WHERE player_id IN (" . $id_string . ")");
 	}
 	
-	public function hasName() {
-		return (strlen($this->first_name) + strlen($this->last_name) > 1);
-	}
-	
 	/**
 	 * Check to ensure the pick exists in the database
-	 * @return bool 
+	 * @return boolean Success 
 	 */
 	public function pickExists() {
 		global $DBH; /* @var $DBH PDO */
@@ -618,7 +585,7 @@ class player_object {
 	
 	/**
 	 * Determine whether a player/pick has been selected. Generally determines if it is editable.
-	 * @return bool true if selected 
+	 * @return boolean true if selected 
 	 */
 	public function hasBeenSelected() {
 		return isset($this->pick_time) && isset($this->pick_duration)

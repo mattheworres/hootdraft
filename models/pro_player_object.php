@@ -1,20 +1,20 @@
 <?php
 /**
- * Data object used for auto-complete for pick entry
+ * Represents a professional sports player, used for pick entry autocompletion.
  * 
- * @property int $pro_player_id ID of the player
- * @property string $league Three character abbreviation of league player belongs to. NFL, NHL, MLB, NBA possible values
- * @property string $first_name First name of the player
- * @property string $last_name Last name of the player
- * @property string $position Abbreviation of the position the player plays
- * @property string $team Abbreviation of the city of the team the player plays for
  */
 class pro_player_object {
+	/** @var int */
 	public $pro_player_id;
+	/** @var string Three character abbreviation of league player belongs to. NFL, NHL, MLB, NBA possible values */
 	public $league;
+	/** @var string */
 	public $first_name;
+	/** @var string */
 	public $last_name;
+	/** @var string Abbreviation of the position the player plays */
 	public $position;
+	/** @var string Abbreviation of the city of the team the player plays for */
 	public $team;
 	
 	public function __construct($id = 0) {
@@ -158,56 +158,4 @@ class pro_player_object {
 		return $found_players;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-///**
-// * Represents an example class for Stackoverflow
-// * 
-// * @property int $id The id of the object
-// * @property string $name The name of the object 
-// * @property int $number The number of the object
-// */
-//class my_class {
-//    public $id;
-//    public $name;
-//    public $number;
-//
-//    public function __construct() {
-//        $this->
-//    }
-//
-//    /**
-//     * Renames the object
-//     * @param string $name Name to rename object
-//     */
-//    public function Rename($name) {
-//        $this->name = $name;
-//    }
-//}
-
-
-
-
 ?>

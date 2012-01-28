@@ -4,21 +4,13 @@
  * Represents a PHPDraft "user" object, which currently there is only one: the Commish
  */
 class user_object {
-	/**
-	 * @var int $UserId The unique identifier for this user 
-	 */
+	/** @var int */
 	public $UserId;
-	/**
-	 * @var string $Username The handle with which user logged in with 
-	 */
+	/** @var string $Username The handle with which user logged in with */
 	public $Username;
-	/**
-	 * @var string $Name The public-visible name for the Commissioner 
-	 */
+	/** @var string $Name The public-visible name for the Commissioner */
 	public $Name;
-	/**
-	 * @var string $Password User's password 
-	 */
+	/** @var string $Password User's password */
 	public $Password;
 	
 	public function __construct($user_id = 0) {
@@ -104,7 +96,7 @@ class user_object {
 	}
 	
 	/**
-	 * Given a raw plaintext password and use the specified hashing method and store it in the object
+	 * Given a raw plaintext password and use the specified hashing method to store it in the object
 	 */
 	public function setHashedPassword($rawPassword) {
 		$this->Password = sha1($rawPassword);
@@ -145,7 +137,7 @@ class user_object {
 		global $DBH; /* @var $DBH PDO */
 		$param_number = 2;
 		//TODO: Remove this hack. This assumes a single user being edited by himself:
-		$this->getLoggedInId();
+		$this->setLoggedInId();
 		
 		$update_sql = "UPDATE user_login SET Username = ?";
 		
@@ -188,14 +180,18 @@ class user_object {
 		}
 	}
 	
-	public function hasPassword() {
+	/**
+	 * Whether or not user has a password.
+	 * @return type 
+	 */
+	private function hasPassword() {
 		return isset($this->Password) && strlen($this->Password) > 0;
 	}
 	
 	/**
-	 * To set the current user's ID for the currently logged in user
+	 * Set the current user's ID for the currently logged in user
 	 */
-	private function getLoggedInId() {
+	private function setLoggedInId() {
 		$this->UserId = (int)$_SESSION['userid'];
 	}
 }
