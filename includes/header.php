@@ -33,10 +33,10 @@
 			<li<?php echo $index_active; ?>><a href="index.php"<?php echo $index_current; ?>>Welcome!</a></li>
 			<li<?php echo $draft_active; ?>><a href="index.php?action=select"<?php echo $draft_current; ?>>Draft Central</a></li>
 			<?php  if($is_authenticated === true) { ?>
-			<li<?php echo $cp_active; ?>><a href="control_panel.php?action=home"<?php echo $cp_current; ?>>Control Panel</a></li>
+			<li<?php echo $cp_active; ?>><a class="commish" href="control_panel.php?action=home"<?php echo $cp_current; ?>>Control Panel</a></li>
 			<li<?php echo $logout_active; ?>><a href="logout.php"<?php echo $logout_current; ?>>Log Out</a></li>
 			<?php } else if($is_authenticated === false) { ?>
-			<li<?php echo $login_active; ?>><a href="login.php"<?php echo $login_current; ?>>Commissioner Login</a></li>
+			<li<?php echo $login_active; ?>><a class="commish" href="login.php"<?php echo $login_current; ?>>Commissioner Login</a></li>
 			<?php } ?>
 			<li<?php echo $help_active; ?>><a href="help.php"<?php echo $help_current; ?>>Help</a></li>
 		</ul>

@@ -298,6 +298,10 @@ table th {
 	border-top-right-radius: 4px;
 }
 
+#navlist li a.commish {
+	background: #215304 url('../images/tab_bg_commish.gif') bottom left repeat-x;
+}
+
 #navlist li a:link { color: #F1F6FE; }
 #navlist li a:visited { color: #F1F6FE; }
 
@@ -306,6 +310,10 @@ table th {
 	color: #FFFFFF;
 	background: #3364BB;
 	border-color: #0F3974;
+}
+
+#navlist li a.commish:hover {
+	background: #336400;
 }
 
 #navlist li a#current
