@@ -16,7 +16,7 @@
 				<?php if($DRAFT->isInProgress()) { ?><p class="success">Your draft is in progress! Click "Enter the Draft Room" to the right to get started or continue, commish!</p><?php } ?>
 				<fieldset>
 					<legend><?php echo $DRAFT->draft_name; ?> - Current Status</legend>
-					<div style="width: 70%; float:left;">
+					<div class="draftInfo">
 						<input type="hidden" id="draft_id" value="<?php echo DRAFT_ID; ?>"/>
 						<p><strong>Sport: </strong> <?php echo $DRAFT->draft_sport; ?></p>
 						<p><strong>Drafting Style: </strong> <?php echo $DRAFT->draft_style; ?></p>
@@ -25,7 +25,7 @@
 						<?php if($DRAFT->isCompleted()) { ?><p><strong>Total Draft Duration: </strong><?php echo $DRAFT->getDraftDuration(); ?></p><?php } ?>
 						<p><strong>Draft Visibility: </strong> <span id="draft_visibility"><?php echo $DRAFT->isPasswordProtected() ? "Private<br /><br/><strong>Draft Password:</strong> " . $DRAFT->draft_password : "Public"; ?></span></p>
 					</div>
-					<div style="width: 30%; float:right; text-align: right;">
+					<div class="draftStatusImage">
 						<p><img src="images/icons/<?php echo $DRAFT->draft_status; ?>.png" alt="<?php echo $DRAFT->draft_status; ?>" title="<?php echo $DRAFT->draft_status; ?>"/></p>
 					</div>
 					<p id="no-managers-msg" class="error"<?php if(HAS_MANAGERS) { ?> style="display: none;"<?php } ?>>*Before you can start your draft, you must <a href="draft.php?action=addManagers&did=<?php echo DRAFT_ID; ?>">add managers</a>.</p>

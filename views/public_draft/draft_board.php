@@ -5,8 +5,8 @@
 		<link href="css/style.css" type="text/css" rel="stylesheet" />
 		<title>PHPDraft - <?php echo $DRAFT->draft_name;?> - Draft Board</title>
 	</head>
-	<body style="margin-top: 1px;">
-		<p style="margin-left: auto; margin-right: auto; margin-top: 0px; margin-bottom: 1px; width:<?php echo TOTAL_WIDTH;?>px; text-align: left; vertical-align: middle;"><strong><a href="public_draft.php?did=<?php echo DRAFT_ID;?>"><img src="images/icons/back.png" border="0" alt="Go Back" />Go Back</a></strong></p>
+	<body class="draftBoardBody">
+		<p style=" width:<?php echo TOTAL_WIDTH;?>px;"><strong><a href="public_draft.php?did=<?php echo DRAFT_ID;?>"><img src="images/icons/back.png" border="0" alt="Go Back" />Go Back</a></strong></p>
 		<div id="picks">
 			<table id="draft_table" width="<?php echo TOTAL_WIDTH;?>">
 				<tr><th class="left_col">Rd.</th><th class="left_col" colspan="<?php echo NUMBER_OF_MANAGERS;?>"><?php echo $DRAFT->draft_name;?> - Draft Board</th></tr>

@@ -31,7 +31,7 @@
 				<?php }
 			}?>
 		</table>
-		<p style="font-size: 80%;">*Cookies must be enabled</p>
+		<p class="cookieText">*Cookies must be enabled</p>
 		</div>
 		<?php require('includes/footer.php'); ?>
 	</div>

@@ -15,7 +15,7 @@
 				<p>This is the main page for this draft.  Below is some summary information for the draft. Use the links to the right for more functionality.</p>
 				<fieldset>
 					<legend><?php echo $DRAFT->draft_name;?> - Current Status</legend>
-					<div style="width: 70%; float:left;">
+					<div class="draftInfo">
 						<p><strong>Sport: </strong> <?php echo $DRAFT->draft_sport;?></p>
 						<p><strong>Drafting Style: </strong> <?php echo $DRAFT->draft_style;?></p>
 						<p><strong># of Rounds: </strong> <?php echo $DRAFT->draft_rounds;?></p>
@@ -26,7 +26,7 @@
 						<?php if($DRAFT->isCompleted()) {?><p><strong>Draft End Time: </strong> <?php echo $DRAFT->draft_end_time;?></p>
 							<p><strong>Time Spent Drafting: </strong> <?php echo $DRAFT->getDraftDuration();?></p><?php }?>
 					</div>
-					<div style="width: 30%; float:right; text-align: right;">
+					<div class="draftStatusImage">
 						<p><img src="images/icons/<?php echo $DRAFT->draft_status;?>.png" alt="<?php echo $DRAFT->draft_status;?>" title="<?php echo $DRAFT->draft_status;?>"/></p>
 					</div>
 				</fieldset>
