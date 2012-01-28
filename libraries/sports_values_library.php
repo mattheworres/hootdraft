@@ -90,7 +90,7 @@ class sports_values_library {
 			"RP" => $this->colors['seafoam'], //SEAFOAM				*
 			//Basketball/NBA
 			"PG" => $this->colors['light_orange'], //LT ORANGE
-			"SH" => $this->colors['dark_green'], //DK GREEN
+			"SG" => $this->colors['dark_green'], //DK GREEN
 			"SF" => $this->colors['light_yellow'], //LT YELLOW
 			"PF" => $this->colors['light_red'], //LT RED
 			//CENTER ALREADY DONE: LT BLUE
