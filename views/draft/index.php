@@ -55,7 +55,6 @@
 								<?php if($DRAFT->isUndrafted()) {?>
 								<td>
 									<a href="manager.php?action=editManager&mid=<?php echo $manager->manager_id; ?>">Edit</a> |
-									<!-- <a href="manager.php?action=deleteManager&mid=<?php echo $manager->manager_id; ?>">Delete</a>-->
 									<span class="manager-delete-link"><a>Delete</a></span>
 								</td>
 								<?php } ?>

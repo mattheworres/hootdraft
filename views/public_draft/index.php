@@ -14,10 +14,6 @@
 				<h3>Draft Home Page - <?php echo $DRAFT->draft_name;?></h3>
 				<p>This is the main page for this draft.  Below is some summary information for the draft. Use the links to the right for more functionality.</p>
 				<fieldset>
-					<legend><?php echo $DRAFT->draft_name;?> - Links</legend>
-					<h4><a href="public_draft.php?action=draftBoard&did=<?php echo DRAFT_ID;?>"><span class="phpdraft-icon ui-icon ui-icon-calculator"></span>&nbsp;View Full Draft Board</a></h4>
-				</fieldset>
-				<fieldset>
 					<legend><?php echo $DRAFT->draft_name;?> - Current Status</legend>
 					<div style="width: 70%; float:left;">
 						<p><strong>Sport: </strong> <?php echo $DRAFT->draft_sport;?></p>
