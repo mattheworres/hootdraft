@@ -7,42 +7,23 @@
  */
 
 class trade_asset_object {
-	// <editor-fold defaultstate="collapsed" desc="Properties">
-	/**
-	 * @var int 
-	 */
+	/** @var int */
 	public $trade_asset_id;
-	/**
-	 * @var int 
-	 */
+	/** @var int */
 	public $trade_id;
-	/**
-	 * @var int Used for loading from the DB
-	 */
+	/** @var int */
 	protected $player_id;
-	/**
-	 * @var player_object 
-	 */
-	public $player;
-	/**
-	 * @var int Used for loading from the DB
-	 */
+	/** @var int */
 	protected $oldmanager_id;
-	/**
-	 * @var manager_object 
-	 */
-	public $oldmanager;
-	/**
-	 * @var int Used for loading from the DB
-	 */
+	/** @var int */
 	protected $newmanager_id;
-	/**
-	 * @var manager_object 
-	 */
+	/** @var player_object */
+	public $player;
+	/** @var manager_object */
+	public $oldmanager;
+	/** @var manager_object */
 	public $newmanager;
-	/**
-	 *@var bool Used for loading from the DB
-	 */
+	/** @var bool Used for loading from the DB*/
 	protected $was_drafted;
 	
 	public function __construct($trade_asset_id = 0) {
@@ -64,6 +45,11 @@ class trade_asset_object {
 		return true;
 	}
 	
+	/**
+	 * Saves an asset to the DB. Update not supported - 
+	 * see saveTrade() for trade_object for reason
+	 * @return boolean Success
+	 */
 	public function saveAsset() {
 		global $DBH; /* @var $DBH PDO */
 		
@@ -72,8 +58,6 @@ class trade_asset_object {
 			return false;
 		}else {
 			$wasDrafted = $this->WasDrafted() ? 1 : 0;
-			$mgr1 = $this->oldmanager;
-			$mgr2 = $this->newmanager;
 			
 			$stmt = $DBH->prepare("INSERT INTO trade_assets (trade_id, player_id, oldmanager_id, newmanager_id, was_drafted) VALUES (?, ?, ?, ?, ?)");
 			$stmt->bindParam(1, $this->trade_id);

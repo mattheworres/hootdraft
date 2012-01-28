@@ -344,6 +344,11 @@ class draft_object {
 		if($this->draft_id == 0)
 			return false;
 		
+		$tradeRemovalSuccess = trade_object::DeleteTradesByDraft($this->draft_id);
+		
+		if($tradeRemovalSuccess === false)
+			return false;
+		
 		$pickRemovalSuccess = player_object::deletePlayersByDraft($this->draft_id);
 		
 		if($pickRemovalSuccess === false)

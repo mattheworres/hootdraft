@@ -1,56 +1,37 @@
 <?php
-/**
+/** 
  * A PHPDraft "Trade" object
  * 
  * During a live draft a commissioner can facilitate a trade, which allows
  * trade assets (both drafted players and undrafted picks) to exchange hands.
- * 
  */
 
 class trade_object {
-	/**
-	 * @var int The unique ID for this trade
-	 */
+	/** @var int*/
 	public $trade_id;
 	
-	/**
-	 * @var int $draft_id The unique ID for the parent draft
-	 */
+	/** @var int*/
 	public $draft_id;
 	
-	/**
-	 * @var int $manager1_id Used for loading from DB. Access Manager ID from manager object.
-	 */
+	/** @var int Used for loading from DB. Access Manager ID from manager object. */
 	protected $manager1_id;
 	
-	/**
-	 * @var manager_object $manager1 The first manager in this trade 
-	 */
-	public $manager1;
-	
-	/**
-	 * @var int $manager2_id Used for loading DB. Access Manager ID from manager object.
-	 */
+	/** @var int Used for loading DB. Access Manager ID from manager object. */
 	protected $manager2_id;
 	
-	/**
-	 * @var manager_object $manager2 The second manager in this trade 
-	 */
+	/** @var manager_object */
+	public $manager1;
+	
+	/** @var manager_object */
 	public $manager2;
 	
-	/**
-	 * @var string $trade_time The timestamp of this trade 
-	 */
+	/** @var string The timestamp of this trade */
 	public $trade_time;
 	
-	/**
-	 * @var array All assets involved in this trade 
-	 */
+	/** @var array All assets involved in this trade */
 	public $trade_assets;
 	
-	/**
-	 * @var array Error messages from validation of asset ownership 
-	 */
+	/** @var array Error messages from validation of asset ownership */
 	private $ownership_errors;
 	
 	public function __construct($trade_id = 0) {
@@ -79,6 +60,11 @@ class trade_object {
 		return true;
 	}
 	
+	/**
+	 * Saves a new instance of a trade. Currently update is not 
+	 * supported - see note in body of function.
+	 * @return boolean Success
+	 */
 	public function saveTrade() {
 		global $DBH; /* @var $DBH PDO */
 		
@@ -227,6 +213,52 @@ class trade_object {
 	}
 	
 	/**
+	 * Delete all trades and assets associated with said trades for a single draft.
+	 * @param int $draft_id
+	 * @return boolean Success
+	 */
+	public static function DeleteTradesByDraft($draft_id) {
+		$draft_id = (int)$draft_id;
+		
+		if($draft_id == 0)
+			return false;
+		
+		global $DBH; /* @var $DBH PDO */
+		
+		$draft_trade_stmt = $DBH->prepare("SELECT * FROM trades WHERE draft_id = ?");
+		
+		$draft_trade_stmt->bindParam(1, $draft_id);
+		
+		$draft_trade_stmt->setFetchMode(PDO::FETCH_CLASS, "trade_object");
+		
+		if(!$draft_trade_stmt->execute())
+			return false;
+		
+		$trades = array();
+		
+		while($newTrade = $draft_trade_stmt->fetch())
+			$trades[] = $newTrade;
+		
+		$delete_assets_stmt = $DBH->prepare("DELETE FROM trade_assets WHERE trade_id = :trade_id");
+		$delete_trade_stmt = $DBH->prepare("DELETE FROM trades WHERE trade_id = :trade_id");
+		
+		foreach($trades as $trade) {
+			/* @var $trade trade_object */
+			$delete_assets_stmt->bindValue(":trade_id", $trade->trade_id);
+			
+			if(!$delete_assets_stmt->execute())
+				return false;
+			
+			$delete_trade_stmt->bindValue(":trade_id", $trade->trade_id);
+			
+			if(!$delete_trade_stmt->execute())
+				return false;
+		}
+		
+		return true;
+	}
+	
+	/**
 	 * Build up all of the trade asset objects for a trade
 	 * @param array $manager1AssetIds
 	 * @param manager_object $manager1
@@ -280,7 +312,7 @@ class trade_object {
 	
 	/**
 	 * Perform the core swap of ownership of each pick in the database for a trade.
-	 * @return bool True on success, false otherwise 
+	 * @return boolean True on success, false otherwise 
 	 */
 	private function ExchangeAssets() {
 		foreach($this->trade_assets as $asset) {
@@ -294,7 +326,7 @@ class trade_object {
 	
 	/**
 	 * Run through all assets involved in a potential trade and ensure they are owned by said managers.
-	 * @return bool True on success, an array of error messages otherwise. 
+	 * @return boolean True on success, an array of error messages otherwise. 
 	 */
 	private function AssetOwnershipIsCorrect() {
 		$manager1_current_assets = player_object::getAllPlayersByManager($this->manager1->manager_id);
@@ -326,7 +358,7 @@ class trade_object {
 	
 	/**
 	 * Checks to ensure that each manager is receiving at least one asset in the potential trade.
-	 * @return bool 
+	 * @return boolean Success
 	 */
 	private function EachManagerHasOneAsset() {
 		$manager2_has_one = false;
