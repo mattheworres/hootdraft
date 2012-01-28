@@ -234,10 +234,15 @@ class draft_object {
 			return false;
 
 		//Were either going from UNDRAFTED to IN PROGRESS, or vice versa, cannot move
-		//out of "COMPLETED", so either way we want to wipe clean any players.
-		$deleteCurrentSuccess = player_object::deletePlayersByDraft($this->draft_id);
+		//out of "COMPLETED", so either way we want to wipe clean any trades & players.
+		$eraseTradesSuccess = trade_object::DeleteTradesByDraft($this->draft_id);
+		
+		if($eraseTradesSuccess === false)
+			return false;
+		
+		$erasePlayersSuccess = player_object::deletePlayersByDraft($this->draft_id);
 
-		if($deleteCurrentSuccess === false)
+		if($erasePlayersSuccess === false)
 			return false;
 
 		if($draftJustStarted) {
