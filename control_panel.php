@@ -164,21 +164,30 @@ switch(ACTION) {
 		$players = array();
 		
 		if(($handle = fopen($tempName, 'r')) !== FALSE) {
-			set_time_limit(0);
+			global $PHPD; /** @var @PHPD PHPDRAFT */
+			
+			if($PHPD->useCsvTimeout())
+				set_time_limit(0);
 			
 			while(($data = fgetcsv($handle, 1000, ';')) !== FALSE) {
 				if($data[0] == "Player")
 					continue;
 				
 				$new_player = new pro_player_object();
+				
 				$new_player->league = $sport;
 				$name_column = explode(",", $data[0]);
+				
 				if(count($name_column) == 2) {
 					$new_player->last_name = trim($name_column[0]);
 					$new_player->first_name = trim($name_column[1]);
+				} else {
+					$new_player->last_name = "Player";
+					$new_player->first_name = "Unknown";
 				}
-				$new_player->position = trim($data[1]);
-				$new_player->team = trim($data[2]);
+				
+				$new_player->position = isset($data[1]) ? trim($data[1]) : '';
+				$new_player->team = isset($data[2]) ? trim($data[2]) : '';
 
 				$players[] = $new_player;
 			}

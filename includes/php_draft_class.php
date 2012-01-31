@@ -5,39 +5,31 @@
  * NOTE: DO NOT edit anything in this class, if you edit you do so at your own risk. Open global_setup.php to edit settings.
  */
 class PHPDRAFT {
-	// <editor-fold defaultstate="collapsed" desc="Constants">
-	/**
-	 * Timezone for GMT-00:00, Greenwich Mean
-	 */
+	/** Timezone for GMT-00:00, Greenwich Mean */
 	const TIMEZONE_GMT = "Europe/London";
-	/**
-	 * Timezone for GMT-05:00, Eastern Standard
-	 */
+	/** Timezone for GMT-05:00, Eastern Standard */
 	const TIMEZONE_EST = "America/New_York";
-	/**
-	 * Timezone for GMT-06:00, Central Standard
-	 */
+	/** Timezone for GMT-06:00, Central Standard */
 	const TIMEZONE_CST = "America/Chicago";
-	/**
-	 * Timezone for GMT-07:00, Mountain Standard
-	 */
+	/** Timezone for GMT-07:00, Mountain Standard */
 	const TIMEZONE_MTN = "America/Denver";
-	/**
-	 * Timezone for GMT-08:00, Pacific Standard
-	 */
+	/** Timezone for GMT-08:00, Pacific Standard */
 	const TIMEZONE_PCF = "America/Los_Angeles";
-	// </editor-fold>
 	
 	private $_db_username;
 	private $_db_pwd;
 	private $_db_host;
 	private $_db_name;
+	private $_use_csv_timeout;
 	
 	public function __construct() {
 		$this->_db_host = "localhost";
+		$this->_db_name = "phpdraft";
+		$this->_db_username = "phpdraft";
+		$this->_db_pwd = "password";
+		$this->_use_csv_timeout = false;
 	}
 	
-	// <editor-fold defaultstate="collapsed" desc="Setters">
 	/**
 	 * Set the database username PHPDraft will connect to the database server with.
 	 * @param string $username 
@@ -79,7 +71,24 @@ class PHPDRAFT {
 	public function setLocalTimezone($timezone_constant) {
 		date_default_timezone_set($timezone_constant);
 	}
-	// </editor-fold>
+	
+	/**
+	 * Set the flag to use the timeout for uploading CSVs or not. Defaults to false, because
+	 * set_timeout can only be used on servers with it enabled (shared hosting disables it often)
+	 * @param type $useTimeout 
+	 */
+	public function setCsvTimeout($useTimeout) {
+		$useTimeout = (bool)$useTimeout;
+		
+		$this->_use_csv_timeout = $useTimeout;
+	}
+	
+	/**
+	 * Whether or not to use the CSV Timeout (set during setup) 
+	 */
+	public function useCsvTimeout() {
+		return $this->_use_csv_timeout;
+	}	
 	
 	public function setupPDOHandle() {
 		try {

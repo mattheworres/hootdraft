@@ -9,11 +9,23 @@ require('includes/php_draft_class.php');
 
 $PHPD = new PHPDRAFT();
 
+/** This is usually unchanged - the server name or address the database is hosted on */
 $PHPD->setDatabaseHostname	("localhost");
+
+/** The name of the PHPDraft database */
 $PHPD->setDatabaseName		("phpdraft");
+
+/** The username that has rights to the PHPDraft database */
 $PHPD->setDatabaseUsername	("your_username");
+
+/** The password for the username above */
 $PHPD->setDatabasePassword	("your_password");
+
+/** The timezone PHPDraft will be operating in. PHPDRAFT class has other constants available. */
 $PHPD->setLocalTimezone(PHPDRAFT::TIMEZONE_EST);
+
+/** OPTIONAL: Whether to disable PHP timeout for performing large CSV uploads. Default: false */
+$PHPD->setCsvTimeout(false);
 
 /*************************************************
  ******** DO NOT EDIT BELOW THIS LINE ************
@@ -31,6 +43,7 @@ require('models/player_object.php');
 require('models/trade_object.php');
 require('models/trade_asset_object.php');
 require('models/search_object.php');
+require('models/pro_player_object.php');
 require('models/draft_statistics_object.php');
 require('libraries/php_draft_library.php');
 
