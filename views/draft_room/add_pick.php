@@ -147,8 +147,11 @@
 					}
 				};
 				
+				<?php global $PHPD; /* @var $PHPD PHPDRAFT */
+				if($PHPD->useAutocomplete()) { ?>
 				$('#first_name').autocomplete(autocompleteOptions);
 				$('#last_name').autocomplete(autocompleteOptions);
+				<?php } ?>
 			});
 		</script>
 	</div>

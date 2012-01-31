@@ -21,6 +21,7 @@ class PHPDRAFT {
 	private $_db_host;
 	private $_db_name;
 	private $_use_csv_timeout;
+	private $_use_autocomplete;
 	
 	public function __construct() {
 		$this->_db_host = "localhost";
@@ -84,11 +85,30 @@ class PHPDRAFT {
 	}
 	
 	/**
-	 * Whether or not to use the CSV Timeout (set during setup) 
+	 * Set the flag to use autocomplete on pick entry
+	 * @param type $useAutocomplete 
+	 */
+	public function setUseAutocomplete($useAutocomplete) {
+		$useAutocomplete = (bool)$useAutocomplete;
+		
+		$this->_use_autocomplete = $useAutocomplete;
+	}
+	
+	/**
+	 * Whether or not to use the CSV Timeout during upload, will help for slower connections or large CSVs
+	 * @return boolean
 	 */
 	public function useCsvTimeout() {
 		return $this->_use_csv_timeout;
-	}	
+	}
+	
+	/**
+	 * Whether Use the autocomplete function on the add pick screen
+	 * @return boolean
+	 */
+	public function useAutocomplete() {
+		return $this->_use_autocomplete;
+	}
 	
 	public function setupPDOHandle() {
 		try {

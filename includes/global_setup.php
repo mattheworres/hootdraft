@@ -24,7 +24,10 @@ $PHPD->setDatabasePassword	("your_password");
 /** The timezone PHPDraft will be operating in. PHPDRAFT class has other constants available. */
 $PHPD->setLocalTimezone(PHPDRAFT::TIMEZONE_EST);
 
-/** OPTIONAL: Whether to disable PHP timeout for performing large CSV uploads. Default: false */
+/** Enable or disable autocomplete on the pick entry screen */
+$PHPD->setUseAutocomplete(true);
+
+/** Enable (true) or disable (false) PHP timeout for performing large CSV uploads. */
 $PHPD->setCsvTimeout(false);
 
 /*************************************************

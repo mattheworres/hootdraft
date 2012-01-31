@@ -205,6 +205,12 @@ switch(ACTION) {
 		break;
 		
 	case 'searchProPlayers':
+		global $PHPD; /* @var $PHPD PHPDRAFT */
+		
+		if($PHPD->useAutocomplete()) {
+			exit(0);
+		}
+		
 		$league = trim($_GET['league']);
 		
 		$first = trim($_GET['first']);
