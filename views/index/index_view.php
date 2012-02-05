@@ -17,19 +17,19 @@
 			<p>If a lock icon shows up beside a draft, that means you'll have to get the password from your commissioner*</p>
 			<table width="100%">
 				<tr>
-				<th width="16">&nbsp;</th>
-				<th>Draft Name</th>
-				<th>Sport</th>
-				<th>Draft Status</th>
+					<th width="16">&nbsp;</th>
+					<th>Draft Name</th>
+					<th>Sport</th>
+					<th>Draft Status</th>
 				</tr>
 				<?php if($drafts->number_of_drafts == 0) { ?><tr><td colspan="4"><h2>There are currently no drafts available.</h2></td></tr><?php
 				}else {
-				foreach($drafts->draft_objects as $draft) {?><tr>
+				foreach($drafts->draft_objects as $draft) {?>
+				<tr>
 					<td><span class="phpdraft-icon ui-icon ui-icon-<?php echo $draft->getVisibility(); ?>"></span></td>
-				<?php if(!$draft->isUndrafted()) {?><td><a href="public_draft.php?did=<?php echo $draft->draft_id; ?>"><?php echo $draft->draft_name; ?></a></td>
-							<?php } else {?><td><?php echo $draft->draft_name; ?></td><?php }?>
-				<td><?php echo $draft->draft_sport; ?></td>
-				<td><?php echo $draft->getStatus(); ?></td>
+					<td><a href="public_draft.php?did=<?php echo $draft->draft_id; ?>"><?php echo $draft->draft_name; ?></a></td>
+					<td><?php echo $draft->draft_sport; ?></td>
+					<td><?php echo $draft->getStatus(); ?></td>
 				</tr>
 					<?php }
 				}?>
