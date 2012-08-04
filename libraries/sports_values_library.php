@@ -193,8 +193,7 @@ class sports_values_library {
 				"OL" => "Offensive Lineman" 
 			));
 		}
-		// </editor-fold>
-		
+		// </editor-fold>		
 		// <editor-fold defaultstate="collapsed" desc="MLB Teams Positions">
 		$this->mlb_teams = Array(
 			"ARI" => "Arizona Diamondbacks",
