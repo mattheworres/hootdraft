@@ -203,7 +203,7 @@ class draft_statistics_object {
 		
 		$row = $stmt->fetch();
 		
-		$this->most_drafted_team = $this->sports_teams[$row['team']];
+		$this->most_drafted_team = isset($row['team']) ? $this->sports_teams[$row['team']] : "";
 		$this->most_drafted_team_count = (int)$row['team_occurences'];
 		
 		$stmt = $DBH->prepare("SELECT DISTINCT p.team, count(team) as team_occurences
@@ -220,7 +220,7 @@ class draft_statistics_object {
 		
 		$row = $stmt->fetch();
 		
-		$this->least_drafted_team = $this->sports_teams[$row['team']];
+		$this->least_drafted_team = isset($row['team']) ? $this->sports_teams[$row['team']] : "";
 		$this->least_drafted_team_count = (int)$row['team_occurences'];
 	}
 	
@@ -241,7 +241,7 @@ class draft_statistics_object {
 		
 		$row = $stmt->fetch();
 		
-		$this->most_drafted_position = $this->sports_positions[$row['position']];
+		$this->most_drafted_position = isset($row['position']) ? $this->sports_positions[$row['position']] : "";
 		$this->most_drafted_position_count = (int)$row['position_occurences'];
 		
 		$stmt = $DBH->prepare("SELECT DISTINCT p.position, count(position) as position_occurences
@@ -258,7 +258,7 @@ class draft_statistics_object {
 		
 		$row = $stmt->fetch();
 		
-		$this->least_drafted_position = $this->sports_positions[$row['position']];
+		$this->least_drafted_position = isset($row['position']) ? $this->sports_positions[$row['position']] : "";
 		$this->least_drafted_position_count = (int)$row['position_occurences'];
 	}
 	// </editor-fold>

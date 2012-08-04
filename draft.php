@@ -205,6 +205,7 @@ switch(ACTION) {
 		break;
 		
 	case 'searchProPlayers':
+		// <editor-fold defaultstate="collapsed" desc="searchProPlayers Logic">
 		global $PHPD; /* @var $PHPD PHPDRAFT */
 		
 		if($PHPD->useAutocomplete()) {
@@ -228,7 +229,8 @@ switch(ACTION) {
 		echo json_encode($players);
 		exit(0);
 		break;
-
+		// </editor-fold>
+	
 	default:
 		// <editor-fold defaultstate="collapsed" desc="Main Draft Page Logic">
 		$MANAGERS = manager_object::getManagersByDraft(DRAFT_ID, true);

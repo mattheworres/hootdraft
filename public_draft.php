@@ -22,9 +22,28 @@ if($DRAFT === false || $DRAFT->draft_id == 0) {
 }
 // </editor-fold>
 
+if(ACTION != 'isDraftReady' && $DRAFT->isUndrafted()) {
+	$LAST_TEN_PICKS = $DRAFT->getLastTenPicks();
+	$CURRENT_PICK = $DRAFT->getCurrentPick();
+	require("views/public_draft/index.php");
+	exit(0);
+}
+
 $DRAFT->setupSport();
 
 switch(ACTION) {
+	case 'isDraftReady':
+		// <editor-fold defaultstate="collapsed" desc="isDraftReady Logic">
+		header('Cache-Control: no-cache, must-revalidate');
+		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+		header('Content-type: application/json');
+		
+		$json_object = array("IsDraftReady" => !$DRAFT->isUndrafted());
+		echo json_encode($json_object);
+		exit(0);
+		// </editor-fold>
+		break;
+	
 	case 'draftBoard':
 		// <editor-fold defaultstate="collapsed" desc="draftBoard Logic">
 		$MANAGERS = manager_object::getManagersByDraft(DRAFT_ID);
@@ -139,11 +158,13 @@ switch(ACTION) {
 		break;
 	
 	case 'viewTrades':
+		// <editor-fold defaultstate="collapsed" desc="viewTrades Logic">
 		$DRAFT_TRADES = trade_object::getDraftTrades(DRAFT_ID);
 		DEFINE("NUMBER_OF_TRADES", count($DRAFT_TRADES));
 		$DRAFT->setupSport();
 		
 		require("views/public_draft/draft_trades.php");
+		// </editor-fold>
 		break;
 	
 	case 'draftStats':

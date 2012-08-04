@@ -62,6 +62,7 @@ switch(ACTION) {
 		break;
 		
 	case 'submitTrade':
+		// <editor-fold defaultstate="collapsed" desc="submitTrade Logic">
 		global $DBH; /* @var $DBH PDO */
 		$manager1_id = isset($_POST['manager1']) ? (int)$_POST['manager1'] : 0;
 		$manager2_id = isset($_POST['manager2']) ? (int)$_POST['manager2'] : 0;
@@ -92,6 +93,7 @@ switch(ACTION) {
 		
 		echo "SUCCESS";
 		exit(0);
+		// </editor-fold>
 		break;
 	
 	default:

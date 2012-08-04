@@ -30,6 +30,9 @@ $PHPD->setUseAutocomplete(true);
 /** Enable (true) or disable (false) PHP timeout for performing large CSV uploads. */
 $PHPD->setCsvTimeout(false);
 
+/** Use extended NFL rosters and positions (defensive players) - false by default */
+$PHPD->setUseNFLExtended(false);
+
 /*************************************************
  ******** DO NOT EDIT BELOW THIS LINE ************
  *************************************************/
