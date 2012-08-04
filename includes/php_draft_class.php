@@ -22,6 +22,7 @@ class PHPDRAFT {
 	private $_db_name;
 	private $_use_csv_timeout;
 	private $_use_autocomplete;
+	private $_use_nfl_extended;
 	
 	public function __construct() {
 		$this->_db_host = "localhost";
@@ -29,6 +30,8 @@ class PHPDRAFT {
 		$this->_db_username = "phpdraft";
 		$this->_db_pwd = "password";
 		$this->_use_csv_timeout = false;
+		$this->_use_autocomplete = true;
+		$this->_use_nfl_extended = false;
 	}
 	
 	/**
@@ -95,6 +98,16 @@ class PHPDRAFT {
 	}
 	
 	/**
+	 * Set the flag to use the extended NFL positions and rosters (defensive players) - false by default
+	 * @param bool $useNFLExtended 
+	 */
+	public function setUseNFLExtended($useNFLExtended) {
+		$useNFLExtended = (bool)$useNFLExtended;
+		
+		$this->_use_nfl_extended = $useNFLExtended;
+	}
+	
+	/**
 	 * Whether or not to use the CSV Timeout during upload, will help for slower connections or large CSVs
 	 * @return boolean
 	 */
@@ -119,6 +132,13 @@ class PHPDRAFT {
 		}
 		
 		return $dbh;
+	}
+	
+	/**
+	 * Whether to use extended NFL positions (the defensive positions)
+	 */
+	public function useNFLExtended() {
+		return $this->_use_nfl_extended;
 	}
 }
 ?>

@@ -45,6 +45,8 @@ class sports_values_library {
 	}
 
 	public function __construct() {
+		global $PHPD; /* @var PHPD PHPDRAFT */
+		
 		$this->colors = array(
 			"light_orange" => "#FFCC66",
 			"light_blue" => "#CCFFFF",
@@ -181,12 +183,18 @@ class sports_values_library {
 			"TE" => "Tight End",
 			"DEF" => "Defense",
 			"K" => "Kicker"
-//			"DL" => "Defensive Lineman",
-//			"LB" => "Linebacker",
-//			"DB" => "Defensive Back",
-//			"OL" => "Offensive Lineman" 
 		);
+		
+		if($PHPD->useNFLExtended()) {
+			$this->nfl_positions = array_merge($this->nfl_positions, array(
+				"DL" => "Defensive Lineman",
+				"LB" => "Linebacker",
+				"DB" => "Defensive Back",
+				"OL" => "Offensive Lineman" 
+			));
+		}
 		// </editor-fold>
+		
 		// <editor-fold defaultstate="collapsed" desc="MLB Teams Positions">
 		$this->mlb_teams = Array(
 			"ARI" => "Arizona Diamondbacks",
