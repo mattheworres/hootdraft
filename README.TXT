@@ -1,6 +1,6 @@
 Thank you for downloading PHP Draft! PHP Draft allows commissioners to setup web-based real-time drafts for their fantasy sports leagues. If your leagues do "offline" drafts (instead of using your fantasy provider's online drafting tools), PHP Draft is just for you! You log in to PHP Draft, add managers, determine the number of rounds, style of draft (standard or serpentine), the sport and the name, and then when you're ready to begin drafting. Your managers will come to you once they make a selection, and you enter it. As you enter picks, your managers will see real-time the picks being made, in a large, easy-to-read color-coded draft board.
 
-REQUIREMENTS for PHP Draft 1.1.0:
+REQUIREMENTS for PHP Draft 1.1.1:
 -Web server with sufficient bandwidth
 -PHP 5+ installed (5.3.0+ preferred)
 -MySQL and the ability to add a new database
@@ -32,9 +32,16 @@ NOTE 1) Version 1.1 adds a new autocomplete feature to suggest players when you 
 
 NOTE 2) Version 1.1 also adds a new feature to help keep your PHP Draft autocomplete up-to-date with the latest NFL, NHL, MLB and NBA rosters so you have the most up-to-date player information being suggested to you. I will make a best effort to provide new updated CSVs for each season, but if for whatever reason I cannot or you have a better one, there is an option to update your database in the commissioner control panel by uploading a CSV file. Following the instructions on that page will delete the stock player data and replace it with what you provide. Depending on the size of your CSV, your connection speed, et. al., if you encounter errors uploading you may need to disable the default timeout PHP provides for operations. Unfortunately, this function call requires relatively high permissions, so it may not work for you. Good luck.
 
+NOTE 3) There are two separate NFL CSV files in the /resources to update the autocomplete database - one is "standard", the other "extended", which includes just about all NFL players (except punters, because theyre never tracked in fantasy football). If you are drafting for a league that drafts defensive players, offensive linemen, you'll want to first Enable Extended NFL positions in global_setup.php, and THEN go to Control Panel - Update Pro Players Database and upload ProPlayers_NFLExtended_xxxx.csv (where xxxx is the current year).
+
 
 
 ***CHANGELOG***
+v1.1.1 - Critical Fixes Release
+FIXED: Autocomplete issue - did not properly use ! (PHP Not operator) when checking the UseComplete flag
+UPDATED: NFL 2012 CSV rosters. Control Panel - Update Pro Players and upload the new 2012 CSV files (found inside /Resources folder)
+ADDED: Flag to use extended NFL rosters (that includes defensive players). By default its false (most fantasy leagues only track offensive players), but you can enable it. If using defensive players, it's suggest to also upload the "extended" pro players CSV file for the NFL, as this includes all defensive players as well (and offensive linemen, etc.)
+
 v1.1.0 - Official Release
 ADDED: Trades feature
 ADDED: Autocomplete pick entry feature
