@@ -208,7 +208,7 @@ switch(ACTION) {
 		// <editor-fold defaultstate="collapsed" desc="searchProPlayers Logic">
 		global $PHPD; /* @var $PHPD PHPDRAFT */
 		
-		if($PHPD->useAutocomplete()) {
+		if(!$PHPD->useAutocomplete()) {
 			exit(0);
 		}
 		
