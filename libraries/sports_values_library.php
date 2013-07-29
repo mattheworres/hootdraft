@@ -243,6 +243,7 @@ class sports_values_library {
 		// <editor-fold defaultstate="collapsed" desc="NBA Teams Positions">
 		$this->nba_teams = array(
 			"ATL" => "Atlanta Hawks",
+			"BKN" => "Brooklyn Nets",
 			"BOS" => "Boston Celtics",
 			"CHI" => "Chicago Bulls",
 			"CHA" => "Charlotte Bobcats",
@@ -256,7 +257,6 @@ class sports_values_library {
 			"LAC" => "Los Angeles Clippers",
 			"LAL" => "Los Angeles Lakers",
 			"MIL" => "Milwaukee Bucks",
-			"NJN" => "New Jersey Nets",
 			"NYK" => "New York Knicks",
 			"PHI" => "Philadelphia 76ers",
 			"PHO" => "Phoenix Suns",
@@ -266,7 +266,7 @@ class sports_values_library {
 			"OKC" => "Oklahoma City Thunder",
 			"UTH" => "Utah Jazz",
 			"WAS" => "Washington Wizards",
-			"NOR" => "New Orleans Hornets",
+			"NOR" => "New Orleans Pelicans",
 			"MIA" => "Miami Heat",
 			"MIN" => "Minnesota Timberwolves",
 			"ORL" => "Orlando Magic",
