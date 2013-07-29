@@ -1,6 +1,6 @@
 <div id="footer">
 	<br />
-	PHPDraft 1.1.1 | <a href="http://gplv3.fsf.org/" target="_blank">GNU GPL3 License</a> | 2012 <a href="http://www.mattheworres.com" target="_blank">Matthew Orres</a>
+	PHPDraft 1.1.1 | <a href="http://gplv3.fsf.org/" target="_blank">GNU GPL3 License</a> | 2013 <a href="http://www.mattheworres.com" target="_blank">Matthew Orres</a>
 </div>
 
 <div id="loadingDialog">
