@@ -3,6 +3,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<link href="css/style.css" type="text/css" rel="stylesheet" />
+		<link href="css/jquery-ui-1.10.3.min.css" type="text/css" rel="stylesheet" />
 		<title>PHPDraft - <?php echo $DRAFT->draft_name;?> - Draft Board</title>
 	</head>
 	<body class="draftBoardBody">
@@ -37,8 +38,8 @@
 			</table>
 		</div>
 	</body>
-	<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
-	<script type="text/javascript" src="js/jquery-ui-1.8.14.custom.min.js"></script>
+	<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui-1.10.3.min.js"></script>
 	<script type="text/javascript">
 			var poll_time = 1000 * <?php echo BOARD_RELOAD; ?>,
 			our_pick = <?php echo $DRAFT->draft_current_pick;?>,

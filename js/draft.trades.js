@@ -14,7 +14,7 @@ $(document).ready(function() {
 		
 		$managerSelect.find('option:first').attr('disabled', 'disabled');
 		
-		if(selectedManagerId == 0 || isNaN(selectedManagerId)) {
+		if(selectedManagerId === 0 || isNaN(selectedManagerId)) {
 			$managerSelect.siblings('div.managerPlayers').html(' ');
 			return;
 		}
@@ -68,10 +68,10 @@ $(document).ready(function() {
 			error: function() {
 				handleAjaxError();
 			}
-		})
+		});
 	});
 	
-	$('input.playerCheck').live('click', function() {
+	$(document).on('click', 'input.playerCheck', function() {
 		var $checkbox = $(this),
 			$label = $checkbox.siblings('label[for*="' + $checkbox.attr('id') + '"]');
 			
@@ -83,7 +83,7 @@ $(document).ready(function() {
 		checkTradeValidity();
 	});
 	
-	$('#submit').live('click', function() {
+	$(document).on('click', '#submit', function() {
 		handleFormSubmit($loadingDialog, $informationDialog);
 	});
 });

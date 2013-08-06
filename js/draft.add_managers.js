@@ -1,78 +1,86 @@
 $(document).ready(function() {
-	$('input.error').live('keypress', function() {
-		$(this).removeClass('error');
-	});
-					
 	$('#addManagers').button();
+	
+	$(document).on('keypress', 'input.error', keypressHandler);
 
-	$('#addManagerButton').live('click', function() {
-		var $newRow = $('#add-managers-table tr.data-row:first').clone();
+	$(document).on('click', '#addManagerButton', addManagerButtonHandler);
+	
+	$(document).on('click', 'span.removeManagerButton', removeManagerHandler);
+	
+	$(document).on('click', '#addManagers', addManagerHandler);
+});
 
-		$newRow.find('input').val('').removeClass('error');
-		$newRow.insertBefore('#last-row');
-	});
-				
-	$('span.removeManagerButton').live('click', function() {
-		var $row = $(this).parents('tr:first'),
-		rowCount = $('#add-managers-table tr.data-row').length;
-						
-		if(rowCount > 1)
-			$row.remove();
-		else
-			alert('You can\'t remove the last row for a manager, silly!');
-	});
-				
-	$('#addManagers').live('click', function() {
-		var $informationDialog = $('#informationDialog'),
+function keypressHandler() {
+	$(this).removeClass('error');
+}
+
+function addManagerButtonHandler() {
+	var $newRow = $('#add-managers-table tr.data-row:first').clone();
+
+	$newRow.find('input').val('').removeClass('error');
+	$newRow.insertBefore('#last-row');
+}
+
+function removeManagerHandler() {
+	var $row = $(this).parents('tr:first'),
+	rowCount = $('#add-managers-table tr.data-row').length;
+
+	if(rowCount > 1)
+		$row.remove();
+	else
+		alert('You can\'t remove the last row for a manager, silly!');
+}
+
+function addManagerHandler() {
+	var $informationDialog = $('#informationDialog'),
 		$loadingDialog = $('#loadingDialog');
 						
-		$('p.errorDescription').hide();
-						
-		if(!validateManagers()) {
-			$('p.errorDescription').html('One or more of the managers are invalid. Please fix highlighted fields to continue.').show();
-			return;
-		}
-						
-		//Build array of JSON objects
-		var managers = [];
-						
-		$.each($('#add-managers-table tr.data-row'), function() {
-			var name = $(this).find('input.manager_name').val();
-			var email = $(this).find('input.manager_email').val();
-			managers.push({
-				manager_name: name, 
-				manager_email: email
-			});
-		});
-						
-		$loadingDialog.dialog('open');
-						
-		$.ajax({
-			type: 'POST',
-			data: {
-				did: $('#draft_id').val(), 
-				action: 'saveManagers', 
-				managers: managers
-			},
-			url: 'draft.php?action=saveManagers',
-			success: function(data) {
-				$loadingDialog.dialog('close');
-				
-				if(data == "SUCCESS") {
-					$informationDialog.html('Congratulations! Your new managers have been added to the draft.').dialog('open');
-					removeAllExtraRows();
-					updateCurrentTable(managers);
-				}else {
-					$('p.errorDescription').html('A server-side error has occurred. Please try again.').show();
-				}
-			},
-			error: function() {
-				$loadingDialog.dialog('close');
-				$('p.errorDescription').html('A server-side error has occurred. Please try again.').show();
-			}
+	$('p.errorDescription').hide();
+
+	if(!validateManagers()) {
+		$('p.errorDescription').html('One or more of the managers are invalid. Please fix highlighted fields to continue.').show();
+		return;
+	}
+
+	//Build array of JSON objects
+	var managers = [];
+
+	$.each($('#add-managers-table tr.data-row'), function() {
+		var name = $(this).find('input.manager_name').val();
+		var email = $(this).find('input.manager_email').val();
+		managers.push({
+			manager_name: name, 
+			manager_email: email
 		});
 	});
-});
+
+	$loadingDialog.dialog('open');
+
+	$.ajax({
+		type: 'POST',
+		data: {
+			did: $('#draft_id').val(), 
+			action: 'saveManagers', 
+			managers: managers
+		},
+		url: 'draft.php?action=saveManagers',
+		success: function(data) {
+			$loadingDialog.dialog('close');
+
+			if(data == "SUCCESS") {
+				$informationDialog.html('Congratulations! Your new managers have been added to the draft.').dialog('open');
+				removeAllExtraRows();
+				updateCurrentTable(managers);
+			}else {
+				$('p.errorDescription').html('A server-side error has occurred. Please try again.').show();
+			}
+		},
+		error: function() {
+			$loadingDialog.dialog('close');
+			$('p.errorDescription').html('A server-side error has occurred. Please try again.').show();
+		}
+	});
+}
 				
 function validateManagers() {
 	$('input.error').removeClass('error');
@@ -125,8 +133,7 @@ function updateCurrentTable(new_managers) {
 	});
 }
 				
-function validateEmail(email) 
-{ 
+function validateEmail(email) {
 	var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ 
 	return email.match(re) 
 }

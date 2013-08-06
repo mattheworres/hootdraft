@@ -1,11 +1,11 @@
 $(document).ready(function() {
 	resetArrows();
 
-	$('#managers-table span.manager-move-link').live('click', function() {
+	$(document).on('click', '#managers-table span.manager-move-link', function() {
 		var $row = $(this).parents('tr:first'),
 			manager_id = $row.attr('data-manager-id'),
 			$loadingDialog = $('#loadingDialog'),
-			isMoveUp = $(this).is('.move-up')
+			isMoveUp = $(this).is('.move-up'),
 			isOff = $(this).is('.down-off') || $(this).is('.up-off');
 
 		if(isOff)
@@ -17,9 +17,11 @@ $(document).ready(function() {
 			type: 'POST',
 			url: 'manager.php?action=moveManager',
 			data: { mid: manager_id, direction: isMoveUp ? 'up' : 'down'},
-			success: function(data) {
+			complete: function() {
 				$loadingDialog.dialog('close');
-				if(data == "SUCCESS") {
+			},
+			success: function(data) {
+				if(data === "SUCCESS") {
 					if(isMoveUp) {
 						$row.insertBefore($row.prev());
 						resetArrows();
@@ -32,13 +34,12 @@ $(document).ready(function() {
 				}
 			},
 			error: function() {
-				$loadingDialog.dialog('close');
 				alert('Sorry - an error has occurred and the manager\'s order could not be changed.');
 			}
-		})
+		});
 	});
 	
-	$('#managers-table .manager-delete-link').live('click', function() {
+	$(document).on('click', '#managers-table .manager-delete-link', function() {
 		var $row = $(this).parents('tr:first'),
 			manager_id = $row.attr('data-manager-id'),
 			$loadingDialog = $('#loadingDialog');
@@ -49,9 +50,11 @@ $(document).ready(function() {
 			type: 'POST',
 			url: 'manager.php?action=deleteManager',
 			data: { mid: manager_id },
-			success: function(data) {
+			complete: function() {
 				$loadingDialog.dialog('close');
-				if(data == "SUCCESS") {
+			},
+			success: function(data) {
+				if(data === "SUCCESS") {
 					$row.remove();
 					resetArrows();
 					checkForOtherManagers();
@@ -60,7 +63,6 @@ $(document).ready(function() {
 				}
 			},
 			error: function() {
-				$loadingDialog.dialog('close');
 				alert('Sorry - an error has occurred and the manager could not be deleted.');
 			}
 		});
@@ -89,24 +91,27 @@ $(document).ready(function() {
 		]
 	});
 	
-	$('#changeVisibility').live('click', function() {
+	$(document).on('click', '#changeVisibility', function() {
 		$('#visibilityDialog').dialog('open');
-	})
-	
-	$('#draft_status').live('change', function() {
-		var value = $(this).val(),
-			$passwordBox = $('#passwordBox');
-		if(value == 1)
-			$passwordBox.show();
-		else
-			$passwordBox.hide();
 	});
 	
-	$('#draft_password, #draft_password_confirm').live('blur', function() {
+	$(document).on('change', '#draft_status', function() {
+		var value = $(this).val(),
+			$passwordBox = $('#passwordBox');
+		
+		if(value === 1) {
+			$passwordBox.show();
+		} else {
+			$passwordBox.hide();
+		}
+			
+	});
+	
+	$(document).on('blur', '#draft_password, #draft_password_confirm', function() {
 		checkMatchingPasswords($('#draft_status'), $('#draft_password'), $('#draft_password_confirm'));
 	});
 
-	$('#draft_password, #draft_password_confirm').live('keyup', function(e) {
+	$(document).on('keyup', '#draft_password, #draft_password_confirm', function() {
 		checkMatchingPasswords($('#draft_status'), $('#draft_password'), $('#draft_password_confirm'));
 	});
 });
@@ -114,7 +119,7 @@ $(document).ready(function() {
 function checkForOtherManagers() {
 	var number_of_managers = $('#managers-table tr').length - 1;	//Account for table header
 	
-	if(number_of_managers == 0) {
+	if(number_of_managers === 0) {
 		$('#managers-table').hide();
 		$('#no-managers-msg').show();
 		$('#draft-status-link').hide();
@@ -128,17 +133,23 @@ function resetArrows() {
 		tableLength = rows.length;
 
 	$.each(rows, function() {
-		if(i == 1) {
-			$(this).children().children('span.move-up').removeClass('up-on').addClass('up-off');
-			if(tableLength > 1)
-				$(this).children().children('span.move-down').removeClass('down-off').addClass('down-on');
-		}else if(i == tableLength) {
-			$(this).children().children('span.move-down').removeClass('down-on').addClass('down-off');
-			if(tableLength > 1)
-				$(this).children().children('span.move-up').removeClass('up-off').addClass('up-on');
+		var $tableRowChildren = $(this).children();
+		
+		if(i === 1) {
+			$tableRowChildren.children('span.move-up').removeClass('up-on').addClass('up-off');
+			
+			if(tableLength > 1) {
+				$tableRowChildren.children('span.move-down').removeClass('down-off').addClass('down-on');
+			}
+		}else if(i === tableLength) {
+			$tableRowChildren.children('span.move-down').removeClass('down-on').addClass('down-off');
+			
+			if(tableLength > 1) {
+				$tableRowChildren.children('span.move-up').removeClass('up-off').addClass('up-on');
+			}
 		}else {
-			$(this).children().children('span.move-down').removeClass('down-off').addClass('down-on');
-			$(this).children().children('span.move-up').removeClass('up-off').addClass('up-on');
+			$tableRowChildren.children('span.move-down').removeClass('down-off').addClass('down-on');
+			$tableRowChildren.children('span.move-up').removeClass('up-off').addClass('up-on');
 		}
 
 		++i;
@@ -158,7 +169,7 @@ function updateDraftVisibility() {
 	$confirmPassword.removeClass('error');
 	$visibilityError.hide();
 		
-	if(status == 0) {
+	if(status === 0) {
 		var updateSuccess = savePassword('');
 		if(updateSuccess === true) {
 			$password.val('');
@@ -170,7 +181,7 @@ function updateDraftVisibility() {
 			return false;
 		}
 	}else {
-		if(password.length == 0 || confirmPassword.length == 0 || password != confirmPassword) {
+		if(password.length === 0 || confirmPassword.length === 0 || password !== confirmPassword) {
 			$visibilityError.html('To make the draft private, you must provide a password and confirm that password!').show();
 			$password.addClass('error');
 			$confirmPassword.addClass('error');
@@ -203,15 +214,16 @@ function savePassword(draft_pass) {
 		type: 'POST',
 		data: {action: 'updateVisibility', did: draft_id, password: draft_pass},
 		url: 'draft.php',
-		success: function(data) {
+		complete: function() {
 			$loadingDialog.dialog('close');
-			if(data == "SUCCESS") 
+		},
+		success: function(data) {
+			if(data === "SUCCESS") 
 				result = true;
 			else
 				result = false;
 		},
 		error: function() {
-			$loadingDialog.dialog('close');
 			result =  false;
 		}
 	});
@@ -223,12 +235,12 @@ function checkMatchingPasswords($statusSelect, $password, $confirmPassword) {
 	var $visibilityError = $('#visibilityError');
 	$visibilityError.hide();
 	
-	if($statusSelect.val() == 0)
+	if($statusSelect.val() === 0)
 		return;
 	
 	console.log('Password len: ' + $password.val().length + ' ; Confirm length: ' + $confirmPassword.val().length);
 	if($password.val().length > 0 && $confirmPassword.val().length > 0)
-		if($password.val() != $confirmPassword.val())
+		if($password.val() !== $confirmPassword.val())
 			$visibilityError.html('Passwords entered do not match!').show();
 		else
 			$visibilityError.hide();
