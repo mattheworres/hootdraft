@@ -38,8 +38,10 @@
 			</table>
 		</div>
 	</body>
-	<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
-	<script type="text/javascript" src="js/jquery-ui-1.10.3.min.js"></script>
+	<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script><script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script>window.jQuery || document.write('<script src="js/jquery-1.10.2.min.js">\x3C/script>');</script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.js"></script>
+	<script>window.jQuery.ui || document.write('<script src="js/jquery-ui-1.10.3.min.js">\x3C/script>');</script>
 	<script type="text/javascript">
 			var poll_time = 1000 * <?php echo BOARD_RELOAD; ?>,
 			our_pick = <?php echo $DRAFT->draft_current_pick;?>,
