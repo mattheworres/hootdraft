@@ -5,6 +5,8 @@ require("includes/check_login.php");
 DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
 DEFINE("ACTION", isset($_GET['action']) ? $_GET['action'] : "");
 
+$DRAFT_SERVICE = new draft_service();
+
 switch(ACTION) {
 	case 'createDraft':
 		//<editor-fold defaultstate="collapsed" desc="createDraft Logic">
@@ -29,7 +31,7 @@ switch(ACTION) {
 		$draft->draft_style = $draft_style;
 		$draft->draft_rounds = $draft_rounds;
 
-		$object_errors = $draft->getValidity();
+		$object_errors = $DRAFT_SERVICE->getValidity($draft);
 
 		if(count($object_errors) > 0) {
 			$ERRORS = $object_errors;
@@ -37,9 +39,11 @@ switch(ACTION) {
 			require_once("views/control_panel/create_draft.php");
 			exit(1);
 		}
-
-		if($draft->saveDraft() == false) {
-			$ERRORS[] = "Draft could not be saved, please try again.";
+		
+		try{
+			$DRAFT_SERVICE->saveDraft($draft);
+		}catch(Exception $e) {
+			$ERRORS[] = "Draft could not be saved:" . $e->getMessage() . " Please try again.";
 			DEFINE("CONTROL_PANEL_ACTION", "ADD");
 			require_once("views/control_panel/create_draft.php");
 			exit(1);

@@ -9,10 +9,20 @@ DEFINE('DRAFT_ID', isset($_REQUEST['did']) ? (int)$_REQUEST['did'] : 0);
 DEFINE("BOARD_RELOAD", 5);
 
 //Draft password may have pre-loaded this for us.
-if(!isset($DRAFT) || get_class($DRAFT) != "draft_object")
-	$DRAFT = new draft_object(DRAFT_ID);
+if(!isset($DRAFT) || get_class($DRAFT) != "draft_object") {
+	$DRAFT_SERVICE = new draft_service();
 
-// <editor-fold defaultstate="collapsed" desc="Error checking on basic input">
+	try {
+		$DRAFT = $DRAFT_SERVICE->loadDraft(DRAFT_ID);
+	}catch(Exception $e) {
+		define("PAGE_HEADER", "Draft Not Found");
+		define("P_CLASS", "error");
+		define("PAGE_CONTENT", "We're sorry, but the draft could not be loaded: " . $e->getMessage());
+		require_once("views/shared/generic_result_view.php");
+		exit(1);
+	}
+}
+
 if($DRAFT === false || $DRAFT->draft_id == 0) {
 	define("PAGE_HEADER", "Draft Not Found");
 	define("P_CLASS", "error");
@@ -20,7 +30,6 @@ if($DRAFT === false || $DRAFT->draft_id == 0) {
 	require_once("views/shared/generic_result_view.php");
 	exit(1);
 }
-// </editor-fold>
 
 if(ACTION != 'isDraftReady' && $DRAFT->isUndrafted()) {
 	$LAST_TEN_PICKS = $DRAFT->getLastTenPicks();

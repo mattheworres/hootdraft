@@ -12,7 +12,17 @@ $pageURL .= $_SERVER["SERVER_PORT"] != "80" ? $_SERVER["SERVER_NAME"] . ":" . $_
 
 $DESTINATION = $pageURL;
 
-$DRAFT = new draft_object($DRAFT_ID);
+$DRAFT_SERVICE = new draft_service();
+
+try {
+	$DRAFT = $DRAFT_SERVICE->loadDraft($DRAFT_ID);
+}catch(Exception $e) {
+	define("PAGE_HEADER", "Draft Not Found");
+	define("P_CLASS", "error");
+	define("PAGE_CONTENT", "We're sorry, but the draft could not be loaded: " . $e->getMessage());
+	require_once("views/shared/generic_result_view.php");
+	exit(1);
+}
 
 if($DRAFT->isPasswordProtected()) {
 	if(!$DRAFT->checkDraftPublicLogin()) {

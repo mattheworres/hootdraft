@@ -8,17 +8,17 @@ DEFINE("DRAFT_ID", isset($_REQUEST['did']) ? (int)$_REQUEST['did'] : 0);
 DEFINE("TRADE_ID", isset($_REQUEST['tid']) ? (int)$_REQUEST['tid'] : 0);
 DEFINE("MANAGER_ID", isset($_REQUEST['mid']) ? (int)$_REQUEST['mid'] : 0);
 
-$DRAFT = new draft_object(DRAFT_ID);
+$DRAFT_SERVICE = new draft_service();
 
-// <editor-fold defaultstate="collapsed" desc="Error checking on basic input">
-if($DRAFT->draft_id == 0) {
+try {
+	$DRAFT = $DRAFT_SERVICE->loadDraft(DRAFT_ID);
+}catch(Exception $e) {
 	define("PAGE_HEADER", "Draft Not Found");
 	define("P_CLASS", "error");
-	define("PAGE_CONTENT", "We're sorry, but the draft could not be loaded. Please try again.");
+	define("PAGE_CONTENT", "We're sorry, but the draft could not be loaded: " . $e->getMessage());
 	require_once("views/shared/generic_result_view.php");
 	exit(1);
 }
-// </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Ensure Draft is Draftable">
 if($DRAFT->isUndrafted()) {

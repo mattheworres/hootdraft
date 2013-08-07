@@ -242,7 +242,13 @@ class manager_object {
 	 * @return boolean Success
 	 */
 	public function deleteManager() {
-		$draft = new draft_object($this->draft_id);
+		$DRAFT_SERVICE = new draft_service();
+
+		try {
+			$draft = $DRAFT_SERVICE->loadDraft($this->draft_id);
+		}catch(Exception $e) {
+			return false;
+		}
 
 		if($draft->draft_id == 0 || !$draft->isUndrafted()) {
 			return false;

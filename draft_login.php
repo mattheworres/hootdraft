@@ -6,18 +6,19 @@ DEFINE('ACTIVE_TAB', 'DRAFT_CENTRAL');
 
 $DESTINATION = isset($_POST['destination']) ? $_POST['destination'] : "";
 $DRAFT_ID = isset($_POST['did']) ? (int)$_POST['did'] : 0;
-$DRAFT = new draft_object($DRAFT_ID);
-$password = isset($_POST['draft_password']) ? $_POST['draft_password'] : "";
+$DRAFT_SERVICE = new draft_service();
 
-// <editor-fold defaultstate="collapsed" desc="Error checking on basic input">
-if($DRAFT->draft_id == 0 || $DRAFT === false) {
+try {
+	$DRAFT = $DRAFT_SERVICE->loadDraft(DRAFT_ID);
+}catch(Exception $e) {
 	define("PAGE_HEADER", "Draft Not Found");
 	define("P_CLASS", "error");
-	define("PAGE_CONTENT", "We're sorry, but the draft could not be loaded. Please try again.");
+	define("PAGE_CONTENT", "We're sorry, but the draft could not be loaded: " . $e->getMessage());
 	require_once("views/shared/generic_result_view.php");
 	exit(1);
 }
-// </editor-fold>
+
+$password = isset($_POST['draft_password']) ? $_POST['draft_password'] : "";
 
 if($DRAFT->draft_password != $password) {
 	$ERRORS[] = "The password for the draft was incorrect, please try again.";

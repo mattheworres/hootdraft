@@ -7,17 +7,17 @@ DEFINE("ACTION", isset($_REQUEST['action']) ? $_REQUEST['action'] : "");
 DEFINE('DRAFT_ID', isset($_REQUEST['did']) ? (int)$_REQUEST['did'] : 0);
 DEFINE('PLAYER_ID', isset($_REQUEST['pid']) ? (int)$_REQUEST['pid'] : 0);
 
-$DRAFT = new draft_object(DRAFT_ID);
+$DRAFT_SERVICE = new draft_service();
 
-// <editor-fold defaultstate="collapsed" desc="Error checking on basic input">
-if($DRAFT->draft_id == 0) {
+try {
+	$DRAFT = $DRAFT_SERVICE->loadDraft(DRAFT_ID);
+}catch(Exception $e) {
 	define("PAGE_HEADER", "Draft Not Found");
 	define("P_CLASS", "error");
-	define("PAGE_CONTENT", "We're sorry, but the draft could not be loaded. Please try again.");
+	define("PAGE_CONTENT", "We're sorry, but the draft could not be loaded: " . $e->getMessage());
 	require_once("views/shared/generic_result_view.php");
 	exit(1);
 }
-// </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="Ensure Draft is Draftable">
 if($DRAFT->isUndrafted()) {
@@ -114,7 +114,10 @@ switch(ACTION) {
 		}
 		
 		$next_pick = $DRAFT->getNextPick();
-		if($DRAFT->moveDraftForward($next_pick) === false) {
+		
+		try{
+			$DRAFT_SERVICE->moveDraftForward($DRAFT, $next_pick);
+		}catch(Exception $e) {
 			define("PAGE_HEADER", "Draft Unable to be Moved Forward");
 			define("P_CLASS", "error");
 			define("PAGE_CONTENT", "An error has occurred and the draft was unable to be moved forward.");

@@ -6,17 +6,17 @@ DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
 DEFINE("ACTION", isset($_REQUEST['action']) ? $_REQUEST['action'] : "");
 DEFINE("DRAFT_ID", isset($_REQUEST['did']) ? (int)$_REQUEST['did'] : "");
 
-$DRAFT = new draft_object(DRAFT_ID);
+$DRAFT_SERVICE = new draft_service();
 
-// <editor-fold defaultstate="collapsed" desc="Error checking on basic input">
-if($DRAFT->draft_id == 0) {
+try {
+	$DRAFT = $DRAFT_SERVICE->loadDraft(DRAFT_ID);
+}catch(Exception $e) {
 	define("PAGE_HEADER", "Draft Not Found");
 	define("P_CLASS", "error");
-	define("PAGE_CONTENT", "We're sorry, but the draft could not be loaded. Please try again.");
+	define("PAGE_CONTENT", "We're sorry, but the draft could not be loaded: " . $e->getMessage());
 	require_once("views/shared/generic_result_view.php");
 	exit(1);
 }
-// </editor-fold>
 
 switch(ACTION) {
 	case 'addManagers':
@@ -67,11 +67,14 @@ switch(ACTION) {
 		}
 
 		$DRAFT->draft_password = $new_password;
-
-		if($DRAFT->saveDraft())
-			echo "SUCCESS";
-		else
+		
+		try{
+			$DRAFT_SERVICE->saveDraft($DRAFT);
+		}catch(Exception $e) {
 			echo "FAILURE";
+		}
+		
+		echo "SUCCESS";
 		// </editor-fold>
 		break;
 
@@ -99,21 +102,21 @@ switch(ACTION) {
 			require_once("views/draft/edit_status.php");
 			exit(1);
 		}
-
-		$success = $DRAFT->updateStatus($new_status);
-
-		if($success) {
-			define("PAGE_HEADER", "Draft Status Updated");
-			define("P_CLASS", "success");
-			define("PAGE_CONTENT", "Your draft's status has been successfully updated. <a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to its main page.");
-			require_once("views/shared/generic_result_view.php");
-			exit(0);
-		}else {
+		
+		try {
+			$DRAFT_SERVICE->updateStatus($DRAFT, $new_status);
+		}catch(Exception $e) {
 			$ERRORS = array();
-			$ERRORS[] = "An error occurred and your draft's status could not be updated.  Please try again.";
+			$ERRORS[] = "An error occurred and your draft's status could not be updated: " . $e->getMessage() . " Please try again.";
 			require_once("views/draft/edit_status.php");
 			exit(1);
 		}
+		
+		define("PAGE_HEADER", "Draft Status Updated");
+		define("P_CLASS", "success");
+		define("PAGE_CONTENT", "Your draft's status has been successfully updated. <a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to its main page.");
+		require_once("views/shared/generic_result_view.php");
+		exit(0);
 		// </editor-fold>
 		break;
 
@@ -149,7 +152,7 @@ switch(ACTION) {
 		$DRAFT->draft_style = $draft_style;
 		$DRAFT->draft_rounds = $draft_rounds;
 
-		$object_errors = $DRAFT->getValidity();
+		$object_errors = $DRAFT_SERVICE->getValidity($DRAFT);
 
 		if(count($object_errors) > 0) {
 			$ERRORS = $object_errors;
@@ -157,7 +160,9 @@ switch(ACTION) {
 			exit(1);
 		}
 
-		if($DRAFT->saveDraft() == false) {
+		try{
+			$DRAFT_SERVICE->saveDraft($DRAFT);
+		}catch(Exception $e) {
 			$ERRORS[] = "Draft could not be saved, please try again.";
 			require_once("views/control_panel/create_draft.php");
 			exit(1);
