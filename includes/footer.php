@@ -1,5 +1,5 @@
 <div id="footer">
-	<br />
+	<br /> 
 	PHPDraft 1.2.0 | <a href="http://gplv3.fsf.org/" target="_blank">GNU GPL3 License</a> | 2013 <a href="http://www.mattheworres.com" target="_blank">Matthew Orres</a>
 </div>
 
