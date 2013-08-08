@@ -73,64 +73,6 @@ class draft_object {
 		}else
 			return "";
 	}
-
-	/**
-	 * Goes through and creates all of the draft's picks as placeholders, triggered when the draft status is set to "in progress"
-	 * @return bool $success True if successful 
-	 */
-	public function setupPicks() {
-		$pick = 1;
-		$even = true;
-		
-		for($current_round = 1; $current_round <= $this->draft_rounds; $current_round++) {
-			if($this->styleIsSerpentine()) {
-				if($even) {
-					$managers = manager_object::getManagersByDraft($this->draft_id, true);
-					$even = false;
-				} else {
-					$managers = manager_object::getManagersByDraft($this->draft_id, true, "DESC");
-					$even = true;
-				}
-			}else
-				$managers = manager_object::getManagersByDraft($this->draft_id, true);
-
-			foreach($managers as $manager) {
-				$new_pick = new player_object();
-				$new_pick->manager_id = $manager->manager_id;
-				$new_pick->draft_id = $this->draft_id;
-				$new_pick->player_round = $current_round;
-				$new_pick->player_pick = $pick;
-
-				$saveSuccess = $new_pick->savePlayer();
-				
-				if(!$saveSuccess)
-					return false;
-
-				$pick++;
-			}
-		}
-		return true;
-	}
-	
-	/**
-	 * Loads all draft picks and sorts them for suitable display
-	 * @return array 
-	 */
-	public function getAllDraftPicks() {
-		$picks = array();
-		
-		$sort = true;
-		for($i = 1; $i <= $this->draft_rounds; ++$i) {
-			if($this->styleIsSerpentine()) {
-				$picks[] = player_object::getAllPlayersByRound($this->draft_id, $i, $sort);
-				$sort = $sort ? false : true;
-			}else{
-				$picks[] = player_object::getAllPlayersByRound($this->draft_id, $i);
-			}
-		}
-		
-		return $picks;
-	}
 	
 	/**
 	 * Grab proper array values for Teams and Positions dropdowns, and corresponding colors for positions too. Void function, operates on calling object.
@@ -141,53 +83,6 @@ class draft_object {
 		$this->sports_teams = $lib->getTeams($this->draft_sport);
 		$this->sports_positions = $lib->getPositions($this->draft_sport);
 		$this->sports_colors = $lib->position_colors;
-	}
-	
-	/**
-	 * Using MySQL's NOW() function, set the draft's start time to NOW in database and return that value.
-	 * @return string MySQL timestamp given to draft 
-	 */
-	public function beginStartTime() {
-		global $DBH; /* @var $DBH PDO */
-		$draft_start_time = php_draft_library::getNowPhpTime();
-		
-		$update_statement = $DBH->prepare("UPDATE draft set draft_start_time = ? WHERE draft_id = ? LIMIT 1");
-		$update_statement->bindParam(1, $draft_start_time);
-		$update_statement->bindParam(2, $this->draft_id);
-		
-		$update_statement->execute();
-		
-		return $draft_start_time;
-	}
-	
-	/**
-	 * Removes a draft, all of its managers and all of their picks permanently (hard delete)
-	 * @return bool Success
-	 */
-	public function deleteDraft() {
-		if($this->draft_id == 0)
-			return false;
-		
-		$tradeRemovalSuccess = trade_object::DeleteTradesByDraft($this->draft_id);
-		
-		if($tradeRemovalSuccess === false)
-			return false;
-		
-		$pickRemovalSuccess = player_object::deletePlayersByDraft($this->draft_id);
-		
-		if($pickRemovalSuccess === false)
-			return false;
-		
-		$managerRemovalSuccess = manager_object::deleteManagersByDraft($this->draft_id);
-		
-		if($managerRemovalSuccess === false)
-			return false;
-		
-		global $DBH; /* @var $DBH PDO */
-		
-		$sql = "DELETE FROM draft WHERE draft_id = " . (int)$this->draft_id . " LIMIT 1";
-		
-		return $DBH->exec($sql);
 	}
 	
 	/**
@@ -207,6 +102,7 @@ class draft_object {
 	 * Returns an array of the last five picks (player_object)
 	 * @return player_object
 	 */
+	//TODO: Remove in favor of just calling the player service
 	public function getLastTenPicks() {
 		return player_object::getLastTenPicks($this->draft_id);
 	}
@@ -215,6 +111,7 @@ class draft_object {
 	 * Returns an array of the last five picks (player_object)
 	 * @return player_object 
 	 */
+	//TODO: Remove in favor of just calling the player service
 	public function getLastFivePicks() {
 		return player_object::getLastFivePicks($this);
 	}
@@ -223,6 +120,7 @@ class draft_object {
 	 * Get the last player pick, or false on 0 rows.
 	 * @return player_object
 	 */
+	//TODO: Remove in favor of just calling the player service
 	public function getLastPick() {
 		return player_object::getLastPick($this);
 	}
@@ -231,6 +129,7 @@ class draft_object {
 	 * Returns the player_object that is the current pick for the draft.
 	 * @return player_object
 	 */
+	//TODO: Remove in favor of just calling the player service
 	public function getCurrentPick() {
 		return player_object::getCurrentPick($this);
 	}
@@ -239,6 +138,7 @@ class draft_object {
 	 * Get the next pick in the draft
 	 * @return player_object 
 	 */
+	//TODO: Remove in favor of just calling the player service
 	public function getNextPick() {
 		return player_object::getNextPick($this);
 	}
@@ -246,12 +146,13 @@ class draft_object {
 	/**
 	 * Returns an array of five player_object that occur in the future
 	 */
+	//TODO: Remove in favor of just calling the player service
 	public function getNextFivePicks() {
 		return player_object::getNextFivePicks($this);
 	}
 	
 	/**
-	 * Check to ensure $status is in the correct state to prevent any borking of the database.\
+	 * Check to ensure $status is in the correct state to prevent any borking of the database.
 	 * @param string $status The database value for status to be checked
 	 * @return bool true if status is legitimate, false otherwise
 	 */
@@ -262,26 +163,6 @@ class draft_object {
 			return true;
 		else
 			return false;
-	}
-
-	/**
-	 * Returns an array of all current drafts in the database
-	 * @return array of all available draft objects
-	 */
-	public static function getAllDrafts() {
-		$drafts = array();
-		//TODO: Change draft object to include timestamp for creation; IDs are not technically reliable sortable columns.
-		global $DBH; /* @var $DBH PDO */
-		
-		$stmt = $DBH->prepare("SELECT * FROM draft ORDER BY draft_id");
-		
-		$stmt->setFetchMode(PDO::FETCH_CLASS, 'draft_object');
-		$stmt->execute();
-		
-		while($draft_row = $stmt->fetch())
-			$drafts[] = $draft_row;
-
-		return $drafts;
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="Draft State Information">

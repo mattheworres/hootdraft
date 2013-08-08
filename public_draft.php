@@ -56,7 +56,7 @@ switch(ACTION) {
 	case 'draftBoard':
 		// <editor-fold defaultstate="collapsed" desc="draftBoard Logic">
 		$MANAGERS = manager_object::getManagersByDraft(DRAFT_ID);
-		$ALL_PICKS = $DRAFT->getAllDraftPicks();
+		$ALL_PICKS = $DRAFT_SERVICE->getAllDraftPicks($DRAFT);
 		DEFINE("NUMBER_OF_MANAGERS", count($MANAGERS));
 		DEFINE("COL_WIDTH", 115);
 		DEFINE("TOTAL_WIDTH", 10 + COL_WIDTH * NUMBER_OF_MANAGERS);
@@ -79,7 +79,7 @@ switch(ACTION) {
 		// <editor-fold defaultstate="collapsed" desc="loadDraftBoard Logic">
 		//Ajax
 		$MANAGERS = manager_object::getManagersByDraft(DRAFT_ID);
-		$ALL_PICKS = $DRAFT->getAllDraftPicks();
+		$ALL_PICKS = $DRAFT_SERVICE->getAllDraftPicks($DRAFT);
 		DEFINE("NUMBER_OF_MANAGERS", count($MANAGERS));
 		DEFINE("COL_WIDTH", 115);
 		DEFINE("TOTAL_WIDTH", 10 + COL_WIDTH * NUMBER_OF_MANAGERS);

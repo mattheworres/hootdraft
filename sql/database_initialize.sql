@@ -17,6 +17,7 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 CREATE TABLE IF NOT EXISTS `draft` (
   `draft_id` int(11) NOT NULL auto_increment,
+  `draft_create_time` datetime NOT NULL COMMENT 'The datetime the draft was created, can be used for sorting purposes.',
   `draft_name` text NOT NULL,
   `draft_sport` text NOT NULL,
   `draft_status` text NOT NULL,

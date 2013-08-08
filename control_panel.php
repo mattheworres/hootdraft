@@ -58,7 +58,7 @@ switch(ACTION) {
 		
 	case 'manageDrafts':
 		// <editor-fold defaultstate="collapsed" desc="manageDrafts Logic">
-		$DRAFTS = draft_object::getAllDrafts();
+		$DRAFTS = $DRAFT_SERVICE->getAllDrafts();
 		DEFINE("CONTROL_PANEL_ACTION", "MANAGE");
 		require_once('views/control_panel/manage_draft.php');
 		// </editor-fold>
@@ -224,7 +224,7 @@ switch(ACTION) {
 	case '':
 	case 'home':
 	default:
-		$DRAFTS = draft_object::getAllDrafts();
+		$DRAFTS = $DRAFT_SERVICE->getAllDrafts();
 		require_once('views/control_panel/index.php');
 		break;
 }

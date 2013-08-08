@@ -192,20 +192,22 @@ switch(ACTION) {
 			require_once("views/draft/delete_draft.php");
 			exit(1);
 		}
-
-		if($DRAFT->deleteDraft()) {
-			define("PAGE_HEADER", "Draft Removed Successfully");
-			define("P_CLASS", "success");
-			define("PAGE_CONTENT", "Your draft was successfully removed. <a href=\"control_panel.php\">Click here</a> to go back to the control panel.");
-			require_once("views/shared/generic_result_view.php");
-			exit(0);
-		} else {
+		
+		try {
+			$DRAFT_SERVICE->deleteDraft($DRAFT);
+		}catch(Exception $e) {
 			define("PAGE_HEADER", "Draft Unable to Be Removed");
 			define("P_CLASS", "error");
-			define("PAGE_CONTENT", "A server side error has occurred and your draft could not be removed.  Please <a href=\"draft.php?action=deleteDraft&did=" . DRAFT_ID . "\">go back</a> and try again.");
+			define("PAGE_CONTENT", "Unable to remove draft: " . $e->getMessage() . " Please <a href=\"draft.php?action=deleteDraft&did=" . DRAFT_ID . "\">go back</a> and try again.");
 			require_once("views/shared/generic_result_view.php");
 			exit(1);
 		}
+		
+		define("PAGE_HEADER", "Draft Removed Successfully");
+		define("P_CLASS", "success");
+		define("PAGE_CONTENT", "Your draft was successfully removed. <a href=\"control_panel.php\">Click here</a> to go back to the control panel.");
+		require_once("views/shared/generic_result_view.php");
+		exit(0);
 		// </editor-fold>
 		break;
 		

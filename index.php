@@ -3,8 +3,10 @@ require("includes/global_setup.php");
 
 require_once('models/index_model.php');
 
+$DRAFT_SERVICE = new draft_service();
+
 $drafts = new indexObject();
-$drafts->draft_objects = draft_object::getAllDrafts();
+$drafts->draft_objects = $DRAFT_SERVICE->getAllDrafts();
 $drafts->number_of_drafts = count($drafts->draft_objects);
 DEFINE("ACTION", isset($_GET['action']) ? $_GET['action'] : "");
 
