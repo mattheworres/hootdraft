@@ -1,6 +1,6 @@
 <?php
 /**
- * Draft Service - an object manager for the PHPDraft "draft" object, which is the parent object.
+ * Draft Service - an object service for the PHPDraft "draft" object, which is the parent object.
  * 
  * A draft has many managers, and managers possess many players/picks.
  */
