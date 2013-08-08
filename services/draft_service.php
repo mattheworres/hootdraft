@@ -176,7 +176,7 @@ class draft_service {
 		$draftJustStarted = $was_undrafted && $draft->isInProgress() ? true : false;
 
 		try {
-			$draft->draft_start_time = $DRAFT_SERVICE->getDraftStartTime($draft, $draftJustStarted);
+			$draft->draft_start_time = $this->getDraftStartTime($draft, $draftJustStarted);
 		}catch(Exception $e) {
 			throw new Exception("Unable to update draft status: " . $e->getMessage());
 		}
@@ -203,7 +203,7 @@ class draft_service {
 
 		if($draftJustStarted) {
 			try {
-				$DRAFT_SERVICE->setupPicks($draft);
+				$this->setupPicks($draft);
 			}catch(Exception $e) {
 				throw new Exception("Unable to update draft status - unable to setup picks.");
 			}

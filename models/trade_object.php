@@ -49,9 +49,12 @@ class trade_object {
 		
 		if(!$stmt->fetch())
 			return false;
+			
+	//TODO: Move into trade service:
+		$MANAGER_SERVICE = new manager_service();
 		
-		$this->manager1 = new manager_object($this->manager1_id);
-		$this->manager2 = new manager_object($this->manager2_id);
+		$this->manager1 = $MANAGER_SERVICE->loadManager($this->manager1_id);
+		$this->manager2 = $MANAGER_SERVICE->loadManager($this->manager2_id);
 		$this->trade_assets = trade_asset_object::GetAssetsByTrade($this->trade_id, $this->manager1, $this->manager2);
 		
 		if($trade->manager1 == false || $trade->manager2 == false || $trade->trade_assets == false)
@@ -154,11 +157,13 @@ class trade_object {
 		if(!$stmt->execute())
 			return false;
 		
+		$MANAGER_SERVICE = new manager_service();
+		
 		//For each trade pass the manager object in so we dont thrash when loading assets from DB
 		while($trade = $stmt->fetch()) {
 			/* @var $trade trade_object*/
-			$trade->manager1 = new manager_object($trade->manager1_id);
-			$trade->manager2 = new manager_object($trade->manager2_id);
+			$trade->manager1 = $MANAGER_SERVICE->loadManager($trade->manager1_id);
+			$trade->manager2 = $MANAGER_SERVICE->loadManager($trade->manager2_id);
 			$trade->trade_assets = trade_asset_object::GetAssetsByTrade($trade->trade_id, $trade->manager1, $trade->manager2);
 				
 			if($trade->manager1 == false || $trade->manager2 == false || $trade->trade_assets == false)
@@ -203,10 +208,12 @@ class trade_object {
 	 * @return trade_object 
 	 */
 	public static function BuildTrade($draft_id, $manager1_id, $manager2_id, $manager1PlayerIds, $manager2PlayerIds) {
+		$MANAGER_SERVICE = new manager_service();
+		
 		$newTrade = new trade_object();
 		$newTrade->draft_id = $draft_id;
-		$newTrade->manager1 = new manager_object($manager1_id);
-		$newTrade->manager2 = new manager_object($manager2_id);
+		$newTrade->manager1 = $MANAGER_SERVICE->loadManager($manager1_id);
+		$newTrade->manager2 = $MANAGER_SERVICE->loadManager($manager2_id);
 		$newTrade->trade_assets = trade_object::BuildTradeAssets($manager1PlayerIds, $manager2PlayerIds, $newTrade->manager1, $newTrade->manager2);
 		
 		return $newTrade;

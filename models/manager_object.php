@@ -17,59 +17,8 @@ class manager_object {
 	/** @var int $draft_order The order in which the manager makes a pick in the draft. */
 	public $draft_order;
 
-	public function __construct($manager_id = 0) {
-		if((int)$manager_id == 0)
-			return false;
-		
-		global $DBH; /* @var $DBH PDO */
-		
-		$stmt = $DBH->prepare("SELECT * FROM managers WHERE manager_id = ? LIMIT 1");
-		$stmt->bindParam(1, $manager_id);
-		$stmt->setFetchMode(PDO::FETCH_INTO, $this);
-		
-		if(!$stmt->execute())
-			return false;
-		
-		if(!$stmt->fetch())
-			return false;
-		
-		return true;
-	}
-
-	/**
-	 * Check the validity of parent manager object and return array of error descriptions if invalid.
-	 * @return array/string errors
-	 */
-	public function getValidity() {
-		$email_regex = "/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/";
-		
-		$errors = array();
-
-		if(!isset($this->manager_name) || strlen($this->manager_name) == 0)
-			$errors[] = "Manager name is empty.";
-		
-		
-		if(isset($this->manager_email) && strlen($this->manager_email) > 0) {
-			$is_valid_email = (bool)preg_match($email_regex, $this->manager_email);
-			if(!$is_valid_email)
-				$errors[] = "Manager email is not in the correct format";
-		}
-		
-		global $DBH; /* @var $DBH PDO */
-		
-		$has_draft_stmt = $DBH->prepare("SELECT COUNT(draft_id) as count FROM draft WHERE draft_id = ?");
-		$has_draft_stmt->bindParam(1, $this->draft_id);
-		
-		if(!$has_draft_stmt->execute())
-			$errors[] = $this->draft_name . " unable to be added";
-		
-		if(!$row = $has_draft_stmt->fetch())
-			$errors[] = $this->draft_name . " unable to be added";
-		
-		if((int)$row['count'] == 0)
-			$errors[] = "Manager's draft doesn't exist.";
-		
-		return $errors;
+	public function __construct() {
+		//Leaving this here in case other init needs to happen later
 	}
 
 	/**

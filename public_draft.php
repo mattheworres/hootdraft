@@ -100,8 +100,9 @@ switch(ACTION) {
 	
 	case 'loadManagerPicks':
 		// <editor-fold defaultstate="collapsed" desc="loadManagerPicks Logic">
+		$MANAGER_SERVICE = new manager_service();
 		$manager_id = (int)$_REQUEST['mid'];
-		$MANAGER = new manager_object($manager_id);
+		$MANAGER = $MANAGER_SERVICE->loadManager($manager_id);
 		
 		if($manager_id == 0 || $MANAGER === false) {
 			exit(1);

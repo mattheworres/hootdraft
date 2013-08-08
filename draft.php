@@ -7,6 +7,7 @@ DEFINE("ACTION", isset($_REQUEST['action']) ? $_REQUEST['action'] : "");
 DEFINE("DRAFT_ID", isset($_REQUEST['did']) ? (int)$_REQUEST['did'] : "");
 
 $DRAFT_SERVICE = new draft_service();
+$MANAGER_SERVICE = new manager_service();
 
 try {
 	$DRAFT = $DRAFT_SERVICE->loadDraft(DRAFT_ID);
@@ -39,7 +40,7 @@ switch(ACTION) {
 			$new_manager->manager_name = $manager_request['manager_name'];
 			$new_manager->manager_email = $manager_request['manager_email'];
 			
-			$object_errors = $new_manager->getValidity();
+			$object_errors = $MANAGER_SERVICE->getValidity($new_manager);
 			
 			if(count($object_errors) > 0) {
 				$ERRORS = $object_errors;

@@ -99,10 +99,10 @@ $(document).ready(function() {
 		var value = $(this).val(),
 			$passwordBox = $('#passwordBox');
 		
-		if(value === 1) {
+		if(value === "1") {
 			$passwordBox.show();
 		} else {
-			$passwordBox.hide();
+			$passwordBox.val('').hide();
 		}
 			
 	});

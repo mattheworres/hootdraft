@@ -21,7 +21,7 @@ class manager_service {
 		global $DBH; /* @var $DBH PDO */
 		
 		$stmt = $DBH->prepare("SELECT * FROM managers WHERE manager_id = ? LIMIT 1");
-		$stmt->bindParam(1, $manager_id);
+		$stmt->bindParam(1, $id);
 		$stmt->setFetchMode(PDO::FETCH_INTO, $manager);
 		
 		if(!$stmt->execute()) {
@@ -33,6 +33,42 @@ class manager_service {
 		}
 		
 		return $manager;
+	}
+	
+	/**
+	 * Check the validity of parent manager object and return array of error descriptions if invalid.
+	 * @return array/string errors
+	 */
+	public function getValidity($manager) {
+		$email_regex = "/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/";
+		
+		$errors = array();
+
+		if(!isset($manager->manager_name) || strlen($manager->manager_name) == 0)
+			$errors[] = "Manager name is empty.";
+		
+		
+		if(isset($manager->manager_email) && strlen($manager->manager_email) > 0) {
+			$is_valid_email = (bool)preg_match($email_regex, $manager->manager_email);
+			if(!$is_valid_email)
+				$errors[] = "Manager email is not in the correct format";
+		}
+		
+		global $DBH; /* @var $DBH PDO */
+		
+		$has_draft_stmt = $DBH->prepare("SELECT COUNT(draft_id) as count FROM draft WHERE draft_id = ?");
+		$has_draft_stmt->bindParam(1, $manager->draft_id);
+		
+		if(!$has_draft_stmt->execute())
+			$errors[] = $manager->draft_name . " unable to be added";
+		
+		if(!$row = $has_draft_stmt->fetch())
+			$errors[] = $manager->draft_name . " unable to be added";
+		
+		if((int)$row['count'] == 0)
+			$errors[] = "Manager's draft doesn't exist.";
+		
+		return $errors;
 	}
 }
 ?>

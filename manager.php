@@ -7,8 +7,9 @@ DEFINE("ACTION", isset($_GET['action']) ? $_GET['action'] : "");
 
 //NOTE: This uses _REQUEST because we grab the ID from both POSTs and GETs
 DEFINE('MANAGER_ID', isset($_REQUEST['mid']) ? (int)$_REQUEST['mid'] : 0);
+$MANAGER_SERVICE = new manager_service();
 
-$MANAGER = new manager_object(MANAGER_ID);
+$MANAGER = $MANAGER_SERVICE->loadManager(MANAGER_ID);
 
 // <editor-fold defaultstate="collapsed" desc="Error-checking on basic input">
 if($MANAGER->manager_id == 0) {
@@ -55,7 +56,7 @@ switch(ACTION) {
 		$MANAGER->manager_name = $manager_name;
 		$MANAGER->manager_email = $manager_email;
 		
-		$object_errors = $MANAGER->getValidity();
+		$object_errors = $MANAGER_SERVICE->getValidity($MANAGER);
 		
 		if(count($object_errors) > 0) {
 			$ERRORS = $object_errors;
