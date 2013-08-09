@@ -219,19 +219,20 @@ class draft_service {
 	public function setupPicks($draft) {
 		$pick = 1;
 		$even = true;
+		$MANAGER_SERVICE = new manager_service();
 		
 		//TODO: Replace calls below with manager and player services:
 		for($current_round = 1; $current_round <= $draft->draft_rounds; $current_round++) {
 			if($draft->styleIsSerpentine()) {
 				if($even) {
-					$managers = manager_object::getManagersByDraft($draft->draft_id, true);
+					$managers = $MANAGER_SERVICE->getManagersByDraft($draft->draft_id, true);
 					$even = false;
 				} else {
-					$managers = manager_object::getManagersByDraft($draft->draft_id, true, "DESC");
+					$managers = $MANAGER_SERVICE->getManagersByDraft($draft->draft_id, true, "DESC");
 					$even = true;
 				}
 			}else
-				$managers = manager_object::getManagersByDraft($draft->draft_id, true);
+				$managers = $MANAGER_SERVICE->getManagersByDraft($draft->draft_id, true);
 
 			foreach($managers as $manager) {
 				$new_pick = new player_object();
@@ -301,6 +302,8 @@ class draft_service {
 			throw new Exception("Draft does not exist in database.");
 		}
 		
+		$MANAGER_SERVICE = new manager_Service();
+		
 		$tradeRemovalSuccess = trade_object::DeleteTradesByDraft($draft->draft_id);
 		
 		if($tradeRemovalSuccess === false) {
@@ -313,9 +316,9 @@ class draft_service {
 			throw new Exception("Unable to delete picks belonging to draft.");
 		}
 		
-		$managerRemovalSuccess = manager_object::deleteManagersByDraft($draft->draft_id);
-		
-		if($managerRemovalSuccess === false) {
+		try {
+			$MANAGER_SERVICE->deleteManagersByDraft($draft->draft_id);
+		}catch(Exception $e) {
 			throw new Exception("Unable to delete managers belonging to draft.");
 		}
 		

@@ -25,7 +25,7 @@ switch(ACTION) {
 		$MANAGERS = array();
 		$MANAGERS[] = new manager_object();
 
-		$CURRENT_MANAGERS = manager_object::getManagersByDraft(DRAFT_ID, true);
+		$CURRENT_MANAGERS = $MANAGER_SERVICE->getManagersByDraft(DRAFT_ID, true);
 		require_once('views/draft/add_managers.php');
 		// </editor-fold>
 		break;
@@ -48,7 +48,9 @@ switch(ACTION) {
 				exit(1);
 			}
 
-			if(!$new_manager->saveManager()) {
+			try {
+				$MANAGER_SERVICE->saveManager($new_manager);
+			}catch(Exception $e) {
 				return "SERVER_ERROR";
 				exit(1);
 			}
@@ -241,7 +243,7 @@ switch(ACTION) {
 	
 	default:
 		// <editor-fold defaultstate="collapsed" desc="Main Draft Page Logic">
-		$MANAGERS = manager_object::getManagersByDraft(DRAFT_ID, true);
+		$MANAGERS = $MANAGER_SERVICE->getManagersByDraft(DRAFT_ID, true);
 
 		DEFINE('NUMBER_OF_MANAGERS', count($MANAGERS));
 		DEFINE('HAS_MANAGERS', NUMBER_OF_MANAGERS > 0);

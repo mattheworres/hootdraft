@@ -9,6 +9,7 @@ DEFINE("TRADE_ID", isset($_REQUEST['tid']) ? (int)$_REQUEST['tid'] : 0);
 DEFINE("MANAGER_ID", isset($_REQUEST['mid']) ? (int)$_REQUEST['mid'] : 0);
 
 $DRAFT_SERVICE = new draft_service();
+$MANAGER_SERVICE = new manager_service();
 
 try {
 	$DRAFT = $DRAFT_SERVICE->loadDraft(DRAFT_ID);
@@ -98,7 +99,7 @@ switch(ACTION) {
 	
 	default:
 		// <editor-fold defaultstate="collapsed" desc="Index Logic">
-		$MANAGERS = manager_object::getManagersByDraft(DRAFT_ID);
+		$MANAGERS = $MANAGER_SERVICE->getManagersByDraft(DRAFT_ID);
 		require("views/trades/index.php");
 		exit(0);
 		// </editor-fold>

@@ -38,7 +38,7 @@ if($DRAFT->isCompleted()) {
 }
 // </editor-fold>
 
-$MANAGERS = manager_object::getManagersByDraft(DRAFT_ID);
+$MANAGERS = $MANAGER_SERVICE->getManagersByDraft(DRAFT_ID);
 $kooky_labels = array();
 $kooky_labels[] = "On Deck: ";
 $kooky_labels[] = "In the Hole: ";

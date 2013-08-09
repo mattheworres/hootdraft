@@ -32,10 +32,11 @@
 						</tr>
 						<?php
 						$alt_row = false;
+						$MANAGER_SERVICE = new manager_service();
 
 						foreach($DRAFTS as $draft) {
 							/* @var $draft draft_object */
-							$numberOfManagers = manager_object::getCountOfManagersByDraft($draft->draft_id);
+							$numberOfManagers = $MANAGER_SERVICE->getCountOfManagersByDraft($draft->draft_id);
 							?>
 							<tr<?php echo ($alt_row ? " style=\"background-color: #cccccc;\"" : "");?>>
 								<td><span class="phpdraft-icon ui-icon ui-icon-<?php echo $draft->getVisibility(); ?>"></span></td>

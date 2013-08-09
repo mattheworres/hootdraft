@@ -8,10 +8,11 @@ DEFINE("ACTION", isset($_REQUEST['action']) ? $_REQUEST['action'] : "");
 DEFINE('DRAFT_ID', isset($_REQUEST['did']) ? (int)$_REQUEST['did'] : 0);
 DEFINE("BOARD_RELOAD", 5);
 
+$DRAFT_SERVICE = new draft_service();
+$MANAGER_SERVICE = new manager_service();
+
 //Draft password may have pre-loaded this for us.
 if(!isset($DRAFT) || get_class($DRAFT) != "draft_object") {
-	$DRAFT_SERVICE = new draft_service();
-
 	try {
 		$DRAFT = $DRAFT_SERVICE->loadDraft(DRAFT_ID);
 	}catch(Exception $e) {
@@ -55,7 +56,7 @@ switch(ACTION) {
 	
 	case 'draftBoard':
 		// <editor-fold defaultstate="collapsed" desc="draftBoard Logic">
-		$MANAGERS = manager_object::getManagersByDraft(DRAFT_ID);
+		$MANAGERS = $MANAGER_SERVICE->getManagersByDraft(DRAFT_ID);
 		$ALL_PICKS = $DRAFT_SERVICE->getAllDraftPicks($DRAFT);
 		DEFINE("NUMBER_OF_MANAGERS", count($MANAGERS));
 		DEFINE("COL_WIDTH", 115);
@@ -78,7 +79,7 @@ switch(ACTION) {
 	case 'loadDraftBoard':
 		// <editor-fold defaultstate="collapsed" desc="loadDraftBoard Logic">
 		//Ajax
-		$MANAGERS = manager_object::getManagersByDraft(DRAFT_ID);
+		$MANAGERS = $MANAGER_SERVICE->getManagersByDraft(DRAFT_ID);
 		$ALL_PICKS = $DRAFT_SERVICE->getAllDraftPicks($DRAFT);
 		DEFINE("NUMBER_OF_MANAGERS", count($MANAGERS));
 		DEFINE("COL_WIDTH", 115);
@@ -90,7 +91,7 @@ switch(ACTION) {
 	
 	case 'picksPerManager':
 		// <editor-fold defaultstate="collapsed" desc="picksPerManager Logic">
-		$MANAGERS = manager_object::getManagersByDraft($DRAFT->draft_id);
+		$MANAGERS = $MANAGER_SERVICE->getManagersByDraft($DRAFT->draft_id);
 		$MANAGER = $MANAGERS[0];
 		$MANAGER_PICKS = player_object::getSelectedPlayersByManager($MANAGER->manager_id);
 		$NOW = php_draft_library::getNowRefreshTime();

@@ -26,17 +26,21 @@ switch(ACTION) {
 		// <editor-fold defaultstate="collapsed" desc="moveManager Logic">
 		$direction = isset($_POST['direction']) ? $_POST['direction'] : "";
 		
-		switch($direction) {
-			case 'up':
-				$success = $MANAGER->moveManagerUp();
-				break;
-			
-			case 'down':
-				$success = $MANAGER->moveManagerDown();
-				break;
-		}	
+		try {
+			switch($direction) {
+				case 'up':
+					$MANAGER_SERVICE->moveManagerUp($MANAGER);
+					break;
+
+				case 'down':
+					$MANAGER_SERVICE->moveManagerDown($MANAGER);
+					break;
+			}
+		}catch(Exception $e) {
+			echo "FAILURE";
+		}
 		
-		echo $success ? "SUCCESS" : "FAILURE";
+		echo "SUCCESS";
 		// </editor-fold>
 		break;
 	
@@ -79,9 +83,15 @@ switch(ACTION) {
 	
 	case 'deleteManager':
 		// <editor-fold defaultstate="collapsed" desc="deleteManager Logic">
-		$success = $MANAGER->deleteManager();
+		try {
+			$MANAGER_SERVICE->deleteManager($MANAGER);
+		}catch(Exception $e) {
+			echo "FAILURE";
+			exit(1);
+		}
 		
-		echo $success ? "SUCCESS" : "FAILURE";
+		echo "SUCCESS";
+		exit(1);
 		// </editor-fold>
 		break;
 }
