@@ -10,6 +10,7 @@ DEFINE("MANAGER_ID", isset($_REQUEST['mid']) ? (int)$_REQUEST['mid'] : 0);
 
 $DRAFT_SERVICE = new draft_service();
 $MANAGER_SERVICE = new manager_service();
+$PLAYER_SERVICE = new player_service();
 
 try {
 	$DRAFT = $DRAFT_SERVICE->loadDraft(DRAFT_ID);
@@ -47,7 +48,7 @@ switch(ACTION) {
 			exit(1);
 		}
 		
-		$players = player_object::getAllPlayersByManager(MANAGER_ID, true);
+		$players = $PLAYER_SERVICE->getAllPlayersByManager(MANAGER_ID, true);
 		
 		if(isset($players) && count($players) > 0) {
 			header('Cache-Control: no-cache, must-revalidate');

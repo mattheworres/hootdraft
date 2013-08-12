@@ -86,8 +86,6 @@ class pro_player_object {
 		foreach($players as $player) {
 			/* @var $player pro_player_object */
 			if(!$player->savePlayer()) {
-				$blart = "blee";
-				$blee = $blart . "bloo";
 				return false;
 			}
 		}

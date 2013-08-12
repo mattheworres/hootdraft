@@ -166,14 +166,14 @@ class draft_service {
 	public function updateStatus($draft, $new_status) {
 		if($draft->isCompleted())
 			return false;
-
-		$was_undrafted = $draft->isUndrafted();
+		
+		$PLAYER_SERVICE = new player_service();
 
 		$draft->draft_status = $new_status;
 		$draft->draft_current_pick = 1;
 		$draft->draft_current_round = 1;
 
-		$draftJustStarted = $was_undrafted && $draft->isInProgress() ? true : false;
+		$draftJustStarted = $draft->isUndrafted() && $draft->isInProgress() ? true : false;
 
 		try {
 			$draft->draft_start_time = $this->getDraftStartTime($draft, $draftJustStarted);
@@ -195,10 +195,10 @@ class draft_service {
 			throw new Exception("Unable to update draft status - unable to erase trades.");
 		}
 		
-		$erasePlayersSuccess = player_object::deletePlayersByDraft($draft->draft_id);
-
-		if($erasePlayersSuccess === false) {
-			throw new Exception("Unable to update draft status - unable to erase players.");
+		try {
+			$PLAYER_SERVICE->deletePlayersByDraft($draft->draft_id);
+		}catch(Exception $e) {
+			throw new Exception("Unable to update draft status: " . $e->getMessage());
 		}
 
 		if($draftJustStarted) {
@@ -220,8 +220,8 @@ class draft_service {
 		$pick = 1;
 		$even = true;
 		$MANAGER_SERVICE = new manager_service();
+		$PLAYER_SERVICE = new player_service();
 		
-		//TODO: Replace calls below with manager and player services:
 		for($current_round = 1; $current_round <= $draft->draft_rounds; $current_round++) {
 			if($draft->styleIsSerpentine()) {
 				if($even) {
@@ -233,6 +233,10 @@ class draft_service {
 				}
 			}else
 				$managers = $MANAGER_SERVICE->getManagersByDraft($draft->draft_id, true);
+			
+			if(count($managers) == 0) {
+				throw new Exception("Unable to setup picks - unable to get managers.");
+			}
 
 			foreach($managers as $manager) {
 				$new_pick = new player_object();
@@ -240,11 +244,12 @@ class draft_service {
 				$new_pick->draft_id = $draft->draft_id;
 				$new_pick->player_round = $current_round;
 				$new_pick->player_pick = $pick;
-
-				$saveSuccess = $new_pick->savePlayer();
 				
-				if(!$saveSuccess) {
-					throw new Exception("Unable to setup picks for draft.");
+				//FIX: Why are picks not being created here? No exception thrown, but rows arent being created
+				try{
+					$PLAYER_SERVICE->savePlayer($new_pick);
+				}catch(Exception $e) {
+					throw new Exception("Unable to save player: " . $e->getMessage());
 				}
 
 				$pick++;
@@ -260,13 +265,15 @@ class draft_service {
 	public function getAllDraftPicks($draft) {
 		$picks = array();
 		
+		$PLAYER_SERVICE = new player_service();
+		
 		$sort = true;
 		for($i = 1; $i <= $draft->draft_rounds; ++$i) {
 			if($draft->styleIsSerpentine()) {
-				$picks[] = player_object::getAllPlayersByRound($draft->draft_id, $i, $sort);
+				$picks[] = $PLAYER_SERVICE->getAllPlayersByRound($draft->draft_id, $i, $sort);
 				$sort = $sort ? false : true;
 			}else{
-				$picks[] = player_object::getAllPlayersByRound($draft->draft_id, $i);
+				$picks[] = $PLAYER_SERVICE->getAllPlayersByRound($draft->draft_id, $i);
 			}
 		}
 		
@@ -303,6 +310,7 @@ class draft_service {
 		}
 		
 		$MANAGER_SERVICE = new manager_Service();
+		$PLAYER_SERVICE = new player_service();
 		
 		$tradeRemovalSuccess = trade_object::DeleteTradesByDraft($draft->draft_id);
 		
@@ -310,9 +318,9 @@ class draft_service {
 			throw new Exception("Unable to delete trades belonging to draft.");
 		}
 		
-		$pickRemovalSuccess = player_object::deletePlayersByDraft($draft->draft_id);
-		
-		if($pickRemovalSuccess === false) {
+		try {
+			$PLAYER_SERVICE->deletePlayersByDraft($draft->draft_id);
+		}catch(Exception $e) {
 			throw new Exception("Unable to delete picks belonging to draft.");
 		}
 		

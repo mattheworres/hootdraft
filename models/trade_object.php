@@ -274,6 +274,7 @@ class trade_object {
 	 */
 	private static function BuildTradeAssets(array $manager1AssetIds, array $manager2AssetIds, manager_object $manager1, manager_object $manager2) {
 		$tradeAssets = array();
+		$PLAYER_SERVICE = new player_service();
 		
 		if($manager1 == null || $manager2 == null)
 			return false;
@@ -287,7 +288,7 @@ class trade_object {
 			$newAsset = new trade_asset_object();
 			$newAsset->oldmanager = $manager1;
 			$newAsset->newmanager = $manager2;
-			$newAsset->player = new player_object($playerId);
+			$newAsset->player = $PLAYER_SERVICE->loadPlayer($playerId);
 			
 			if(!isset($newAsset->player) || $newAsset->player == false) {
 				return false;
@@ -305,7 +306,7 @@ class trade_object {
 			$newAsset = new trade_asset_object();
 			$newAsset->oldmanager = $manager2;
 			$newAsset->newmanager = $manager1;
-			$newAsset->player = new player_object($playerId);
+			$newAsset->player = $PLAYER_SERVICE->loadPlayer($playerId);
 			
 			if(!isset($newAsset->player) || $newAsset->player == false) {
 				return false;
@@ -322,11 +323,16 @@ class trade_object {
 	 * @return boolean True on success, false otherwise 
 	 */
 	private function ExchangeAssets() {
+		$PLAYER_SERVICE = new player_service();
 		foreach($this->trade_assets as $asset) {
 			/* @var $asset trade_asset_object */
 			$asset->player->manager_id = $asset->newmanager->manager_id;
-			if(!$asset->player->savePlayer())
+			
+			try {
+				$PLAYER_SERVICE->savePlayer($asset->player);
+			}catch(Exception $e) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -336,8 +342,10 @@ class trade_object {
 	 * @return boolean True on success, an array of error messages otherwise. 
 	 */
 	private function AssetOwnershipIsCorrect() {
-		$manager1_current_assets = player_object::getAllPlayersByManager($this->manager1->manager_id);
-		$manager2_current_assets = player_object::getAllPlayersByManager($this->manager2->manager_id);
+		$PLAYER_SERVICE = new player_service();
+		
+		$manager1_current_assets = $PLAYER_SERVICE->getAllPlayersByManager($this->manager1->manager_id);
+		$manager2_current_assets = $PLAYER_SERVICE->getAllPlayersByManager($this->manager2->manager_id);
 		
 		$this->ownership_errors = array();
 		

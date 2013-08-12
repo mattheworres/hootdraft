@@ -68,7 +68,9 @@ switch(ACTION) {
 			exit(1);
 		}
 		
-		if($MANAGER->saveManager() === false) {
+		try {
+			$MANAGER_SERVICE->saveManager($MANAGER);
+		}catch(Exception $e) {
 			$ERRORS[] = "The manager was unable to be updated, please try again.";
 			require_once('views/manager/edit_manager.php');
 			exit(1);

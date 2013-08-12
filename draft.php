@@ -8,6 +8,7 @@ DEFINE("DRAFT_ID", isset($_REQUEST['did']) ? (int)$_REQUEST['did'] : "");
 
 $DRAFT_SERVICE = new draft_service();
 $MANAGER_SERVICE = new manager_service();
+$PLAYER_SERVICE = new player_service();
 
 try {
 	$DRAFT = $DRAFT_SERVICE->loadDraft(DRAFT_ID);
@@ -44,14 +45,14 @@ switch(ACTION) {
 			
 			if(count($object_errors) > 0) {
 				$ERRORS = $object_errors;
-				return "SERVER_ERROR";
+				echo "SERVER_ERROR: " . $ERRORS;
 				exit(1);
 			}
 
 			try {
 				$MANAGER_SERVICE->saveManager($new_manager);
 			}catch(Exception $e) {
-				return "SERVER_ERROR";
+				echo "SERVER_ERROR: " . $e->getMessage();
 				exit(1);
 			}
 		}
@@ -251,7 +252,7 @@ switch(ACTION) {
 		
 		if($DRAFT->isInProgress() || $DRAFT->isCompleted()) {
 			$DRAFT->setupSport();
-			$LAST_TEN_PICKS = player_object::getLastTenPicks(DRAFT_ID);
+			$LAST_TEN_PICKS = $PLAYER_SERVICE->getLastTenPicks(DRAFT_ID);
 			DEFINE('NUMBER_OF_LAST_PICKS', count($LAST_TEN_PICKS));
 			
 			if($LAST_TEN_PICKS === false) {

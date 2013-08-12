@@ -10,6 +10,7 @@ DEFINE("BOARD_RELOAD", 5);
 
 $DRAFT_SERVICE = new draft_service();
 $MANAGER_SERVICE = new manager_service();
+$PLAYER_SERVICE = new player_service();
 
 //Draft password may have pre-loaded this for us.
 if(!isset($DRAFT) || get_class($DRAFT) != "draft_object") {
@@ -33,8 +34,8 @@ if($DRAFT === false || $DRAFT->draft_id == 0) {
 }
 
 if(ACTION != 'isDraftReady' && $DRAFT->isUndrafted()) {
-	$LAST_TEN_PICKS = $DRAFT->getLastTenPicks();
-	$CURRENT_PICK = $DRAFT->getCurrentPick();
+	$LAST_TEN_PICKS = $PLAYER_SERVICE->getLastTenPicks($DRAFT->draft_id);
+	$CURRENT_PICK = $PLAYER_SERVICE->getCurrentPick($DRAFT);
 	require("views/public_draft/index.php");
 	exit(0);
 }
@@ -91,9 +92,18 @@ switch(ACTION) {
 	
 	case 'picksPerManager':
 		// <editor-fold defaultstate="collapsed" desc="picksPerManager Logic">
-		$MANAGERS = $MANAGER_SERVICE->getManagersByDraft($DRAFT->draft_id);
-		$MANAGER = $MANAGERS[0];
-		$MANAGER_PICKS = player_object::getSelectedPlayersByManager($MANAGER->manager_id);
+		try {
+			$MANAGERS = $MANAGER_SERVICE->getManagersByDraft($DRAFT->draft_id);
+			$MANAGER = $MANAGERS[0];
+			$MANAGER_PICKS = $PLAYER_SERVICE->getSelectedPlayersByManager($MANAGER->manager_id);
+		}catch(Exception $e) {
+			define("PAGE_HEADER", "Draft Not Found");
+			define("P_CLASS", "error");
+			define("PAGE_CONTENT", "Unable to load information: " . $e->getMessage() . " Please try again.");
+			require_once("views/shared/generic_result_view.php");
+			exit(1);
+		}
+		
 		$NOW = php_draft_library::getNowRefreshTime();
 		require("views/public_draft/picks_per_manager.php");
 		// </editor-fold>
@@ -109,7 +119,7 @@ switch(ACTION) {
 			exit(1);
 		}
 		
-		$MANAGER_PICKS = player_object::getSelectedPlayersByManager($manager_id);
+		$MANAGER_PICKS = $PLAYER_SERVICE->getSelectedPlayersByManager($manager_id);
 		$NOW = php_draft_library::getNowRefreshTime();
 		
 		if(empty($MANAGER_PICKS)) {
@@ -124,7 +134,7 @@ switch(ACTION) {
 	case 'picksPerRound':
 		// <editor-fold defaultstate="collapsed" desc="picksPerRound Logic">
 		$ROUND = 1;
-		$ROUND_PICKS = player_object::getSelectedPlayersByRound($DRAFT->draft_id, $ROUND);
+		$ROUND_PICKS = $PLAYER_SERVICE->getSelectedPlayersByRound($DRAFT->draft_id, $ROUND);
 		$NOW = php_draft_library::getNowRefreshTime();
 		require("views/public_draft/picks_per_round.php");
 		// </editor-fold>
@@ -137,7 +147,7 @@ switch(ACTION) {
 		if($ROUND == 0)
 			exit(1);
 		
-		$ROUND_PICKS = player_object::getSelectedPlayersByRound($DRAFT->draft_id, $ROUND);
+		$ROUND_PICKS = $PLAYER_SERVICE->getSelectedPlayersByRound($DRAFT->draft_id, $ROUND);
 		$NOW = php_draft_library::getNowRefreshTime();
 		
 		if(empty($ROUND_PICKS)) {
@@ -198,8 +208,8 @@ switch(ACTION) {
 	
 	default:
 		// <editor-fold defaultstate="collapsed" desc="index logic">
-		$LAST_TEN_PICKS = $DRAFT->getLastTenPicks();
-		$CURRENT_PICK = $DRAFT->getCurrentPick();
+		$LAST_TEN_PICKS = $PLAYER_SERVICE->getLastTenPicks($DRAFT->draft_id);
+		$CURRENT_PICK = $PLAYER_SERVICE->getCurrentPick($DRAFT);
 		require("views/public_draft/index.php");
 		// </editor-fold>
 		break;

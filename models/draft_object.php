@@ -99,59 +99,6 @@ class draft_object {
 	}
 	
 	/**
-	 * Returns an array of the last five picks (player_object)
-	 * @return player_object
-	 */
-	//TODO: Remove in favor of just calling the player service
-	public function getLastTenPicks() {
-		return player_object::getLastTenPicks($this->draft_id);
-	}
-	
-	/**
-	 * Returns an array of the last five picks (player_object)
-	 * @return player_object 
-	 */
-	//TODO: Remove in favor of just calling the player service
-	public function getLastFivePicks() {
-		return player_object::getLastFivePicks($this);
-	}
-	
-	/**
-	 * Get the last player pick, or false on 0 rows.
-	 * @return player_object
-	 */
-	//TODO: Remove in favor of just calling the player service
-	public function getLastPick() {
-		return player_object::getLastPick($this);
-	}
-	
-	/**
-	 * Returns the player_object that is the current pick for the draft.
-	 * @return player_object
-	 */
-	//TODO: Remove in favor of just calling the player service
-	public function getCurrentPick() {
-		return player_object::getCurrentPick($this);
-	}
-	
-	/**
-	 * Get the next pick in the draft
-	 * @return player_object 
-	 */
-	//TODO: Remove in favor of just calling the player service
-	public function getNextPick() {
-		return player_object::getNextPick($this);
-	}
-	
-	/**
-	 * Returns an array of five player_object that occur in the future
-	 */
-	//TODO: Remove in favor of just calling the player service
-	public function getNextFivePicks() {
-		return player_object::getNextFivePicks($this);
-	}
-	
-	/**
 	 * Check to ensure $status is in the correct state to prevent any borking of the database.
 	 * @param string $status The database value for status to be checked
 	 * @return bool true if status is legitimate, false otherwise
@@ -164,8 +111,6 @@ class draft_object {
 		else
 			return false;
 	}
-
-	// <editor-fold defaultstate="collapsed" desc="Draft State Information">
 
 	/**
 	 * Contains the logic to determine a draft's visibility.
@@ -221,6 +166,5 @@ class draft_object {
 	public function styleIsStandard() {
 		return $this->draft_sty == "standard";
 	}
-	// </editor-fold>
 }
 ?>

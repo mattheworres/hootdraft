@@ -91,6 +91,7 @@ class trade_asset_object {
 		/* @var $DBH PDO */
 		global $DBH;
 		$assets = array();
+		$PLAYER_SERVICE = new player_service();
 		
 		$stmt = $DBH->prepare("SELECT * FROM trade_assets WHERE trade_id = ?");
 		$stmt->bindParam(1, $trade_id);
@@ -111,7 +112,7 @@ class trade_asset_object {
 				return false;
 			
 			//Use passed in manager_objects to prevent unneccessary SELECTs to the db:
-			$asset->player = new player_object($asset->player_id);
+			$asset->player = $PLAYER_SERVICE->loadPlayer($asset->player_id);
 			$asset->newmanager = $asset->newmanager_id == $manager1->manager_id ? $manager1 : $manager2;
 			$asset->oldmanager = $asset->oldmanager_id == $manager1->manager_id ? $manager1 : $manager2;
 			

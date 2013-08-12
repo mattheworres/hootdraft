@@ -9,6 +9,7 @@ DEFINE('PLAYER_ID', isset($_REQUEST['pid']) ? (int)$_REQUEST['pid'] : 0);
 
 $DRAFT_SERVICE = new draft_service();
 $MANAGER_SERVICE = new manager_service();
+$PLAYER_SERVICE = new player_service();
 
 try {
 	$DRAFT = $DRAFT_SERVICE->loadDraft(DRAFT_ID);
@@ -51,11 +52,19 @@ $DRAFT->setupSport();
 switch(ACTION) {
 	case 'addScreen':
 		// <editor-fold defaultstate="collapsed" desc="addScreen Logic">
-		$CURRENT_PICK = $DRAFT->getCurrentPick();
-		$CURRENT_PICK_MANAGER = $MANAGER_SERVICE->loadManager($CURRENT_PICK->manager_id);
-		
-		$NEXT_FIVE_PICKS = $DRAFT->getNextFivePicks();
-		$LAST_FIVE_PICKS = $DRAFT->getLastFivePicks();
+		try {
+			$CURRENT_PICK = $PLAYER_SERVICE->getCurrentPick($DRAFT);
+			$CURRENT_PICK_MANAGER = $MANAGER_SERVICE->loadManager($CURRENT_PICK->manager_id);
+
+			$NEXT_FIVE_PICKS = $PLAYER_SERVICE->getNextFivePicks($DRAFT);
+			$LAST_FIVE_PICKS = $PLAYER_SERVICE->getLastFivePicks($DRAFT);
+		}catch(Exception $e) {
+			define("PAGE_HEADER", "Unable To Load Information");
+			define("P_CLASS", "error");
+			define("PAGE_CONTENT", "An error has occurred: " . $e->getMessage() . " Please check the system and install before continuing.");
+			require_once("views/shared/generic_result_view.php");
+			exit(1);
+		}
 		
 		require("views/draft_room/add_pick.php");
 		// </editor-fold>
@@ -74,11 +83,19 @@ switch(ACTION) {
 		$submitted_pick->player_round = isset($_POST['player_round']) ? (int)$_POST['player_round'] : 0;
 		$submitted_pick->player_pick = isset($_POST['player_pick']) ? (int)$_POST['player_pick'] : 0;
 		
-		$NEXT_FIVE_PICKS = $DRAFT->getNextFivePicks();
-		$LAST_FIVE_PICKS = $DRAFT->getLastFivePicks();
-		$CURRENT_PICK = clone $submitted_pick;
+		try {
+			$NEXT_FIVE_PICKS = $PLAYER_SERVICE->getNextFivePicks($DRAFT);
+			$LAST_FIVE_PICKS = $PLAYER_SERVICE->getLastFivePicks($DRAFT);
+			$CURRENT_PICK = clone $submitted_pick;
+		}catch(Exception $e) {
+			define("PAGE_HEADER", "Unable To Add Pick");
+			define("P_CLASS", "error");
+			define("PAGE_CONTENT", "An error has occurred and the pick was unable to be added: " . $e->getMessage() . " Please check the system and install before continuing.");
+			require_once("views/shared/generic_result_view.php");
+			exit(1);
+		}
 		
-		$object_errors = $submitted_pick->getValidity($DRAFT);
+		$object_errors = $PLAYER_SERVICE->getValidity($DRAFT, $submitted_pick);
 		
 		if(count($object_errors) > 0) {
 			$ERRORS = $object_errors;
@@ -86,7 +103,7 @@ switch(ACTION) {
 			exit(1);
 		}
 		
-		$previous_pick = $DRAFT->getLastPick();
+		$previous_pick = $PLAYER_SERVICE->getLastPick($DRAFT);
 		
 		//Fixes defect for a refresh POSTing already-added picks:
 		if($previous_pick != null && $previous_pick->player_id == $submitted_pick->player_id) {
@@ -102,19 +119,31 @@ switch(ACTION) {
 			exit(1);
 		}
 		
-		if($submitted_pick->savePlayer(true) === false) {
+		try {
+			$PLAYER_SERVICE->savePlayer($submitted_pick, true);
+		}catch(Exception $e) {
 			$ERRORS[] = "Unable to update pick, please try again.";
 			require("views/draft_room/add_pick.php");
 			exit(1);
 		}
 		
-		if($submitted_pick->updatePickDuration($previous_pick, $DRAFT) === false) {
+		try {
+			$PLAYER_SERVICE->updatePickDuration($submitted_pick, $previous_pick, $DRAFT);
+		}catch(Exception $e) {
 			$ERRORS[] = "Unable to update pick duration, your draft has become out of sync. Please see a PHPDraft administrator.";
 			require("views/draft_room/add_pick.php");
 			exit(1);
 		}
 		
-		$next_pick = $DRAFT->getNextPick();
+		try {
+			$next_pick = $PLAYER_SERVICE->getNextPick($DRAFT);
+		}catch(Exception $e) {
+			define("PAGE_HEADER", "Unable to Get Next Pick of Draft");
+			define("P_CLASS", "error");
+			define("PAGE_CONTENT", "An error has occurred and the next pick of the draft was unable to be loaded.");
+			require_once("views/shared/generic_result_view.php");
+			exit(1);
+		}
 		
 		try{
 			$DRAFT_SERVICE->moveDraftForward($DRAFT, $next_pick);
@@ -134,11 +163,21 @@ switch(ACTION) {
 			exit(0);
 		}
 		
-		$NEXT_FIVE_PICKS = $DRAFT->getNextFivePicks();
-		$LAST_FIVE_PICKS = $DRAFT->getLastFivePicks();
-		unset($CURRENT_PICK);
-		$CURRENT_PICK = $DRAFT->getCurrentPick();
-		$CURRENT_PICK_MANAGER = $MANAGER_SERVICE->loadManager($CURRENT_PICK->manager_id);
+		try {
+			$NEXT_FIVE_PICKS = $PLAYER_SERVICE->getNextFivePicks($DRAFT);
+			$LAST_FIVE_PICKS = $PLAYER_SERVICE->getLastFivePicks($DRAFT);
+			
+			unset($CURRENT_PICK);
+			
+			$CURRENT_PICK = $PLAYER_SERVICE->getCurrentPick($DRAFT);
+			$CURRENT_PICK_MANAGER = $MANAGER_SERVICE->loadManager($CURRENT_PICK->manager_id);
+		}catch(Exception $e) {
+			define("PAGE_HEADER", "Unexpected Load Error Experienced");
+			define("P_CLASS", "error");
+			define("PAGE_CONTENT", "An error has occurred and a piece of information was unable to be loaded: " . $e->getMessage() . " Please check to ensure everything is still operating correctly before moving forward.");
+			require_once("views/shared/generic_result_view.php");
+			exit(1);
+		}
 		
 		$SUCCESSES[] = "<em>" . $submitted_pick->casualName() . "</em> was successfully drafted with the #" . $submitted_pick->player_pick . " selection.";
 		require_once("views/draft_room/add_pick.php");
@@ -147,7 +186,7 @@ switch(ACTION) {
 		
 	case 'selectPickToEdit':
 		// <editor-fold defaultstate="collapsed" desc="selectPickToEdit Logic">
-		$ROUND_1_PICKS = player_object::getSelectedPlayersByRound($DRAFT->draft_id, 1);
+		$ROUND_1_PICKS = $PLAYER_SERVICE->getSelectedPlayersByRound($DRAFT->draft_id, 1);
 		require("views/draft_room/select_pick_to_edit.php");
 		// </editor-fold>
 		break;
@@ -160,7 +199,7 @@ switch(ACTION) {
 			exit(1);
 		}
 		
-		$editable_picks = player_object::getSelectedPlayersByRound(DRAFT_ID, $round_number);
+		$editable_picks = $PLAYER_SERVICE->getSelectedPlayersByRound(DRAFT_ID, $round_number);
 		
 		if(empty($editable_picks)) {
 			exit(0);
@@ -172,10 +211,10 @@ switch(ACTION) {
 	
 	case 'editScreen':
 		// <editor-fold defaultstate="collapsed" desc="editScreen Logic">
-		$EDIT_PLAYER = new player_object(PLAYER_ID);
+		$EDIT_PLAYER = $PLAYER_SERVICE->loadPlayer(PLAYER_ID);
 		$EDIT_PLAYER_MANAGER = $MANAGER_SERVICE->loadManager($EDIT_PLAYER->manager_id);
 		
-		if($EDIT_PLAYER === false || PLAYER_ID == 0 || !$EDIT_PLAYER->hasBeenSelected() || !$EDIT_PLAYER->pickExists()) {
+		if($EDIT_PLAYER === false || PLAYER_ID == 0 || !$EDIT_PLAYER->hasBeenSelected() || !$PLAYER_SERVICE->pickExists($EDIT_PLAYER)) {
 			define("PAGE_HEADER", "Player Unable to be Edited");
 			define("P_CLASS", "error");
 			define("PAGE_CONTENT", "The player you were attempting to edit is un-editable. This may be because the wrong information was passed in, or the fact that the player/pick you were attempting to edit hasn't been selected in your draft.");
@@ -189,9 +228,9 @@ switch(ACTION) {
 	
 	case 'editPick':
 		// <editor-fold defaultstate="collapsed" desc="editPick Logic">
-		$EDIT_PLAYER = new player_object(PLAYER_ID);
+		$EDIT_PLAYER = $PLAYER_SERVICE->loadPlayer(PLAYER_ID);
 		
-		if($EDIT_PLAYER === false || PLAYER_ID == 0 || !$EDIT_PLAYER->hasBeenSelected() || !$EDIT_PLAYER->pickExists()) {
+		if($EDIT_PLAYER === false || PLAYER_ID == 0 || !$EDIT_PLAYER->hasBeenSelected() || !$PLAYER_SERVICE->pickExists($EDIT_PLAYER)) {
 			define("PAGE_HEADER", "Player Unable to be Edited");
 			define("P_CLASS", "error");
 			define("PAGE_CONTENT", "The player you were attempting to edit is un-editable. This may be because the wrong information was passed in, or the fact that the player/pick you were attempting to edit hasn't been selected in your draft.");
@@ -205,7 +244,7 @@ switch(ACTION) {
 		$EDIT_PLAYER->team = isset($_POST['team']) ? $_POST['team'] : "";
 		$EDIT_PLAYER->position = isset($_POST['position']) ? $_POST['position'] : "";
 		
-		$object_errors = $EDIT_PLAYER->getValidity($DRAFT);
+		$object_errors = $PLAYER_SERVICE->getValidity($DRAFT, $EDIT_PLAYER);
 		
 		if(count($object_errors) > 0) {
 			$ERRORS = $object_errors;
@@ -213,7 +252,9 @@ switch(ACTION) {
 			exit(1);
 		}
 		
-		if($EDIT_PLAYER->savePlayer() === false) {
+		try {
+			$PLAYER_SERVICE->savePlayer($EDIT_PLAYER);
+		}catch(Exception $e) {
 			$ERRORS[] = "There was an error while saving the pick. Please try again.";
 			require("views/draft_room/edit_pick.php");
 			exit(1);

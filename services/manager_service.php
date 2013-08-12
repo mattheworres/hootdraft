@@ -250,11 +250,15 @@ class manager_service {
 		$stmt->bindParam(1, $draft_id);
 		
 		if(!$stmt->execute()) {
-			throw new Exception("Unable to get lowest draft order.");
+			throw new Exception("Unable to get lowest draft order. A");
+		}
+		
+		if($stmt->rowCount() == 0) {
+			return 0;
 		}
 		
 		if(!$row = $stmt->fetch()) {
-			throw new Exception("Unable to get lowest draft order.");
+			throw new Exception("Unable to get lowest draft order. B");
 		}
 		
 		return (int)$row['draft_order'];
