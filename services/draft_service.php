@@ -169,11 +169,12 @@ class draft_service {
 		
 		$PLAYER_SERVICE = new player_service();
 
-		$draft->draft_status = $new_status;
+		$was_undrafted = $draft->isUndrafted();
+    $draft->draft_status = $new_status;
 		$draft->draft_current_pick = 1;
 		$draft->draft_current_round = 1;
 
-		$draftJustStarted = $draft->isUndrafted() && $draft->isInProgress() ? true : false;
+		$draftJustStarted = $was_undrafted && $draft->isInProgress() ? true : false;
 
 		try {
 			$draft->draft_start_time = $this->getDraftStartTime($draft, $draftJustStarted);
