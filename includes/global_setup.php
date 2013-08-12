@@ -1,4 +1,5 @@
 <?php
+
 require('includes/php_draft_class.php');
 /**
  * This is the main settings file for PHP Draft. There are five lines that you need to edit in order to get started,
@@ -6,20 +7,19 @@ require('includes/php_draft_class.php');
  * for the user that can read/write to that database, and the timezone that PHPDraft will exist on. Do not edit any lines
  * below that, unless you know what you're doing!
  */
-
 $PHPD = new PHPDRAFT();
 
 /** This is usually unchanged - the server name or address the database is hosted on */
-$PHPD->setDatabaseHostname	("localhost");
+$PHPD->setDatabaseHostname("localhost");
 
 /** The name of the PHPDraft database */
-$PHPD->setDatabaseName		("phpdraft");
+$PHPD->setDatabaseName("phpdraft");
 
 /** The username that has rights to the PHPDraft database */
-$PHPD->setDatabaseUsername	("YOUR_USERNAME");
+$PHPD->setDatabaseUsername("YOUR_USERNAME");
 
 /** The password for the username above */
-$PHPD->setDatabasePassword	("YOUR_PASSWORD");
+$PHPD->setDatabasePassword("YOUR_PASSWORD");
 
 /** The timezone PHPDraft will be operating in. PHPDRAFT class has other constants available. */
 $PHPD->setLocalTimezone(PHPDRAFT::TIMEZONE_EST);
@@ -33,9 +33,9 @@ $PHPD->setCsvTimeout(false);
 /** Use extended NFL rosters and positions (defensive players) - false by default */
 $PHPD->setUseNFLExtended(false);
 
-/*************************************************
- ******** DO NOT EDIT BELOW THIS LINE ************
- *************************************************/
+/* * ***********************************************
+ * ******* DO NOT EDIT BELOW THIS LINE ************
+ * *********************************************** */
 
 $DBH = $PHPD->setupPDOHandle();
 
