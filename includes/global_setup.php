@@ -54,6 +54,7 @@ require('models/draft_statistics_object.php');
 require('services/draft_service.php');
 require('services/manager_service.php');
 require('services/player_service.php');
+require('services/pro_player_service.php');
 require('libraries/php_draft_library.php');
 
 //Global-level commissioner object - used for printing commissioner's name publicly

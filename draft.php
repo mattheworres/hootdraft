@@ -9,6 +9,7 @@ DEFINE("DRAFT_ID", isset($_REQUEST['did']) ? (int)$_REQUEST['did'] : "");
 $DRAFT_SERVICE = new draft_service();
 $MANAGER_SERVICE = new manager_service();
 $PLAYER_SERVICE = new player_service();
+$PRO_PLAYER_SERVICE = new pro_player_service();
 
 try {
 	$DRAFT = $DRAFT_SERVICE->loadDraft(DRAFT_ID);
@@ -235,9 +236,9 @@ switch(ACTION) {
 		$team = strlen($team) == 0 ? "NA" : $team;
 		$position = strlen($position) == 0 ? "NA" : $position;
 		
-		$players = pro_player_object::SearchPlayers($league, $first, $last, $team, $position);
+		$pro_players = $PRO_PLAYER_SERVICE->SearchPlayers($league, $first, $last, $team, $position);
 		
-		echo json_encode($players);
+		echo json_encode($pro_players);
 		exit(0);
 		break;
 		// </editor-fold>
