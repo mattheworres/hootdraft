@@ -129,13 +129,13 @@ class player_service {
     return $errors;
   }
 
-  public function updatePickDuration(player_object $player, player_object $previous_pick, draft_object $draft) {
+  public function updatePickDuration(player_object $player, $previous_pick, draft_object $draft) {
     global $DBH; /* @var $DBH PDO */
 
     if (!isset($player->pick_time) || strlen($player->pick_time) == 0)
       throw new Exception("Must call updatePickDuration on a player object that already has its own pick_time set!");
 
-    if ($player->player_pick == 1 || $previous_pick === false)
+    if ($player->player_pick == 1 || $previous_pick == null)
       $start_time = strtotime($draft->draft_start_time);
     else
       $start_time = strtotime($previous_pick->pick_time);
@@ -247,11 +247,11 @@ class player_service {
     $stmt->setFetchMode(PDO::FETCH_CLASS, 'player_object');
 
     if (!$stmt->execute()) {
-      throw new Exception("Unable to get last pick.");
+      throw new Exception("Unable to get last pick: " . implode(":", $stmt->errorInfo()));
     }
 
     if ($stmt->rowCount() == 0) {
-      throw new Exception("Unable to get last pick.");
+      return null;
     }
 
     return $stmt->fetch();
