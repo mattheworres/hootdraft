@@ -185,7 +185,7 @@ class sports_values_library {
         "K" => "Kicker"
     );
 
-    if ($PHPD->useNFLExtended()) {
+    if (isset($PHPD) && $PHPD->useNFLExtended()) {
       $this->nfl_positions = array_merge($this->nfl_positions, array(
           "DL" => "Defensive Lineman",
           "LB" => "Linebacker",

@@ -60,10 +60,10 @@ switch(ACTION) {
 		$MANAGERS = $MANAGER_SERVICE->getManagersByDraft(DRAFT_ID);
 		$ALL_PICKS = $DRAFT_SERVICE->getAllDraftPicks($DRAFT);
 		DEFINE("NUMBER_OF_MANAGERS", count($MANAGERS));
-		DEFINE("COL_WIDTH", 115);
-		DEFINE("TOTAL_WIDTH", 10 + COL_WIDTH * NUMBER_OF_MANAGERS);
+		DEFINE("COL_WIDTH", 160);//Should be 160 - 2px for border on each side
+		DEFINE("TOTAL_WIDTH", 55 + COL_WIDTH * NUMBER_OF_MANAGERS);
 		
-		require("views/public_draft/draft_board.php");
+		require("views/public_draft/draft_board_new.php");
 		// </editor-fold>
 		break;
 	
