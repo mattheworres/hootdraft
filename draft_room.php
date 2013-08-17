@@ -254,7 +254,7 @@ switch(ACTION) {
 		$EDIT_PLAYER->last_name = isset($_POST['last_name']) ? $_POST['last_name'] : "";
 		$EDIT_PLAYER->team = isset($_POST['team']) ? $_POST['team'] : "";
 		$EDIT_PLAYER->position = isset($_POST['position']) ? $_POST['position'] : "";
-    $EDIT_PLAYER->player_counter = $DRAFT->draft_counter++;
+    $EDIT_PLAYER->player_counter = $DRAFT->draft_counter + 1;
 		
 		$object_errors = $PLAYER_SERVICE->getValidity($DRAFT, $EDIT_PLAYER);
 		
