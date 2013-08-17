@@ -77,7 +77,7 @@ switch (ACTION) {
     DEFINE("COL_WIDTH", 160); //Should be 160 - 2px for border on each side
     DEFINE("TOTAL_WIDTH", 85 + COL_WIDTH * NUMBER_OF_MANAGERS);
 
-    require("views/public_draft/draft_board_new.php");
+    require("views/public_draft/draft_board.php");
     // </editor-fold>
     break;
 
