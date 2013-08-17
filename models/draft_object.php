@@ -24,6 +24,9 @@ class draft_object {
 
   /** @var int $draft_rounds Number of rounds draft will have in total */
   public $draft_rounds;
+  
+  /** @var int $draft_rounds Counter used to determine if a board is stale and needs updating. */
+  public $draft_counter;
 
   /** @var string $draft_password Determines draft visibility */
   public $draft_password;

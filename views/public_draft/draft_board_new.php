@@ -11,7 +11,10 @@
     <title>PHPDraft - <?php echo $DRAFT->draft_name; ?> - Draft Board</title>
   </head>
   <body>
-    <div id="draft-board" style="width: <?php echo TOTAL_WIDTH; ?>px;">
+    <div id="draft-board" style="width: <?php echo TOTAL_WIDTH; ?>px;" 
+         data-draft-reload="<?php echo BOARD_RELOAD; ?>" 
+         data-draft-id="<?php echo $DRAFT->draft_id;?>"
+         data-draft-counter="0">
       <?php
       for ($i = 1; $i <= $DRAFT->draft_rounds; ++$i) {
         $picks_row = $ALL_PICKS[$i - 1];
@@ -23,20 +26,11 @@
           <?php foreach ($picks_row as $pick) { ?>
             <!--
             TODO: Pull this structure out into an Underscore template
-            TODO: Update draft + player tables to carry draft counter fields
-            TODO: Update draft + player services to properly handle an increment draft counter (picks, trades, edits)
             TODO: Begin writing the JS that grabs this data from the server, and spins through it and puts it on the screen
             TODO: Re-write server logic JS hits to combine both update check + new data retrieval into one request
             -->
-            <div class="pick <?php echo $pick->position; ?>" data-pick-number="<?php echo $pick->player_pick; ?>">
+            <div class="pick" data-pick-number="<?php echo $pick->player_pick; ?>">
               <span class="pick-number"><?php echo $pick->player_pick; ?></span>
-              <?php if (isset($pick->pick_time)) { ?>
-                <span class="first-name"><?php echo $pick->first_name; ?></span>
-                <span class="last-name"><?php echo $pick->last_name; ?></span>
-                <span class="manager"><?php echo $pick->manager_name; ?></span>
-                <span class="position"><?php echo $pick->position; ?></span>
-                <span class="team"><?php echo $pick->team; ?></span>
-              <?php } ?>
             </div>
           <?php } ?>
         </div>
@@ -48,15 +42,88 @@
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.js"></script>
   <script>window.jQuery.ui || document.write('<script src="js/jquery-ui-1.10.3.min.js">\x3C/script>');</script>
   <script type="text/javascript" src="js/underscore-min.js"></script>
-
+<!-- TODO: Move to separate JS file -->
   <script type="text/javascript">
     var poll_time = 1000 * <?php echo BOARD_RELOAD; ?>,
-            our_pick = <?php echo $DRAFT->draft_current_pick; ?>,
-            last_pick = <?php echo $DRAFT->draft_rounds * NUMBER_OF_MANAGERS; ?>,
-            intervalID;
+        our_pick = <?php echo $DRAFT->draft_current_pick; ?>,
+        last_pick = <?php echo $DRAFT->draft_rounds * NUMBER_OF_MANAGERS; ?>;
+
+    intervalID = 0,
+    checkIsRunning = false;
 
     $(document).ready(function() {
-
+      var reloadMs = 1000*parseInt($('#draft-board').data('draft-reload'), 10);
+      
+      _.templateSettings.variable = "pick";
+      
+      pickTemplate = _.template(
+          $("#pickTemplate").html()
+      );
+    
+      refreshBoard();
+              
+      intervalID = setInterval(function() {
+        refreshBoard();
+      }, reloadMs);
     });
+    
+    function refreshBoard() {
+      var currentCounter = parseInt($('#draft-board').data('draft-counter'), 10),
+          draftId = parseInt($('#draft-board').data('draft-id'), 10),
+          refreshUrl = 'public_draft.php?action=refreshBoard&did=' + draftId + '&currentCounter=' + currentCounter;
+  
+      if(checkIsRunning) {
+        console.log('No man, too quick!!');   
+        return;
+      }
+      
+      checkIsRunning = true;
+      
+      $.ajax({
+        type: 'GET',
+        url: refreshUrl,
+        dataType: 'json',
+        complete: function() {
+          checkIsRunning = false;
+        },
+        success: function(response) {
+          switch(response.Status) {
+            case "draft-complete":
+              //Do something to stop the interval.
+              break;
+              
+            case "up-to-date":
+              //do nothing right now
+              break;
+
+            case "out-of-date":
+              $.each(response.Players, function() {
+                var player = this,
+                    $pickCell = $('div.pick[data-pick-number="' + player.player_pick + '"]');
+                    
+                    console.log('This: ' + 'div.pick[data-pick-number="' + player.player_pick + '"]');
+                    
+                $pickCell.html(pickTemplate(player)).addClass(player.position);
+              });
+              
+              $('#draft-board').data('draft-counter', parseInt(response.CurrentCounter, 10));
+              break;
+          }
+        },
+        error: function() {
+          //TODO: No.
+          alert('There was an issue brah.');
+        }
+      });
+    }
+  </script>
+  
+  <script type="text/template" id="pickTemplate">
+    <span class="pick-number"><%- pick.player_pick %></span>
+    <span class="first-name"><%- pick.first_name %></span>
+    <span class="last-name"><%- pick.last_name %></span>
+    <span class="manager"><%- pick.manager_name %></span>
+    <span class="position"><%- pick.position %></span>
+    <span class="team"><%- pick.team %></span> 
   </script>
 </html>
