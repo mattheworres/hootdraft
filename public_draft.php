@@ -35,28 +35,40 @@ if ($DRAFT === false || $DRAFT->draft_id == 0) {
   exit(1);
 }
 
-if (ACTION != 'isDraftReady' && $DRAFT->isUndrafted()) {
-  $LAST_TEN_PICKS = $PLAYER_SERVICE->getLastTenPicks($DRAFT->draft_id);
-  $CURRENT_PICK = $PLAYER_SERVICE->getCurrentPick($DRAFT);
-  require("views/public_draft/index.php");
+if(ACTION == 'isDraftReady') {
+  header('Cache-Control: no-cache, must-revalidate');
+  header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+  header('Content-type: application/json');
+
+  $json_object = array("IsDraftReady" => !$DRAFT->isUndrafted());
+  echo json_encode($json_object);
   exit(0);
+}
+
+if($DRAFT->isUndrafted()) {
+  switch(ACTION) {
+    case 'refreshBoard':
+      $response = array();
+      $response["Status"] = "draft-not-ready";
+      echo json_encode($response);
+      exit(0);
+      break;
+    
+    default:
+      $LAST_TEN_PICKS = $PLAYER_SERVICE->getLastTenPicks($DRAFT->draft_id);
+      
+      if($DRAFT->isInProgress()) {
+        $CURRENT_PICK = $PLAYER_SERVICE->getCurrentPick($DRAFT);
+      }
+      require("views/public_draft/index.php");
+      exit(0);
+      break;
+  }
 }
 
 $DRAFT->setupSport();
 
 switch (ACTION) {
-  case 'isDraftReady':
-    // <editor-fold defaultstate="collapsed" desc="isDraftReady Logic">
-    header('Cache-Control: no-cache, must-revalidate');
-    header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-    header('Content-type: application/json');
-
-    $json_object = array("IsDraftReady" => !$DRAFT->isUndrafted());
-    echo json_encode($json_object);
-    exit(0);
-    // </editor-fold>
-    break;
-
   case 'draftBoard':
     // <editor-fold defaultstate="collapsed" desc="draftBoard Logic">
     $MANAGERS = $MANAGER_SERVICE->getManagersByDraft(DRAFT_ID);
@@ -66,29 +78,6 @@ switch (ACTION) {
     DEFINE("TOTAL_WIDTH", 85 + COL_WIDTH * NUMBER_OF_MANAGERS);
 
     require("views/public_draft/draft_board_new.php");
-    // </editor-fold>
-    break;
-
-  case 'checkPick':
-    // <editor-fold defaultstate="collapsed" desc="checkPick Logic">
-    //Ajax
-    if ($DRAFT->isCompleted())
-      echo "9999";
-    else
-      echo (int) $DRAFT->draft_current_pick;
-    // </editor-fold>
-    break;
-
-  case 'loadDraftBoard':
-    // <editor-fold defaultstate="collapsed" desc="loadDraftBoard Logic">
-    //Ajax
-    $MANAGERS = $MANAGER_SERVICE->getManagersByDraft(DRAFT_ID);
-    $ALL_PICKS = $DRAFT_SERVICE->getAllDraftPicks($DRAFT);
-    DEFINE("NUMBER_OF_MANAGERS", count($MANAGERS));
-    DEFINE("COL_WIDTH", 115);
-    DEFINE("TOTAL_WIDTH", 10 + COL_WIDTH * NUMBER_OF_MANAGERS);
-
-    require("views/public_draft/draft_board_naked.php");
     // </editor-fold>
     break;
 

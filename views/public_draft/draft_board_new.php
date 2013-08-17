@@ -23,8 +23,10 @@
             <?php echo $i; ?>
           </div>
           <?php foreach ($picks_row as $pick) { ?>
-            <div class="pick" data-pick-number="<?php echo $pick->player_pick; ?>">
+            <div class="pick undrafted" data-pick-number="<?php echo $pick->player_pick; ?>">
+              <div class="overlay"></div>
               <span class="pick-number"><?php echo $pick->player_pick; ?></span>
+              <span class="manager"><?php echo $pick->manager_name; ?></span>
             </div>
           <?php } ?>
         </div>
@@ -33,6 +35,7 @@
     <div id="loadingDialog">
       <img src="images/loading.gif" alt="Loading..."/>Loading...
     </div>
+    <div id="informationDialog"></div>
   </body>
   <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script><script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script>window.jQuery || document.write('<script src="js/jquery-1.10.2.min.js">\x3C/script>');</script>
@@ -42,6 +45,7 @@
   <script type="text/javascript" src="js/public_draft_board.js"></script>
   
   <script type="text/template" id="pickTemplate">
+    <div class="overlay"></div>
     <span class="pick-number"><%- pick.player_pick %></span>
     <span class="first-name"><%- pick.first_name %></span>
     <span class="last-name"><%- pick.last_name %></span>
