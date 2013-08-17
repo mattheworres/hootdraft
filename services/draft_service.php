@@ -133,7 +133,6 @@ class draft_service {
     if ($next_pick !== false) {
       $draft->draft_current_pick = (int) $next_pick->player_pick;
       $draft->draft_current_round = (int) $next_pick->player_round;
-      $draft->draft_counter = $draft->draft_counter + 1;
 
       $stmt = $DBH->prepare("UPDATE draft SET draft_current_pick = ?, draft_current_round = ? WHERE draft_id = ?");
       $stmt->bindParam(1, $draft->draft_current_pick);
