@@ -23,7 +23,7 @@
 						<p><strong># of Rounds: </strong> <?php echo $DRAFT->draft_rounds; ?></p>
 						<p><strong>Status: </strong> <?php echo $DRAFT->draft_status; ?> </p>
 						<?php if($DRAFT->isCompleted()) { ?><p><strong>Total Draft Duration: </strong><?php echo $DRAFT->getDraftDuration(); ?></p><?php } ?>
-						<p><strong>Draft Visibility: </strong> <span id="draft_visibility"><?php echo $DRAFT->isPasswordProtected() ? "Private<br /><br/><strong>Draft Password:</strong> " . $DRAFT->draft_password : "Public"; ?></span></p>
+						<p><strong>Draft Visibility: </strong> <span id="draft_visibility_status"><?php echo $DRAFT->isPasswordProtected() ? "Private<br /><br/><strong>Draft Password:</strong> " . $DRAFT->draft_password : "Public"; ?></span></p>
 					</div>
 					<div class="draftStatusImage">
 						<p><img src="images/icons/<?php echo $DRAFT->draft_status; ?>.png" alt="<?php echo $DRAFT->draft_status; ?>" title="<?php echo $DRAFT->draft_status; ?>"/></p>
@@ -77,8 +77,8 @@
 				<fieldset>
 					<legend><?php echo $DRAFT->draft_name; ?> - Functions</legend>
 					<?php if($DRAFT->isUndrafted()) {?><p><strong><a href="draft.php?action=addManagers&did=<?php echo DRAFT_ID; ?>"><span class="phpdraft-icon ui-icon ui-icon-plusthick"></span>Add Manager(s)</a></strong></p>
-					<?php } ?><p><strong><a id="changeVisibility" href="#"><span class="phpdraft-icon ui-icon ui-icon-key"></span>Change Draft Visibility</a></strong></p>
-					<?php if(!$DRAFT->isCompleted() && HAS_MANAGERS) { ?><p id="draft-status-link"><strong><a href="draft.php?action=changeStatus&did=<?php echo DRAFT_ID; ?>"><span class="phpdraft-icon ui-icon ui-icon-play"></span>Change Draft Status</a></strong></p><?php } ?>
+					<?php } ?><p><strong><a id="changeVisibility"><span class="phpdraft-icon ui-icon ui-icon-key"></span>Change Draft Visibility</a></strong></p>
+					<?php if(!$DRAFT->isCompleted() && HAS_MANAGERS) { ?><p id="draft-status-link"><strong><a id="changeDraftStatus"><span class="phpdraft-icon ui-icon ui-icon-play"></span>Change Draft Status</a></strong></p><?php } ?>
 				</fieldset>
 				<?php
 				if($DRAFT->isInProgress() || $DRAFT->isCompleted()) {
@@ -104,8 +104,8 @@
 		</div>
 		<div id="visibilityDialog">
 			<p>Change whether or not this draft is viewable publicly. If you would like to make it private, you must provide a password.</p>
-			<label for="draft_status">Draft Status:</label>
-			<select id="draft_status" name="draft_status">
+			<label for="draft_visibility">Draft Visibility:</label>
+			<select id="draft_visibility" name="draft_visibility">
 				<option value="1" <?php if($DRAFT->isPasswordProtected()) { echo " selected=\"selected\""; } ?>>Password Protected</option>
 				<option value="0" <?php if(!$DRAFT->isPasswordProtected()) { echo " selected=\"selected\""; } ?>>Public</option>
 			</select>
@@ -117,5 +117,15 @@
 			</div>
 			<p id="visibilityError" class="errorDescription error"></p>
 		</div>
+    <div id="draftStatusDialog">
+      <p>
+        <label for="draft_status">Draft Status*:</label>
+        <select name="draft_status" id="draft_status">
+          <option value="undrafted"<?php if($DRAFT->isUndrafted()) { echo " selected=\"selected\""; } ?>>Undrafted</option>
+          <option value="in_progress"<?php if($DRAFT->isInProgress()) { echo " selected=\"selected\""; } ?>>In Progress</option>
+        </select>
+			</p>
+      <p class="error">NOTE: If you switch from "In Progress" to "Undrafted" and have already started to draft, all data related to picks <em>will</em> be immediately deleted.</p>
+    </div>
 	</body>
 </html>

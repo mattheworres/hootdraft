@@ -82,48 +82,35 @@ switch(ACTION) {
 		echo "SUCCESS";
 		// </editor-fold>
 		break;
-
-	case 'changeStatus':
-		// <editor-fold defaultstate="collapsed" desc="changeStatus Logic">
-		require_once("views/draft/edit_status.php");
-		// </editor-fold>
-		break;
-
-	case 'updateStatus':
-		// <editor-fold defaultstate="collapsed" desc="updateStatus Logic">
-		$new_status = isset($_POST['draft_status']) ? $_POST['draft_status'] : "";
-
-		if($DRAFT->draft_status == $new_status) {
-			define("PAGE_HEADER", "Status Unchanged");
-			define("P_CLASS", "success");
-			define("PAGE_CONTENT", "Your draft's status was unchanged. <a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to the draft's main page, or <a href=\"draft.php?action=changeStatus&did=" . DRAFT_ID . "\">click here</a> to change it's status.");
-			require_once("views/shared/generic_result_view.php");
-			exit(0);
-		}
-
-		if(!draft_object::checkStatus($new_status)) {
-			$ERRORS = array();
-			$ERRORS[] = "Draft status is of the incorrect value. Please correct this and try again.";
-			require_once("views/draft/edit_status.php");
-			exit(1);
-		}
-		
-		try {
+    
+  case 'updateStatus':
+    $new_status = $_POST['draft_status'];
+    $response = array();
+    
+    if($DRAFT->draft_status == $new_status) {
+      $response["Status"] = "status-unchanged";
+      echo json_encode($response);
+      exit(0);
+    }
+    
+    if(!draft_object::checkStatus($new_status)) {
+      $response["Status"] = "invalid-status";
+      echo json_encode($response);
+      exit(0);
+    }
+    
+    try {
 			$DRAFT_SERVICE->updateStatus($DRAFT, $new_status);
 		}catch(Exception $e) {
-			$ERRORS = array();
-			$ERRORS[] = "An error occurred and your draft's status could not be updated: " . $e->getMessage() . " Please try again.";
-			require_once("views/draft/edit_status.php");
+			$response["Status"] = "unable-to-update";
+			$response["Error"] = "Draft's status could not be updated: " . $e->getMessage() . " Please try again.";
+			echo json_encode($response);
 			exit(1);
 		}
-		
-		define("PAGE_HEADER", "Draft Status Updated");
-		define("P_CLASS", "success");
-		define("PAGE_CONTENT", "Your draft's status has been successfully updated. <a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to its main page.");
-		require_once("views/shared/generic_result_view.php");
-		exit(0);
-		// </editor-fold>
-		break;
+    
+    $response["Status"] = "status-updated";
+    echo json_encode($response);
+    break;
 
 	case 'editDraft':
 		// <editor-fold defaultstate="collapsed" desc="editDraft Logic">

@@ -1,12 +1,97 @@
 $(document).ready(function() {
   resetArrows();
+  setupDialogs();
+  setupEventHandlers();
+});
 
+function setupEventHandlers() {
   $(document).on('click', '#managers-table span.manager-move-link', function() {
-    var $row = $(this).parents('tr:first'),
+    moveManagerHandler($(this));
+  });
+  
+  $(document).on('click', '#managers-table .manager-delete-link', function() {
+    deleteManagerHandler($(this));
+  });
+  
+  $(document).on('click', '#changeVisibility', function() {
+    $('#visibilityDialog').dialog('open');
+  });
+  
+  $(document).on('click', '#changeDraftStatus', function() {
+    $('#draftStatusDialog').dialog('open');
+  });
+
+  $(document).on('change', '#draft_visibility', function() {
+    changeDraftVisibilityHandler($(this));
+  });
+
+  $(document).on('blur', '#draft_password, #draft_password_confirm', function() {
+    checkMatchingPasswords($('#draft_visibility'), $('#draft_password'), $('#draft_password_confirm'));
+  });
+
+  $(document).on('keyup', '#draft_password, #draft_password_confirm', function() {
+    checkMatchingPasswords($('#draft_visibility'), $('#draft_password'), $('#draft_password_confirm'));
+  });
+}
+
+function setupDialogs() {
+  $('#visibilityDialog').dialog({
+    title: 'Change Draft Visibility',
+    autoOpen: false,
+    modal: true,
+    width: 650,
+    buttons: [
+      {
+        text: "Save",
+        click: function() {
+          var success = updateDraftVisibility();
+          if (success === true) {
+            $(this).dialog("close");
+            $('#informationDialog').html('Draft\'s visibility updated!').dialog('open');
+          }
+        }
+      },
+      {
+        text: "Cancel",
+        click: function() {
+          $(this).dialog("close");
+        }
+      }
+    ]
+  });
+  
+  $('#draftStatusDialog').dialog({
+    title: "Update Draft Status",
+    autoOpen: false,
+    modal: true,
+    width: 650,
+    buttons: [
+      {
+        text: "Save",
+        click: function() {
+          updateDraftStatus(function() {
+            $('#draftStatusDialog').dialog('close');
+            $('#informationDialog').html('Draft\'s status updated! Refreshing page now...').dialog('open');
+            location.reload(true);
+          });
+        }
+      },
+      {
+        text: "Cancel",
+        click: function() {
+          $(this).dialog('close');
+        }
+      }
+    ]
+  });
+}
+
+function moveManagerHandler($moveLink) {
+  var $row = $moveLink.parents('tr:first'),
             manager_id = $row.attr('data-manager-id'),
             $loadingDialog = $('#loadingDialog'),
-            isMoveUp = $(this).is('.move-up'),
-            isOff = $(this).is('.down-off') || $(this).is('.up-off');
+            isMoveUp = $moveLink.is('.move-up'),
+            isOff = $moveLink.is('.down-off') || $moveLink.is('.up-off');
 
     if (isOff)
       return;
@@ -37,10 +122,10 @@ $(document).ready(function() {
         alert('Sorry - an error has occurred and the manager\'s order could not be changed.');
       }
     });
-  });
+}
 
-  $(document).on('click', '#managers-table .manager-delete-link', function() {
-    var $row = $(this).parents('tr:first'),
+function deleteManagerHandler($deleteLink) {
+  var $row = $deleteLink.parents('tr:first'),
             manager_id = $row.attr('data-manager-id'),
             $loadingDialog = $('#loadingDialog');
 
@@ -66,57 +151,18 @@ $(document).ready(function() {
         alert('Sorry - an error has occurred and the manager could not be deleted.');
       }
     });
-  });
+}
 
-  $('#visibilityDialog').dialog({
-    title: 'Change Draft Visibility',
-    autoOpen: false,
-    modal: true,
-    width: 650,
-    buttons: [
-      {
-        text: "Save",
-        click: function() {
-          var success = updateDraftVisibility();
-          if (success === true) {
-            $(this).dialog("close");
-            $('#informationDialog').html('Draft\'s visibility updated!').dialog('open');
-          }
-        }
-      },
-      {
-        text: "Cancel",
-        click: function() {
-          $(this).dialog("close");
-        }
-      }
-    ]
-  });
+function changeDraftVisibilityHandler($draftVisibility) {
+  var value = $draftVisibility.val(),
+      $passwordBox = $('#passwordBox');
 
-  $(document).on('click', '#changeVisibility', function() {
-    $('#visibilityDialog').dialog('open');
-  });
-
-  $(document).on('change', '#draft_status', function() {
-    var value = $(this).val(),
-            $passwordBox = $('#passwordBox');
-
-    if (value === "1") {
-      $passwordBox.show();
-    } else {
-      $passwordBox.val('').hide();
-    }
-
-  });
-
-  $(document).on('blur', '#draft_password, #draft_password_confirm', function() {
-    checkMatchingPasswords($('#draft_status'), $('#draft_password'), $('#draft_password_confirm'));
-  });
-
-  $(document).on('keyup', '#draft_password, #draft_password_confirm', function() {
-    checkMatchingPasswords($('#draft_status'), $('#draft_password'), $('#draft_password_confirm'));
-  });
-});
+  if (value === "1") {
+    $passwordBox.show();
+  } else {
+    $passwordBox.val('').hide();
+  }
+}
 
 function checkForOtherManagers() {
   var number_of_managers = $('#managers-table tr').length - 1;	//Account for table header
@@ -159,11 +205,11 @@ function resetArrows() {
 }
 
 function updateDraftVisibility() {
-  var status = parseInt($('#draft_status').val(), 10),
+  var visibilityValue = parseInt($('#draft_visibility').val(), 10),
           $password = $('#draft_password'),
           $confirmPassword = $('#draft_password_confirm'),
           $visibilityError = $('#visibilityError'),
-          $draftVisibility = $('#draft_visibility'),
+          $draftVisibilityStatus = $('#draft_visibility_status'),
           password = $.trim($('#draft_password').val()),
           confirmPassword = $.trim($('#draft_password_confirm').val());
 
@@ -171,12 +217,12 @@ function updateDraftVisibility() {
   $confirmPassword.removeClass('error');
   $visibilityError.hide();
 
-  if (status === 0) {
+  if (visibilityValue === 0) {
     var updateSuccess = savePassword('');
     if (updateSuccess === true) {
       $password.val('');
       $confirmPassword.val('');
-      $draftVisibility.html('Public');
+      $draftVisibilityStatus.html('Public');
       return true;
     } else {
       $visibilityError.html('There was a server-side error, please try again.').show();
@@ -194,13 +240,56 @@ function updateDraftVisibility() {
 
     if (success === true) {
       $('#visibilityDialog').dialog('close');
-      $draftVisibility.html('Private<br/><br/><strong>Draft Password:</strong> ' + password);
+      $draftVisibilityStatus.html('Private<br/><br/><strong>Draft Password:</strong> ' + password);
       return true;
     } else {
       $visibilityError.html('There was a server-side error, please try again.').show();
       return false;
     }
   }
+}
+
+function updateDraftStatus(successCallback) {
+  var draft_id = parseInt($('#draft_id').val(), 10),
+      statusValue = $('#draft_status').val(),
+      $loadingDialog = $('#loadingDialog');
+      
+  $loadingDialog.dialog('open');
+  
+  $.ajax({
+    type: 'POST',
+    url: 'draft.php?action=updateStatus&did=' + draft_id,
+    dataType: 'json',
+    data: {draft_status: statusValue},
+    complete: function() {
+      $loadingDialog.dialog('close');
+    },
+    success: function(response) {
+      switch(response.Status) {
+        case 'status-unchanged':
+          $('#draftStatusDialog').dialog('close');
+          $('#informationDialog').html('Your draft status has remain unchanged!').dialog('open');
+          break;
+        
+        case 'invalid-status':
+          $('#informationDialog').html('Draft status could not be updated: an invalid status was selected.').dialog('open');
+          break;
+          
+        case 'unable-to-update':
+          $('#informationDialog').html('An error has occurred and the draft status could not be updated: ' + response.Error).dialog('open');
+          break;
+          
+        case 'status-updated':
+          if(typeof(successCallback) === "function") {
+            successCallback();
+          }
+          break;
+      }
+    },
+    error: function() {
+      $('#informationDialog').html('An error has occurred and the draft status was unable to be updated.').dialog('open');
+    }
+  });
 }
 
 function savePassword(draft_pass) {

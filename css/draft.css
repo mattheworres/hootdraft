@@ -33,7 +33,7 @@ input.manager_info
 	width: 225px;
 }
 
-#addManagerButton, span.removeManagerButton{
+#addManagerButton, span.removeManagerButton, #changeVisibility, #changeDraftStatus {
 	cursor: pointer;
 }
 
