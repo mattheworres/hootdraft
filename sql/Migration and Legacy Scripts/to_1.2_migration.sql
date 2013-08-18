@@ -1,8 +1,8 @@
 -- PHPDraft Migration Script
--- Only use if you have a pre-existing PHPDraft database (from version before version 1.2.0)
+-- ONLY USE IF you have a pre-existing PHPDraft database (from version before version 1.2.0)
 -- *Schema change for draft table
 -- *Value updates associated with new team abbreviations
---
+-- *Updated draft board
 -- No deprecated columns result from this migration.
 
 USE phpdraft;
@@ -45,3 +45,13 @@ ADD COLUMN `draft_counter` int(11) NOT NULL default '0' COMMENT 'The counter tra
 --
 ALTER TABLE `players`
 ADD COLUMN `player_counter` int(11) default NULL COMMENT 'The draft counter value in which this pick was edited at';
+
+--
+-- And for legacy data, set the draft counters all to 1 - this will let the data load without doing too much heavy lifting.
+-- This obviously assumes that any legacy data at the time of upgrade was not in-process - otherwise you'll want to finish drafts before upgrading.
+--
+UPDATE `draft`
+SET `draft_counter` = 1;
+
+UPDATE `players`
+SET `player_counter` = 1;
