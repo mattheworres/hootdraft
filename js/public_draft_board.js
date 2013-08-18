@@ -47,6 +47,11 @@ $(function() {
     $(document).on('mouseleave', 'div.pick.undrafted', function() {
       pickClickHandler($(this), false);
     });
+    
+    $(document).on('click', '#back-button', function() {
+      var draft_id = parseInt($('#draft-board').data('draft-id'), 10);
+      window.location.href = 'public_draft.php?did=' + draft_id;
+    });
   }
 
   function refreshBoard(callback) {

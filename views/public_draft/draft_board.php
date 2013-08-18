@@ -10,6 +10,9 @@
     <title>PHPDraft - <?php echo $DRAFT->draft_name; ?> - Draft Board</title>
   </head>
   <body>
+    <div id="back-button">
+      <img src="images/icons/back_new.png" />
+    </div>
     <div id="draft-board" style="width: <?php echo TOTAL_WIDTH; ?>px;" 
          data-draft-reload="<?php echo BOARD_RELOAD; ?>" 
          data-draft-id="<?php echo $DRAFT->draft_id;?>"
