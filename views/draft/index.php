@@ -120,10 +120,14 @@
     <div id="draftStatusDialog">
       <p>
         <label for="draft_status">Draft Status*:</label>
-        <select name="draft_status" id="draft_status">
+        <!--<select name="draft_status" id="draft_status">
           <option value="undrafted"<?php if($DRAFT->isUndrafted()) { echo " selected=\"selected\""; } ?>>Undrafted</option>
           <option value="in_progress"<?php if($DRAFT->isInProgress()) { echo " selected=\"selected\""; } ?>>In Progress</option>
-        </select>
+        </select>-->
+        <div id="draft_status">
+          <input type="radio" id="undrafted" name="draft_status" value="undrafted" <?php if($DRAFT->isUndrafted()) { echo " checked=\"checked\""; } ?>/><label for="undrafted">Undrafted</label>
+          <input type="radio" id="in_progress" name="draft_status" value="in_progress" <?php if($DRAFT->isInProgress()) { echo " checked=\"checked\""; } ?>/><label for="in_progress">In Progress</label>
+        </div>
 			</p>
       <p class="error">NOTE: If you switch from "In Progress" to "Undrafted" and have already started to draft, all data related to picks <em>will</em> be immediately deleted.</p>
     </div>

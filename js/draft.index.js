@@ -1,6 +1,6 @@
 $(document).ready(function() {
   resetArrows();
-  setupDialogs();
+  setupUIElements();
   setupEventHandlers();
 });
 
@@ -34,7 +34,7 @@ function setupEventHandlers() {
   });
 }
 
-function setupDialogs() {
+function setupUIElements() {
   $('#visibilityDialog').dialog({
     title: 'Change Draft Visibility',
     autoOpen: false,
@@ -84,6 +84,8 @@ function setupDialogs() {
       }
     ]
   });
+  
+  $('#draft_status').buttonset();
 }
 
 function moveManagerHandler($moveLink) {
@@ -251,7 +253,7 @@ function updateDraftVisibility() {
 
 function updateDraftStatus(successCallback) {
   var draft_id = parseInt($('#draft_id').val(), 10),
-      statusValue = $('#draft_status').val(),
+      statusValue = $('#draft_status input[name="draft_status"]:checked').val(),
       $loadingDialog = $('#loadingDialog');
       
   $loadingDialog.dialog('open');
