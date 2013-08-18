@@ -72,43 +72,47 @@ $(function() {
         }
       },
       success: function(response) {
-        switch (response.Status) {
-          case "draft-complete":
-            clearInterval(intervalID);
-            break;
-            
-          case "draft-not-ready":
-            clearInterval(intervalID);
-            $('#informationDialog').html('Your draft is not ready yet, sending you back to the draft main page for now, please wait...').dialog('open');
-            var draft_id = parseInt($('#draft-board').data('draft-id'), 10);
-            window.location.href = 'public_draft.php?did=' + draft_id;
-            break;
+        //We may have data to process still, so doing this outside of switch makes sense:
+        if(response.Status === "up-to-date") {
+          return;
+        }
+        
+        if(response.Status === "draft-complete") {
+          clearInterval(intervalID);
+        }
+        
+        if(response.Status === "draft-not-ready") {
+          clearInterval(intervalID);
+          $('#informationDialog').html('Your draft is not ready yet, sending you back to the draft main page for now, please wait...').dialog('open');
+          var draft_id = parseInt($('#draft-board').data('draft-id'), 10);
+          window.location.href = 'public_draft.php?did=' + draft_id;
+        }
+        
+        if(response.Players !== undefined) {
+          //To reduce slow client performance when we're processing 15 or more new picks, disable overlay:
+          var showOverlay = parseInt(response.PlayersCount, 10) < 15;
+          
+          $.each(response.Players, function() {
+            var player = this,
+                $pickCell = $('div.pick[data-pick-number="' + player.player_pick + '"]'),
+                isDrafted = player.last_name !== null && player.first_name !== null;
 
-          case "up-to-date":
-            //do nothing right now
-            break;
+            if (isDrafted) {
+              $pickCell.html(pickTemplate(player))
+                      .removeClass()
+                      .addClass('pick')
+                      .addClass(player.position)
+                      .data('pick-duration', player.pick_duration);
+            } else {
+              $pickCell.find('span.manager').html(player.manager_name);
+            }
 
-          case "out-of-date":
-            $.each(response.Players, function() {
-              var player = this,
-                  $pickCell = $('div.pick[data-pick-number="' + player.player_pick + '"]'),
-                  isDrafted = player.last_name !== null && player.first_name !== null;
-
-              if (isDrafted) {
-                $pickCell.html(pickTemplate(player))
-                        .removeClass()
-                        .addClass('pick')
-                        .addClass(player.position)
-                        .data('pick-duration', player.pick_duration);
-              } else {
-                $pickCell.find('span.manager').html(player.manager_name);
-              }
-              
+            if(showOverlay) {
               $pickCell.find('div.overlay').show().fadeOut(1250);
-            });
+            }
+          });
 
-            $('#draft-board').data('draft-counter', parseInt(response.CurrentCounter, 10));
-            break;
+          $('#draft-board').data('draft-counter', parseInt(response.CurrentCounter, 10));
         }
       },
       error: function() {

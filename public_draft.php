@@ -94,6 +94,7 @@ switch (ACTION) {
     $response["Status"] = $DRAFT->isCompleted() ? "draft-complete" : "out-of-date";
     //The hope here is to be a little more RESTful and if an exception is thrown the proper HTTP code will be thrown
     $response["Players"] = $PLAYER_SERVICE->getAllUpdatedPlayersForBoard($DRAFT, CURRENT_COUNTER);
+    $response["PlayersCount"] = count($response["Players"]);
     $response["CurrentCounter"] = $DRAFT->draft_counter;
     echo json_encode($response);
     break;
