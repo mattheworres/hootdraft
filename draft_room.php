@@ -82,6 +82,7 @@ switch(ACTION) {
 		$submitted_pick->position = isset($_POST['position']) ? $_POST['position'] : "";
 		$submitted_pick->player_round = isset($_POST['player_round']) ? (int)$_POST['player_round'] : 0;
 		$submitted_pick->player_pick = isset($_POST['player_pick']) ? (int)$_POST['player_pick'] : 0;
+    $submitted_pick->player_counter = $DRAFT->draft_counter + 1;
 		
 		try {
 			$NEXT_FIVE_PICKS = $PLAYER_SERVICE->getNextFivePicks($DRAFT);
@@ -151,6 +152,16 @@ switch(ACTION) {
 			define("PAGE_HEADER", "Draft Unable to be Moved Forward");
 			define("P_CLASS", "error");
 			define("PAGE_CONTENT", "An error has occurred and the draft was unable to be moved forward.");
+			require_once("views/shared/generic_result_view.php");
+			exit(1);
+		}
+    
+    try{
+      $DRAFT_SERVICE->incrementDraftCounter($DRAFT);
+		}catch(Exception $e) {
+			define("PAGE_HEADER", "Draft Counter Unable to be Incremented");
+			define("P_CLASS", "error");
+			define("PAGE_CONTENT", "An error has occurred and the draft counter was unable to be incremented.");
 			require_once("views/shared/generic_result_view.php");
 			exit(1);
 		}
@@ -243,6 +254,7 @@ switch(ACTION) {
 		$EDIT_PLAYER->last_name = isset($_POST['last_name']) ? $_POST['last_name'] : "";
 		$EDIT_PLAYER->team = isset($_POST['team']) ? $_POST['team'] : "";
 		$EDIT_PLAYER->position = isset($_POST['position']) ? $_POST['position'] : "";
+    $EDIT_PLAYER->player_counter = $DRAFT->draft_counter + 1;
 		
 		$object_errors = $PLAYER_SERVICE->getValidity($DRAFT, $EDIT_PLAYER);
 		
@@ -257,6 +269,16 @@ switch(ACTION) {
 		}catch(Exception $e) {
 			$ERRORS[] = "There was an error while saving the pick. Please try again.";
 			require("views/draft_room/edit_pick.php");
+			exit(1);
+		}
+    
+    try{
+      $DRAFT_SERVICE->incrementDraftCounter($DRAFT);
+		}catch(Exception $e) {
+			define("PAGE_HEADER", "Draft Counter Unable to be Incremented");
+			define("P_CLASS", "error");
+			define("PAGE_CONTENT", "An error has occurred and the draft counter was unable to be incremented.");
+			require_once("views/shared/generic_result_view.php");
 			exit(1);
 		}
 		

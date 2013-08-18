@@ -30,6 +30,9 @@ class player_object {
 
   /** @var string The position the player plays. Stored as one to three character abbreviation. */
   public $position;
+  
+  /** @var int The counter value indicating in what order this pick was edited in relation to the entire draft */
+  public $player_counter;
 
   /** @var string Timestamp of when the player was picked. Use strtotime to convert for comparisons, NULL for undrafted */
   public $pick_time;

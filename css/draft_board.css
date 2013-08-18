@@ -1,0 +1,128 @@
+#draft-board {
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5px;
+  /*border-right: 1px solid #000;
+  border-bottom: 1px solid #000;*/
+  font-family: "Arial",sans-serif;
+}
+
+#draft-board div.row {
+  clear: left;
+}
+
+#draft-board div.row div.round-number {
+  width: 50px;
+  height: 100px;
+  float: left;
+  font-size: 40px;
+  line-height: 100px;
+  color: #000;
+  opacity: 0.15;
+  padding-right: 5px;
+  text-align: right;
+}
+
+#draft-board div.row div.pick {
+  width: 159px;
+  height: 99px;
+  border-left: 1px solid #000;
+  border-top: 1px solid #000;
+  float: left;
+  position: relative;
+  font-size: 12px;
+  z-index: 0;
+  box-sizing: border-box;
+}
+
+#draft-board div.row div.pick div.overlay {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 160px;
+  height: 100px;
+  z-index: 2;
+  background-color: #FFD800;
+  opacity: 0.85;
+}
+
+#draft-board div.row:last-child div.pick {
+  border-bottom: 1px solid #000;
+}
+
+#draft-board div.row div.pick:last-child {
+  border-right: 1px solid #000;
+}
+
+#draft-board div.row div.pick span.pick-number {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 154px;
+  padding-right: 5px;
+  text-align: right;
+  font-size: 30px;
+  font-weight: bold;
+  color: #333;
+  opacity: 0.15;
+  line-height: 32px;
+  z-index: 1;
+}
+
+#draft-board div.row div.pick span.last-name {
+  display: block;
+  font-size: 21px;
+  font-weight: bold;
+  color: #000;
+}
+
+#draft-board div.row div.pick span.first-name {
+  display: block;
+  font-size: 16px;
+  margin-top: 3px;
+  color: #000;
+}
+
+#draft-board div.row div.pick span.manager {
+  display: block;
+  color: #000;
+  margin-top: 2px;
+  font-size: 15px;
+  opacity: 0.60;
+}
+
+#draft-board div.row div.pick.undrafted span.manager {
+  display: none;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+#draft-board div.row div.pick span.position {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 45%;
+  margin: 0 0 2px 3px;
+  text-align: left;
+  color: #000;
+  font-size: 15px;
+  font-weight: bold;
+  opacity: 0.60;
+}
+
+#draft-board div.row div.pick span.team {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 45%;
+  margin: 0 3px 2px 0;
+  text-align: right;
+  color: #000;
+  font-size: 15px;
+  font-weight: bold;
+  opacity: 0.60;
+}

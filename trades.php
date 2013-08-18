@@ -8,7 +8,7 @@ DEFINE("DRAFT_ID", isset($_REQUEST['did']) ? (int)$_REQUEST['did'] : 0);
 DEFINE("TRADE_ID", isset($_REQUEST['tid']) ? (int)$_REQUEST['tid'] : 0);
 DEFINE("MANAGER_ID", isset($_REQUEST['mid']) ? (int)$_REQUEST['mid'] : 0);
 
-$DRAFT_SERVICE = new draft_service();
+$DRAFT_SERVICE = new draft_service(); /*@var $DRAFT_SERVICE draft_service */
 $MANAGER_SERVICE = new manager_service();
 $PLAYER_SERVICE = new player_service();
 
@@ -86,12 +86,21 @@ switch(ACTION) {
 			exit(1);
 		}
 		
-		if($newTrade->saveTrade() === false) {
+		if($newTrade->saveTrade($DRAFT) === false) {
 			$save_errors = array();
 			$save_errors[] = "Encountered an error when saving trade.";
 			echo json_encode($save_errors);
 			exit(1);
 		}
+    
+    try {
+      $DRAFT_SERVICE->incrementDraftCounter($DRAFT);
+    }catch(Exception $e) {
+      $save_errors = array();
+			$save_errors[] = "Encountered an error when saving trade - unable to increment draft counter";
+			echo json_encode($save_errors);
+			exit(1);
+    }
 		
 		echo "SUCCESS";
 		exit(0);

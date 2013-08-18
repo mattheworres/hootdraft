@@ -81,7 +81,7 @@ class draft_service {
       $update_stmt = $DBH->prepare("UPDATE draft 
 				SET draft_name = ?, draft_sport = ?, draft_status = ?, draft_style = ?,
 					draft_rounds = ?, draft_current_round = ?, draft_current_pick = ?, 
-					draft_password = ? 
+					draft_password = ?
 				WHERE draft_id = ?");
 
       $update_stmt->bindParam(1, $draft->draft_name);
@@ -158,6 +158,43 @@ class draft_service {
       return $draft;
     }
   }
+  
+  /**
+   * Increment draft object counter then update the value in the DB
+   * @param draft_object $draft
+   */
+  public function incrementDraftCounter(draft_object $draft) {
+    global $DBH; /* @var $DBH PDO */
+    $draft->draft_counter = $draft->draft_counter + 1;
+    
+    $stmt = $DBH->prepare("UPDATE draft SET draft_counter = ? WHERE draft_id = ?");
+    $stmt->bindParam(1, $draft->draft_counter);
+    $stmt->bindParam(2, $draft->draft_id);
+    
+    if(!$stmt->execute()) {
+      throw new Exception("Unable to increment draft counter.");
+    }
+    
+    return $draft;
+  }
+  
+  /***
+   * Reset the draft object counter to 0, then update the value in the DB
+   */
+  public function resetDraftCounter(draft_object $draft) {
+    global $DBH; /* @var $DBH PDO */
+    $draft->draft_counter = 0;
+    
+    $stmt = $DBH->prepare("UPDATE draft SET draft_counter = ? WHERE draft_id = ?");
+    $stmt->bindParam(1, $draft->draft_counter);
+    $stmt->bindParam(2, $draft->draft_id);
+    
+    if(!$stmt->execute()) {
+      throw new Exception("Unable to reset draft counter.");
+    }
+    
+    return $draft;
+  }
 
   /**
    * Move the draft into drafting or undrafted status
@@ -174,6 +211,12 @@ class draft_service {
     $draft->draft_status = $new_status;
     $draft->draft_current_pick = 1;
     $draft->draft_current_round = 1;
+    
+    try {
+      $this->resetDraftCounter($draft);
+    }catch(Exception $e) {
+      throw new Exception("Unable to update draft status: " . $e->getMessage());
+    }
 
     $draftJustStarted = $was_undrafted && $draft->isInProgress() ? true : false;
 

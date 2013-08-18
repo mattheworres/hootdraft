@@ -69,7 +69,7 @@ class trade_object {
    * supported - see note in body of function.
    * @return boolean Success
    */
-  public function saveTrade() {
+  public function saveTrade(draft_object $draft) {
     global $DBH; /* @var $DBH PDO */
 
     if ($this->trade_id > 0 && $this->draft_id > 0) {//Update
@@ -77,7 +77,7 @@ class trade_object {
       return false;
     } elseif ($this->draft_id > 0) {//Save
       //Exchange Assets
-      if (!$this->ExchangeAssets())
+      if (!$this->ExchangeAssets($draft))
         return false;
 
       //Save the trade
@@ -324,11 +324,15 @@ class trade_object {
    * Perform the core swap of ownership of each pick in the database for a trade.
    * @return boolean True on success, false otherwise 
    */
-  private function ExchangeAssets() {
+  private function ExchangeAssets(draft_object $draft) {
     $PLAYER_SERVICE = new player_service();
+    //Update the draft counter - can be the same for all assets, doesnt matter. Trade = 1 action
+    $new_counter_value = $draft->draft_counter + 1;
+    
     foreach ($this->trade_assets as $asset) {
       /* @var $asset trade_asset_object */
       $asset->player->manager_id = $asset->newmanager->manager_id;
+      $asset->player->player_counter = $new_counter_value;
 
       try {
         $PLAYER_SERVICE->savePlayer($asset->player);

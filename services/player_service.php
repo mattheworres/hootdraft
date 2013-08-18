@@ -47,9 +47,9 @@ class player_service {
       //NOTE: I don't care for this... But I had to use a param counter to get around the statement needing to be dynamic. There are instances
       //like when an already-made pick doesn't need the pick_time updated. Always up for a more elegant solution.
 
-      $param_number = 9;
+      $param_number = 10;
 
-      $sql = "UPDATE players SET manager_id = ?, draft_id = ?, first_name = ?, last_name = ?, team = ?, position = ?, player_round = ?, player_pick = ? ";
+      $sql = "UPDATE players SET manager_id = ?, draft_id = ?, first_name = ?, last_name = ?, team = ?, position = ?, player_round = ?, player_pick = ?, player_counter = ? ";
 
       if ($setPickToNow === true) {
         $player->pick_time = php_draft_library::getNowPhpTime();
@@ -67,6 +67,7 @@ class player_service {
       $stmt->bindParam(6, $player->position);
       $stmt->bindParam(7, $player->player_round);
       $stmt->bindParam(8, $player->player_pick);
+      $stmt->bindParam(9, $player->player_counter);
 
       if ($setPickToNow === true) {
         $stmt->bindParam($param_number, $player->pick_time);
@@ -580,6 +581,42 @@ class player_service {
     return $players;
   }
 
+  /**
+   * Get all picks that are required to refresh the draft board
+   * @global type $DBH
+   * @param draft_object $draft
+   * @param int $currentDraftCounter current draft counter that the client board is reporting
+   * @return array Players that have counter greater than the draft counter handed to us
+   * @throws Exception
+   */
+  public function getAllUpdatedPlayersForBoard(draft_object $draft, $currentDraftCounter) {
+    global $DBH; /* @var $DBH PDO */
+    
+    $players = array();
+    
+    $currentDraftCounter = (int)$currentDraftCounter;
+    
+    $stmt = $DBH->prepare("SELECT p.*, m.manager_name FROM players P ".
+            "LEFT OUTER JOIN managers m " .
+            "ON m.manager_id = p.manager_id " .
+            "WHERE p.draft_id = ? " .
+            "AND p.player_counter > ? ORDER BY p.player_counter");
+    
+    $stmt->bindParam(1, $draft->draft_id);
+    $stmt->bindParam(2, $currentDraftCounter);
+    
+    $stmt->setFetchMode(PDO::FETCH_CLASS, 'player_object');
+    
+    if(!$stmt->execute()) {
+      throw new Exception("Unable to get all players with a counter of " . $currentDraftCounter . ".");
+    }
+    
+    while($player = $stmt->fetch()) {
+      $players[] = $player;
+    }
+    
+    return $players;
+  }
 }
 
 ?>

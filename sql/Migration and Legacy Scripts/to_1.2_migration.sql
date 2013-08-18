@@ -33,3 +33,15 @@ MODIFY `draft_create_time` datetime NOT NULL COMMENT 'The datetime the draft was
 UPDATE `players`
 SET `team` = 'BKN'
 WHERE `team` = 'NJN';
+
+--
+-- Add new column to draft table for updated draft board
+--
+ALTER TABLE `draft`
+ADD COLUMN `draft_counter` int(11) NOT NULL default '0' COMMENT 'The counter tracking the sequence of events to help keep the draft board fresh';
+
+--
+-- Add new column to player table for updated draft board
+--
+ALTER TABLE `players`
+ADD COLUMN `player_counter` int(11) default NULL COMMENT 'The draft counter value in which this pick was edited at';
