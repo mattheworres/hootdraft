@@ -6,11 +6,13 @@
  * Managers have many players (picks), and belong to a single draft.
  */
 class manager_service {
-  /*
+  /**
    * Load a given manager
-   * @return manager_object $manager if successful, exception thrown otherwise
+   * @global PDO $DBH
+   * @param type $id
+   * @return \manager_object
+   * @throws Exception
    */
-
   public function loadManager($id = 0) {
     $manager = new manager_object();
 

@@ -206,6 +206,7 @@ class draft_service {
       return false;
 
     $PLAYER_SERVICE = new player_service();
+    $TRADE_SERVICE = new trade_service();
 
     $was_undrafted = $draft->isUndrafted();
     $draft->draft_status = $new_status;
@@ -231,12 +232,12 @@ class draft_service {
     } catch (Exception $e) {
       throw new Exception("Unable to update draft status - unable to save draft.");
     }
-
+    
     //Were either going from UNDRAFTED to IN PROGRESS, or vice versa, cannot move
     //out of "COMPLETED", so either way we want to wipe clean any trades & players.
-    $eraseTradesSuccess = trade_object::DeleteTradesByDraft($draft->draft_id);
-
-    if ($eraseTradesSuccess === false) {
+    try {
+      $TRADE_SERVICE->DeleteTradesByDraft($draft->draft_id);
+    }catch(Exception $e) {
       throw new Exception("Unable to update draft status - unable to erase trades.");
     }
 
@@ -357,10 +358,11 @@ class draft_service {
 
     $MANAGER_SERVICE = new manager_Service();
     $PLAYER_SERVICE = new player_service();
-
-    $tradeRemovalSuccess = trade_object::DeleteTradesByDraft($draft->draft_id);
-
-    if ($tradeRemovalSuccess === false) {
+    $TRADE_SERVICE = new trade_service();
+    
+    try {
+      $TRADE_SERVICE->DeleteTradesByDraft($draft->draft_id);
+    }catch(Exception $e) {
       throw new Exception("Unable to delete trades belonging to draft.");
     }
 

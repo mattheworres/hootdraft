@@ -11,6 +11,7 @@ DEFINE("MANAGER_ID", isset($_REQUEST['mid']) ? (int)$_REQUEST['mid'] : 0);
 $DRAFT_SERVICE = new draft_service(); /*@var $DRAFT_SERVICE draft_service */
 $MANAGER_SERVICE = new manager_service();
 $PLAYER_SERVICE = new player_service();
+$TRADE_SERVICE = new trade_service();
 
 try {
 	$DRAFT = $DRAFT_SERVICE->loadDraft(DRAFT_ID);
@@ -77,21 +78,23 @@ switch(ACTION) {
 		}
 		
 		//TODO: Find a way to make this shorter in presenter:
-		$newTrade = trade_object::BuildTrade(DRAFT_ID, $manager1_id, $manager2_id, $manager1_assets, $manager2_assets);
+    $newTrade = $TRADE_SERVICE->BuildTrade(DRAFT_ID, $manager1_id, $manager2_id, $manager1_assets, $manager2_assets);
 		
-		$object_errors = $newTrade->getValidity();
+		$object_errors = $TRADE_SERVICE->getValidity($newTrade);
 		
 		if(count($object_errors) > 0) {
 			echo json_encode($object_errors);
 			exit(1);
 		}
-		
-		if($newTrade->saveTrade($DRAFT) === false) {
-			$save_errors = array();
-			$save_errors[] = "Encountered an error when saving trade.";
+    
+		try {
+      $TRADE_SERVICE->saveTrade($DRAFT, $newTrade);
+    }catch(Exceptio $e) {
+      $save_errors = array();
+			$save_errors[] = "Encountered an error when saving trade: " . $e->getMessage();
 			echo json_encode($save_errors);
 			exit(1);
-		}
+    }
     
     try {
       $DRAFT_SERVICE->incrementDraftCounter($DRAFT);

@@ -13,6 +13,7 @@ DEFINE("BOARD_RELOAD", 3);
 $DRAFT_SERVICE = new draft_service();
 $MANAGER_SERVICE = new manager_service();
 $PLAYER_SERVICE = new player_service();
+$TRADE_SERVICE = new trade_service();
 
 //Draft password may have pre-loaded this for us.
 if (!isset($DRAFT) || get_class($DRAFT) != "draft_object") {
@@ -187,7 +188,7 @@ switch (ACTION) {
 
   case 'viewTrades':
     // <editor-fold defaultstate="collapsed" desc="viewTrades Logic">
-    $DRAFT_TRADES = trade_object::getDraftTrades(DRAFT_ID);
+    $DRAFT_TRADES = $TRADE_SERVICE->getDraftTrades(DRAFT_ID);
     DEFINE("NUMBER_OF_TRADES", count($DRAFT_TRADES));
     $DRAFT->setupSport();
 

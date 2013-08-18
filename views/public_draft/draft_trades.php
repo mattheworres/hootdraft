@@ -16,11 +16,11 @@
 				<p>Here you can see all of the trades that have occurred in the draft up to this point.</p>
 				<?php if(NUMBER_OF_TRADES == 0) { ?>
 				<h2>No trades have been made yet.</h2>
-				<?php } else { 
+				<?php } else {
 					foreach($DRAFT_TRADES as $trade) {/* @var $trade trade_object */
 						$trade_date = php_draft_library::parseObjectDate($trade->trade_time);
-						$manager1_assets = $trade->getTradeManagerAssets($trade->manager1->manager_id);
-						$manager2_assets = $trade->getTradeManagerAssets($trade->manager2->manager_id);
+						$manager1_assets = $TRADE_SERVICE->getTradeManagerAssets($trade->manager1->manager_id, $trade);
+						$manager2_assets = $TRADE_SERVICE->getTradeManagerAssets($trade->manager2->manager_id, $trade);
 					?>
 				<fieldset>
 					<legend><?php echo $trade->manager1->manager_name; ?> and <?php echo $trade->manager2->manager_name; ?> (<?php echo $trade_date; ?>) </legend>

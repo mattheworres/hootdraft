@@ -55,36 +55,6 @@ class trade_asset_object {
   }
 
   /**
-   * Saves an asset to the DB. Update not supported - 
-   * see saveTrade() for trade_object for reason
-   * @return boolean Success
-   */
-  public function saveAsset() {
-    global $DBH; /* @var $DBH PDO */
-
-    if ($this->trade_asset_id > 0) {
-      //TODO: implement update
-      return false;
-    } else {
-      $wasDrafted = $this->WasDrafted() ? 1 : 0;
-
-      $stmt = $DBH->prepare("INSERT INTO trade_assets (trade_id, player_id, oldmanager_id, newmanager_id, was_drafted) VALUES (?, ?, ?, ?, ?)");
-      $stmt->bindParam(1, $this->trade_id);
-      $stmt->bindParam(2, $this->player->player_id);
-      $stmt->bindParam(3, $this->oldmanager->manager_id);
-      $stmt->bindParam(4, $this->newmanager->manager_id);
-      $stmt->bindParam(5, $wasDrafted);
-
-      $success = $stmt->execute();
-      $error_code = "blart";
-      if (!$success)
-        $error_code = $stmt->errorInfo();
-
-      return $success;
-    }
-  }
-
-  /**
    * Get all assets involved in a trade. Requires passing both managers to prevent
    * thrashing the database to SELECT the two same manager rows for every asset.
    * @param int $trade_id
