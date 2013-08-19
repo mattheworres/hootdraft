@@ -32,6 +32,24 @@ function setupEventHandlers() {
   $(document).on('keyup', '#draft_password, #draft_password_confirm', function() {
     checkMatchingPasswords($('#draft_visibility'), $('#draft_password'), $('#draft_password_confirm'));
   });
+  
+  $(document).on('click', 'span.manager-edit-link', function() {
+    var $managerRow = $(this).parents('tr.manager-row');
+    
+    managerEditClickHandler($managerRow);
+  });
+  
+  $(document).on('click', 'span.manager-save-link', function() {
+    var $managerRow = $(this).parents('tr.manager-row');
+    
+    managerSaveClickHandler($managerRow);
+  });
+  
+  $(document).on('click', 'span.manager-cancel-link', function() {
+    var $managerRow = $(this).parents('tr.manager-row');
+    
+    managerCancelClickHandler($managerRow);
+  });
 }
 
 function setupUIElements() {
@@ -86,6 +104,75 @@ function setupUIElements() {
   });
   
   $('#draft_status').buttonset();
+}
+
+function managerEditClickHandler($managerRow) {
+  $managerRow.find('span.manager-name, span.manager-email').hide();
+  $managerRow.find('input.manager-name').val($managerRow.data('manager-name')).show();
+  $managerRow.find('input.manager-email').val($managerRow.data('manager-email')).show();
+  
+  $managerRow.find('td.main-functions').hide();
+  $managerRow.find('td.edit-functions').show();
+  
+  $managerRow.find('span.manager-move-link').hide();
+}
+
+function managerSaveClickHandler($managerRow) {
+  var manager_name = $.trim($managerRow.find('input.manager-name').val()),
+      manager_email = $.trim($managerRow.find('input.manager-email').val()),
+      manager_id = parseInt($managerRow.data('manager-id'), 10),
+      $managerNameDisplay = $managerRow.find('span.manager-name'),
+      $managerEmailDisplay = $managerRow.find('span.manager-email');
+      
+  //Todo: If this gets more complicated, use Jquery validate. Otherwise, only 1 field...
+  if(manager_name.length === 0) {
+    $('#informationDialog').html('Unable to save: manager must have a non-empty name.').dialog('open');
+    return;
+  }
+  
+  $('#loadingDialog').dialog('open');
+  
+  $.ajax({
+    type: 'POST',
+    url: 'manager.php?action=updateManager&mid=' + manager_id,
+    data: {'manager_name': manager_name, 'manager_email': manager_email},
+    dataType: 'json',
+    complete: function() {
+      $('#loadingDialog').dialog('close');
+    },
+    success: function(response) {
+      switch(response.Status) {
+        case 'invalid-data':
+          $('#informationDialog').html('Unable to save manager: ' + response.Errors).dialog('open');
+          break;
+          
+        case 'unable-to-save':
+          $('#informationDialog').html('Unable to save manager: unexpected error occurred').dialog('open');
+          break;
+          
+        case 'save-successful':
+          $managerNameDisplay.text(manager_name);
+          $managerEmailDisplay.text(manager_email);
+          $managerRow.data('manager-name', manager_name);
+          $managerRow.data('manager-email', manager_email);
+          managerCancelClickHandler($managerRow);
+          break;
+      }
+    },
+    error: function() {
+      $('#informationDialog').html('An error has occurred and the manager could not be updated.');
+    }
+  });
+}
+
+function managerCancelClickHandler($managerRow) {
+  $managerRow.find('span.manager-name, span.manager-email').show();
+  $managerRow.find('input.manager-name, input.manager-email').val('').hide();
+  
+  $managerRow.find('td.main-functions').show();
+  $managerRow.find('td.edit-functions').hide();
+  
+  $managerRow.find('span.manager-move-link').show();
 }
 
 function moveManagerHandler($moveLink) {

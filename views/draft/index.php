@@ -36,7 +36,7 @@
 								<th width="100">&nbsp;</th>
 								<?php } ?>
 								<th>Manager Name</th>
-								<th>Manager Email</th>
+								<th width="225">Email</th>
 								<th width="85">Draft Order</th>
 							</tr>
 						</thead>
@@ -51,15 +51,28 @@
 								if($manager->draft_order == LOWEST_ORDER)
 									$DOWNARROW = false;
 								?>
-							<tr data-manager-id="<?php echo $manager->manager_id;?>">
+							<tr class="manager-row" data-manager-id="<?php echo $manager->manager_id;?>" 
+                  data-manager-name="<?php echo $manager->manager_name; ?>"
+                  data-manager-email="<?php echo $manager->manager_email; ?>">
 								<?php if($DRAFT->isUndrafted()) {?>
-								<td>
-									<a href="manager.php?action=editManager&mid=<?php echo $manager->manager_id; ?>">Edit</a> |
+								<td class="main-functions">
+									<!--<a href="manager.php?action=editManager&mid=<?php echo $manager->manager_id; ?>">Edit</a> |-->
+                  <span class="manager-edit-link"><a>Edit</a></span> |
 									<span class="manager-delete-link"><a>Delete</a></span>
 								</td>
+                <td class="edit-functions">
+                  <span class="manager-save-link"><a>Save</a></span> |
+                  <span class="manager-cancel-link"><a>Cancel</a></span>
+                </td>
 								<?php } ?>
-								<td><?php echo $manager->manager_name; ?></td>
-								<td><?php echo $manager->manager_email; ?></td>
+								<td>
+                  <span class="manager-name"><?php echo $manager->manager_name; ?></span>
+                  <input type="text" class="manager-name" />
+                </td>
+								<td>
+                  <span class="manager-email"><?php echo $manager->manager_email; ?></span>
+                  <input type="text" class="manager-email" />
+                </td>
 								<td>&nbsp;&nbsp;
 								<?php if($DRAFT->isUndrafted()) {?>
 									<span class="manager-move-link move-up up-on"></span>
@@ -131,5 +144,6 @@
 			</p>
       <p class="error">NOTE: If you switch from "In Progress" to "Undrafted" and have already started to draft, all data related to picks <em>will</em> be immediately deleted.</p>
     </div>
+    
 	</body>
 </html>
