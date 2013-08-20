@@ -51,8 +51,8 @@
 					$picks = $('#picks');
 
 				$(document).ready(function() {
-					$("#refresh").live('click', reloadPicks);
-					$("#round").live('change', reloadPicks);
+					$(document).on('click', '#refresh', reloadPicks);
+					$(document).on('change', '#round', reloadPicks);
 				});
 			
 				function reloadPicks() {

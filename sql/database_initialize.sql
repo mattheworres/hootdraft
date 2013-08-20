@@ -17,9 +17,11 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 CREATE TABLE IF NOT EXISTS `draft` (
   `draft_id` int(11) NOT NULL auto_increment,
+  `draft_create_time` datetime NOT NULL COMMENT 'The datetime the draft was created, can be used for sorting purposes.',
   `draft_name` text NOT NULL,
   `draft_sport` text NOT NULL,
   `draft_status` text NOT NULL,
+  `draft_counter` int(11) NOT NULL default '0' COMMENT 'The counter tracking the sequence of events to help keep the draft board fresh',
   `draft_style` text NOT NULL COMMENT 'The style of draft that will take place, either serpentine or cyclical',
   `draft_rounds` int(2) unsigned NOT NULL default '0' COMMENT 'The number of rounds (players per team) to be drafted',
   `draft_password` text COMMENT 'Optional password to make public functions of the draft (view-only) private via password protection.',
@@ -62,6 +64,7 @@ CREATE TABLE IF NOT EXISTS `players` (
   `position` varchar(4) default NULL COMMENT 'The position this player plays',
   `pick_time` datetime default NULL COMMENT 'The timestamp that the pick occurred',
   `pick_duration` int(10) default NULL COMMENT 'The number of seconds that the pick took',
+  `player_counter` int(11) default NULL COMMENT 'The draft counter value in which this pick was edited at',
   `draft_id` int(11) unsigned NOT NULL default '0',
   `player_round` int(11) NOT NULL default '0' COMMENT 'The round that this player was drafted in',
   `player_pick` int(11) NOT NULL default '0' COMMENT 'The particular draft pick that this player was taken in.',

@@ -43,7 +43,7 @@
 			<?php require('includes/footer.php');?>
 			<script type="text/javascript">
 				$(document).ready(function() {
-					$('#round').live('change', function() {
+					$(document).on('change', '#round', function() {
 						var round_number = parseInt($('#round').val(), 10),
 						draft_id = parseInt(<?php echo DRAFT_ID;?>, 10),
 						$pick_div = $('#picks'),

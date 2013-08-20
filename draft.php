@@ -6,17 +6,20 @@ DEFINE("ACTIVE_TAB", "CONTROL_PANEL");
 DEFINE("ACTION", isset($_REQUEST['action']) ? $_REQUEST['action'] : "");
 DEFINE("DRAFT_ID", isset($_REQUEST['did']) ? (int)$_REQUEST['did'] : "");
 
-$DRAFT = new draft_object(DRAFT_ID);
+$DRAFT_SERVICE = new draft_service();
+$MANAGER_SERVICE = new manager_service();
+$PLAYER_SERVICE = new player_service();
+$PRO_PLAYER_SERVICE = new pro_player_service();
 
-// <editor-fold defaultstate="collapsed" desc="Error checking on basic input">
-if($DRAFT->draft_id == 0) {
+try {
+	$DRAFT = $DRAFT_SERVICE->loadDraft(DRAFT_ID);
+}catch(Exception $e) {
 	define("PAGE_HEADER", "Draft Not Found");
 	define("P_CLASS", "error");
-	define("PAGE_CONTENT", "We're sorry, but the draft could not be loaded. Please try again.");
+	define("PAGE_CONTENT", "We're sorry, but the draft could not be loaded: " . $e->getMessage());
 	require_once("views/shared/generic_result_view.php");
 	exit(1);
 }
-// </editor-fold>
 
 switch(ACTION) {
 	case 'addManagers':
@@ -24,7 +27,7 @@ switch(ACTION) {
 		$MANAGERS = array();
 		$MANAGERS[] = new manager_object();
 
-		$CURRENT_MANAGERS = manager_object::getManagersByDraft(DRAFT_ID, true);
+		$CURRENT_MANAGERS = $MANAGER_SERVICE->getManagersByDraft(DRAFT_ID, true);
 		require_once('views/draft/add_managers.php');
 		// </editor-fold>
 		break;
@@ -39,16 +42,18 @@ switch(ACTION) {
 			$new_manager->manager_name = $manager_request['manager_name'];
 			$new_manager->manager_email = $manager_request['manager_email'];
 			
-			$object_errors = $new_manager->getValidity();
+			$object_errors = $MANAGER_SERVICE->getValidity($new_manager);
 			
 			if(count($object_errors) > 0) {
 				$ERRORS = $object_errors;
-				return "SERVER_ERROR";
+				echo "SERVER_ERROR: " . $ERRORS;
 				exit(1);
 			}
 
-			if(!$new_manager->saveManager()) {
-				return "SERVER_ERROR";
+			try {
+				$MANAGER_SERVICE->saveManager($new_manager);
+			}catch(Exception $e) {
+				echo "SERVER_ERROR: " . $e->getMessage();
 				exit(1);
 			}
 		}
@@ -67,55 +72,45 @@ switch(ACTION) {
 		}
 
 		$DRAFT->draft_password = $new_password;
-
-		if($DRAFT->saveDraft())
-			echo "SUCCESS";
-		else
+		
+		try{
+			$DRAFT_SERVICE->saveDraft($DRAFT);
+		}catch(Exception $e) {
 			echo "FAILURE";
-		// </editor-fold>
-		break;
-
-	case 'changeStatus':
-		// <editor-fold defaultstate="collapsed" desc="changeStatus Logic">
-		require_once("views/draft/edit_status.php");
-		// </editor-fold>
-		break;
-
-	case 'updateStatus':
-		// <editor-fold defaultstate="collapsed" desc="updateStatus Logic">
-		$new_status = isset($_POST['draft_status']) ? $_POST['draft_status'] : "";
-
-		if($DRAFT->draft_status == $new_status) {
-			define("PAGE_HEADER", "Status Unchanged");
-			define("P_CLASS", "success");
-			define("PAGE_CONTENT", "Your draft's status was unchanged. <a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to the draft's main page, or <a href=\"draft.php?action=changeStatus&did=" . DRAFT_ID . "\">click here</a> to change it's status.");
-			require_once("views/shared/generic_result_view.php");
-			exit(0);
 		}
-
-		if(!draft_object::checkStatus($new_status)) {
-			$ERRORS = array();
-			$ERRORS[] = "Draft status is of the incorrect value. Please correct this and try again.";
-			require_once("views/draft/edit_status.php");
+		
+		echo "SUCCESS";
+		// </editor-fold>
+		break;
+    
+  case 'updateStatus':
+    $new_status = $_POST['draft_status'];
+    $response = array();
+    
+    if($DRAFT->draft_status == $new_status) {
+      $response["Status"] = "status-unchanged";
+      echo json_encode($response);
+      exit(0);
+    }
+    
+    if(!draft_object::checkStatus($new_status)) {
+      $response["Status"] = "invalid-status";
+      echo json_encode($response);
+      exit(0);
+    }
+    
+    try {
+			$DRAFT_SERVICE->updateStatus($DRAFT, $new_status);
+		}catch(Exception $e) {
+			$response["Status"] = "unable-to-update";
+			$response["Error"] = "Draft's status could not be updated: " . $e->getMessage() . " Please try again.";
+			echo json_encode($response);
 			exit(1);
 		}
-
-		$success = $DRAFT->updateStatus($new_status);
-
-		if($success) {
-			define("PAGE_HEADER", "Draft Status Updated");
-			define("P_CLASS", "success");
-			define("PAGE_CONTENT", "Your draft's status has been successfully updated. <a href=\"draft.php?did=" . DRAFT_ID . "\">Click here</a> to be taken back to its main page.");
-			require_once("views/shared/generic_result_view.php");
-			exit(0);
-		}else {
-			$ERRORS = array();
-			$ERRORS[] = "An error occurred and your draft's status could not be updated.  Please try again.";
-			require_once("views/draft/edit_status.php");
-			exit(1);
-		}
-		// </editor-fold>
-		break;
+    
+    $response["Status"] = "status-updated";
+    echo json_encode($response);
+    break;
 
 	case 'editDraft':
 		// <editor-fold defaultstate="collapsed" desc="editDraft Logic">
@@ -149,7 +144,7 @@ switch(ACTION) {
 		$DRAFT->draft_style = $draft_style;
 		$DRAFT->draft_rounds = $draft_rounds;
 
-		$object_errors = $DRAFT->getValidity();
+		$object_errors = $DRAFT_SERVICE->getValidity($DRAFT);
 
 		if(count($object_errors) > 0) {
 			$ERRORS = $object_errors;
@@ -157,7 +152,9 @@ switch(ACTION) {
 			exit(1);
 		}
 
-		if($DRAFT->saveDraft() == false) {
+		try{
+			$DRAFT_SERVICE->saveDraft($DRAFT);
+		}catch(Exception $e) {
 			$ERRORS[] = "Draft could not be saved, please try again.";
 			require_once("views/control_panel/create_draft.php");
 			exit(1);
@@ -187,20 +184,22 @@ switch(ACTION) {
 			require_once("views/draft/delete_draft.php");
 			exit(1);
 		}
-
-		if($DRAFT->deleteDraft()) {
-			define("PAGE_HEADER", "Draft Removed Successfully");
-			define("P_CLASS", "success");
-			define("PAGE_CONTENT", "Your draft was successfully removed. <a href=\"control_panel.php\">Click here</a> to go back to the control panel.");
-			require_once("views/shared/generic_result_view.php");
-			exit(0);
-		} else {
+		
+		try {
+			$DRAFT_SERVICE->deleteDraft($DRAFT);
+		}catch(Exception $e) {
 			define("PAGE_HEADER", "Draft Unable to Be Removed");
 			define("P_CLASS", "error");
-			define("PAGE_CONTENT", "A server side error has occurred and your draft could not be removed.  Please <a href=\"draft.php?action=deleteDraft&did=" . DRAFT_ID . "\">go back</a> and try again.");
+			define("PAGE_CONTENT", "Unable to remove draft: " . $e->getMessage() . " Please <a href=\"draft.php?action=deleteDraft&did=" . DRAFT_ID . "\">go back</a> and try again.");
 			require_once("views/shared/generic_result_view.php");
 			exit(1);
 		}
+		
+		define("PAGE_HEADER", "Draft Removed Successfully");
+		define("P_CLASS", "success");
+		define("PAGE_CONTENT", "Your draft was successfully removed. <a href=\"control_panel.php\">Click here</a> to go back to the control panel.");
+		require_once("views/shared/generic_result_view.php");
+		exit(0);
 		// </editor-fold>
 		break;
 		
@@ -224,16 +223,16 @@ switch(ACTION) {
 		$team = strlen($team) == 0 ? "NA" : $team;
 		$position = strlen($position) == 0 ? "NA" : $position;
 		
-		$players = pro_player_object::SearchPlayers($league, $first, $last, $team, $position);
+		$pro_players = $PRO_PLAYER_SERVICE->SearchPlayers($league, $first, $last, $team, $position);
 		
-		echo json_encode($players);
+		echo json_encode($pro_players);
 		exit(0);
 		break;
 		// </editor-fold>
 	
 	default:
 		// <editor-fold defaultstate="collapsed" desc="Main Draft Page Logic">
-		$MANAGERS = manager_object::getManagersByDraft(DRAFT_ID, true);
+		$MANAGERS = $MANAGER_SERVICE->getManagersByDraft(DRAFT_ID, true);
 
 		DEFINE('NUMBER_OF_MANAGERS', count($MANAGERS));
 		DEFINE('HAS_MANAGERS', NUMBER_OF_MANAGERS > 0);
@@ -241,7 +240,7 @@ switch(ACTION) {
 		
 		if($DRAFT->isInProgress() || $DRAFT->isCompleted()) {
 			$DRAFT->setupSport();
-			$LAST_TEN_PICKS = player_object::getLastTenPicks(DRAFT_ID);
+			$LAST_TEN_PICKS = $PLAYER_SERVICE->getLastTenPicks(DRAFT_ID);
 			DEFINE('NUMBER_OF_LAST_PICKS', count($LAST_TEN_PICKS));
 			
 			if($LAST_TEN_PICKS === false) {

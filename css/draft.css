@@ -6,7 +6,23 @@ span.manager-move-link {
 	border: 0px;
 }
 
-span.manager-delete-link {
+td.edit-functions {
+  display: none;
+}
+
+td.edit-functions span.manager-save-link {
+  font-weight: bold;
+}
+
+input.manager-name, 
+input.manager-email {
+  display: none;
+}
+
+span.manager-edit-link, 
+span.manager-delete-link,
+span.manager-save-link,
+span.manager-cancel-link {
 	cursor: pointer;
 }
 
@@ -33,7 +49,7 @@ input.manager_info
 	width: 225px;
 }
 
-#addManagerButton, span.removeManagerButton{
+#addManagerButton, span.removeManagerButton, #changeVisibility, #changeDraftStatus {
 	cursor: pointer;
 }
 
