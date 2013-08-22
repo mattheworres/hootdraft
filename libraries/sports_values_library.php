@@ -97,6 +97,14 @@ class sports_values_library {
         "PF" => $this->colors['light_red'], //LT RED
             //CENTER ALREADY DONE: LT BLUE
     );
+    
+    //PHPD-70: FIX 3 INFIELD ISSUES WITH CSS CLASS NAMES:
+    $this->position_colors = array_merge($this->position_colors, array(
+      "x1B" => $this->position_colors['1B'],
+      "x2B" => $this->position_colors['2B'],
+      "x3B" => $this->position_colors['3B'],
+    ));
+    
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="NHL Teams Positions">
     $this->nhl_teams = Array(

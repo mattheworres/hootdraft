@@ -103,10 +103,19 @@ $(function() {
                 isDrafted = player.last_name !== null && player.first_name !== null;
 
             if (isDrafted) {
+              var positonClass = player.position;
+              switch(player.position) {
+                case '1B':
+                case '2B':
+                case '3B':
+                  positonClass = 'x' + player.position;
+                  break;
+              }
+              
               $pickCell.html(pickTemplate(player))
                       .removeClass()
                       .addClass('pick')
-                      .addClass(player.position)
+                      .addClass(positonClass)
                       .data('pick-duration', player.pick_duration);
             } else {
               $pickCell.find('span.manager').html(player.manager_name);
