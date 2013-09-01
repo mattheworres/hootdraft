@@ -596,7 +596,7 @@ class player_service {
     
     $currentDraftCounter = (int)$currentDraftCounter;
     
-    $stmt = $DBH->prepare("SELECT p.*, m.manager_name FROM players P ".
+    $stmt = $DBH->prepare("SELECT p.*, m.manager_name FROM players p ".
             "LEFT OUTER JOIN managers m " .
             "ON m.manager_id = p.manager_id " .
             "WHERE p.draft_id = ? " .
