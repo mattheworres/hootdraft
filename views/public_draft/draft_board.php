@@ -5,7 +5,7 @@
     <link href="css/style.css" type="text/css" rel="stylesheet" />
     <link href="css/jquery-ui-1.10.3.min.css" type="text/css" rel="stylesheet" />
     <link href="css/draft_board_dynamic_styles.php" type="text/css" rel="stylesheet" />
-    <link href="css/draft_Board.css" type="text/css" rel="stylesheet" />
+    <link href="css/draft_board.css" type="text/css" rel="stylesheet" />
 
     <title>PHPDraft - <?php echo $DRAFT->draft_name; ?> - Draft Board</title>
   </head>
