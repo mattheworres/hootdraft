@@ -27,7 +27,7 @@
 						</fieldset>
 					</form>
 				</div>
-				<?php if(count($ERRORS) > 0) {?>
+				<?php if(isset($ERRORS) && count($ERRORS) > 0) {?>
 					<?php foreach($ERRORS as $error) {?>
 						<p class="error">* <?php echo $error;?></p>
 					<?php }?>
@@ -35,7 +35,7 @@
 					<p class="error">*Required</p>
 				<?php }?>
 			</div>
-			<?php require('includes/footer.php');;?>
+			<?php require('includes/footer.php');?>
 		</div>
 	</body>
 </html>

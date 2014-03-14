@@ -18,10 +18,10 @@
 							<input type="text" name="draft_name" id="draft_name" value="<?php echo $draft->draft_name ?>" /></p>
 							<p><label for="draft_sport">Draft Sport*:</label>
 							<select name="draft_sport">
-									<option value="football"<?php ($draft->draft_sport == "football" ? "selected=\"selected\"" : "") ?>>Football - NFL</option>
-									<option value="baseball"<?php ($draft->draft_sport == "baseball" ? "selected=\"selected\"" : "") ?>>Baseball - MLB</option>
-									<option value="hockey"<?php ($draft->draft_sport == "hockey" ? "selected=\"selected\"" : "") ?>>Hockey - NHL</option>
-									<option value="basketball"<?php ($draft->draft_sport == "basketball" ? "selected=\"selected\"" : "") ?>>Basketball - NBA</option>
+									<option value="NFL"<?php ($draft->draft_sport == "NFL" ? "selected=\"selected\"" : "") ?>>Football - NFL</option>
+									<option value="MLB"<?php ($draft->draft_sport == "MLB" ? "selected=\"selected\"" : "") ?>>Baseball - MLB</option>
+									<option value="NHL"<?php ($draft->draft_sport == "NHL" ? "selected=\"selected\"" : "") ?>>Hockey - NHL</option>
+									<option value="NBA"<?php ($draft->draft_sport == "NBA" ? "selected=\"selected\"" : "") ?>>Basketball - NBA</option>
 							</select></p>
 							<p><label for="draft_style">Draft Style*:</label>
 							<select name="draft_style">
@@ -31,7 +31,7 @@
 							<p><label for="draft_name"># of Rounds*:</label>
 							<input type="text" name="draft_rounds" id="draft_rounds" size="2" maxlength="2" value="<?php echo $draft->draft_rounds ?>" /> (players per team)</p>
 							<p><input type="submit" name="submit" class="button" value="Create Draft" /></p>
-							<?php if(count($ERRORS) > 0) { ?>
+							<?php if(isset($ERRORS) && count($ERRORS) > 0) { ?>
 							<?php foreach($ERRORS as $error) { ?>
 							<p class="error">* <?php echo $error; ?></p>
 							<?php } ?>
@@ -41,7 +41,7 @@
 					</form>
 		</fieldset>
 		</div>
-		<?php require('includes/footer.php');; ?>
+		<?php require('includes/footer.php'); ?>
 	</div>
 	</body>
 </html>

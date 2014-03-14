@@ -17,9 +17,11 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 CREATE TABLE IF NOT EXISTS `draft` (
   `draft_id` int(11) NOT NULL auto_increment,
+  `draft_create_time` datetime NOT NULL COMMENT 'The datetime the draft was created, can be used for sorting purposes.',
   `draft_name` text NOT NULL,
   `draft_sport` text NOT NULL,
   `draft_status` text NOT NULL,
+  `draft_counter` int(11) NOT NULL default '0' COMMENT 'The counter tracking the sequence of events to help keep the draft board fresh',
   `draft_style` text NOT NULL COMMENT 'The style of draft that will take place, either serpentine or cyclical',
   `draft_rounds` int(2) unsigned NOT NULL default '0' COMMENT 'The number of rounds (players per team) to be drafted',
   `draft_password` text COMMENT 'Optional password to make public functions of the draft (view-only) private via password protection.',
@@ -29,11 +31,6 @@ CREATE TABLE IF NOT EXISTS `draft` (
   `draft_current_pick` int(5) unsigned NOT NULL default '1' COMMENT 'The current pick the draft is on',
   PRIMARY KEY  (`draft_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Stores information for individual drafts, which will have ma' AUTO_INCREMENT=1 ;
-
---
--- Dumping data for table `draft`
---
-
 
 -- --------------------------------------------------------
 
@@ -52,11 +49,6 @@ CREATE TABLE IF NOT EXISTS `managers` (
   FULLTEXT KEY `manager_idx` (`manager_name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
---
--- Dumping data for table `managers`
---
-
-
 -- --------------------------------------------------------
 
 --
@@ -72,6 +64,7 @@ CREATE TABLE IF NOT EXISTS `players` (
   `position` varchar(4) default NULL COMMENT 'The position this player plays',
   `pick_time` datetime default NULL COMMENT 'The timestamp that the pick occurred',
   `pick_duration` int(10) default NULL COMMENT 'The number of seconds that the pick took',
+  `player_counter` int(11) default NULL COMMENT 'The draft counter value in which this pick was edited at',
   `draft_id` int(11) unsigned NOT NULL default '0',
   `player_round` int(11) NOT NULL default '0' COMMENT 'The round that this player was drafted in',
   `player_pick` int(11) NOT NULL default '0' COMMENT 'The particular draft pick that this player was taken in.',
@@ -81,17 +74,11 @@ CREATE TABLE IF NOT EXISTS `players` (
   FULLTEXT KEY `player_idx` (`first_name`,`last_name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
---
--- Dumping data for table `players`
---
-
-
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `user_login`
 --
-
 CREATE TABLE IF NOT EXISTS `user_login` (
   `UserID` int(10) unsigned NOT NULL auto_increment COMMENT 'Unique user ID for each user',
   `Username` text NOT NULL COMMENT 'Username for login',
@@ -99,11 +86,62 @@ CREATE TABLE IF NOT EXISTS `user_login` (
   `Name` varchar(15) NOT NULL default '' COMMENT 'The plaintext name of the site owner',
   PRIMARY KEY  (`UserID`),
   UNIQUE KEY `UserID` (`UserID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COMMENT='Will store logins for users of the PHPDraft system' AUTO_INCREMENT=100001 ;
+) ENGINE=MyISAM  
+DEFAULT CHARSET=latin1 
+COMMENT='Will store logins for users of the PHPDraft system' 
+AUTO_INCREMENT=100001 ;
 
 --
 -- Dumping data for table `user_login`
 --
-
 INSERT INTO `user_login` (`UserID`, `Username`, `Password`, `Name`) VALUES
 (99999, 'admin_commish', '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8', 'Matthew Orres');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `trades`
+--
+CREATE TABLE IF NOT EXISTS `trades` (
+  `trade_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique ID for a trade',
+  `draft_id` int(11) unsigned NOT NULL COMMENT 'FK to the draft',
+  `manager1_id` int(11) unsigned NOT NULL COMMENT 'FK to manager 1',
+  `manager2_id` int(11) unsigned NOT NULL COMMENT 'FK to manager 2',
+  `trade_time` datetime DEFAULT NULL COMMENT 'The timestamp that the pick occurred',
+  PRIMARY KEY (`trade_id`),
+  KEY `manager1_idx` (`manager1_id`),
+  KEY `manager2_idx` (`manager2_id`),
+  KEY `draft_idx` (`draft_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Table to track trades that occur in a draft.' AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `trade_assets`
+--
+CREATE TABLE IF NOT EXISTS `trade_assets` (
+`tradeasset_id` INT( 11 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'Unique ID for the asset',
+`trade_id` INT( 11 ) UNSIGNED NOT NULL COMMENT 'FK for the trade this asset was involved in',
+`player_id` INT( 11 ) UNSIGNED NOT NULL COMMENT 'FK to the pick or player this asset is related to',
+`oldmanager_id` INT( 11 ) UNSIGNED NOT NULL COMMENT 'FK to the manager this asset used to belong to',
+`newmanager_id` INT( 11 ) UNSIGNED NOT NULL COMMENT 'FK to the manager this asset belongs to after trade',
+`was_drafted` TINYINT( 1 ) NOT NULL COMMENT 'Boolean whether the asset was a drafted player or not at the time of trade',
+INDEX ( `trade_id` , `player_id` , `oldmanager_id` , `newmanager_id` )
+) ENGINE = MYISAM DEFAULT CHARSET=latin1 COMMENT = 'Table that tracks the assets that exchanged hands in a trade.' AUTO_INCREMENT=1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pro_players`
+--
+CREATE TABLE IF NOT EXISTS `pro_players` (
+  `pro_player_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Unique ID of the player',
+  `league` text NOT NULL COMMENT 'Three character abbreviation of league player belongs to.',
+  `first_name` text NOT NULL COMMENT 'First name of the player',
+  `last_name` text NOT NULL COMMENT 'Last name of the player',
+  `position` text NOT NULL COMMENT 'Abbreviation of the position the player plays',
+  `team` text NOT NULL COMMENT 'Abbreviation of the city of the team the player plays for',
+  PRIMARY KEY (`pro_player_id`),
+  KEY `league_idx` (`league`(4)),
+  FULLTEXT KEY `firstname_idx` (`first_name`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Pro players used for auto-complete for pick entry' AUTO_INCREMENT=1 ;

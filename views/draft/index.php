@@ -16,16 +16,16 @@
 				<?php if($DRAFT->isInProgress()) { ?><p class="success">Your draft is in progress! Click "Enter the Draft Room" to the right to get started or continue, commish!</p><?php } ?>
 				<fieldset>
 					<legend><?php echo $DRAFT->draft_name; ?> - Current Status</legend>
-					<div style="width: 70%; float:left;">
+					<div class="draftInfo">
 						<input type="hidden" id="draft_id" value="<?php echo DRAFT_ID; ?>"/>
 						<p><strong>Sport: </strong> <?php echo $DRAFT->draft_sport; ?></p>
 						<p><strong>Drafting Style: </strong> <?php echo $DRAFT->draft_style; ?></p>
 						<p><strong># of Rounds: </strong> <?php echo $DRAFT->draft_rounds; ?></p>
 						<p><strong>Status: </strong> <?php echo $DRAFT->draft_status; ?> </p>
 						<?php if($DRAFT->isCompleted()) { ?><p><strong>Total Draft Duration: </strong><?php echo $DRAFT->getDraftDuration(); ?></p><?php } ?>
-						<p><strong>Draft Visibility: </strong> <span id="draft_visibility"><?php echo $DRAFT->isPasswordProtected() ? "Private<br /><br/><strong>Draft Password:</strong> " . $DRAFT->draft_password : "Public"; ?></span></p>
+						<p><strong>Draft Visibility: </strong> <span id="draft_visibility_status"><?php echo $DRAFT->isPasswordProtected() ? "Private<br /><br/><strong>Draft Password:</strong> " . $DRAFT->draft_password : "Public"; ?></span></p>
 					</div>
-					<div style="width: 30%; float:right; text-align: right;">
+					<div class="draftStatusImage">
 						<p><img src="images/icons/<?php echo $DRAFT->draft_status; ?>.png" alt="<?php echo $DRAFT->draft_status; ?>" title="<?php echo $DRAFT->draft_status; ?>"/></p>
 					</div>
 					<p id="no-managers-msg" class="error"<?php if(HAS_MANAGERS) { ?> style="display: none;"<?php } ?>>*Before you can start your draft, you must <a href="draft.php?action=addManagers&did=<?php echo DRAFT_ID; ?>">add managers</a>.</p>
@@ -36,7 +36,7 @@
 								<th width="100">&nbsp;</th>
 								<?php } ?>
 								<th>Manager Name</th>
-								<th>Manager Email</th>
+								<th width="225">Email</th>
 								<th width="85">Draft Order</th>
 							</tr>
 						</thead>
@@ -51,16 +51,28 @@
 								if($manager->draft_order == LOWEST_ORDER)
 									$DOWNARROW = false;
 								?>
-							<tr data-manager-id="<?php echo $manager->manager_id;?>">
+							<tr class="manager-row" data-manager-id="<?php echo $manager->manager_id;?>" 
+                  data-manager-name="<?php echo $manager->manager_name; ?>"
+                  data-manager-email="<?php echo $manager->manager_email; ?>">
 								<?php if($DRAFT->isUndrafted()) {?>
-								<td>
-									<a href="manager.php?action=editManager&mid=<?php echo $manager->manager_id; ?>">Edit</a> |
-									<!-- <a href="manager.php?action=deleteManager&mid=<?php echo $manager->manager_id; ?>">Delete</a>-->
+								<td class="main-functions">
+									<!--<a href="manager.php?action=editManager&mid=<?php echo $manager->manager_id; ?>">Edit</a> |-->
+                  <span class="manager-edit-link"><a>Edit</a></span> |
 									<span class="manager-delete-link"><a>Delete</a></span>
 								</td>
+                <td class="edit-functions">
+                  <span class="manager-save-link"><a>Save</a></span> |
+                  <span class="manager-cancel-link"><a>Cancel</a></span>
+                </td>
 								<?php } ?>
-								<td><?php echo $manager->manager_name; ?></td>
-								<td><?php echo $manager->manager_email; ?></td>
+								<td>
+                  <span class="manager-name"><?php echo $manager->manager_name; ?></span>
+                  <input type="text" class="manager-name" />
+                </td>
+								<td>
+                  <span class="manager-email"><?php echo $manager->manager_email; ?></span>
+                  <input type="text" class="manager-email" />
+                </td>
 								<td>&nbsp;&nbsp;
 								<?php if($DRAFT->isUndrafted()) {?>
 									<span class="manager-move-link move-up up-on"></span>
@@ -77,28 +89,61 @@
 				</fieldset>
 				<fieldset>
 					<legend><?php echo $DRAFT->draft_name; ?> - Functions</legend>
-					<?php if($DRAFT->isUndrafted()) {?><p><strong><a href="draft.php?action=addManagers&did=<?php echo DRAFT_ID; ?>"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-plusthick"></span>Add Manager(s)</a></strong></p>
-					<?php } ?><p><strong><a id="changeVisibility" href="#"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-key"></span>Change Draft Visibility</a></strong></p>
-					<?php if(!$DRAFT->isCompleted() && HAS_MANAGERS) { ?><p id="draft-status-link"><strong><a href="draft.php?action=changeStatus&did=<?php echo DRAFT_ID; ?>"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-play"></span>Change Draft Status</a></strong></p><?php } ?>
+					<?php if($DRAFT->isUndrafted()) {?><p><strong><a href="draft.php?action=addManagers&did=<?php echo DRAFT_ID; ?>"><span class="phpdraft-icon ui-icon ui-icon-plusthick"></span>Add Manager(s)</a></strong></p>
+					<?php } ?><p><strong><a id="changeVisibility"><span class="phpdraft-icon ui-icon ui-icon-key"></span>Change Draft Visibility</a></strong></p>
+					<?php if(!$DRAFT->isCompleted() && HAS_MANAGERS) { ?><p id="draft-status-link"><strong><a id="changeDraftStatus"><span class="phpdraft-icon ui-icon ui-icon-play"></span>Change Draft Status</a></strong></p><?php } ?>
 				</fieldset>
+				<?php
+				if($DRAFT->isInProgress() || $DRAFT->isCompleted()) {
+				?>
+				<fieldset>
+					<legend>Recent Picks - Last 10</legend>
+					<?php if(NUMBER_OF_LAST_PICKS == 0) { ?>
+					<p><strong>No picks have been made yet.</strong></p>
+					<?php } else { 
+						foreach($LAST_TEN_PICKS as $player) { ?>
+					<p style="background-color: <?php echo $DRAFT->sports_colors[$player->position]; ?>;">
+						<span class="player-name"><?php echo $player->casualName(); ?></span>
+						<?php echo " (Pick #" . $player->player_pick . ", " . $player->team . " - " . $player->position . ")"; ?><br/>
+						<strong>Manager:</strong> <?php echo $player->manager_name; ?><br/>
+					</p>
+					<?php } ?>
+					<?php } ?>
+				</fieldset>
+				<?php } ?>
 			</div>
 			<?php require('includes/footer.php'); ?>
 			<script src="js/draft.index.js" type="text/javascript"></script>
 		</div>
 		<div id="visibilityDialog">
 			<p>Change whether or not this draft is viewable publicly. If you would like to make it private, you must provide a password.</p>
-			<label for="draft_status">Draft Status:</label>
-			<select id="draft_status" name="draft_status">
+			<label for="draft_visibility">Draft Visibility:</label>
+			<select id="draft_visibility" name="draft_visibility">
 				<option value="1" <?php if($DRAFT->isPasswordProtected()) { echo " selected=\"selected\""; } ?>>Password Protected</option>
 				<option value="0" <?php if(!$DRAFT->isPasswordProtected()) { echo " selected=\"selected\""; } ?>>Public</option>
 			</select>
 			<div id="passwordBox"<?php if(!$DRAFT->isPasswordProtected()) { echo " style=\" display: none;\""; }?>>
 				<label for="draft_password">Draft Password:</label>
-				<input type="text" id="draft_password" value="<?php echo $DRAFT->Password; ?>" /><br/>
+				<input type="text" id="draft_password" value="<?php echo $DRAFT->draft_password; ?>" /><br/>
 				<label for="draft_password_confirm">Confirm Password:</label>
-				<input type="text" id="draft_password_confirm" value="<?php echo $DRAFT->Password; ?>" /><br/>
+				<input type="text" id="draft_password_confirm" value="<?php echo $DRAFT->draft_password; ?>" /><br/>
 			</div>
 			<p id="visibilityError" class="errorDescription error"></p>
 		</div>
+    <div id="draftStatusDialog">
+      <p>
+        <label for="draft_status">Draft Status*:</label>
+        <!--<select name="draft_status" id="draft_status">
+          <option value="undrafted"<?php if($DRAFT->isUndrafted()) { echo " selected=\"selected\""; } ?>>Undrafted</option>
+          <option value="in_progress"<?php if($DRAFT->isInProgress()) { echo " selected=\"selected\""; } ?>>In Progress</option>
+        </select>-->
+        <div id="draft_status">
+          <input type="radio" id="undrafted" name="draft_status" value="undrafted" <?php if($DRAFT->isUndrafted()) { echo " checked=\"checked\""; } ?>/><label for="undrafted">Undrafted</label>
+          <input type="radio" id="in_progress" name="draft_status" value="in_progress" <?php if($DRAFT->isInProgress()) { echo " checked=\"checked\""; } ?>/><label for="in_progress">In Progress</label>
+        </div>
+			</p>
+      <p class="error">NOTE: If you switch from "In Progress" to "Undrafted" and have already started to draft, all data related to picks <em>will</em> be immediately deleted.</p>
+    </div>
+    
 	</body>
 </html>

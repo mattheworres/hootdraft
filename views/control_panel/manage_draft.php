@@ -8,10 +8,7 @@
 		<div id="page_wrapper">
 		<?php require('includes/header.php'); ?>
 
-		<?php
-		require_once('models/draft_model.php');
-
-		require('views/shared/commish_draftless_menu.php'); ?>
+		<?php require('views/shared/commish_draftless_menu.php'); ?>
 			<div id="content">
 		<h3>Select a Draft</h3>
 				<p>To begin managing a draft (either draft details, or editing managers, or editing players), select a draft below by clicking on its name.</p>
@@ -24,9 +21,10 @@
 					</tr>
 					<?php
 					$alt_row = true;
+					$MANAGER_SERVICE = new manager_service();
 					
 					foreach($DRAFTS as $draft) {
-							$numberOfManagers = manager_object::getCountOfManagersByDraft($draft->draft_id); ?>
+							$numberOfManagers = $MANAGER_SERVICE->getCountOfManagersByDraft($draft->draft_id); ?>
 					<tr<?php echo ($alt_row ? " background-color=\"#cccccc\"" : ""); ?>>
 						<td><a href="draft.php?did=<?php echo $draft->draft_id; ?>"><?php echo $draft->draft_name; ?></a></td>
 						<td><?php echo $draft->draft_sport; ?></td>
@@ -41,7 +39,7 @@
 			}//foreach ?>
 				</table>
 			</div>
-<?php require('includes/footer.php');; ?>
+<?php require('includes/footer.php'); ?>
 		</div>
 	</body>
 </html>

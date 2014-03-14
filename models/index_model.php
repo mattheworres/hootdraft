@@ -5,7 +5,10 @@
  * @property array $draft_objects An array of all of the draft objects.
  */
 class indexObject {
-	public $number_of_drafts;
-	public $draft_objects = array();
+
+  public $number_of_drafts;
+  public $draft_objects = array();
+
 }
+
 ?>

@@ -50,7 +50,7 @@
 					</table>
 				</fieldset>
 			</div>
-			<?php require('includes/footer.php');;?>
+			<?php require('includes/footer.php');?>
 			<script src="js/draft.add_managers.js" type="text/javascript"></script>
 		</div>
 	</body>

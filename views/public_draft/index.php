@@ -13,13 +13,12 @@
 			<div id="content">
 				<h3>Draft Home Page - <?php echo $DRAFT->draft_name;?></h3>
 				<p>This is the main page for this draft.  Below is some summary information for the draft. Use the links to the right for more functionality.</p>
-				<fieldset>
-					<legend><?php echo $DRAFT->draft_name;?> - Links</legend>
-					<h3><a href="public_draft.php?action=draftBoard&did=<?php echo DRAFT_ID;?>"><img src="images/icons/draft_board.png" alt="View Full Draft Board" class="small_link" />&nbsp;View Full Draft Board</a></h3>
-				</fieldset>
+				<?php if($DRAFT->isUndrafted()) { ?>
+				<p class="success">This draft has not yet started. Once the commissioner starts the draft, this page will auto-update.</p>
+				<?php } ?>
 				<fieldset>
 					<legend><?php echo $DRAFT->draft_name;?> - Current Status</legend>
-					<div style="width: 70%; float:left;">
+					<div class="draftInfo">
 						<p><strong>Sport: </strong> <?php echo $DRAFT->draft_sport;?></p>
 						<p><strong>Drafting Style: </strong> <?php echo $DRAFT->draft_style;?></p>
 						<p><strong># of Rounds: </strong> <?php echo $DRAFT->draft_rounds;?></p>
@@ -30,10 +29,11 @@
 						<?php if($DRAFT->isCompleted()) {?><p><strong>Draft End Time: </strong> <?php echo $DRAFT->draft_end_time;?></p>
 							<p><strong>Time Spent Drafting: </strong> <?php echo $DRAFT->getDraftDuration();?></p><?php }?>
 					</div>
-					<div style="width: 30%; float:right; text-align: right;">
+					<div class="draftStatusImage">
 						<p><img src="images/icons/<?php echo $DRAFT->draft_status;?>.png" alt="<?php echo $DRAFT->draft_status;?>" title="<?php echo $DRAFT->draft_status;?>"/></p>
 					</div>
 				</fieldset>
+				<?php if(!$DRAFT->isUndrafted()) { ?>
 				<fieldset>
 					<legend>Recent Picks - Last 10</legend>
 					<table width="100%">
@@ -62,8 +62,35 @@
 						}?>
 					</table>
 				</fieldset>
+				<?php } ?>
 			</div>
-<?php require('includes/footer.php');;?>
+			<?php require('includes/footer.php');?>
+			<?php if($DRAFT->isUndrafted()) { ?>
+			<script type="text/javascript">
+				$(document).ready(function() {
+					var interval = setInterval(function() {
+						$.ajax({
+							type: 'GET',
+							dataType: 'json',
+							url: 'public_draft.php',
+							data: { did: <?PHP echo DRAFT_ID; ?>, action: 'isDraftReady' },
+							success: function(data) {
+								if(data.IsDraftReady == true) {
+									clearInterval(interval);
+									location.reload();
+									$('#informationDialog').html('The draft is now ready, if the page does not automatically refresh itself go ahead and reload this page.')
+															.dialog('open');
+								}
+							}
+						});
+					}, 5000);
+					
+					$.each($('#right_side a'), function() {
+						$(this).replaceWith($('<span>' + this.innerHTML + '</span>'));
+					});
+				});
+			</script>
+			<?php } ?>
 		</div>
 	</body>
 </html>

@@ -45,14 +45,14 @@
 				</div>
 			</div>
 			<br/><br/>
-			<?php require('includes/footer.php');;?>
+			<?php require('includes/footer.php');?>
 			<script type="text/javascript">
 				var manager_id,
 					$picks = $('#picks');
 
 				$(document).ready(function() {
-					$("#refresh").live('click', reloadPicks);
-					$("#mid").live('change', reloadPicks);
+					$(document).on('click', '#refresh', reloadPicks);
+					$(document).on('change', '#mid', reloadPicks);
 				});
 			
 				function reloadPicks() {

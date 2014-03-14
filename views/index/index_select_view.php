@@ -1,4 +1,4 @@
-<?php session_start(); ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -21,19 +21,19 @@
 			</tr>
 			<?php if($drafts->number_of_drafts == 0) { ?><tr><td colspan="4"><h2>There are currently no drafts available.</h2></td></tr><?php
 			}else {
-			foreach($drafts->draft_objects as $draft) {?><tr>
-				<td><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-<?php echo $draft->getVisibility(); ?>"></span></td>
-			<?php if(!$draft->isUndrafted()) {?><td><a href="public_draft.php?did=<?php echo $draft->draft_id; ?>"><?php echo $draft->draft_name; ?></a></td>
-						<?php } else {?><td><?php echo $draft->draft_name; ?></td><?php }?>
-			<td><?php echo $draft->draft_sport; ?></td>
-			<td><?php echo $draft->getStatus(); ?></td>
+			foreach($drafts->draft_objects as $draft) {?>
+			<tr>
+				<td><span class="phpdraft-icon ui-icon ui-icon-<?php echo $draft->getVisibility(); ?>"></span></td>
+				<td><a href="public_draft.php?did=<?php echo $draft->draft_id; ?>"><?php echo $draft->draft_name; ?></a></td>
+				<td><?php echo $draft->draft_sport; ?></td>
+				<td><?php echo $draft->getStatus(); ?></td>
 			</tr>
 				<?php }
 			}?>
 		</table>
-		<p style="font-size: 80%;">*Cookies must be enabled</p>
+		<p class="cookieText">*Cookies must be enabled</p>
 		</div>
-		<?php require('includes/footer.php');; ?>
+		<?php require('includes/footer.php'); ?>
 	</div>
 	</body>
 </html>

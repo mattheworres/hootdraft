@@ -1,3 +1,6 @@
 syntax: glob
 nbproject/private/private.xml
 images/Thumbs.db
+.idea/*.iml
+.idea/*.xml
+images/icons/Thumbs.db

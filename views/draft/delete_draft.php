@@ -20,7 +20,7 @@
 				<p><label for="txt_answer">Your Answer*:</label>
 				<input type="text" name="txt_answer" id="txt_answer" value="<?php echo ANSWER; ?>" autocomplete="off" /></p>
 				<p><input type="submit" name="submit" class="button" value="Delete Draft, Im Sure!" /></p>
-				<?php if(count($ERRORS) > 0) {?>
+				<?php if(isset($ERRORS) && count($ERRORS) > 0) {?>
 					<?php foreach($ERRORS as $error) {?>
 						<p class="error">* <?php echo $error;?></p>
 					<?php }?>
@@ -30,7 +30,7 @@
 			</form>
 		</fieldset>
 		</div>
-		<?php require('includes/footer.php');; ?>
+		<?php require('includes/footer.php'); ?>
 	</div>
 	</body>
 </html>

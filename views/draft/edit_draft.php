@@ -12,7 +12,7 @@
 				<fieldset>
 					<legend>Edit Draft</legend>
 					<p>To change your draft's details, use the form below.</p>
-					<p class="error">NOTE: You will not be able to edit this draft's details once you begin the draft (change it's status to &quot;in progress&quot;);</p>
+					<p class="error">NOTE: You will not be able to edit this draft's details once you begin the draft (change it's status to &quot;in progress&quot;)</p>
 					<form action="draft.php?action=updateDraft" method="post">
 						<input type="hidden" name="did" value="<?php echo DRAFT_ID;?>" />
 						<p>
@@ -22,9 +22,10 @@
 						<p>
 							<label for="draft_sport">Draft Sport*:</label>
 							<select name="draft_sport">
-								<option value="football"<?php echo $DRAFT->draft_sport == "football" ? " selected" : "";?>>Football</option>
-								<option value="baseball"<?php echo $DRAFT->draft_sport == "baseball" ? " selected" : "";?>>Baseball</option>
-								<option value="hockey"<?php echo $DRAFT->draft_sport == "hockey" ? " selected" : "";?>>Hockey</option>
+								<option value="NFL"<?php echo $DRAFT->draft_sport == "NFL" ? " selected" : "";?>>Football (NFL)</option>
+								<option value="MLB"<?php echo $DRAFT->draft_sport == "MLB" ? " selected" : "";?>>Baseball (MLB)</option>
+								<option value="NHL"<?php echo $DRAFT->draft_sport == "NHL" ? " selected" : "";?>>Hockey (NHL)</option>
+								<option value="NBA"<?php echo $DRAFT->draft_sport == "NBA" ? " selected" : "";?>>Basketball (NBA)</option>
 							</select>
 						</p>
 						<p>
@@ -39,7 +40,7 @@
 							<input type="text" name="draft_rounds" id="draft_rounds" size="2" maxlength="2" value="<?php echo $DRAFT->draft_rounds;?>" /> (players per team)
 						</p>
 						<p><input type="submit" name="submit" class="button" value="Update Draft" /></p>
-						<?php if(count($ERRORS) > 0) {?>
+						<?php if(isset($ERRORS) && count($ERRORS) > 0) {?>
 							<?php foreach($ERRORS as $error) {?>
 								<p class="error">* <?php echo $error;?></p>
 							<?php }?>
@@ -49,7 +50,7 @@
 					</form>
 				</fieldset>
 			</div>
-			<?php require('includes/footer.php');;?>
+			<?php require('includes/footer.php');?>
 		</div>
 	</body>
 </html>

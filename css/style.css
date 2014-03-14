@@ -6,6 +6,19 @@ body {
 	background-color: #E0E0E0;
 }
 
+body.draftBoardBody {
+	margin-top: 1px;
+}
+
+body.draftBoardBody p.backText {
+	text-align: left;
+	vertical-align: middle;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 0px;
+	margin-bottom: 1px;
+}
+
 A {
 	color: #0000FF; text-decoration: none;
 }
@@ -30,17 +43,38 @@ A:hover {
 	text-align: left;
 	background: #FFFFFF;
 	border: 8px solid #FFFFFF;
+	border-radius: 5px;
+}
+
+#page_wrapper p.cookieText {
+	font-size: 13px;
 }
 
 #header_wrapper {
 	background: #4E7DD1 url('../images/menu_bg.gif') bottom left repeat-x;
 	margin:0px; padding:0px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
 }
 
 #header {
 	height: 60px;
 	padding:15px;
 	margin:0px;
+}
+
+#header span.secondary {
+	color: #FFDF8C;
+}
+
+#header div.left {
+	width:50%;
+	float: left;
+}
+
+#header div.right {
+	width:50%;
+	float: right;
 }
 
 #header h1 {
@@ -71,6 +105,11 @@ A:hover {
 	float: right;
 	width: 160px;
 	background: #F1F6FE url('../images/side_bg.gif') bottom left repeat-x;
+	border-radius: 4px;
+}
+
+#right_side h3 {
+	border-radius: 2px;
 }
 
 #content {
@@ -78,6 +117,17 @@ A:hover {
 	margin-bottom: 0px;
 	margin-left: 10px;
 	margin-right: 180px;
+}
+
+#content div.draftInfo {
+	width: 70%;
+	float: left;
+}
+
+#content div.draftStatusImage {
+	width: 30%;
+	float: right;
+	text-align: right;
 }
 
 #content-wide {
@@ -98,6 +148,8 @@ A:hover {
 	font-family: verdana, arial, sans-serif;
 	font-size: 11px;
 	line-height: 18px;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
 }
 
 #footer A:link {
@@ -152,6 +204,10 @@ p {
 p.error, .error {
 	color: #990000;
 	font-weight: bold;
+}
+p.errorDescription
+{
+	display: none;
 }
 
 p.success{
@@ -238,6 +294,12 @@ table th {
 	border-bottom: none;
 	background: #2153AA url('../images/tab_bg.gif') bottom left repeat-x;
 	text-decoration: none;
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+}
+
+#navlist li a.commish {
+	background: #215304 url('../images/tab_bg_commish.gif') bottom left repeat-x;
 }
 
 #navlist li a:link { color: #F1F6FE; }
@@ -248,6 +310,10 @@ table th {
 	color: #FFFFFF;
 	background: #3364BB;
 	border-color: #0F3974;
+}
+
+#navlist li a.commish:hover {
+	background: #336400;
 }
 
 #navlist li a#current
@@ -338,4 +404,62 @@ table th {
 span.player-name {
 	font-weight: bold;
 	font-size: 15px;
+}
+
+.phpdraft-icon {
+	display: inline-block !important;
+	vertical-align: middle !important;
+	margin-right: 2px !important;
+}
+
+span.highlighted {
+	float: left;
+	font-size: 30px;
+	font-weight: bold;
+	margin: 5px 10px 0px 10px;
+	background-color: #4E7DD1;
+	width: 40px;
+	height: 40px;
+	text-align: center;
+	border-radius: 4px;
+}
+
+div.questionBlock, div.answerBlock {
+	width: 100%;
+	clear: left;
+	font-family: Helvetica, Verdana, sans-serif;
+}
+
+div.questionBlock div.questionText, div.questionBlock div.answerText {
+	height: 40px;
+}
+
+div.questionBlock span.highlighted {
+	color: #FFFFFF;
+}
+
+div.questionBlock div.questionText {
+	font-weight: bold;
+	vertical-align: middle;
+	font-size: 22px;
+	padding-top: 10px;
+}
+
+div.answerBlock {
+	padding-bottom: 10px;
+}
+
+div.answerBlock span.highlighted {
+	color: #FFDF8C;
+}
+
+div.answerBlock div.answerText {
+	font-size: 16px;
+	padding-left: 60px;
+	margin-bottom: 10px;
+	padding-top: 10px;
+}
+a.shortcutLink {
+	margin-left: 25px;
+	font-size: 14px;
 }

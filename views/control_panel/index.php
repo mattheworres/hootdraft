@@ -14,8 +14,9 @@
 
 				<fieldset>
 					<legend>Commissioner Functions</legend>
-					<p><strong><a href="control_panel.php?action=createDraft"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-plusthick"></span>Create a New Draft</a></strong> - Create a brand new draft from scratch, and then add managers to that draft afterwards</p>
-					<p><strong><a href="control_panel.php?action=manageProfile"><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-person"></span>Update Your User Profile</a></strong> - Change your login, password and name here for PHPDraft</p>
+					<p><strong><a href="control_panel.php?action=createDraft"><span class="phpdraft-icon ui-icon ui-icon-plusthick"></span>Create a New Draft</a></strong> - Create a brand new draft from scratch, and then add managers to that draft afterwards</p>
+					<p><strong><a href="control_panel.php?action=manageProfile"><span class="phpdraft-icon ui-icon ui-icon-person"></span>Update Your User Profile</a></strong> - Change your login, password and name here for PHPDraft</p>
+					<p><strong><a href="control_panel.php?action=updateProPlayers"><span class="phpdraft-icon ui-icon ui-icon-wrench"></span>Update Pro Players Database</a></strong> - Update the database for commissioner autocomplete containing pro player names</p>
 				</fieldset>
 
 				<fieldset>
@@ -31,13 +32,14 @@
 						</tr>
 						<?php
 						$alt_row = false;
+						$MANAGER_SERVICE = new manager_service();
 
 						foreach($DRAFTS as $draft) {
 							/* @var $draft draft_object */
-							$numberOfManagers = manager_object::getCountOfManagersByDraft($draft->draft_id);
+							$numberOfManagers = $MANAGER_SERVICE->getCountOfManagersByDraft($draft->draft_id);
 							?>
 							<tr<?php echo ($alt_row ? " style=\"background-color: #cccccc;\"" : "");?>>
-								<td><span style="display: inline-block; vertical-align: middle; margin-right: 2px;" class="ui-icon ui-icon-<?php echo $draft->getVisibility(); ?>"></span></td>
+								<td><span class="phpdraft-icon ui-icon ui-icon-<?php echo $draft->getVisibility(); ?>"></span></td>
 								<td><a href="draft.php?did=<?php echo $draft->draft_id;?>"><?php echo $draft->draft_name;?></a></td>
 								<td><?php echo $draft->draft_sport;?></td>
 								<td><?php echo $numberOfManagers;?></td>
@@ -50,7 +52,7 @@
 					</table>
 				</fieldset>
 			</div>
-			<?php require('includes/footer.php');;?>
+			<?php require('includes/footer.php');?>
 		</div>
 	</body>
 </html>
