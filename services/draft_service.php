@@ -130,7 +130,7 @@ class draft_service {
    */
   public function moveDraftForward($draft, $next_pick) {
     global $DBH; /* @var $DBH PDO */
-    if ($next_pick !== false) {
+    if ($next_pick !== null) {
       $draft->draft_current_pick = (int) $next_pick->player_pick;
       $draft->draft_current_round = (int) $next_pick->player_round;
 

@@ -319,7 +319,7 @@ class player_service {
     }
 
     if ($stmt->rowCount() == 0) {
-      throw new Exception("Unable to get next pick.");
+      return null;
     }
 
     return $stmt->fetch();
