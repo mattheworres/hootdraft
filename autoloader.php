@@ -7,6 +7,7 @@ spl_autoload_register('phpDraftAutoload');
  *
  * @param string $classname name of class to load
  *
+ * @throws Exception
  * @return boolean
  */
 function phpDraftAutoload($classname)
@@ -18,22 +19,29 @@ function phpDraftAutoload($classname)
 
     $isModel =  preg_match('/[a-zA-Z]+_object$/', $classname) ||
                 preg_match('/[a-zA-Z]+_model$/', $classname);
+    $modelFile = "models/$classname.php";
 
     $isService = preg_match('/[a-zA-Z]+_service$/', $classname);
+    $serviceFile = "services/$classname.php";
 
-    $isLibrary = preg_match('/[a-zA-Z]+library$/', $classname);
+    $isLibrary = preg_match('/[a-zA-Z]+_library$/', $classname);
+    $libraryFile = "libraries/$classname.php";
 
-    if ($isModel) {
-        include_once 'models/' . $classname . '.php';
+    $includesFile = "includes/$classname.php";
+
+    if ($isModel && file_exists($modelFile)) {
+        include_once($modelFile);
         return true;
-    } elseif ($isService) {
-        include 'services/' . $classname . '.php';
+    } elseif ($isService && file_exists($serviceFile)) {
+        include_once($serviceFile);
         return true;
-    } elseif ($isLibrary) {
-        include 'libraries/' . $classname . '.php';
+    } elseif ($isLibrary && file_exists($libraryFile)) {
+        include_once($libraryFile);
+        return true;
+    } elseif(file_exists($includesFile)) {
+        include_once($includesFile);
         return true;
     } else {
-        include 'includes/' . $classname . '.php';
-        return true;
+        throw new Exception("Class $classname unable to be auto-loaded.", 500);
     }
 }
