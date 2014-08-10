@@ -1,5 +1,5 @@
 <?php
-
+require('autoloader.php');
 require('includes/php_draft_class.php');
 /**
  * This is the main settings file for PHP Draft. There are five lines that you need to edit in order to get started,
@@ -40,23 +40,6 @@ $PHPD->setUseNFLExtended(false);
 $DBH = $PHPD->setupPDOHandle();
 
 session_start();
-
-//Require the draft and user objects used on every page
-require('models/draft_object.php');
-require('models/user_object.php');
-require('models/manager_object.php');
-require('models/player_object.php');
-require('models/trade_object.php');
-require('models/trade_asset_object.php');
-require('models/search_object.php');
-require('models/pro_player_object.php');
-require('models/draft_statistics_object.php');
-require('services/draft_service.php');
-require('services/manager_service.php');
-require('services/player_service.php');
-require('services/pro_player_service.php');
-require('services/trade_service.php');
-require('libraries/php_draft_library.php');
 
 //Global-level commissioner object - used for printing commissioner's name publicly
 $COMMISH = new user_object();
