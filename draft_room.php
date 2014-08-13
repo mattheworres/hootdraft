@@ -69,6 +69,28 @@ switch(ACTION) {
 		require("views/draft_room/add_pick.php");
 		// </editor-fold>
 		break;
+
+  case 'checkAlreadyDrafted':
+    // <editor-fold defaultstate="collapsed" desc="checkAlreadyDrafted Logic">
+    $response = array();
+    $first_name = isset($_GET['first_name']) ? $_GET['first_name'] : "";
+    $last_name = isset($_GET['last_name']) ? $_GET['last_name'] : "";
+
+    try {
+      $matching_picks = $PLAYER_SERVICE->getAlreadyDrafted(DRAFT_ID, $first_name, $last_name);
+    }catch(Exception $e) {
+      define("PAGE_HEADER", "Unable To Load Information");
+      define("P_CLASS", "error");
+      define("PAGE_CONTENT", "An error has occurred: " . $e->getMessage() . " Please check the system and install before continuing.");
+      require_once("views/shared/generic_result_view.php");
+    }
+
+    $response['PossibleMatchExists'] = count($matching_picks) > 0;
+    $response['Matches'] = $matching_picks;
+
+    echo json_encode($response);
+    // </editor-fold>
+    break;
 	
 	case 'addPick':
 		// <editor-fold defaultstate="collapsed" desc="addPick Logic">
@@ -88,6 +110,7 @@ switch(ACTION) {
 			$NEXT_FIVE_PICKS = $PLAYER_SERVICE->getNextFivePicks($DRAFT);
 			$LAST_FIVE_PICKS = $PLAYER_SERVICE->getLastFivePicks($DRAFT);
 			$CURRENT_PICK = clone $submitted_pick;
+      $CURRENT_PICK_MANAGER = $MANAGER_SERVICE->loadManager($CURRENT_PICK->manager_id);
 		}catch(Exception $e) {
 			define("PAGE_HEADER", "Unable To Add Pick");
 			define("P_CLASS", "error");
@@ -100,11 +123,12 @@ switch(ACTION) {
 		
 		if(count($object_errors) > 0) {
 			$ERRORS = $object_errors;
+
 			require("views/draft_room/add_pick.php");
 			exit(1);
 		}
 		
-		$previous_pick = $PLAYER_SERVICE->getLastPick($DRAFT);
+		$previous_pick = $PLAYER_SERVICE->getPreviousPick($DRAFT);
 		
 		//Fixes defect for a refresh POSTing already-added picks:
 		if($previous_pick != null && $previous_pick->player_id == $submitted_pick->player_id) {

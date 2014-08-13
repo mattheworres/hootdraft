@@ -35,7 +35,7 @@ $(function() {
       autoOpen: false,
       modal: true,
       draggable: false,
-      rezisable: false
+      resizable: false
     });
   }
   
