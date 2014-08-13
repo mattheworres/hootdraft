@@ -3,6 +3,7 @@
 	<head>
 	<?php require('includes/meta.php'); ?>
 	<link href="css/draft_room.css" type="text/css" rel="stylesheet" />
+  <link href="css/draft_board_dynamic_styles.php" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
 	<div id="page_wrapper">
@@ -18,8 +19,8 @@
 		<h3>Enter the Next Draft Pick</h3>
 		<fieldset id="add_pick" class="enter_pick">
 			<legend>Round <?php echo $DRAFT->draft_current_round; ?>, Pick #<?php echo $DRAFT->draft_current_pick; ?></legend>
-			<form action="draft_room.php?action=addPick" method="post">
-				<input type="hidden" name="did" value="<?php echo DRAFT_ID; ?>" />
+			<form action="draft_room.php?action=addPick" method="post" id="addPickForm" data-has-autocomplete="<?php echo $PHPD->useAutocomplete() == true; ?>">
+				<input type="hidden" name="did" id="draft_id" value="<?php echo DRAFT_ID; ?>" />
 				<input type="hidden" name="pid" value="<?php echo $CURRENT_PICK->player_id; ?>" />
 				<input type="hidden" id="league" name="league" value="<?php echo $DRAFT->draft_sport; ?>" />
 				<input type="hidden" name="player_round" value="<?php echo $CURRENT_PICK->player_round; ?>" />
@@ -31,15 +32,15 @@
 				</p>
 				<p>
 					<label for="first_name">First Name*:</label>
-					<input type="text" name="first_name" id="first_name" value="<?php echo $CURRENT_PICK->first_name; ?>" tabindex="1"/>
+					<input type="text" name="first_name" id="first_name" value="<?php echo $CURRENT_PICK->first_name; ?>" tabindex="1" required/>
 				</p>
 				<p>
 					<label for="last_name">Last Name*:</label>
-					<input type="text" name="last_name" id="last_name" value="<?php echo $CURRENT_PICK->last_name; ?>" tabindex="2"/>
+					<input type="text" name="last_name" id="last_name" value="<?php echo $CURRENT_PICK->last_name; ?>" tabindex="2" required/>
 				</p>
 				<p>
 					<label for="team">Team*:</label>
-					<select id="team" name="team" tabindex="3">
+					<select id="team" name="team" tabindex="3" required>
 					<?php if(strlen($CURRENT_PICK->team) == 0) {?><option selected="selected"></option><?php } ?>
 					<?php foreach($DRAFT->sports_teams as $abbr => $sports_team_name) {
 						?><option value="<?php echo $abbr; ?>"<?php if($CURRENT_PICK->team == $abbr) { echo " selected=\"selected\"";}?>><?php echo $sports_team_name; ?></option>
@@ -48,14 +49,14 @@
 				</p>
 				<p>
 					<label for="position">Position*:</label>
-					<select id="position" name="position" tabindex="4">
+					<select id="position" name="position" tabindex="4" required>
 						<?php if(strlen($CURRENT_PICK->position) == 0) {?><option selected="selected"></option><?php } ?>
 					<?php foreach($DRAFT->sports_positions as $abbr => $sports_position) {
 						?><option style="background-color: <?php echo $DRAFT->sports_colors[$abbr]; ?>" value="<?php echo $abbr; ?>"<?php if($CURRENT_PICK->position == $abbr) { echo " selected=\"selected\"";}?>><?php echo $sports_position; ?></option>
 					<?php } ?>
 					</select>
 				</p>
-				<p><input type="submit" name="submit" class="button" value="Enter Draft Pick"  tabindex="5"/></p>
+				<p><input type="submit" name="submit" class="button" id="addPickButton" value="Enter Draft Pick"  tabindex="5"/></p>
 				<?php if(isset($ERRORS) && count($ERRORS) > 0) {?>
 					<?php foreach($ERRORS as $error) {?>
 						<p class="error">* <?php echo $error;?></p>
@@ -98,60 +99,23 @@
 		</div>
 		<?php require('includes/footer.php'); ?>
 		<script type="text/javascript">
-			$(document).ready(function() {
-				$("#first_name").focus();
-				
-				var autocompleteOptions = {
-					source: function(request, response) {
-						$.ajax({
-							type: 'GET',
-							url: 'draft.php',	//Where to ask server for data
-							dataType: 'json',
-							data: { action: 'searchProPlayers',
-								did: <?php echo DRAFT_ID; ?>,
-								league: $('#league').val(), 
-								first: $('#first_name').val(), 
-								last: $('#last_name').val(), 
-								team: $('#team').val(), 
-								position: $('#position').val()
-							},
-							success: function(data) {
-								response($.map(data, function(item) {
-									return {
-										first_name: item.first_name,
-										last_name: item.last_name,
-										team: item.team,
-										position: item.position,
-										label: item.first_name + " " + item.last_name + " (" + item.position + ", " + item.team + ")"
-									}
-								}));
-							}
-						});
-					},
-					minLength: 2,
-					select: function(event, ui) {
-						var $firstName = $('#first_name'),
-							$lastName = $('#last_name'),
-							$team = $('#team'),
-							$position = $('#position');
-						
-						
-						setTimeout(function() {
-							$firstName.val(ui.item.first_name);
-							$lastName.val(ui.item.last_name);
-							$team.val(ui.item.team);
-							$position.val(ui.item.position);
-						}, 1);
-					}
-				};
-				
-				<?php global $PHPD; /* @var $PHPD PHPDRAFT */
-				if($PHPD->useAutocomplete()) { ?>
-					$('#first_name').autocomplete(autocompleteOptions);
-					$('#last_name').autocomplete(autocompleteOptions);
-				<?php } ?>
-			});
+
 		</script>
 	</div>
+  <div id="alreadyPickedDialog">
+    It looks like <strong><span class="pickName"></span></strong> might have already been picked:<br/><br/>
+
+    <ol class="matchingPicks">
+
+    </ol>
+    <br/><br/>
+
+    Are you sure you want to enter this pick?
+  </div>
 	</body>
+  <script src="js/underscore-min.js"></script>
+  <script src="js/draft_room/add_pick.js"></script>
+  <script type="text/template" id="matchingPickTemplate">
+    <li><strong class="<%- player.positionClass %>"><%- player.first_name %> <%- player.last_name %></strong> (<%- player.position %>, <%- player.team %>) - Pick #<%- player.player_pick %> by <%- player.manager_name %></li>
+  </script>
 </html>

@@ -44,8 +44,8 @@
   <script>window.jQuery || document.write('<script src="js/jquery-1.10.2.min.js">\x3C/script>');</script>
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.js"></script>
   <script>window.jQuery.ui || document.write('<script src="js/jquery-ui-1.10.3.min.js">\x3C/script>');</script>
-  <script type="text/javascript" src="js/underscore-min.js"></script>
-  <script type="text/javascript" src="js/public_draft_board.js"></script>
+  <script src="js/underscore-min.js"></script>
+  <script src="js/public_draft_board.js"></script>
   
   <script type="text/template" id="pickTemplate">
     <div class="overlay"></div>
