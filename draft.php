@@ -8,8 +8,6 @@ DEFINE("DRAFT_ID", isset($_REQUEST['did']) ? (int)$_REQUEST['did'] : "");
 
 $DRAFT_SERVICE = new draft_service();
 $MANAGER_SERVICE = new manager_service();
-$PLAYER_SERVICE = new player_service();
-$PRO_PLAYER_SERVICE = new pro_player_service();
 
 try {
 	$DRAFT = $DRAFT_SERVICE->loadDraft(DRAFT_ID);
@@ -210,6 +208,8 @@ switch(ACTION) {
 		if(!$PHPD->useAutocomplete()) {
 			exit(0);
 		}
+
+    $PRO_PLAYER_SERVICE = new pro_player_service();
 		
 		$league = trim($_GET['league']);
 		
@@ -229,6 +229,76 @@ switch(ACTION) {
 		exit(0);
 		break;
 		// </editor-fold>
+
+  case 'addRoundTimes':
+    // <editor-fold defaultstate="collapsed" desc="addManagers Logic">
+    $ROUND_TIME_SERVICE = new round_time_service();
+
+    //First, get our draft's round times (if they exist).
+    $round_times = $ROUND_TIME_SERVICE->getRoundTimes(DRAFT_ID);
+    //If one or more exist, we've enabled them. This is also a bool for the object
+    $ROUND_TIMES_ENABLED = count($round_times) > 0;
+    //Isolate the first one since we'll use it.
+    $first_round_time = $ROUND_TIMES_ENABLED ? $round_times[0] : new round_time_object();
+
+    //Get the collection (even if it's just one) and assign it to the view variable
+    $DYNAMIC_ROUND_TIMES = $round_times;
+    //Assign the static round time to its view variable
+    $STATIC_ROUND_TIME = $first_round_time;
+
+    //Setup the properties for the bools
+    $IS_STATIC_TIME = $ROUND_TIMES_ENABLED && $first_round_time->is_static_time;
+    $DRAFT_ROUNDS = $DRAFT->draft_rounds;
+
+    require_once('views/draft/add_round_times.php');
+    // </editor-fold>
+    break;
+
+  case 'saveRoundTimes':
+    // <editor-fold defaultstate="collapsed" desc="saveManagers Logic">
+    $ROUND_TIME_SERVICE = new round_time_service();
+
+    //First, we must remove all round times:
+    $ROUND_TIME_SERVICE->removeRoundTimesByDraft(DRAFT_ID);
+
+    //Then, determine if we need to check all round times coming to us:
+    $roundTimeIsEnabled = isset($_POST['isRoundTimesEnabled']) ? $_POST['isRoundTimesEnabled'] : false;
+
+    if($roundTimeIsEnabled) {
+      $roundTimes = isset($_POST['roundTimes']) ? $_POST['roundTimes'] : "";
+      foreach($roundTimes as $round_time_request) {
+        $new_round_time = new round_time_object();
+        $new_round_time->draft_id = DRAFT_ID;
+        $new_round_time->is_static_time = $round_time_request['is_static_time'] == "true" ? 1 : 0;
+        $new_round_time->draft_round = $new_round_time->is_static_time == 1 ? null : $round_time_request['draft_round'];
+        $new_round_time->round_time_seconds = $round_time_request['round_time_seconds'];
+
+        $object_errors = $ROUND_TIME_SERVICE->getValidity($new_round_time);
+
+        if(count($object_errors) > 0) {
+          $ERRORS = $object_errors;
+          echo "SERVER_ERROR: " . $ERRORS;
+          exit(1);
+        }
+
+        try {
+          $ROUND_TIME_SERVICE->saveRoundTime($new_round_time);
+        }catch(Exception $e) {
+          echo "SERVER_ERROR: " . $e->getMessage();
+          exit(1);
+        }
+      }
+    }
+
+    echo "SUCCESS";
+    // </editor-fold>
+    break;
+
+  case 'getRoundTime':
+    //<editor-fold defaultstate="collapsed" desc="getRoundTime Logic">
+    $ROUND_TIME_SERVICE = new round_time_service();
+    // </editor-fold>
+    break;
 	
 	default:
 		// <editor-fold defaultstate="collapsed" desc="Main Draft Page Logic">
@@ -240,6 +310,7 @@ switch(ACTION) {
 		
 		if($DRAFT->isInProgress() || $DRAFT->isCompleted()) {
 			$DRAFT->setupSport();
+      $PLAYER_SERVICE = new player_service();
 			$LAST_TEN_PICKS = $PLAYER_SERVICE->getLastTenPicks(DRAFT_ID);
 			DEFINE('NUMBER_OF_LAST_PICKS', count($LAST_TEN_PICKS));
 			

@@ -114,7 +114,7 @@
   </div>
 	</body>
   <script src="js/underscore-min.js"></script>
-  <script src="js/draft_room/add_pick.js"></script>
+  <script src="js/draft_room/draft_room.add_pick.js"></script>
   <script type="text/template" id="matchingPickTemplate">
     <li><strong class="<%- player.positionClass %>"><%- player.first_name %> <%- player.last_name %></strong> (<%- player.position %>, <%- player.team %>) - Pick #<%- player.player_pick %> by <%- player.manager_name %></li>
   </script>
