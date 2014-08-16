@@ -10,11 +10,21 @@
 	width: 300px;
 	height: 60px;
 	font-weight: bold;
-	font-size: 16px;
+	font-size: 20px;
+    border-radius: 6px;
+    background-color: #6CBB3C;
 }
 
 .enter_pick select, input {
 	width: 300px;
+}
+
+#clearButton {
+    margin-left: 200px;
+    margin-top: 20px;
+    width: 100px;
+    border-radius: 5px;
+    background-color: #FFDB58;
 }
 
 p.round {

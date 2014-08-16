@@ -79,6 +79,8 @@ $(function() {
                 }
             ]
         });
+
+        $(document).on('click', '#clearButton', clearButtonHandler);
     });
 
     function interceptFormSubmit(event) {
@@ -144,7 +146,6 @@ $(function() {
                 return true;
             },
             error: function() {
-                console.log('Error.');
                 $('#informationDialog').html('Unable to check status of picks, please ensure you have a working internet connection.').dialog('open');
             }
         });
@@ -157,5 +158,17 @@ $(function() {
         blockForMatches = false;
 
         $('#addPickButton').click();
+    }
+
+    function clearButtonHandler() {
+        var $first = $('#first_name'),
+            $last = $('#last_name'),
+            $team = $('#team'),
+            $position = $('#position');
+
+        $first.val('');
+        $last.val('');
+        $team.val('');
+        $position.val('');
     }
 });

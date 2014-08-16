@@ -77,19 +77,21 @@
 
       $static_round_time_stmt = $DBH->prepare("SELECT * FROM round_times WHERE draft_id = ? AND is_static_time = 1 LIMIT 1");
       $static_round_time_stmt->setFetchMode(PDO::FETCH_INTO, $round_time);
-      $static_round_time_stmt->bindParam(1, $_draft_id);
+      $static_round_time_stmt->bindParam(1, $draft_id);
 
       if(!$static_round_time_stmt->execute()) {
         throw new Exception("Unable to get static round time.");
       }
 
-      if($static_round_time_stmt->rowCount() > 0) {
+      if($static_round_time_stmt->rowCount() == 1) {
+        $static_round_time_stmt->fetch();
+
         return $round_time;
       }
 
       $round_time_stmt = $DBH->prepare("SELECT * FROM round_times WHERE draft_id = ? AND draft_round = ? LIMIT 1");
       $round_time_stmt->setFetchMode(PDO::FETCH_INTO, $round_time);
-      $round_time_stmt->bindParam(1, $_draft_id);
+      $round_time_stmt->bindParam(1, $draft_id);
       $round_time_stmt->bindParam(2, $pick_round);
 
       if (!$round_time_stmt->execute()) {

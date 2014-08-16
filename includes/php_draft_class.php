@@ -128,8 +128,7 @@ class PHPDRAFT {
     try {
       $dbh = new PDO('mysql:host=' . $this->_db_host . ';dbname=' . $this->_db_name, $this->_db_username, $this->_db_pwd);
     } catch (PDOException $e) {
-      echo "Error: " . $e->getMessage();
-      die();
+      die("Error: " . $e->getMessage());
     }
 
     return $dbh;

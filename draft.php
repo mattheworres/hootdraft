@@ -294,11 +294,7 @@ switch(ACTION) {
     // </editor-fold>
     break;
 
-  case 'getRoundTime':
-    //<editor-fold defaultstate="collapsed" desc="getRoundTime Logic">
-    $ROUND_TIME_SERVICE = new round_time_service();
-    // </editor-fold>
-    break;
+
 	
 	default:
 		// <editor-fold defaultstate="collapsed" desc="Main Draft Page Logic">

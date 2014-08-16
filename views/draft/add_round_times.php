@@ -17,9 +17,9 @@
             <p>If you'd like to enable the round pick timer, which shows up on the public draft board in the form of a popup countdown timer to let managers know how much time they have to pick, specify how much time you'd like to use below.</p>
             <p>You can either use a single standard pick time that is the same for every round, or specify a particular time for each round.</p>
             <p>
-              <input type="checkbox" name="round_times_enabled" id="round_times_enabled" <?php if($ROUND_TIMES_ENABLED) { echo " checked=\"checked\""; } ?> /> <label for="round_times_enabled">Use round pick timer</label>
+              <input type="checkbox" name="round_times_enabled" id="round_times_enabled" <?php if($ROUND_TIMES_ENABLED) { echo " checked=\"checked\""; } ?> /> <label for="round_times_enabled">Enable pick timers</label>
             </p>
-            <p><input type="checkbox" name="is_static_time" id="is_static_time" <?php if($IS_STATIC_TIME) { echo ' checked="checked"'; } ?> /> <label for="is_static_time">Use a single pick time for all rounds</label></p>
+            <p><input type="checkbox" name="is_static_time" id="is_static_time" <?php if($IS_STATIC_TIME) { echo ' checked="checked"'; } ?> /> <label for="is_static_time">Use a single pick time for all rounds (uncheck to specify pick times per each round)</label></p>
             <table id="static-round-time-table" class="times-table" width="100%">
               <th width="50">Round</th>
               <th>&nbsp;</th>

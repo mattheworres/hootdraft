@@ -11,9 +11,6 @@ DEFINE("CURRENT_COUNTER", isset($_REQUEST['currentCounter']) ? (int)$_REQUEST['c
 DEFINE("BOARD_RELOAD", 3);
 
 $DRAFT_SERVICE = new draft_service();
-$MANAGER_SERVICE = new manager_service();
-$PLAYER_SERVICE = new player_service();
-$TRADE_SERVICE = new trade_service();
 
 //Draft password may have pre-loaded this for us.
 if (!isset($DRAFT) || get_class($DRAFT) != "draft_object") {
@@ -56,6 +53,7 @@ if($DRAFT->isUndrafted()) {
       break;
     
     default:
+      $PLAYER_SERVICE = new player_service();
       $LAST_TEN_PICKS = $PLAYER_SERVICE->getLastTenPicks($DRAFT->draft_id);
       
       if($DRAFT->isInProgress()) {
@@ -72,6 +70,7 @@ $DRAFT->setupSport();
 switch (ACTION) {
   case 'draftBoard':
     // <editor-fold defaultstate="collapsed" desc="draftBoard Logic">
+    $MANAGER_SERVICE = new manager_service();
     $MANAGERS = $MANAGER_SERVICE->getManagersByDraft(DRAFT_ID);
     $ALL_PICKS = $DRAFT_SERVICE->getAllDraftPicks($DRAFT);
     DEFINE("NUMBER_OF_MANAGERS", count($MANAGERS));
@@ -90,17 +89,23 @@ switch (ACTION) {
       echo json_encode($response);
       exit(0);
     }
-    
+
+    $PLAYER_SERVICE = new player_service();
+
     $response["Status"] = $DRAFT->isCompleted() ? "draft-complete" : "out-of-date";
     //The hope here is to be a little more RESTful and if an exception is thrown the proper HTTP code will be thrown
     $response["Players"] = $PLAYER_SERVICE->getAllUpdatedPlayersForBoard($DRAFT, CURRENT_COUNTER);
     $response["PlayersCount"] = count($response["Players"]);
     $response["CurrentCounter"] = $DRAFT->draft_counter;
+    $response["CurrentPick"] = $DRAFT->draft_current_pick;
+    $response["CurrentPickManager"] = $PLAYER_SERVICE->getCurrentPick($DRAFT)->manager_name;
     echo json_encode($response);
     break;
 
   case 'picksPerManager':
     // <editor-fold defaultstate="collapsed" desc="picksPerManager Logic">
+    $MANAGER_SERVICE = new manager_service();
+    $PLAYER_SERVICE = new player_service();
     try {
       $MANAGERS = $MANAGER_SERVICE->getManagersByDraft($DRAFT->draft_id);
       $MANAGER = $MANAGERS[0];
@@ -128,6 +133,8 @@ switch (ACTION) {
       exit(1);
     }
 
+    $PLAYER_SERVICE = new player_service();
+
     $MANAGER_PICKS = $PLAYER_SERVICE->getSelectedPlayersByManager($manager_id);
     $NOW = php_draft_library::getNowRefreshTime();
 
@@ -142,6 +149,7 @@ switch (ACTION) {
 
   case 'picksPerRound':
     // <editor-fold defaultstate="collapsed" desc="picksPerRound Logic">
+    $PLAYER_SERVICE = new player_service();
     $ROUND = 1;
     $ROUND_PICKS = $PLAYER_SERVICE->getSelectedPlayersByRound($DRAFT->draft_id, $ROUND);
     $NOW = php_draft_library::getNowRefreshTime();
@@ -155,6 +163,8 @@ switch (ACTION) {
 
     if ($ROUND == 0)
       exit(1);
+
+    $PLAYER_SERVICE = new player_service();
 
     $ROUND_PICKS = $PLAYER_SERVICE->getSelectedPlayersByRound($DRAFT->draft_id, $ROUND);
     $NOW = php_draft_library::getNowRefreshTime();
@@ -189,6 +199,7 @@ switch (ACTION) {
 
   case 'viewTrades':
     // <editor-fold defaultstate="collapsed" desc="viewTrades Logic">
+    $TRADE_SERVICE = new trade_service();
     $DRAFT_TRADES = $TRADE_SERVICE->getDraftTrades(DRAFT_ID);
     DEFINE("NUMBER_OF_TRADES", count($DRAFT_TRADES));
     $DRAFT->setupSport();
@@ -215,8 +226,50 @@ switch (ACTION) {
     // </editor-fold>
     break;
 
+  case 'getPickSecondsRemaining':
+    //<editor-fold defaultstate="collapsed" desc="getRoundTime Logic">
+    $ROUND_TIME_SERVICE = new round_time_service();
+    $PLAYER_SERVICE = new player_service();
+
+    try {
+      $current_pick = $PLAYER_SERVICE->getCurrentPick($DRAFT);
+      $last_pick = $PLAYER_SERVICE->getPreviousPick($DRAFT);
+      $current_round_picktime = $ROUND_TIME_SERVICE->getRoundTimeByDraftRound($current_pick->player_round, DRAFT_ID);
+    }catch(Exception $e) {
+      echo "Server error: " . $e->getMessage();
+      return;
+    }
+
+    if($current_round_picktime == null) {
+      echo "PICK_TIMERS_DISABLED";
+      return;
+    }
+
+    $response = array();
+
+    //Take last pick's picktime and add our timer seconds to it
+
+    $last_pick_time = isset($last_pick)
+      ? strtotime($last_pick->pick_time)
+      : strtotime($DRAFT->draft_start_time);
+
+    $timer_ends_at = $last_pick_time + $current_round_picktime->round_time_seconds;
+
+    //then subtract PHP's time NOW to get seconds left and return that for timer to count down.
+    $right_now = strtotime("now");
+    $seconds_remaining = $timer_ends_at - $right_now;
+
+    //Return non-negative seconds figure, 0 meaning TIME IS UP!
+
+    $response['seconds_remaining'] = max($seconds_remaining, 0);
+
+    echo json_encode($response);
+    // </editor-fold>
+    break;
+
   default:
     // <editor-fold defaultstate="collapsed" desc="index logic">
+    $PLAYER_SERVICE = new player_service();
     $LAST_TEN_PICKS = $PLAYER_SERVICE->getLastTenPicks($DRAFT->draft_id);
     $CURRENT_PICK = $PLAYER_SERVICE->getCurrentPick($DRAFT);
     require("views/public_draft/index.php");

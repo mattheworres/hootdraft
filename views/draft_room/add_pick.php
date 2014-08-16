@@ -56,7 +56,8 @@
 					<?php } ?>
 					</select>
 				</p>
-				<p><input type="submit" name="submit" class="button" id="addPickButton" value="Enter Draft Pick"  tabindex="5"/></p>
+				<p><input type="submit" name="submit" class="button" id="addPickButton" value="Enter Draft Pick"  tabindex="5"/></br>
+        <input type="button" name="clear"  id="clearButton" value="Clear" tabindex="6" /> </p>
 				<?php if(isset($ERRORS) && count($ERRORS) > 0) {?>
 					<?php foreach($ERRORS as $error) {?>
 						<p class="error">* <?php echo $error;?></p>
@@ -105,16 +106,14 @@
   <div id="alreadyPickedDialog">
     It looks like <strong><span class="pickName"></span></strong> might have already been picked:<br/><br/>
 
-    <ol class="matchingPicks">
-
-    </ol>
+    <ol class="matchingPicks"></ol>
     <br/><br/>
 
     Are you sure you want to enter this pick?
   </div>
 	</body>
   <script src="js/underscore-min.js"></script>
-  <script src="js/draft_room/draft_room.add_pick.js"></script>
+  <script src="js/draft_room.add_pick.js"></script>
   <script type="text/template" id="matchingPickTemplate">
     <li><strong class="<%- player.positionClass %>"><%- player.first_name %> <%- player.last_name %></strong> (<%- player.position %>, <%- player.team %>) - Pick #<%- player.player_pick %> by <%- player.manager_name %></li>
   </script>

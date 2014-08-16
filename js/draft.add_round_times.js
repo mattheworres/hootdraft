@@ -140,9 +140,8 @@ function saveRoundTimesHandler() {
         draft_id = $('#draft_id').val();
 
     if(!isRoundTimesEnabled) {
-        console.log('Not enabled');
+
     } else if(isStaticTime) {
-        console.log('Static');
         var $row = $('#static-round-time-table'),
             minutes = $row.find('input.minutes').val(),
             seconds = $row.find('input.seconds').val(),
@@ -151,7 +150,6 @@ function saveRoundTimesHandler() {
 
         roundTimes.push(makeNewRoundTime($('#static-round-time-table'), draft_id, true));
     } else {
-        console.log('Dynamic. Row #: ' + $('#dynamic-round-time-table tr.data-row').length);
         $.each($('#dynamic-round-time-table tr.data-row'), function() {
             roundTimes.push(makeNewRoundTime($(this), draft_id, false));
         });
