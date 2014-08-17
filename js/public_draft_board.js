@@ -8,7 +8,8 @@ $(function() {
           of: "#draft-board",
           collision: "fit"
       },
-      $timerClock;
+      $timerClock,
+      enableSounds = false;
 
   $(document).ready(function() {
     initializeUIComponents();
@@ -21,11 +22,11 @@ $(function() {
     pickTemplate = _.template($("#pickTemplate").html());
 
     refreshBoard(function() {
-      $('#loadingDialog').dialog('close');
+        $('#loadingDialog').dialog('close');
     });
 
     intervalID = setInterval(function() {
-      refreshBoard();
+        refreshBoard();
     }, reloadMs);
   });
 
@@ -64,6 +65,8 @@ $(function() {
           stop: timerEndHandler
       }
   });
+
+      $('#audio-button').button();
   }
   
   function initializeEventHandlers() {
@@ -79,6 +82,8 @@ $(function() {
       var draft_id = parseInt($('#draft-board').data('draft-id'), 10);
       window.location.href = 'public_draft.php?did=' + draft_id;
     });
+
+    $(document).on('click', '#audio-button', audioButtonClickHandler);
   }
 
   function refreshBoard(callback) {
@@ -165,7 +170,7 @@ $(function() {
 
             $draftBoard.data('draft-counter', parseInt(response.CurrentCounter, 10));
 
-            if(currentPick != responseCurrentPick) {
+            if(response.Status === "out-of-date" && currentPick != responseCurrentPick) {
                 //We've updated to a new pick, time to update the timer if it's enabled.
                 $draftBoard.data('draft-pick', responseCurrentPick);
                 var managerName = response.CurrentPickManager;
@@ -288,6 +293,10 @@ $(function() {
     }
 
     function playRandomEndSound() {
+        if(!enableSounds) {
+            return;
+        }
+
         var soundHandle = $('#soundHandle'),
             files = [
                 /*
@@ -304,5 +313,18 @@ $(function() {
 
         soundHandle.get(0).src = files[randomFileIndex];
         soundHandle.get(0).play();
+    }
+
+    function audioButtonClickHandler() {
+        var $audioButton = $('#audio-button button'),
+            $icon = $audioButton.find('.ui-icon');
+
+        if(enableSounds) {
+            enableSounds = false;
+            $icon.removeClass('ui-icon-volume-on').addClass('ui-icon-volume-off');
+        } else {
+            enableSounds = true;
+            $icon.removeClass('ui-icon-volume-off').addClass('ui-icon-volume-on');
+        }
     }
 });

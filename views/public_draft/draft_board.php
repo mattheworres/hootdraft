@@ -13,6 +13,11 @@
     <div id="back-button">
       <img src="images/icons/back_new.png" />
     </div>
+    <div id="audio-button">
+      <button class="ui-button">
+        <span class="ui-icon ui-icon-volume-off"></span>
+      </button>
+    </div>
     <div id="draft-board" style="width: <?php echo TOTAL_WIDTH; ?>px;" 
          data-draft-reload="<?php echo BOARD_RELOAD; ?>" 
          data-draft-id="<?php echo $DRAFT->draft_id;?>"
