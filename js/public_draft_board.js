@@ -301,7 +301,9 @@ $(function() {
             files = [
                 /*
                 Fill this array with MP3 files, which will randomly auto play when the timer runs out
-                 'path/to/your_sound/file.mp3',
+                Path is relative to project's root:
+                 'path/to/your_sound/file1.mp3',
+                 'path/to/your_sound/file2.mp3'
                  */
             ],
             fileArraySize = files.length,
