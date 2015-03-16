@@ -41,6 +41,8 @@ class manager_service {
 
   /**
    * Check the validity of parent manager object and return array of error descriptions if invalid.
+   *
+   * @param $manager
    * @return array/string errors
    */
   public function getValidity($manager) {
@@ -202,6 +204,9 @@ class manager_service {
 
   /**
    * Saves or updates the manager object
+   *
+   * @param $manager
+   * @throws Exception
    * @return manager_object $manager on success, exception thrown otherwise
    */
   public function saveManager($manager) {

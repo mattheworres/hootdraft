@@ -92,6 +92,7 @@
 					<?php if($DRAFT->isUndrafted()) {?><p><strong><a href="draft.php?action=addManagers&did=<?php echo DRAFT_ID; ?>"><span class="phpdraft-icon ui-icon ui-icon-plusthick"></span>Add Manager(s)</a></strong></p>
 					<?php } ?><p><strong><a id="changeVisibility"><span class="phpdraft-icon ui-icon ui-icon-key"></span>Change Draft Visibility</a></strong></p>
 					<?php if(!$DRAFT->isCompleted() && HAS_MANAGERS) { ?><p id="draft-status-link"><strong><a id="changeDraftStatus"><span class="phpdraft-icon ui-icon ui-icon-play"></span>Change Draft Status</a></strong></p><?php } ?>
+          <p><strong><a href="draft.php?action=addRoundTimes&did=<?php echo DRAFT_ID; ?>"><span class="phpdraft-icon ui-icon ui-icon-clock"></span>Setup Pick Timers</a></strong></p>
 				</fieldset>
 				<?php
 				if($DRAFT->isInProgress() || $DRAFT->isCompleted()) {
@@ -133,10 +134,6 @@
     <div id="draftStatusDialog">
       <p>
         <label for="draft_status">Draft Status*:</label>
-        <!--<select name="draft_status" id="draft_status">
-          <option value="undrafted"<?php if($DRAFT->isUndrafted()) { echo " selected=\"selected\""; } ?>>Undrafted</option>
-          <option value="in_progress"<?php if($DRAFT->isInProgress()) { echo " selected=\"selected\""; } ?>>In Progress</option>
-        </select>-->
         <div id="draft_status">
           <input type="radio" id="undrafted" name="draft_status" value="undrafted" <?php if($DRAFT->isUndrafted()) { echo " checked=\"checked\""; } ?>/><label for="undrafted">Undrafted</label>
           <input type="radio" id="in_progress" name="draft_status" value="in_progress" <?php if($DRAFT->isInProgress()) { echo " checked=\"checked\""; } ?>/><label for="in_progress">In Progress</label>

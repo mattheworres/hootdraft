@@ -418,7 +418,6 @@ function checkMatchingPasswords($statusSelect, $password, $confirmPassword) {
   if ($statusSelect.val() === 0)
     return;
 
-  console.log('Password len: ' + $password.val().length + ' ; Confirm length: ' + $confirmPassword.val().length);
   if ($password.val().length > 0 && $confirmPassword.val().length > 0)
     if ($password.val() !== $confirmPassword.val())
       $visibilityError.html('Passwords entered do not match!').show();

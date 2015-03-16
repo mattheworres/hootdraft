@@ -1,10 +1,18 @@
 $(function() {
   var pickTemplate,
       intervalID = 0,
-      checkIsRunning = false;
+      checkIsRunning = false,
+      pickTimerPosition = {
+          my: "left",
+          at: "right",
+          of: "#draft-board",
+          collision: "fit"
+      },
+      $timerClock,
+      enableSounds = false;
 
   $(document).ready(function() {
-    initDialogs();
+    initializeUIComponents();
     initializeEventHandlers();
 
     var reloadMs = 1000 * parseInt($('#draft-board').data('draft-reload'), 10);
@@ -14,15 +22,15 @@ $(function() {
     pickTemplate = _.template($("#pickTemplate").html());
 
     refreshBoard(function() {
-      $('#loadingDialog').dialog('close');
+        $('#loadingDialog').dialog('close');
     });
 
     intervalID = setInterval(function() {
-      refreshBoard();
+        refreshBoard();
     }, reloadMs);
   });
 
-  function initDialogs() {
+  function initializeUIComponents() {
     $('#loadingDialog').dialog({
       autoOpen: true,
       title: "Loading...",
@@ -30,13 +38,35 @@ $(function() {
       draggable: false,
       resizable: false
     });
-    
+
     $('#informationDialog').dialog({
       autoOpen: false,
       modal: true,
       draggable: false,
-      rezisable: false
+      resizable: false
     });
+
+  var $timerDialog = $('#pickTimerDialog');
+  $timerDialog.dialog({
+        autoOpen: false,
+        modal: false,
+        draggable: true,
+        resizable: false,
+        width: 350,
+        title: "Pick Time Remaining",
+        position: pickTimerPosition
+    });
+
+  $timerClock = $timerDialog.find('.clockDisplay').FlipClock({
+      autoStart: false,
+      clockFace: 'MinuteCounter',
+      countdown: true,
+      callbacks: {
+          stop: timerEndHandler
+      }
+  });
+
+      $('#audio-button').button();
   }
   
   function initializeEventHandlers() {
@@ -52,12 +82,16 @@ $(function() {
       var draft_id = parseInt($('#draft-board').data('draft-id'), 10);
       window.location.href = 'public_draft.php?did=' + draft_id;
     });
+
+    $(document).on('click', '#audio-button', audioButtonClickHandler);
   }
 
   function refreshBoard(callback) {
-    var currentCounter = parseInt($('#draft-board').data('draft-counter'), 10),
-            draftId = parseInt($('#draft-board').data('draft-id'), 10),
-            refreshUrl = 'public_draft.php?action=refreshBoard&did=' + draftId + '&currentCounter=' + currentCounter;
+    var $draftBoard = $('#draft-board'),
+        currentCounter = parseInt($draftBoard.data('draft-counter'), 10),
+        currentPick = parseInt($draftBoard.data('draft-pick'), 10),
+        draftId = parseInt($draftBoard.data('draft-id'), 10),
+        refreshUrl = 'public_draft.php?action=refreshBoard&did=' + draftId + '&currentCounter=' + currentCounter;
 
     if (checkIsRunning) {
       return;
@@ -79,11 +113,18 @@ $(function() {
       success: function(response) {
         //We may have data to process still, so doing this outside of switch makes sense:
         if(response.Status === "up-to-date") {
+          if(currentPick == 0) {
+              currentPick = 1;
+              $draftBoard.data('draft-pick', currentPick);
+              var managerName = $('div.pick.undrafted[data-pick-number=1]').find('span.manager').html();
+              updatePickTimer(draftId, currentPick, managerName);
+          }
           return;
         }
         
         if(response.Status === "draft-complete") {
           clearInterval(intervalID);
+            $('#pickTimerDialog').dialog('close').hide();
         }
         
         if(response.Status === "draft-not-ready") {
@@ -95,7 +136,8 @@ $(function() {
         
         if(response.Players !== undefined) {
           //To reduce slow client performance when we're processing 15 or more new picks, disable overlay:
-          var showOverlay = parseInt(response.PlayersCount, 10) < 15;
+          var showOverlay = parseInt(response.PlayersCount, 10) < 15,
+              responseCurrentPick = parseInt(response.CurrentPick, 10);
           
           $.each(response.Players, function() {
             var player = this,
@@ -126,13 +168,38 @@ $(function() {
             }
           });
 
-          $('#draft-board').data('draft-counter', parseInt(response.CurrentCounter, 10));
+            $draftBoard.data('draft-counter', parseInt(response.CurrentCounter, 10));
+
+            if(response.Status === "out-of-date" && currentPick != responseCurrentPick) {
+                //We've updated to a new pick, time to update the timer if it's enabled.
+                $draftBoard.data('draft-pick', responseCurrentPick);
+                var managerName = response.CurrentPickManager;
+                updatePickTimer(draftId, responseCurrentPick, managerName);
+            }
         }
       },
       error: function() {
         $('#informationDialog').html('There was a connection issue while attempting to gather new picks - if the issue persists contact your administrator.').dialog('open');
       }
     });
+  }
+
+  function updatePickTimer(draft_id, current_pick, manager_name) {
+      $.ajax({
+          type: 'GET',
+          url: 'public_draft.php?did=' + draft_id + '&action=getPickSecondsRemaining',
+          dataType: 'json',
+          complete: function() {
+            $('#timerDialog').dialog('close');
+          },
+          success: function(response) {
+            if(response == "PICK_TIMERS_DISABLED") {
+                return;
+            }
+
+            timerRestartHandler(parseInt(response.seconds_remaining, 10), current_pick, manager_name);
+          }
+      });
   }
 
   function pickClickHandler($pickCell, mouseEnter) {
@@ -188,4 +255,78 @@ $(function() {
   function pluralUnitEnding(amount) {
     return amount > 1 ? "s" : "";
   }
+
+    function timerEndHandler() {
+      var $timerDialog = $('#pickTimerDialog'),
+          $timesUpMessage = $timerDialog.find('.timesUpMessage');
+
+      //There's a delay added to allow the CSS clock animation to complete:
+      setTimeout(function() {
+          $timerDialog.find('.clockDisplay').hide();
+          $timerDialog.dialog('open');
+          $timesUpMessage.show();
+          playRandomEndSound();
+      }, 1000);
+
+
+      //TODO: Play kooky sound.
+    }
+
+    function timerRestartHandler(timerSeconds, pick_number, manager_name) {
+        var $timerDialog = $('#pickTimerDialog'),
+            $timesUpMessage = $timerDialog.find('.timesUpMessage');
+
+        $timesUpMessage.find('.manager-name').html(manager_name);
+        $timerDialog.dialog('close')
+            .dialog('option', 'title', 'Pick #' + pick_number + ' - ' + manager_name);
+
+        if(timerSeconds == 0) {
+            timerEndHandler();
+            return;
+        }
+
+        $timesUpMessage.hide();
+        $timerDialog.dialog('open');
+        $timerDialog.find('.clockDisplay').show();
+        $timerClock.setTime(timerSeconds);
+        $timerClock.start();
+    }
+
+    function playRandomEndSound() {
+        if(!enableSounds) {
+            return;
+        }
+
+        var soundHandle = $('#soundHandle'),
+            files = [
+                /*
+                Fill this array with MP3 files, which will randomly auto play when the timer runs out
+                Path is relative to project's root:
+                 'path/to/your_sound/file1.mp3',
+                 'path/to/your_sound/file2.mp3'
+                 */
+            ],
+            fileArraySize = files.length,
+            randomFileIndex = fileArraySize > 0 ? Math.floor((Math.random() * (fileArraySize))) : 0;
+
+        if(fileArraySize == 0) {
+            return;
+        }
+
+        soundHandle.get(0).src = files[randomFileIndex];
+        soundHandle.get(0).play();
+    }
+
+    function audioButtonClickHandler() {
+        var $audioButton = $('#audio-button button'),
+            $icon = $audioButton.find('.ui-icon');
+
+        if(enableSounds) {
+            enableSounds = false;
+            $icon.removeClass('ui-icon-volume-on').addClass('ui-icon-volume-off');
+        } else {
+            enableSounds = true;
+            $icon.removeClass('ui-icon-volume-off').addClass('ui-icon-volume-on');
+        }
+    }
 });

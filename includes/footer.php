@@ -1,6 +1,6 @@
 <div id="footer">
   <br /> 
-  PHPDraft 1.2.1 | <a href="http://gplv3.fsf.org/" target="_blank">GNU GPL3 License</a> | 2014 <a href="http://www.mattheworres.com" target="_blank">Matthew Orres</a>
+  PHPDraft 1.3.0 | <a href="http://gplv3.fsf.org/" target="_blank">GNU GPL3 License</a> | 2015 <a href="http://www.mattheworres.com" target="_blank">Matthew Orres</a>
 </div>
 
 <div id="loadingDialog">
@@ -13,6 +13,8 @@
 <script>window.jQuery || document.write('<script src="js/jquery-1.10.2.min.js">\x3C/script>');</script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.js"></script>
 <script>window.jQuery.ui || document.write('<script src="js/jquery-ui-1.10.3.min.js">\x3C/script>');</script>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.0/jquery.validate.min.js"></script>
+<script>window.jQuery.validator || document.write('<script src="js/jquery.validate.1.13.0.min.js">\x3C/script>');</script>
 <script type="text/javascript">
   $('#loadingDialog').dialog({
     autoOpen: false,

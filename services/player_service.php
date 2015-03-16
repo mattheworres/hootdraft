@@ -37,10 +37,13 @@ class player_service {
     return $player;
   }
 
-  /**
-   * Saves or updates a player. NOTE: Does not update or save the player's pick time or pick duration. Those must be handled separately.
-   * @return player_object $player on success, exception thrown otherwise
-   */
+    /**
+     * Saves or updates a player. NOTE: Does not update or save the player's pick time or pick duration. Those must be handled separately.
+     * @param player_object $player
+     * @param bool $setPickToNow
+     * @throws Exception
+     * @return player_object $player on success, exception thrown otherwise
+     */
   public function savePlayer(player_object $player, $setPickToNow = false) {
     global $DBH; /* @var $DBH PDO */
     if ($player->player_id > 0) {
@@ -100,11 +103,12 @@ class player_service {
       throw new Exception("Unable to save player.");
   }
 
-  /**
-   * Get the validity of this object as it stands to ensure it can be updated as a pick
-   * @param draft_object $draft The draft this pick is being submitted for
-   * @return array $errors Array of string error messages 
-   */
+    /**
+     * Get the validity of this object as it stands to ensure it can be updated as a pick
+     * @param draft_object $draft The draft this pick is being submitted for
+     * @param player_object $player
+     * @return array $errors Array of string error messages
+     */
   public function getValidity(draft_object $draft, player_object $player) {
     $errors = array();
 
@@ -155,10 +159,56 @@ class player_service {
   }
 
   /**
-   * For a draft get the ten most recent picks that have occurred.
-   * @param int $draft_id
-   * @return array|boolean Array of picks, or false on error.
+   * Check and see if a player has been picked before based on name string matching (first AND last) - to be checked before picking
+   * @param $draft_id The ID of the draft we're searching on
+   * @param $player_first_name The first name of the pick about to be entered
+   * @param $player_last_name The last name of the player
+   * @return array Returns an array of one or more matching picks, or an empty array if none were found
+   * @throws Exception
    */
+  public function getAlreadyDrafted($draft_id, $player_first_name, $player_last_name) {
+    global $DBH; /* @var $DBH PDO */
+    $draft_id = (int) $draft_id;
+
+    $picks = array();
+
+    if($draft_id == 0) {
+        throw new Exception("Draft is invalid");
+    }
+
+    $stmt = $DBH->prepare("SELECT p.*, m.manager_name " .
+    "FROM players p " .
+    "LEFT OUTER JOIN managers m " .
+    "ON m.manager_id = p.manager_id " .
+    "WHERE p.draft_id = ? " .
+    "AND p.pick_time IS NOT NULL " .
+    "AND p.first_name = ? " .
+    "AND p.last_name = ? " .
+    "ORDER BY p.player_pick");
+
+    $stmt->bindParam(1, $draft_id);
+    $stmt->bindParam(2, $player_first_name);
+    $stmt->bindParam(3, $player_last_name);
+
+    $stmt->setFetchMode(PDO::FETCH_CLASS, 'player_object');
+
+    if(!$stmt->execute()) {
+        throw new Exception("Unable to check to see if a player was already drafted.");
+    }
+
+    while($player = $stmt->fetch()) {
+        $picks[] = $player;
+    }
+
+    return $picks;
+  }
+
+    /**
+     * For a draft get the ten most recent picks that have occurred.
+     * @param int $draft_id
+     * @throws Exception
+     * @return array|boolean Array of picks, or false on error.
+     */
   public function getLastTenPicks($draft_id) {
     global $DBH; /* @var $DBH PDO */
     $draft_id = (int) $draft_id;
@@ -191,11 +241,12 @@ class player_service {
     return $picks;
   }
 
-  /**
-   * Grab the last five completed draft picks
-   * @param draft_object $draft
-   * @return array last five picks 
-   */
+    /**
+     * Grab the last five completed draft picks
+     * @param draft_object $draft
+     * @throws Exception
+     * @return array last five picks
+     */
   public function getLastFivePicks(draft_object $draft) {
     global $DBH; /* @var $DBH PDO */
     $picks = array();
@@ -223,12 +274,13 @@ class player_service {
     return $picks;
   }
 
-  /**
-   * Get the previous (completed) pick in the draft
-   * @param draft_object $draft
-   * @return player_object $last_player, or false on 0 rows
-   */
-  public function getLastPick(draft_object $draft) {
+    /**
+     * Get the previous (completed) pick in the draft
+     * @param draft_object $draft
+     * @throws Exception
+     * @return player_object $last_player, or false on 0 rows
+     */
+  public function getPreviousPick(draft_object $draft) {
     global $DBH; /* @var $DBH PDO */
 
     $stmt = $DBH->prepare("SELECT p.*, m.* " .
@@ -258,11 +310,12 @@ class player_service {
     return $stmt->fetch();
   }
 
-  /**
-   * Called from a draft or statically from a presenter, gets the current pick "on the clock"
-   * @param draft_object $draft Object to get the current pick for
-   * @return player_object The current pick
-   */
+    /**
+     * Called from a draft or statically from a presenter, gets the current pick "on the clock"
+     * @param draft_object $draft Object to get the current pick for
+     * @throws Exception
+     * @return player_object The current pick
+     */
   public function getCurrentPick(draft_object $draft) {
     global $DBH; /* @var $DBH PDO */
 
@@ -292,11 +345,12 @@ class player_service {
     return $stmt->fetch();
   }
 
-  /**
-   * Get the next pick object
-   * @param draft_object $draft
-   * @return player_object the next pick 
-   */
+    /**
+     * Get the next pick object
+     * @param draft_object $draft
+     * @throws Exception
+     * @return player_object the next pick
+     */
   public function getNextPick(draft_object $draft) {
     global $DBH; /* @var $DBH PDO */
 
@@ -325,11 +379,12 @@ class player_service {
     return $stmt->fetch();
   }
 
-  /**
-   * Get the next five picks
-   * @param draft_object $draft
-   * @return array of player_objects 
-   */
+    /**
+     * Get the next five picks
+     * @param draft_object $draft
+     * @throws Exception
+     * @return array of player_objects
+     */
   public function getNextFivePicks(draft_object $draft) {
     global $DBH; /* @var $DBH PDO */
     $picks = array();
@@ -358,11 +413,12 @@ class player_service {
     return $picks;
   }
 
-  /**
-   * Get all players/picks for a given draft.
-   * @param int $draft_id ID of the draft to get players for
-   * @return array Player objects that belong to given draft. false on failure
-   */
+    /**
+     * Get all players/picks for a given draft.
+     * @param int $draft_id ID of the draft to get players for
+     * @throws Exception
+     * @return array Player objects that belong to given draft. false on failure
+     */
   public function getPlayersByDraft($draft_id) {
     global $DBH; /* @var $DBH PDO */
     $draft_id = (int) $draft_id;
@@ -412,10 +468,12 @@ class player_service {
     }
   }
 
-  /**
-   * Check to ensure the pick exists in the database
-   * @return boolean result (if pick exists)
-   */
+    /**
+     * Check to ensure the pick exists in the database
+     * @param player_object $player
+     * @throws Exception
+     * @return boolean result (if pick exists)
+     */
   public function pickExists(player_object $player) {
     global $DBH; /* @var $DBH PDO */
 
