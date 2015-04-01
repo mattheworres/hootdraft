@@ -1,0 +1,12 @@
+{
+    "require": {
+        "silex/silex": "~1.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "PhpDraft\\": "src/",
+            "PhpDraft\\Controllers\\": "src/Controllers",
+            "PhpDraft\\Controllers\\Providers\\": "src/Controllers/Providers"
+        }
+    }
+}
