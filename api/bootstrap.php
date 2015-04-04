@@ -1,6 +1,6 @@
 <?php
 
-$app = require_once __DIR__ . '/_app.php';
+$app = require_once __DIR__ . '/config/_app.php';
 
 if ($app instanceof Silex\Application) {
     $app->run();

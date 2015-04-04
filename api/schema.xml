@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database name="phpdraft" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
+  <table name="draft" idMethod="native" phpName="Draft">
+    <column name="draft_id" phpName="DraftId" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="draft_create_time" phpName="DraftCreateTime" type="TIMESTAMP" required="true"/>
+    <column name="draft_name" phpName="DraftName" type="LONGVARCHAR" required="true"/>
+    <column name="draft_sport" phpName="DraftSport" type="LONGVARCHAR" required="true"/>
+    <column name="draft_status" phpName="DraftStatus" type="LONGVARCHAR" required="true"/>
+    <column name="draft_counter" phpName="DraftCounter" type="INTEGER" required="true" defaultValue="0"/>
+    <column name="draft_style" phpName="DraftStyle" type="LONGVARCHAR" required="true"/>
+    <column name="draft_rounds" phpName="DraftRounds" type="INTEGER" size="2" sqlType="int(2) unsigned" required="true" defaultValue="0"/>
+    <column name="draft_password" phpName="DraftPassword" type="LONGVARCHAR"/>
+    <column name="draft_start_time" phpName="DraftStartTime" type="TIMESTAMP"/>
+    <column name="draft_end_time" phpName="DraftEndTime" type="TIMESTAMP"/>
+    <column name="draft_current_round" phpName="DraftCurrentRound" type="INTEGER" size="5" sqlType="int(5) unsigned" required="true" defaultValue="1"/>
+    <column name="draft_current_pick" phpName="DraftCurrentPick" type="INTEGER" size="5" sqlType="int(5) unsigned" required="true" defaultValue="1"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="MyISAM"/>
+    </vendor>
+  </table>
+  <table name="managers" idMethod="native" phpName="Managers">
+    <column name="manager_id" phpName="ManagerId" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="draft_id" phpName="DraftId" type="INTEGER" required="true" defaultValue="0"/>
+    <column name="manager_name" phpName="ManagerName" type="LONGVARCHAR" required="true"/>
+    <column name="manager_email" phpName="ManagerEmail" type="LONGVARCHAR"/>
+    <column name="draft_order" phpName="DraftOrder" type="TINYINT" size="3" sqlType="tinyint(3) unsigned" required="true" defaultValue="0"/>
+    <index name="draft_idx">
+      <index-column name="draft_id"/>
+    </index>
+    <index name="manager_idx">
+      <index-column name="manager_name"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="MyISAM"/>
+    </vendor>
+  </table>
+  <table name="players" idMethod="native" phpName="Players">
+    <column name="player_id" phpName="PlayerId" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="manager_id" phpName="ManagerId" type="INTEGER" required="true" defaultValue="0"/>
+    <column name="first_name" phpName="FirstName" type="LONGVARCHAR"/>
+    <column name="last_name" phpName="LastName" type="LONGVARCHAR"/>
+    <column name="team" phpName="Team" type="CHAR" size="3"/>
+    <column name="position" phpName="Position" type="VARCHAR" size="4"/>
+    <column name="pick_time" phpName="PickTime" type="TIMESTAMP"/>
+    <column name="pick_duration" phpName="PickDuration" type="INTEGER" size="10"/>
+    <column name="player_counter" phpName="PlayerCounter" type="INTEGER"/>
+    <column name="draft_id" phpName="DraftId" type="INTEGER" sqlType="int(11) unsigned" required="true" defaultValue="0"/>
+    <column name="player_round" phpName="PlayerRound" type="INTEGER" required="true" defaultValue="0"/>
+    <column name="player_pick" phpName="PlayerPick" type="INTEGER" required="true" defaultValue="0"/>
+    <index name="manager_idx">
+      <index-column name="manager_id"/>
+    </index>
+    <index name="draft_idx">
+      <index-column name="draft_id"/>
+    </index>
+    <index name="player_idx">
+      <index-column name="first_name"/>
+      <index-column name="last_name"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="MyISAM"/>
+    </vendor>
+  </table>
+  <table name="pro_players" idMethod="native" phpName="ProPlayers">
+    <column name="pro_player_id" phpName="ProPlayerId" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="league" phpName="League" type="LONGVARCHAR" required="true"/>
+    <column name="first_name" phpName="FirstName" type="LONGVARCHAR" required="true"/>
+    <column name="last_name" phpName="LastName" type="LONGVARCHAR" required="true"/>
+    <column name="position" phpName="Position" type="LONGVARCHAR" required="true"/>
+    <column name="team" phpName="Team" type="LONGVARCHAR" required="true"/>
+    <index name="league_idx">
+      <index-column name="league" size="4"/>
+    </index>
+    <index name="firstname_idx">
+      <index-column name="first_name"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="MyISAM"/>
+    </vendor>
+  </table>
+  <table name="trade_assets" idMethod="native" phpName="TradeAssets">
+    <column name="tradeasset_id" phpName="TradeassetId" type="INTEGER" sqlType="int(11) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="trade_id" phpName="TradeId" type="INTEGER" sqlType="int(11) unsigned" required="true"/>
+    <column name="player_id" phpName="PlayerId" type="INTEGER" sqlType="int(11) unsigned" required="true"/>
+    <column name="oldmanager_id" phpName="OldmanagerId" type="INTEGER" sqlType="int(11) unsigned" required="true"/>
+    <column name="newmanager_id" phpName="NewmanagerId" type="INTEGER" sqlType="int(11) unsigned" required="true"/>
+    <column name="was_drafted" phpName="WasDrafted" type="BOOLEAN" size="1" required="true"/>
+    <index name="trade_id">
+      <index-column name="trade_id"/>
+      <index-column name="player_id"/>
+      <index-column name="oldmanager_id"/>
+      <index-column name="newmanager_id"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="MyISAM"/>
+    </vendor>
+  </table>
+  <table name="trades" idMethod="native" phpName="Trades">
+    <column name="trade_id" phpName="TradeId" type="INTEGER" sqlType="int(11) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="draft_id" phpName="DraftId" type="INTEGER" sqlType="int(11) unsigned" required="true"/>
+    <column name="manager1_id" phpName="Manager1Id" type="INTEGER" sqlType="int(11) unsigned" required="true"/>
+    <column name="manager2_id" phpName="Manager2Id" type="INTEGER" sqlType="int(11) unsigned" required="true"/>
+    <column name="trade_time" phpName="TradeTime" type="TIMESTAMP"/>
+    <index name="manager1_idx">
+      <index-column name="manager1_id"/>
+    </index>
+    <index name="manager2_idx">
+      <index-column name="manager2_id"/>
+    </index>
+    <index name="draft_idx">
+      <index-column name="draft_id"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="MyISAM"/>
+    </vendor>
+  </table>
+  <table name="user_login" idMethod="native" phpName="UserLogin">
+    <column name="UserID" phpName="Userid" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="Username" phpName="Username" type="LONGVARCHAR" required="true"/>
+    <column name="Password" phpName="Password" type="LONGVARCHAR" required="true"/>
+    <column name="Name" phpName="Name" type="VARCHAR" size="15" required="true" defaultValue=""/>
+    <unique name="UserID">
+      <unique-column name="UserID"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="MyISAM"/>
+    </vendor>
+  </table>
+</database>

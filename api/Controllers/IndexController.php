@@ -2,7 +2,12 @@
 
 namespace PhpDraft\Controllers;
 
-class IndexController {
+class IndexController
+{
+	public function __construct(/*dependncies injected here*/) {
+
+	}
+
 	public function Index() {
 		return 'Got it!';
 	}

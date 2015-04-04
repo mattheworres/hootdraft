@@ -4,5 +4,5 @@
     RewriteEngine On
     RewriteBase /phpdraft
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ src/api.php [L]
+    RewriteRule ^ api/bootstrap.php [L]
 </IfModule>
