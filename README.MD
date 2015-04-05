@@ -5,17 +5,26 @@ You log in to PHP Draft, add managers, select the number of rounds, style of dra
 
 Your managers will notify you once they make a selection, and you enter the draft pick. As you enter picks, your managers will see the picks being made in real-time, on the large color-coded draft board.
 
-####REQUIREMENTS for PHP Draft 1.2.0:
+####REQUIREMENTS for PHP Draft 2.0.0:
 
-  - Web server with sufficient bandwidth
+  - Web server with the ability to edit `php.ini` file for your installation
 
-  - PHP 5.3+ installed
+  - If server is Apache, need ability to use `.htaccess` to enable/use `mod_rewrite`
 
-  - MySQL and the ability to add a new database
+  - PHP 5.4+ installed
+
+  - SQL database compatible with Doctrine 2
 
   - PHPMyAdmin or some other MySQL utility that allows import of large SQL dump files
 
+  - TODO - finish
+
 ##To install, follow these steps:
+
+ 1. Set the following variables in your PHP.ini:
+
+		phpdraft.cfg.DB_USER = ‘your_database_username’
+		phpdraft.cfg.DB_PASS = ‘your_database_password’
 
  1. Unzip entire PHP Draft project to your local machine, and browse to that folder in your file explorer. 
 

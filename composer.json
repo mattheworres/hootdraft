@@ -1,12 +1,19 @@
 {
     "require": {
-        "silex/silex": "~1.2"
+        "php": ">=5.4.0",
+        "silex/silex": "~1.2",
+        "propel/propel": "2.0.*@dev",
+        "propel/propel-service-provider": "2.*@dev",
+        "monolog/monolog": "~1.13"
+    },
+    "require-dev": {
+        "knplabs/console-service-provider": "1.0"
     },
     "autoload": {
         "psr-4": {
-            "PhpDraft\\": "src/",
-            "PhpDraft\\Controllers\\": "src/Controllers",
-            "PhpDraft\\Controllers\\Providers\\": "src/Controllers/Providers"
+            "PhpDraft\\Controllers\\": "api/Controllers",
+            "PhpDraft\\Domain\\Entities\\": "api/Domain/Entities",
+            "PhpDraft\\Models\\": "api/Models"
         }
     }
 }
