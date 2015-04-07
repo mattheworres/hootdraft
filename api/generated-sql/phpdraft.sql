@@ -42,7 +42,7 @@ CREATE TABLE `managers`
     `draft_order` tinyint(3) unsigned DEFAULT 0 NOT NULL,
     PRIMARY KEY (`manager_id`),
     INDEX `draft_idx` (`draft_id`),
-    INDEX `manager_idx` (`manager_name`)
+    INDEX `manager_idx` (`manager_id`)
 ) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
@@ -67,8 +67,7 @@ CREATE TABLE `players`
     `player_pick` INTEGER DEFAULT 0 NOT NULL,
     PRIMARY KEY (`player_id`),
     INDEX `manager_idx` (`manager_id`),
-    INDEX `draft_idx` (`draft_id`),
-    INDEX `player_idx` (`first_name`, `last_name`)
+    INDEX `draft_idx` (`draft_id`)
 ) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
@@ -86,8 +85,7 @@ CREATE TABLE `pro_players`
     `position` TEXT NOT NULL,
     `team` TEXT NOT NULL,
     PRIMARY KEY (`pro_player_id`),
-    INDEX `league_idx` (`league`(4)),
-    INDEX `firstname_idx` (`first_name`)
+    INDEX `league_idx` (`league`(4))
 ) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
@@ -105,7 +103,7 @@ CREATE TABLE `trade_assets`
     `newmanager_id` int(11) unsigned NOT NULL,
     `was_drafted` TINYINT(1) NOT NULL,
     PRIMARY KEY (`tradeasset_id`),
-    INDEX `trade_id` (`trade_id`, `player_id`, `oldmanager_id`, `newmanager_id`)
+    INDEX `trade_id` (`trade_id`)
 ) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------

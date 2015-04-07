@@ -28,7 +28,7 @@
       <index-column name="draft_id"/>
     </index>
     <index name="manager_idx">
-      <index-column name="manager_name"/>
+      <index-column name="manager_id"/>
     </index>
     <vendor type="mysql">
       <parameter name="Engine" value="MyISAM"/>
@@ -53,10 +53,6 @@
     <index name="draft_idx">
       <index-column name="draft_id"/>
     </index>
-    <index name="player_idx">
-      <index-column name="first_name"/>
-      <index-column name="last_name"/>
-    </index>
     <vendor type="mysql">
       <parameter name="Engine" value="MyISAM"/>
     </vendor>
@@ -71,9 +67,6 @@
     <index name="league_idx">
       <index-column name="league" size="4"/>
     </index>
-    <index name="firstname_idx">
-      <index-column name="first_name"/>
-    </index>
     <vendor type="mysql">
       <parameter name="Engine" value="MyISAM"/>
     </vendor>
@@ -87,9 +80,6 @@
     <column name="was_drafted" phpName="WasDrafted" type="BOOLEAN" size="1" required="true"/>
     <index name="trade_id">
       <index-column name="trade_id"/>
-      <index-column name="player_id"/>
-      <index-column name="oldmanager_id"/>
-      <index-column name="newmanager_id"/>
     </index>
     <vendor type="mysql">
       <parameter name="Engine" value="MyISAM"/>

@@ -12,7 +12,9 @@
     "autoload": {
         "psr-4": {
             "PhpDraft\\Controllers\\": "api/Controllers",
-            "PhpDraft\\Domain\\Entities\\": "api/Domain/Entities",
+            "Base\\": "api/Domain/Entities/Base",
+            "": "api/Domain/Entities",
+            "Map\\": "api/Domain/Entities/Map",
             "PhpDraft\\Models\\": "api/Models"
         }
     }
