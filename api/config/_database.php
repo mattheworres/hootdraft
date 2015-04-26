@@ -6,5 +6,5 @@ if (!$app instanceof Silex\Application) {
 
 $app->register(new Propel\Silex\PropelServiceProvider(), array(
     'propel.config_file' => __DIR__.'/propel.php',
-    'propel.model_path' => __DIR__.'/api/Domain/Entities'
+    'propel.model_path' => '/../Domain/Entities'
   ));

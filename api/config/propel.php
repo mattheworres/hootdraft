@@ -1,43 +1,25 @@
 <?php
+$configuration_variables = array('DB_USER', 'DB_PASS');
 
-// if (!$app instanceof Silex\Application) {
-//   throw new Exception('Invalid application setup.');
-// }
+foreach($configuration_variables as $variable) {
+    define($variable, get_cfg_var("phpdraft.cfg.$variable"));
+}
 
-//TODO: Figure out if a service can be used if we need to re-use this pattern anywhere else:
-// $configuration_variables = array('DB_USER', 'DB_PASS');
-
-// foreach($configuration_variables as $variable) {
-//     define($variable, get_cfg_var("phpdraft.cfg.$variable"));
-// }
-
-//TODO: Add easier support for dynamic DSN changing depending on adapter choice.
-$propel_adapter = 'mysql';
-$server = 'localhost';
-$database_name = 'phpdraft';
-
-//CAUTION: DO NOT EDIT USERNAME/PWD BELOW! See README.md for directions on what to set in your php.ini file
-return [
-    'propel' => [
-        'database' => [
-            'connections' => [
-                'phpdraft' => [
-                    'adapter'    => $propel_adapter,
-                    'classname'  => 'Propel\\Runtime\\Connection\\ConnectionWrapper',
-                    'dsn'        => "$propel_adapter:host=$server;dbname=$database_name",
-                    'user'       => DB_USER,
-                    'password'   => DB_PASS,
-                    'attributes' => []
-                ]
-            ]
-        ],
-        'runtime' => [
-            'defaultConnection' => 'phpdraft',
-            'connections' => ['phpdraft']
-        ],
-        'generator' => [
-            'defaultConnection' => 'phpdraft',
-            'connections' => ['phpdraft']
-        ]
-    ]
-];
+$serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
+$serviceContainer->checkVersion('2.0.0-dev');
+$serviceContainer->setAdapterClass('phpdraft', 'mysql');
+$manager = new \Propel\Runtime\Connection\ConnectionManagerSingle();
+$manager->setConfiguration(array (
+  'classname' => 'Propel\\Runtime\\Connection\\ConnectionWrapper',
+  'dsn' => 'mysql:host=127.0.0.1;dbname=phpdraft',
+  //TODO: Uncomment!!
+  //'user' => DB_USER,
+  //'password' => DB_PASS,
+  'attributes' =>
+  array (
+    'ATTR_EMULATE_PREPARES' => false,
+  ),
+));
+$manager->setName('phpdraft');
+$serviceContainer->setConnectionManager('phpdraft', $manager);
+$serviceContainer->setDefaultDatasource('phpdraft');

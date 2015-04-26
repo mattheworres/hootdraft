@@ -13,7 +13,7 @@ Your managers will notify you once they make a selection, and you enter the draf
 
   - PHP 5.4+ installed
 
-  - SQL database compatible with Doctrine 2
+  - SQL database compatible with Propel 2
 
   - PHPMyAdmin or some other MySQL utility that allows import of large SQL dump files
 
@@ -23,8 +23,8 @@ Your managers will notify you once they make a selection, and you enter the draf
 
  1. Set the following variables in your PHP.ini:
 
-		phpdraft.cfg.DB_USER = ‘your_database_username’
-		phpdraft.cfg.DB_PASS = ‘your_database_password’
+	phpdraft.cfg.DB_USER = ‘your_database_username’
+	phpdraft.cfg.DB_PASS = ‘your_database_password’
 
  1. Unzip entire PHP Draft project to your local machine, and browse to that folder in your file explorer. 
 

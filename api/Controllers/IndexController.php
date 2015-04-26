@@ -10,7 +10,6 @@ class IndexController
 
 	public function Index() {
 		$drafts = \DraftQuery::create()->find();
-		
-		return $app->json($drafts);
+		return $drafts->toJSON();
 	}
 }
