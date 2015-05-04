@@ -1,9 +1,9 @@
 <?php
 
-use Base\UserLoginQuery as BaseUserLoginQuery;
+use Base\Users as BaseUsers;
 
 /**
- * Skeleton subclass for performing query and update operations on the 'user_login' table.
+ * Skeleton subclass for representing a row from the 'users' table.
  *
  *
  *
@@ -12,7 +12,7 @@ use Base\UserLoginQuery as BaseUserLoginQuery;
  * long as it does not already exist in the output directory.
  *
  */
-class UserLoginQuery extends BaseUserLoginQuery
+class Users extends BaseUsers
 {
 
 }

@@ -6,6 +6,9 @@ if (!$app instanceof Silex\Application) {
 
 //See api/config/propel.php for database settings
 
+//Provide the base URL for the API:
+$app['phpdraft.apiBaseUrl'] = 'http://localhost/phpdraft/api';
+
 //Enable or disable autocomplete on pick entry screen; DEFAULT: true
 $app['phpdraft.use_autocomplete'] = true;
 

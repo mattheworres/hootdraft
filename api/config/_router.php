@@ -8,9 +8,13 @@ if (!$app instanceof Silex\Application) {
 
 $app->register(new Silex\Provider\ServiceControllerServiceProvider());
 
-/* Index */
 $app['index.controller'] = $app->share(function() use ($app) {
   return new PhpDraft\Controllers\IndexController();
 });
 
+$app['admin.index.controller'] = $app->share(function() use($app) {
+  return new PhpDraft\Controllers\Admin\IndexController();
+});
+
 $app->get('/', "index.controller:Index");
+$app->get('/admin', "index.controller:Index");

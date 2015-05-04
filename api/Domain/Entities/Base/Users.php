@@ -2,10 +2,10 @@
 
 namespace Base;
 
-use \UserLoginQuery as ChildUserLoginQuery;
+use \UsersQuery as ChildUsersQuery;
 use \Exception;
 use \PDO;
-use Map\UserLoginTableMap;
+use Map\UsersTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -19,18 +19,18 @@ use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 
 /**
- * Base class that represents a row from the 'user_login' table.
+ * Base class that represents a row from the 'users' table.
  *
  *
  *
 * @package    propel.generator..Base
 */
-abstract class UserLogin implements ActiveRecordInterface
+abstract class Users implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Map\\UserLoginTableMap';
+    const TABLE_MAP = '\\Map\\UsersTableMap';
 
 
     /**
@@ -60,10 +60,10 @@ abstract class UserLogin implements ActiveRecordInterface
     protected $virtualColumns = array();
 
     /**
-     * The value for the userid field.
+     * The value for the id field.
      * @var        int
      */
-    protected $userid;
+    protected $id;
 
     /**
      * The value for the username field.
@@ -85,6 +85,12 @@ abstract class UserLogin implements ActiveRecordInterface
     protected $name;
 
     /**
+     * The value for the roles field.
+     * @var        string
+     */
+    protected $roles;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
@@ -104,7 +110,7 @@ abstract class UserLogin implements ActiveRecordInterface
     }
 
     /**
-     * Initializes internal state of Base\UserLogin object.
+     * Initializes internal state of Base\Users object.
      * @see applyDefaults()
      */
     public function __construct()
@@ -201,9 +207,9 @@ abstract class UserLogin implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>UserLogin</code> instance.  If
-     * <code>obj</code> is an instance of <code>UserLogin</code>, delegates to
-     * <code>equals(UserLogin)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>Users</code> instance.  If
+     * <code>obj</code> is an instance of <code>Users</code>, delegates to
+     * <code>equals(Users)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -269,7 +275,7 @@ abstract class UserLogin implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|UserLogin The current object, for fluid interface
+     * @return $this|Users The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -323,13 +329,13 @@ abstract class UserLogin implements ActiveRecordInterface
     }
 
     /**
-     * Get the [userid] column value.
+     * Get the [id] column value.
      *
      * @return int
      */
-    public function getUserid()
+    public function getid()
     {
-        return $this->userid;
+        return $this->id;
     }
 
     /**
@@ -337,7 +343,7 @@ abstract class UserLogin implements ActiveRecordInterface
      *
      * @return string
      */
-    public function getUsername()
+    public function getusername()
     {
         return $this->username;
     }
@@ -347,7 +353,7 @@ abstract class UserLogin implements ActiveRecordInterface
      *
      * @return string
      */
-    public function getPassword()
+    public function getpassword()
     {
         return $this->password;
     }
@@ -363,32 +369,42 @@ abstract class UserLogin implements ActiveRecordInterface
     }
 
     /**
-     * Set the value of [userid] column.
+     * Get the [roles] column value.
+     *
+     * @return string
+     */
+    public function getroles()
+    {
+        return $this->roles;
+    }
+
+    /**
+     * Set the value of [id] column.
      *
      * @param int $v new value
-     * @return $this|\UserLogin The current object (for fluent API support)
+     * @return $this|\Users The current object (for fluent API support)
      */
-    public function setUserid($v)
+    public function setid($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->userid !== $v) {
-            $this->userid = $v;
-            $this->modifiedColumns[UserLoginTableMap::COL_USERID] = true;
+        if ($this->id !== $v) {
+            $this->id = $v;
+            $this->modifiedColumns[UsersTableMap::COL_ID] = true;
         }
 
         return $this;
-    } // setUserid()
+    } // setid()
 
     /**
      * Set the value of [username] column.
      *
      * @param string $v new value
-     * @return $this|\UserLogin The current object (for fluent API support)
+     * @return $this|\Users The current object (for fluent API support)
      */
-    public function setUsername($v)
+    public function setusername($v)
     {
         if ($v !== null) {
             $v = (string) $v;
@@ -396,19 +412,19 @@ abstract class UserLogin implements ActiveRecordInterface
 
         if ($this->username !== $v) {
             $this->username = $v;
-            $this->modifiedColumns[UserLoginTableMap::COL_USERNAME] = true;
+            $this->modifiedColumns[UsersTableMap::COL_USERNAME] = true;
         }
 
         return $this;
-    } // setUsername()
+    } // setusername()
 
     /**
      * Set the value of [password] column.
      *
      * @param string $v new value
-     * @return $this|\UserLogin The current object (for fluent API support)
+     * @return $this|\Users The current object (for fluent API support)
      */
-    public function setPassword($v)
+    public function setpassword($v)
     {
         if ($v !== null) {
             $v = (string) $v;
@@ -416,17 +432,17 @@ abstract class UserLogin implements ActiveRecordInterface
 
         if ($this->password !== $v) {
             $this->password = $v;
-            $this->modifiedColumns[UserLoginTableMap::COL_PASSWORD] = true;
+            $this->modifiedColumns[UsersTableMap::COL_PASSWORD] = true;
         }
 
         return $this;
-    } // setPassword()
+    } // setpassword()
 
     /**
      * Set the value of [name] column.
      *
      * @param string $v new value
-     * @return $this|\UserLogin The current object (for fluent API support)
+     * @return $this|\Users The current object (for fluent API support)
      */
     public function setName($v)
     {
@@ -436,11 +452,31 @@ abstract class UserLogin implements ActiveRecordInterface
 
         if ($this->name !== $v) {
             $this->name = $v;
-            $this->modifiedColumns[UserLoginTableMap::COL_NAME] = true;
+            $this->modifiedColumns[UsersTableMap::COL_NAME] = true;
         }
 
         return $this;
     } // setName()
+
+    /**
+     * Set the value of [roles] column.
+     *
+     * @param string $v new value
+     * @return $this|\Users The current object (for fluent API support)
+     */
+    public function setroles($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->roles !== $v) {
+            $this->roles = $v;
+            $this->modifiedColumns[UsersTableMap::COL_ROLES] = true;
+        }
+
+        return $this;
+    } // setroles()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -482,17 +518,20 @@ abstract class UserLogin implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : UserLoginTableMap::translateFieldName('Userid', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->userid = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : UsersTableMap::translateFieldName('id', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : UserLoginTableMap::translateFieldName('Username', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : UsersTableMap::translateFieldName('username', TableMap::TYPE_PHPNAME, $indexType)];
             $this->username = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : UserLoginTableMap::translateFieldName('Password', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : UsersTableMap::translateFieldName('password', TableMap::TYPE_PHPNAME, $indexType)];
             $this->password = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : UserLoginTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : UsersTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
             $this->name = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : UsersTableMap::translateFieldName('roles', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->roles = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -501,10 +540,10 @@ abstract class UserLogin implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 4; // 4 = UserLoginTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = UsersTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\UserLogin'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\Users'), 0, $e);
         }
     }
 
@@ -546,13 +585,13 @@ abstract class UserLogin implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(UserLoginTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(UsersTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildUserLoginQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildUsersQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -571,8 +610,8 @@ abstract class UserLogin implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see UserLogin::setDeleted()
-     * @see UserLogin::isDeleted()
+     * @see Users::setDeleted()
+     * @see Users::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -581,11 +620,11 @@ abstract class UserLogin implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserLoginTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(UsersTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildUserLoginQuery::create()
+            $deleteQuery = ChildUsersQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -616,7 +655,7 @@ abstract class UserLogin implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserLoginTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(UsersTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -635,7 +674,7 @@ abstract class UserLogin implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                UserLoginTableMap::addInstanceToPool($this);
+                UsersTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -692,27 +731,30 @@ abstract class UserLogin implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[UserLoginTableMap::COL_USERID] = true;
-        if (null !== $this->userid) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . UserLoginTableMap::COL_USERID . ')');
+        $this->modifiedColumns[UsersTableMap::COL_ID] = true;
+        if (null !== $this->id) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . UsersTableMap::COL_ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(UserLoginTableMap::COL_USERID)) {
-            $modifiedColumns[':p' . $index++]  = 'UserID';
+        if ($this->isColumnModified(UsersTableMap::COL_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(UserLoginTableMap::COL_USERNAME)) {
-            $modifiedColumns[':p' . $index++]  = 'Username';
+        if ($this->isColumnModified(UsersTableMap::COL_USERNAME)) {
+            $modifiedColumns[':p' . $index++]  = 'username';
         }
-        if ($this->isColumnModified(UserLoginTableMap::COL_PASSWORD)) {
-            $modifiedColumns[':p' . $index++]  = 'Password';
+        if ($this->isColumnModified(UsersTableMap::COL_PASSWORD)) {
+            $modifiedColumns[':p' . $index++]  = 'password';
         }
-        if ($this->isColumnModified(UserLoginTableMap::COL_NAME)) {
+        if ($this->isColumnModified(UsersTableMap::COL_NAME)) {
             $modifiedColumns[':p' . $index++]  = 'Name';
+        }
+        if ($this->isColumnModified(UsersTableMap::COL_ROLES)) {
+            $modifiedColumns[':p' . $index++]  = 'roles';
         }
 
         $sql = sprintf(
-            'INSERT INTO user_login (%s) VALUES (%s)',
+            'INSERT INTO users (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -721,17 +763,20 @@ abstract class UserLogin implements ActiveRecordInterface
             $stmt = $con->prepare($sql);
             foreach ($modifiedColumns as $identifier => $columnName) {
                 switch ($columnName) {
-                    case 'UserID':
-                        $stmt->bindValue($identifier, $this->userid, PDO::PARAM_INT);
+                    case 'id':
+                        $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'Username':
+                    case 'username':
                         $stmt->bindValue($identifier, $this->username, PDO::PARAM_STR);
                         break;
-                    case 'Password':
+                    case 'password':
                         $stmt->bindValue($identifier, $this->password, PDO::PARAM_STR);
                         break;
                     case 'Name':
                         $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
+                        break;
+                    case 'roles':
+                        $stmt->bindValue($identifier, $this->roles, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -746,7 +791,7 @@ abstract class UserLogin implements ActiveRecordInterface
         } catch (Exception $e) {
             throw new PropelException('Unable to get autoincrement id.', 0, $e);
         }
-        $this->setUserid($pk);
+        $this->setid($pk);
 
         $this->setNew(false);
     }
@@ -779,7 +824,7 @@ abstract class UserLogin implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = UserLoginTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = UsersTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -796,16 +841,19 @@ abstract class UserLogin implements ActiveRecordInterface
     {
         switch ($pos) {
             case 0:
-                return $this->getUserid();
+                return $this->getid();
                 break;
             case 1:
-                return $this->getUsername();
+                return $this->getusername();
                 break;
             case 2:
-                return $this->getPassword();
+                return $this->getpassword();
                 break;
             case 3:
                 return $this->getName();
+                break;
+            case 4:
+                return $this->getroles();
                 break;
             default:
                 return null;
@@ -830,16 +878,17 @@ abstract class UserLogin implements ActiveRecordInterface
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
     {
 
-        if (isset($alreadyDumpedObjects['UserLogin'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['Users'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['UserLogin'][$this->hashCode()] = true;
-        $keys = UserLoginTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['Users'][$this->hashCode()] = true;
+        $keys = UsersTableMap::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getUserid(),
-            $keys[1] => $this->getUsername(),
-            $keys[2] => $this->getPassword(),
+            $keys[0] => $this->getid(),
+            $keys[1] => $this->getusername(),
+            $keys[2] => $this->getpassword(),
             $keys[3] => $this->getName(),
+            $keys[4] => $this->getroles(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -859,11 +908,11 @@ abstract class UserLogin implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\UserLogin
+     * @return $this|\Users
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = UserLoginTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = UsersTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -874,22 +923,25 @@ abstract class UserLogin implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\UserLogin
+     * @return $this|\Users
      */
     public function setByPosition($pos, $value)
     {
         switch ($pos) {
             case 0:
-                $this->setUserid($value);
+                $this->setid($value);
                 break;
             case 1:
-                $this->setUsername($value);
+                $this->setusername($value);
                 break;
             case 2:
-                $this->setPassword($value);
+                $this->setpassword($value);
                 break;
             case 3:
                 $this->setName($value);
+                break;
+            case 4:
+                $this->setroles($value);
                 break;
         } // switch()
 
@@ -915,19 +967,22 @@ abstract class UserLogin implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = UserLoginTableMap::getFieldNames($keyType);
+        $keys = UsersTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
-            $this->setUserid($arr[$keys[0]]);
+            $this->setid($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setUsername($arr[$keys[1]]);
+            $this->setusername($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setPassword($arr[$keys[2]]);
+            $this->setpassword($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
             $this->setName($arr[$keys[3]]);
+        }
+        if (array_key_exists($keys[4], $arr)) {
+            $this->setroles($arr[$keys[4]]);
         }
     }
 
@@ -948,7 +1003,7 @@ abstract class UserLogin implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\UserLogin The current object, for fluid interface
+     * @return $this|\Users The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -968,19 +1023,22 @@ abstract class UserLogin implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(UserLoginTableMap::DATABASE_NAME);
+        $criteria = new Criteria(UsersTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(UserLoginTableMap::COL_USERID)) {
-            $criteria->add(UserLoginTableMap::COL_USERID, $this->userid);
+        if ($this->isColumnModified(UsersTableMap::COL_ID)) {
+            $criteria->add(UsersTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(UserLoginTableMap::COL_USERNAME)) {
-            $criteria->add(UserLoginTableMap::COL_USERNAME, $this->username);
+        if ($this->isColumnModified(UsersTableMap::COL_USERNAME)) {
+            $criteria->add(UsersTableMap::COL_USERNAME, $this->username);
         }
-        if ($this->isColumnModified(UserLoginTableMap::COL_PASSWORD)) {
-            $criteria->add(UserLoginTableMap::COL_PASSWORD, $this->password);
+        if ($this->isColumnModified(UsersTableMap::COL_PASSWORD)) {
+            $criteria->add(UsersTableMap::COL_PASSWORD, $this->password);
         }
-        if ($this->isColumnModified(UserLoginTableMap::COL_NAME)) {
-            $criteria->add(UserLoginTableMap::COL_NAME, $this->name);
+        if ($this->isColumnModified(UsersTableMap::COL_NAME)) {
+            $criteria->add(UsersTableMap::COL_NAME, $this->name);
+        }
+        if ($this->isColumnModified(UsersTableMap::COL_ROLES)) {
+            $criteria->add(UsersTableMap::COL_ROLES, $this->roles);
         }
 
         return $criteria;
@@ -998,8 +1056,8 @@ abstract class UserLogin implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildUserLoginQuery::create();
-        $criteria->add(UserLoginTableMap::COL_USERID, $this->userid);
+        $criteria = ChildUsersQuery::create();
+        $criteria->add(UsersTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -1012,7 +1070,7 @@ abstract class UserLogin implements ActiveRecordInterface
      */
     public function hashCode()
     {
-        $validPk = null !== $this->getUserid();
+        $validPk = null !== $this->getid();
 
         $validPrimaryKeyFKs = 0;
         $primaryKeyFKs = [];
@@ -1032,18 +1090,18 @@ abstract class UserLogin implements ActiveRecordInterface
      */
     public function getPrimaryKey()
     {
-        return $this->getUserid();
+        return $this->getid();
     }
 
     /**
-     * Generic method to set the primary key (userid column).
+     * Generic method to set the primary key (id column).
      *
      * @param       int $key Primary key.
      * @return void
      */
     public function setPrimaryKey($key)
     {
-        $this->setUserid($key);
+        $this->setid($key);
     }
 
     /**
@@ -1052,7 +1110,7 @@ abstract class UserLogin implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-        return null === $this->getUserid();
+        return null === $this->getid();
     }
 
     /**
@@ -1061,19 +1119,20 @@ abstract class UserLogin implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \UserLogin (or compatible) type.
+     * @param      object $copyObj An object of \Users (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setUsername($this->getUsername());
-        $copyObj->setPassword($this->getPassword());
+        $copyObj->setusername($this->getusername());
+        $copyObj->setpassword($this->getpassword());
         $copyObj->setName($this->getName());
+        $copyObj->setroles($this->getroles());
         if ($makeNew) {
             $copyObj->setNew(true);
-            $copyObj->setUserid(NULL); // this is a auto-increment column, so set to default value
+            $copyObj->setid(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -1086,7 +1145,7 @@ abstract class UserLogin implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \UserLogin Clone of current object.
+     * @return \Users Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1106,10 +1165,11 @@ abstract class UserLogin implements ActiveRecordInterface
      */
     public function clear()
     {
-        $this->userid = null;
+        $this->id = null;
         $this->username = null;
         $this->password = null;
         $this->name = null;
+        $this->roles = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();
@@ -1140,7 +1200,7 @@ abstract class UserLogin implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(UserLoginTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(UsersTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**

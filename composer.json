@@ -4,14 +4,21 @@
         "silex/silex": "~1.2",
         "propel/propel": "2.0.*@dev",
         "propel/propel-service-provider": "2.*@dev",
-        "monolog/monolog": "~1.13"
+        "monolog/monolog": "~1.13",
+        "symfony/security": "~2.6",
+        "jdesrosiers/silex-cors-provider": "~0.1"
     },
     "require-dev": {
         "knplabs/console-service-provider": "1.0"
     },
     "autoload": {
         "psr-4": {
+            "PhpDraft\\": "api",
+            "PhpDraft\\Config\\": "api/config",
+            "PhpDraft\\Config\\Security\\": "api/config/Security",
             "PhpDraft\\Controllers\\": "api/Controllers",
+            "PhpDraft\\Controllers\\Admin\\": "api/Controllers/Admin",
+            "PhpDraft\\Controllers\\Commish\\": "api/Controllers/Commish",
             "Base\\": "api/Domain/Entities/Base",
             "": "api/Domain/Entities",
             "Map\\": "api/Domain/Entities/Map",

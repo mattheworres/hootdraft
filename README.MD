@@ -17,6 +17,18 @@ Your managers will notify you once they make a selection, and you enter the draf
 
   - PHPMyAdmin or some other MySQL utility that allows import of large SQL dump files
 
+  - Helpful: generate model classes with Propel (run within api folder):
+
+  `./propel model:build`
+
+  - Helpful: generate migrations from difference in schema (connects to DB and does a diff):
+
+  `./propel diff`
+
+  - Helpful: generate SQL from schema with Propel (run within api folder):
+
+  `./propel sql:build`
+
   - TODO - finish
 
 ##To install, follow these steps:
@@ -25,6 +37,7 @@ Your managers will notify you once they make a selection, and you enter the draf
 
 	phpdraft.cfg.DB_USER = ‘your_database_username’
 	phpdraft.cfg.DB_PASS = ‘your_database_password’
+
 
  1. Unzip entire PHP Draft project to your local machine, and browse to that folder in your file explorer. 
 

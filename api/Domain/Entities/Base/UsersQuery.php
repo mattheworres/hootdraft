@@ -2,11 +2,11 @@
 
 namespace Base;
 
-use \UserLogin as ChildUserLogin;
-use \UserLoginQuery as ChildUserLoginQuery;
+use \Users as ChildUsers;
+use \UsersQuery as ChildUsersQuery;
 use \Exception;
 use \PDO;
-use Map\UserLoginTableMap;
+use Map\UsersTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -15,78 +15,83 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 
 /**
- * Base class that represents a query for the 'user_login' table.
+ * Base class that represents a query for the 'users' table.
  *
  *
  *
- * @method     ChildUserLoginQuery orderByUserid($order = Criteria::ASC) Order by the UserID column
- * @method     ChildUserLoginQuery orderByUsername($order = Criteria::ASC) Order by the Username column
- * @method     ChildUserLoginQuery orderByPassword($order = Criteria::ASC) Order by the Password column
- * @method     ChildUserLoginQuery orderByName($order = Criteria::ASC) Order by the Name column
+ * @method     ChildUsersQuery orderByid($order = Criteria::ASC) Order by the id column
+ * @method     ChildUsersQuery orderByusername($order = Criteria::ASC) Order by the username column
+ * @method     ChildUsersQuery orderBypassword($order = Criteria::ASC) Order by the password column
+ * @method     ChildUsersQuery orderByName($order = Criteria::ASC) Order by the Name column
+ * @method     ChildUsersQuery orderByroles($order = Criteria::ASC) Order by the roles column
  *
- * @method     ChildUserLoginQuery groupByUserid() Group by the UserID column
- * @method     ChildUserLoginQuery groupByUsername() Group by the Username column
- * @method     ChildUserLoginQuery groupByPassword() Group by the Password column
- * @method     ChildUserLoginQuery groupByName() Group by the Name column
+ * @method     ChildUsersQuery groupByid() Group by the id column
+ * @method     ChildUsersQuery groupByusername() Group by the username column
+ * @method     ChildUsersQuery groupBypassword() Group by the password column
+ * @method     ChildUsersQuery groupByName() Group by the Name column
+ * @method     ChildUsersQuery groupByroles() Group by the roles column
  *
- * @method     ChildUserLoginQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
- * @method     ChildUserLoginQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
- * @method     ChildUserLoginQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ * @method     ChildUsersQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
+ * @method     ChildUsersQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
+ * @method     ChildUsersQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method     ChildUserLogin findOne(ConnectionInterface $con = null) Return the first ChildUserLogin matching the query
- * @method     ChildUserLogin findOneOrCreate(ConnectionInterface $con = null) Return the first ChildUserLogin matching the query, or a new ChildUserLogin object populated from the query conditions when no match is found
+ * @method     ChildUsers findOne(ConnectionInterface $con = null) Return the first ChildUsers matching the query
+ * @method     ChildUsers findOneOrCreate(ConnectionInterface $con = null) Return the first ChildUsers matching the query, or a new ChildUsers object populated from the query conditions when no match is found
  *
- * @method     ChildUserLogin findOneByUserid(int $UserID) Return the first ChildUserLogin filtered by the UserID column
- * @method     ChildUserLogin findOneByUsername(string $Username) Return the first ChildUserLogin filtered by the Username column
- * @method     ChildUserLogin findOneByPassword(string $Password) Return the first ChildUserLogin filtered by the Password column
- * @method     ChildUserLogin findOneByName(string $Name) Return the first ChildUserLogin filtered by the Name column *
+ * @method     ChildUsers findOneByid(int $id) Return the first ChildUsers filtered by the id column
+ * @method     ChildUsers findOneByusername(string $username) Return the first ChildUsers filtered by the username column
+ * @method     ChildUsers findOneBypassword(string $password) Return the first ChildUsers filtered by the password column
+ * @method     ChildUsers findOneByName(string $Name) Return the first ChildUsers filtered by the Name column
+ * @method     ChildUsers findOneByroles(string $roles) Return the first ChildUsers filtered by the roles column *
 
- * @method     ChildUserLogin requirePk($key, ConnectionInterface $con = null) Return the ChildUserLogin by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildUserLogin requireOne(ConnectionInterface $con = null) Return the first ChildUserLogin matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUsers requirePk($key, ConnectionInterface $con = null) Return the ChildUsers by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUsers requireOne(ConnectionInterface $con = null) Return the first ChildUsers matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
- * @method     ChildUserLogin requireOneByUserid(int $UserID) Return the first ChildUserLogin filtered by the UserID column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildUserLogin requireOneByUsername(string $Username) Return the first ChildUserLogin filtered by the Username column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildUserLogin requireOneByPassword(string $Password) Return the first ChildUserLogin filtered by the Password column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildUserLogin requireOneByName(string $Name) Return the first ChildUserLogin filtered by the Name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUsers requireOneByid(int $id) Return the first ChildUsers filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUsers requireOneByusername(string $username) Return the first ChildUsers filtered by the username column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUsers requireOneBypassword(string $password) Return the first ChildUsers filtered by the password column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUsers requireOneByName(string $Name) Return the first ChildUsers filtered by the Name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUsers requireOneByroles(string $roles) Return the first ChildUsers filtered by the roles column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
- * @method     ChildUserLogin[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildUserLogin objects based on current ModelCriteria
- * @method     ChildUserLogin[]|ObjectCollection findByUserid(int $UserID) Return ChildUserLogin objects filtered by the UserID column
- * @method     ChildUserLogin[]|ObjectCollection findByUsername(string $Username) Return ChildUserLogin objects filtered by the Username column
- * @method     ChildUserLogin[]|ObjectCollection findByPassword(string $Password) Return ChildUserLogin objects filtered by the Password column
- * @method     ChildUserLogin[]|ObjectCollection findByName(string $Name) Return ChildUserLogin objects filtered by the Name column
- * @method     ChildUserLogin[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
+ * @method     ChildUsers[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildUsers objects based on current ModelCriteria
+ * @method     ChildUsers[]|ObjectCollection findByid(int $id) Return ChildUsers objects filtered by the id column
+ * @method     ChildUsers[]|ObjectCollection findByusername(string $username) Return ChildUsers objects filtered by the username column
+ * @method     ChildUsers[]|ObjectCollection findBypassword(string $password) Return ChildUsers objects filtered by the password column
+ * @method     ChildUsers[]|ObjectCollection findByName(string $Name) Return ChildUsers objects filtered by the Name column
+ * @method     ChildUsers[]|ObjectCollection findByroles(string $roles) Return ChildUsers objects filtered by the roles column
+ * @method     ChildUsers[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
-abstract class UserLoginQuery extends ModelCriteria
+abstract class UsersQuery extends ModelCriteria
 {
     protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityNotFoundException';
 
     /**
-     * Initializes internal state of \Base\UserLoginQuery object.
+     * Initializes internal state of \Base\UsersQuery object.
      *
      * @param     string $dbName The database name
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'phpdraft', $modelName = '\\UserLogin', $modelAlias = null)
+    public function __construct($dbName = 'phpdraft', $modelName = '\\Users', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }
 
     /**
-     * Returns a new ChildUserLoginQuery object.
+     * Returns a new ChildUsersQuery object.
      *
      * @param     string $modelAlias The alias of a model in the query
      * @param     Criteria $criteria Optional Criteria to build the query from
      *
-     * @return ChildUserLoginQuery
+     * @return ChildUsersQuery
      */
     public static function create($modelAlias = null, Criteria $criteria = null)
     {
-        if ($criteria instanceof ChildUserLoginQuery) {
+        if ($criteria instanceof ChildUsersQuery) {
             return $criteria;
         }
-        $query = new ChildUserLoginQuery();
+        $query = new ChildUsersQuery();
         if (null !== $modelAlias) {
             $query->setModelAlias($modelAlias);
         }
@@ -109,19 +114,19 @@ abstract class UserLoginQuery extends ModelCriteria
      * @param mixed $key Primary key to use for the query
      * @param ConnectionInterface $con an optional connection object
      *
-     * @return ChildUserLogin|array|mixed the result, formatted by the current formatter
+     * @return ChildUsers|array|mixed the result, formatted by the current formatter
      */
     public function findPk($key, ConnectionInterface $con = null)
     {
         if ($key === null) {
             return null;
         }
-        if ((null !== ($obj = UserLoginTableMap::getInstanceFromPool((string) $key))) && !$this->formatter) {
+        if ((null !== ($obj = UsersTableMap::getInstanceFromPool((string) $key))) && !$this->formatter) {
             // the object is already in the instance pool
             return $obj;
         }
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(UserLoginTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(UsersTableMap::DATABASE_NAME);
         }
         $this->basePreSelect($con);
         if ($this->formatter || $this->modelAlias || $this->with || $this->select
@@ -142,11 +147,11 @@ abstract class UserLoginQuery extends ModelCriteria
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return ChildUserLogin A model object, or null if the key is not found
+     * @return ChildUsers A model object, or null if the key is not found
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT UserID, Username, Password, Name FROM user_login WHERE UserID = :p0';
+        $sql = 'SELECT id, username, password, Name, roles FROM users WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -157,10 +162,10 @@ abstract class UserLoginQuery extends ModelCriteria
         }
         $obj = null;
         if ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
-            /** @var ChildUserLogin $obj */
-            $obj = new ChildUserLogin();
+            /** @var ChildUsers $obj */
+            $obj = new ChildUsers();
             $obj->hydrate($row);
-            UserLoginTableMap::addInstanceToPool($obj, (string) $key);
+            UsersTableMap::addInstanceToPool($obj, (string) $key);
         }
         $stmt->closeCursor();
 
@@ -173,7 +178,7 @@ abstract class UserLoginQuery extends ModelCriteria
      * @param     mixed $key Primary key to use for the query
      * @param     ConnectionInterface $con A connection object
      *
-     * @return ChildUserLogin|array|mixed the result, formatted by the current formatter
+     * @return ChildUsers|array|mixed the result, formatted by the current formatter
      */
     protected function findPkComplex($key, ConnectionInterface $con)
     {
@@ -215,12 +220,12 @@ abstract class UserLoginQuery extends ModelCriteria
      *
      * @param     mixed $key Primary key to use for the query
      *
-     * @return $this|ChildUserLoginQuery The current query, for fluid interface
+     * @return $this|ChildUsersQuery The current query, for fluid interface
      */
     public function filterByPrimaryKey($key)
     {
 
-        return $this->addUsingAlias(UserLoginTableMap::COL_USERID, $key, Criteria::EQUAL);
+        return $this->addUsingAlias(UsersTableMap::COL_ID, $key, Criteria::EQUAL);
     }
 
     /**
@@ -228,42 +233,42 @@ abstract class UserLoginQuery extends ModelCriteria
      *
      * @param     array $keys The list of primary key to use for the query
      *
-     * @return $this|ChildUserLoginQuery The current query, for fluid interface
+     * @return $this|ChildUsersQuery The current query, for fluid interface
      */
     public function filterByPrimaryKeys($keys)
     {
 
-        return $this->addUsingAlias(UserLoginTableMap::COL_USERID, $keys, Criteria::IN);
+        return $this->addUsingAlias(UsersTableMap::COL_ID, $keys, Criteria::IN);
     }
 
     /**
-     * Filter the query on the UserID column
+     * Filter the query on the id column
      *
      * Example usage:
      * <code>
-     * $query->filterByUserid(1234); // WHERE UserID = 1234
-     * $query->filterByUserid(array(12, 34)); // WHERE UserID IN (12, 34)
-     * $query->filterByUserid(array('min' => 12)); // WHERE UserID > 12
+     * $query->filterByid(1234); // WHERE id = 1234
+     * $query->filterByid(array(12, 34)); // WHERE id IN (12, 34)
+     * $query->filterByid(array('min' => 12)); // WHERE id > 12
      * </code>
      *
-     * @param     mixed $userid The value to use as filter.
+     * @param     mixed $id The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildUserLoginQuery The current query, for fluid interface
+     * @return $this|ChildUsersQuery The current query, for fluid interface
      */
-    public function filterByUserid($userid = null, $comparison = null)
+    public function filterByid($id = null, $comparison = null)
     {
-        if (is_array($userid)) {
+        if (is_array($id)) {
             $useMinMax = false;
-            if (isset($userid['min'])) {
-                $this->addUsingAlias(UserLoginTableMap::COL_USERID, $userid['min'], Criteria::GREATER_EQUAL);
+            if (isset($id['min'])) {
+                $this->addUsingAlias(UsersTableMap::COL_ID, $id['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($userid['max'])) {
-                $this->addUsingAlias(UserLoginTableMap::COL_USERID, $userid['max'], Criteria::LESS_EQUAL);
+            if (isset($id['max'])) {
+                $this->addUsingAlias(UsersTableMap::COL_ID, $id['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -274,25 +279,25 @@ abstract class UserLoginQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(UserLoginTableMap::COL_USERID, $userid, $comparison);
+        return $this->addUsingAlias(UsersTableMap::COL_ID, $id, $comparison);
     }
 
     /**
-     * Filter the query on the Username column
+     * Filter the query on the username column
      *
      * Example usage:
      * <code>
-     * $query->filterByUsername('fooValue');   // WHERE Username = 'fooValue'
-     * $query->filterByUsername('%fooValue%'); // WHERE Username LIKE '%fooValue%'
+     * $query->filterByusername('fooValue');   // WHERE username = 'fooValue'
+     * $query->filterByusername('%fooValue%'); // WHERE username LIKE '%fooValue%'
      * </code>
      *
      * @param     string $username The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildUserLoginQuery The current query, for fluid interface
+     * @return $this|ChildUsersQuery The current query, for fluid interface
      */
-    public function filterByUsername($username = null, $comparison = null)
+    public function filterByusername($username = null, $comparison = null)
     {
         if (null === $comparison) {
             if (is_array($username)) {
@@ -303,25 +308,25 @@ abstract class UserLoginQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(UserLoginTableMap::COL_USERNAME, $username, $comparison);
+        return $this->addUsingAlias(UsersTableMap::COL_USERNAME, $username, $comparison);
     }
 
     /**
-     * Filter the query on the Password column
+     * Filter the query on the password column
      *
      * Example usage:
      * <code>
-     * $query->filterByPassword('fooValue');   // WHERE Password = 'fooValue'
-     * $query->filterByPassword('%fooValue%'); // WHERE Password LIKE '%fooValue%'
+     * $query->filterBypassword('fooValue');   // WHERE password = 'fooValue'
+     * $query->filterBypassword('%fooValue%'); // WHERE password LIKE '%fooValue%'
      * </code>
      *
      * @param     string $password The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildUserLoginQuery The current query, for fluid interface
+     * @return $this|ChildUsersQuery The current query, for fluid interface
      */
-    public function filterByPassword($password = null, $comparison = null)
+    public function filterBypassword($password = null, $comparison = null)
     {
         if (null === $comparison) {
             if (is_array($password)) {
@@ -332,7 +337,7 @@ abstract class UserLoginQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(UserLoginTableMap::COL_PASSWORD, $password, $comparison);
+        return $this->addUsingAlias(UsersTableMap::COL_PASSWORD, $password, $comparison);
     }
 
     /**
@@ -348,7 +353,7 @@ abstract class UserLoginQuery extends ModelCriteria
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildUserLoginQuery The current query, for fluid interface
+     * @return $this|ChildUsersQuery The current query, for fluid interface
      */
     public function filterByName($name = null, $comparison = null)
     {
@@ -361,27 +366,56 @@ abstract class UserLoginQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(UserLoginTableMap::COL_NAME, $name, $comparison);
+        return $this->addUsingAlias(UsersTableMap::COL_NAME, $name, $comparison);
+    }
+
+    /**
+     * Filter the query on the roles column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByroles('fooValue');   // WHERE roles = 'fooValue'
+     * $query->filterByroles('%fooValue%'); // WHERE roles LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $roles The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildUsersQuery The current query, for fluid interface
+     */
+    public function filterByroles($roles = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($roles)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $roles)) {
+                $roles = str_replace('*', '%', $roles);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(UsersTableMap::COL_ROLES, $roles, $comparison);
     }
 
     /**
      * Exclude object from result
      *
-     * @param   ChildUserLogin $userLogin Object to remove from the list of results
+     * @param   ChildUsers $users Object to remove from the list of results
      *
-     * @return $this|ChildUserLoginQuery The current query, for fluid interface
+     * @return $this|ChildUsersQuery The current query, for fluid interface
      */
-    public function prune($userLogin = null)
+    public function prune($users = null)
     {
-        if ($userLogin) {
-            $this->addUsingAlias(UserLoginTableMap::COL_USERID, $userLogin->getUserid(), Criteria::NOT_EQUAL);
+        if ($users) {
+            $this->addUsingAlias(UsersTableMap::COL_ID, $users->getid(), Criteria::NOT_EQUAL);
         }
 
         return $this;
     }
 
     /**
-     * Deletes all rows from the user_login table.
+     * Deletes all rows from the users table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
@@ -389,7 +423,7 @@ abstract class UserLoginQuery extends ModelCriteria
     public function doDeleteAll(ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserLoginTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(UsersTableMap::DATABASE_NAME);
         }
 
         // use transaction because $criteria could contain info
@@ -400,8 +434,8 @@ abstract class UserLoginQuery extends ModelCriteria
             // Because this db requires some delete cascade/set null emulation, we have to
             // clear the cached instance *after* the emulation has happened (since
             // instances get re-added by the select statement contained therein).
-            UserLoginTableMap::clearInstancePool();
-            UserLoginTableMap::clearRelatedInstancePool();
+            UsersTableMap::clearInstancePool();
+            UsersTableMap::clearRelatedInstancePool();
 
             return $affectedRows;
         });
@@ -419,26 +453,26 @@ abstract class UserLoginQuery extends ModelCriteria
     public function delete(ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserLoginTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(UsersTableMap::DATABASE_NAME);
         }
 
         $criteria = $this;
 
         // Set the correct dbName
-        $criteria->setDbName(UserLoginTableMap::DATABASE_NAME);
+        $criteria->setDbName(UsersTableMap::DATABASE_NAME);
 
         // use transaction because $criteria could contain info
         // for more than one table or we could emulating ON DELETE CASCADE, etc.
         return $con->transaction(function () use ($con, $criteria) {
             $affectedRows = 0; // initialize var to track total num of affected rows
 
-            UserLoginTableMap::removeInstanceFromPool($criteria);
+            UsersTableMap::removeInstanceFromPool($criteria);
 
             $affectedRows += ModelCriteria::delete($con);
-            UserLoginTableMap::clearRelatedInstancePool();
+            UsersTableMap::clearRelatedInstancePool();
 
             return $affectedRows;
         });
     }
 
-} // UserLoginQuery
+} // UsersQuery

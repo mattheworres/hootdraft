@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpDraft\Controllers;
+namespace PhpDraft\Controllers\Admin;
 
 use \Silex\Application;
 

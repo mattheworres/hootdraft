@@ -104,13 +104,14 @@
       <parameter name="Engine" value="MyISAM"/>
     </vendor>
   </table>
-  <table name="user_login" idMethod="native" phpName="UserLogin">
-    <column name="UserID" phpName="Userid" type="INTEGER" size="10" sqlType="int(10) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="Username" phpName="Username" type="LONGVARCHAR" required="true"/>
-    <column name="Password" phpName="Password" type="LONGVARCHAR" required="true"/>
+  <table name="users" idMethod="native" phpName="Users">
+    <column name="id" phpName="id" type="INTEGER" size="11" sqlType="int(11) unsigned" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="username" phpName="username" type="VARCHAR" sqlType="VARCHAR(100)" required="true"/>
+    <column name="password" phpName="password" type="VARCHAR" sqlType="VARCHAR(255)" required="true"/>
     <column name="Name" phpName="Name" type="VARCHAR" size="15" required="true" defaultValue=""/>
-    <unique name="UserID">
-      <unique-column name="UserID"/>
+    <column name="roles" phpName="roles" type="VARCHAR" sqlType="VARCHAR(255)" required="true"/>
+    <unique name="id">
+      <unique-column name="id"/>
     </unique>
     <vendor type="mysql">
       <parameter name="Engine" value="MyISAM"/>
