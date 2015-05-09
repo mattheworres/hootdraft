@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "dc64ece1027550c9d74e53eb91672a12",
+    "hash": "a085eb56be90219a16ba01218f51e838",
     "packages": [
         {
             "name": "jdesrosiers/silex-cors-provider",
@@ -181,12 +181,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/propelorm/Propel2.git",
-                "reference": "e6e18a2431910fbb14dbce3cf97354cffa7eb3d0"
+                "reference": "4968909779b239360cf52d30036c63452f94859b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/propelorm/Propel2/zipball/e6e18a2431910fbb14dbce3cf97354cffa7eb3d0",
-                "reference": "e6e18a2431910fbb14dbce3cf97354cffa7eb3d0",
+                "url": "https://api.github.com/repos/propelorm/Propel2/zipball/4968909779b239360cf52d30036c63452f94859b",
+                "reference": "4968909779b239360cf52d30036c63452f94859b",
                 "shasum": ""
             },
             "require": {
@@ -238,7 +238,7 @@
                 "orm",
                 "persistence"
             ],
-            "time": "2015-03-23 13:06:17"
+            "time": "2015-05-01 21:21:08"
         },
         {
             "name": "propel/propel-service-provider",
@@ -329,46 +329,46 @@
         },
         {
             "name": "silex/silex",
-            "version": "v1.2.3",
+            "version": "v1.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/silexphp/Silex.git",
-                "reference": "57c98ea0cb47664096094912920951fde1f4631a"
+                "reference": "417deb440eecf776df868d8760d0b7d8e2c4e6d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/silexphp/Silex/zipball/57c98ea0cb47664096094912920951fde1f4631a",
-                "reference": "57c98ea0cb47664096094912920951fde1f4631a",
+                "url": "https://api.github.com/repos/silexphp/Silex/zipball/417deb440eecf776df868d8760d0b7d8e2c4e6d1",
+                "reference": "417deb440eecf776df868d8760d0b7d8e2c4e6d1",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
                 "pimple/pimple": "~1.0",
-                "symfony/event-dispatcher": "~2.3,<3.0",
-                "symfony/http-foundation": "~2.3,<3.0",
-                "symfony/http-kernel": "~2.3,<3.0",
-                "symfony/routing": "~2.3,<3.0"
+                "symfony/event-dispatcher": "~2.3,<2.7",
+                "symfony/http-foundation": "~2.3,<2.7",
+                "symfony/http-kernel": "~2.3,<2.7",
+                "symfony/routing": "~2.3,<2.7"
             },
             "require-dev": {
                 "doctrine/dbal": "~2.2",
                 "monolog/monolog": "~1.4,>=1.4.1",
                 "swiftmailer/swiftmailer": "5.*",
-                "symfony/browser-kit": "~2.3,<3.0",
-                "symfony/config": "~2.3,<3.0",
-                "symfony/css-selector": "~2.3,<3.0",
-                "symfony/debug": "~2.3,<3.0",
-                "symfony/dom-crawler": "~2.3,<3.0",
-                "symfony/finder": "~2.3,<3.0",
-                "symfony/form": "~2.3,<3.0",
-                "symfony/locale": "~2.3,<3.0",
-                "symfony/monolog-bridge": "~2.3,<3.0",
-                "symfony/options-resolver": "~2.3,<3.0",
-                "symfony/process": "~2.3,<3.0",
-                "symfony/security": "~2.3,<3.0",
-                "symfony/serializer": "~2.3,<3.0",
-                "symfony/translation": "~2.3,<3.0",
-                "symfony/twig-bridge": "~2.3,<3.0",
-                "symfony/validator": "~2.3,<3.0",
+                "symfony/browser-kit": "~2.3,<2.7",
+                "symfony/config": "~2.3,<2.7",
+                "symfony/css-selector": "~2.3,<2.7",
+                "symfony/debug": "~2.3,<2.7",
+                "symfony/dom-crawler": "~2.3,<2.7",
+                "symfony/finder": "~2.3,<2.7",
+                "symfony/form": "~2.3,<2.7",
+                "symfony/locale": "~2.3,<2.7",
+                "symfony/monolog-bridge": "~2.3,<2.7",
+                "symfony/options-resolver": "~2.3,<2.7",
+                "symfony/process": "~2.3,<2.7",
+                "symfony/security": "~2.3,<2.7",
+                "symfony/serializer": "~2.3,<2.7",
+                "symfony/translation": "~2.3,<2.7",
+                "symfony/twig-bridge": "~2.3,<2.7",
+                "symfony/validator": "~2.3,<2.7",
                 "twig/twig": ">=1.8.0,<2.0-dev"
             },
             "suggest": {
@@ -407,7 +407,7 @@
             "keywords": [
                 "microframework"
             ],
-            "time": "2015-01-20 16:45:58"
+            "time": "2015-04-11 12:43:27"
         },
         {
             "name": "symfony/config",
@@ -1196,6 +1196,47 @@
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
             "time": "2015-03-30 15:54:10"
+        },
+        {
+            "name": "wukka/nonce",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wukka/Nonce.git",
+                "reference": "07b82de6a9be0e98eaf640573c95ef586378be4d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wukka/Nonce/zipball/07b82de6a9be0e98eaf640573c95ef586378be4d",
+                "reference": "07b82de6a9be0e98eaf640573c95ef586378be4d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "wukka/test": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Wukka\\Nonce": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "John Loehrer",
+                    "email": "72squared@gmail.com",
+                    "homepage": "http://www.linkedin.com/pub/john-loehrer/10/439/9b6",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Nonce - token generator to prevent unauthorized access.",
+            "time": "2013-08-06 17:01:08"
         }
     ],
     "packages-dev": [
@@ -1246,7 +1287,8 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "propel/propel": 20,
-        "propel/propel-service-provider": 20
+        "propel/propel-service-provider": 20,
+        "wukka/nonce": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

@@ -5,3 +5,4 @@ images/Thumbs.db
 images/icons/Thumbs.db
 apiy/config/logs
 vendor
+api/config/security_cache

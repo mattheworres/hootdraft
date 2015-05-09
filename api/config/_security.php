@@ -41,9 +41,9 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
     'security.user_provider.default' => $app->share(function() use ($app) {
       return new UserProvider();
     }),
-    'security.entry_point.default' => $app->share(function() use ($app) {
-      return new AuthenticationEntryPoint();
-    }),
+    // 'security.entry_point' => $app->share(function() use ($app) {
+    //   return new AuthenticationEntryPoint();
+    // }),
     'security.firewalls' => array(
       'admin' => array(
           'pattern' => '^/admin',
@@ -54,7 +54,7 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
       ),
       'commish' => array(
           'pattern' => '^/commish',
-          //'form' => array('login_path' => '/login', 'check_path' => '/commish/login_check'),
+          //'wsse' => true,
           // 'users' => $app->share(function() use ($app) {
           //   return new UserProvider();
           // })

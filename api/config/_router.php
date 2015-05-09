@@ -17,4 +17,6 @@ $app['admin.index.controller'] = $app->share(function() use($app) {
 });
 
 $app->get('/', "index.controller:Index");
+$app->get('/pwd', "index.controller:GetHash");
+
 $app->get('/admin', "index.controller:Index");

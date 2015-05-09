@@ -13,13 +13,14 @@ class UserProvider implements UserProviderInterface
   {
     // $stmt = $this->conn->executeQuery('SELECT * FROM users WHERE username = ?', array(strtolower($username)));
     // if (!$user = $stmt->fetch()) {
-    $userQuery = \UserQuery::create()->filterByUsername($username)->findOne();
+    
+    $userQuery = \UsersQuery::create()->filterByUsername($username)->findOne();
 
     if(!$userQuery) {
       throw new UsernameNotFoundException(sprintf('Username "%s" does not exist.', $username));
     }
 
-    return new User($userQuery['username'], $userQuery['password'], explode(',', $userQuery['roles']), true, true, true, true);
+    return new PhpDraftSecurityUser($userQuery->getUsername(), $userQuery->getPassword(), '', explode(',', $userQuery->getRoles()));
   }
 
   public function refreshUser(UserInterface $user)
@@ -33,6 +34,8 @@ class UserProvider implements UserProviderInterface
 
   public function supportsClass($class)
   {
-    return $class === 'Symfony\Component\Security\Core\User\User';
+    return $this->userRepository->getClassName() === $class
+      || is_subclass_of($class, $this->userRepository->getClassName());
+    //return $class === 'Symfony\Component\Security\Core\User\User';
   }
 }

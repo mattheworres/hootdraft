@@ -6,7 +6,8 @@
         "propel/propel-service-provider": "2.*@dev",
         "monolog/monolog": "~1.13",
         "symfony/security": "~2.6",
-        "jdesrosiers/silex-cors-provider": "~0.1"
+        "jdesrosiers/silex-cors-provider": "~0.1",
+        "wukka/nonce": "dev-master"
     },
     "require-dev": {
         "knplabs/console-service-provider": "1.0"
