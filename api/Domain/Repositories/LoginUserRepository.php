@@ -92,6 +92,17 @@ class LoginUserRepository {
     return $username_stmt->rowCount() == 0;
   }
 
+  public function UsernameExists($username) {
+    $username_stmt = $this->app['db']->prepare("SELECT username FROM users WHERE username = ? LIMIT 1");
+    $username_stmt->bindParam(1, strtolower($username));
+
+    if (!$username_stmt->execute()) {
+      throw new Exception(sprintf('Username "%s" is invalid', $username));
+    }
+
+    return $username_stmt->rowCount() == 1;
+  }
+
   public function EmailIsUnique($email) {
     $email_stmt = $this->app['db']->prepare("SELECT email FROM users WHERE email = ? LIMIT 1");
     $email_stmt->bindParam(1, strtolower($email));

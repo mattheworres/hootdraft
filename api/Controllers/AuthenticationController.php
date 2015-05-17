@@ -84,10 +84,41 @@ class AuthenticationController
   }
 
   public function LostPassword(Application $app, Request $request) {
-    //Starts lost pwd process - set verification key & send email
+    $validity = $app['phpdraft.LoginUserValidator']->IsForgottenPasswordUserValid($request);
+
+    if(!$validity->success) {
+      return $app->json($validity, Response::HTTP_BAD_REQUEST);
+    }
+
+    $username = $request->get('_username');
+
+    $user = $app['phpdraft.LoginUserRepository']->Load($username);
+
+    $response = $app['phpdraft.LoginUserService']->BeginForgottenPasswordProcess($user);
+
+    $responseType = ($response->success == true ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST);
+
+    return $app->json($response, $responseType);
   }
 
   public function ResetPassword(Application $app, Request $request) {
-    //Finishes lost pwd process - given proper verification key, reset the user's password.
+    $validity = $app['phpdraft.LoginUserValidator']->IsResetPasswordRequestValid($request);
+
+    if(!$validity->success) {
+      return $app->json($validity, Response::HTTP_BAD_REQUEST);
+    }
+
+    $username = urldecode($request->get('_username'));
+    $password = $request->get('_password');
+
+    $user = $app['phpdraft.LoginUserRepository']->Load($username);
+
+    $user->password = $password;
+
+    $response = $app['phpdraft.LoginUserService']->ResetPassword($user);
+
+    $responseType = ($response->success == true ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST);
+
+    return $app->json($response, $responseType);
   }
 }

@@ -22,7 +22,7 @@ class LoginUserService {
     $user->password = $this->app['security.encoder.digest']->encodePassword($user->password, $user->salt);
     $user->roles = array('ROLE_MANAGER');
 
-    $response = new PhpDraftResponse();  
+    $response = new PhpDraftResponse();
 
     try {
       $this->app['db']->beginTransaction();
@@ -71,11 +71,87 @@ class LoginUserService {
     return new PhpDraftResponse(true);
   }
 
-  //TODO: Update to point to main frontend instead of the API link:
+  public function BeginForgottenPasswordProcess(LoginUser $user) {
+    $user->verificationKey = $this->app['phpdraft.SaltService']->GenerateSalt();
+
+    $response = new PhpDraftResponse();
+
+    try {
+      $this->app['db']->beginTransaction();  
+
+      $user = $this->app['phpdraft.LoginUserRepository']->Update($user);
+
+      $message = new MailMessage();
+
+      $message->to_addresses = array (
+        $user->email => $user->name
+      );
+
+      $message->subject = "PHPDraft: Reset Password Request";
+      $message->is_html = true;
+      $verificationLink = $this->_CreateForgottenPasswordLink($user);
+      $message->body = sprintf("A password recovery request has been made for the username <strong>%s</strong><br/><br/>\n\n
+        
+        To reset your password, visit the following address in your web browser:<br/><br/>\n\n
+
+        <a href=\"%s\">%s</a><br/>\n
+        (For non-HTML enabled email:)<br/>\n
+        %s<br/><br/>\n\n
+
+        If you remember your old password, no longer want to change it, or didn't request a password reset - you can ignore this email.
+      ", $user->username, $verificationLink, $verificationLink, $verificationLink);
+
+      $this->app['phpdraft.EmailService']->SendMail($message);
+
+      $response->success = true;
+
+      $this->app['db']->commit();
+    }catch(\Exception $e) {
+      $this->app['db']->rollback();
+
+      $response->success = false;
+      $response->errors = array($e->getMessage());
+    }
+
+    return $response;
+  }
+
+  public function ResetPassword(LoginUser $user) {
+    $user->verificationKey = null;
+    $user->salt = $this->app['phpdraft.SaltService']->GenerateSalt();
+    $user->password = $this->app['security.encoder.digest']->encodePassword($user->password, $user->salt);
+
+    $response = new PhpDraftResponse();
+
+    try {
+      $this->app['db']->beginTransaction();
+
+      $user = $this->app['phpdraft.LoginUserRepository']->Update($user);
+
+      $response->success = true;
+
+      $this->app['db']->commit();
+    }catch(\Exception $e) {
+      $this->app['db']->rollback();
+
+      $response->success = false;
+      $response->errors = array($e->getMessage());
+    }
+
+    return $response;
+  }
+
   private function _CreateEmailVerificationLink(LoginUser $user) {
     $encodedUsername = urlencode($user->username);
     $encodedToken = urlencode($user->verificationKey);
 
-    return sprintf("%s/verify?_username=%s&_verificationToken=%s", $this->app['phpdraft.apiBaseUrl'], $encodedUsername, $encodedToken);
+    return sprintf("%s/verify?_username=%s&_verificationToken=%s", $this->app['phpdraft.appBaseUrl'], $encodedUsername, $encodedToken);
+  }
+
+  private function _CreateForgottenPasswordLink(LoginUser $user) {
+    $encodedUsername = urlencode($user->username);
+    $encodedToken = urlencode($user->verificationKey);
+
+    return sprintf("%s/resetPassword?_username=%s&_verificationToken=%s", $this->app['phpdraft.appBaseUrl'], $encodedUsername, $encodedToken);
   }
 }

@@ -114,4 +114,73 @@ class LoginUserValidator {
 
     return new PhpDraftResponse($valid, $errors);
   }
+
+  public function IsForgottenPasswordUserValid(Request $request) {
+    $valid = true;
+    $errors = array();
+
+    $username = $request->get('_username');
+
+    if(!$this->app['phpdraft.LoginUserRepository']->UsernameExists($username)) {
+      $errors[] = "Username invalid.";
+      $valid = false;
+    }
+
+    return new PhpDraftResponse($valid, $errors);
+  }
+
+  public function IsResetPasswordRequestValid(Request $request) {
+    $valid = true;
+    $errors = array();
+
+    $username = urldecode($request->get('_username'));
+    $password = $request->get('_password');
+    $confirmPassword = $request->get('_confirmPassword');
+    $verificationToken = $this->app['phpdraft.SaltService']->UrlDecodeSalt($request->get('_verificationToken'));
+
+    if(empty($username)
+      || empty($password)
+      || empty($confirmPassword)
+      || empty($verificationToken)) {
+      $errors[] = "One or more missing fields.";
+      $valid = false;
+    }
+
+    if(strlen($verificationToken) != 16) {
+      $errors[] = "Verification token invalid.";
+      $valid = false;
+    }
+
+    if(strlen($username) < 3 || strlen($username) > 100) {
+      $errors[] = "Username invalid.";
+      $valid = false;
+    }
+
+    if(!$this->app['phpdraft.LoginUserRepository']->VerificationMatches($username, $verificationToken)) {
+      $errors[] = "Verification token invalid.";
+      $valid = false;
+    }
+
+    if(!StringUtils::equals($password, $confirmPassword)) {
+      $errors[] = "Password values do not match.";
+      $valid = false;
+    }
+
+    if(strlen($password) < 8) {
+      $errors[] = "Password is below minimum length.";
+      $valid = false;
+    }
+
+    if(strlen($password) > 255) {
+      $errors[] = "Password is above maximum length.";
+      $valid = false;
+    }
+
+    if(!$this->app['phpdraft.LoginUserRepository']->UsernameExists($username)) {
+      $errors[] = "Invalid username.";
+      $valid = false;
+    }
+
+    return new PhpDraftResponse($valid, $errors);
+  }
 }
