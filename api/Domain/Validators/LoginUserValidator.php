@@ -5,7 +5,7 @@ namespace PhpDraft\Domain\Validators;
 use \Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use PhpDraft\Domain\Entities\LoginUser;
-use PhpDraft\Domain\Entities\PhpDraftResponse;
+use PhpDraft\Domain\Models\PhpDraftResponse;
 use Symfony\Component\Security\Core\Util\StringUtils;
 use Egulias\EmailValidator\EmailValidator;
 
@@ -20,112 +20,98 @@ class LoginUserValidator {
     $valid = true;
     $errors = array();
 
-    if(empty($request['_username'])
-      || empty($request['_password'])
-      || empty($request['_confirmPassword'])
-      || empty($request['_email'])
-      || !StringUtils::equals($request['_password'], $request['_confirmPassword'])) {
+    $username = $request->get('_username');
+    $password = $request->get('_password');
+    $confirmPassword = $request->get('_confirmPassword');
+    $email = $request->get('_email');
+    $name = $request->get('_name');
+
+    if(empty($username)
+      || empty($password)
+      || empty($confirmPassword)
+      || empty($email)
+      || empty($name)) {
       $errors[] = "One or more missing fields.";
       $valid = false;
     }
 
-    if(strlen($request['_username']) < 3) {
+    if(!StringUtils::equals($password, $confirmPassword)) {
+      $errors[] = "Password values do not match.";
+      $valid = false;
+    }
+
+    if(strlen($username) < 3) {
       $errors[] = "Username is below minimum length.";
       $valid = false;
     }
 
-    if(strlen($request['_username']) > 100) {
+    if(strlen($username) > 100) {
       $errors[] = "Username is above maximum length.";
       $valid = false;
     }
 
-    if(strlen($request['_password']) < 8) {
+    if(strlen($password) < 8) {
       $errors[] = "Password is below minimum length.";
       $valid = false;
     }
 
-    if(strlen($request['_password']) > 255) {
+    if(strlen($password) > 255) {
       $errors[] = "Password is above maximum length.";
       $valid = false;
     }
 
-    if(strlen($request['_email']) > 255) {
+    if(strlen($email) > 255) {
       $errors[] = "Email is above maximum length.";
       $valid = false;
     }
 
-    $validator = new EmailValidator;
-
-    if (!$validator->isValid($request['_email'])) {
-      $errors[] "Email is invalid.";
+    if(strlen($name) > 100) {
+      $errors[] = "Name is above maximum length";
       $valid = false;
     }
 
-    $username_stmt = $this->app['db']->prepare("SELECT username FROM users WHERE username = ? LIMIT 1");
-    $username_stmt->bindParam(1, strtolower($request['_username']));
+    $emailValidator = new EmailValidator;
 
-    if (!$username_stmt->execute()) {
-      throw new Exception(sprintf('Username "%s" is invalid', $request['_username']));
+    if (!$emailValidator->isValid($email)) {
+      $errors[] = "Email is invalid.";
+      $valid = false;
     }
 
-    if($username_stmt->rowCount() != 0) {
+    if(!$this->app['phpdraft.LoginUserRepository']->UsernameIsUnique($username)) {
       $errors[] = "Username already taken.";
       $valid = false;
     }
 
-    $email_stmt = $this->app['db']->prepare("SELECT email FROM users WHERE email = ? LIMIT 1");
-    $email_stmt->bindParam(1, strtolower($request['_email']));
-
-    if(!$email_stmt->execute()) {
-      throw new Exception(sprintf('Email %s is invalid', $request['_email']));
-    }
-
-    if($username_stmt->rowCount() != 0) {
+    if(!$this->app['phpdraft.LoginUserRepository']->EmailIsUnique($email)) {
       $errors[] = "Email already registered.";
       $valid = false;
     }
 
-    $response = new PhpDraftResponse();
-
-    $response->success = $valid;
-    $response->errors = $errors;
-
-    return $response;
+    return new PhpDraftResponse($valid, $errors);
   }
 
   public function IsVerificationValid(Request $request) {
     $valid = true;
     $errors = array();
 
-    if(strlen($request['_verificationToken']) != 16) {
+    $username = urldecode($request->get('_username'));
+    $verificationToken = $this->app['phpdraft.SaltService']->UrlDecodeSalt($request->get('_verificationToken'));
+
+    if(strlen($verificationToken) != 16) {
       $errors[] = "Verification token invalid.";
       $valid = false;
     }
 
-    if(strlen($request['_username']) < 3 || strlen($request['_username']) > 100) {
+    if(strlen($username) < 3 || strlen($username) > 100) {
       $errors[] = "Username invalid.";
       $valid = false;
     }
 
-    $username_stmt = $this->app['db']->prepare("SELECT username, verifiationKey FROM users WHERE username = ? AND verificationKey = ? LIMIT 1");
-    $username_stmt->bindParam(1, strtolower($request['_username']));
-    $username_stmt->bindParam(2, $request['_verificationToken']);
-
-    if(!$username_stmt->execute()) {
-      $errors[] = "Verification invalid.";
+    if(!$this->app['phpdraft.LoginUserRepository']->VerificationMatches($username, $verificationToken)) {
+      $errors[] = "Verification token invalid.";
       $valid = false;
     }
 
-    if($username_stmt->rowCount() != 0) {
-      $errors[] = "Verification invalid.";
-      $valid = false;
-    }
-
-    $response = new PhpDraftResponse();
-
-    $response->success = $valid;
-    $response->errors = $errors;
-
-    return $response;
+    return new PhpDraftResponse($valid, $errors);
   }
 }

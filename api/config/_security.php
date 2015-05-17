@@ -25,7 +25,7 @@ $app['security.jwt'] = [
 
 $app['security.firewalls'] = array(
   'login' => [
-    'pattern' => 'login|register|oauth|forgotpassword',
+    'pattern' => 'login|register|verify|lostPassword|resetPassword',
     'anonymous' => true,
   ],
   'admin' => array(

@@ -9,6 +9,10 @@ $app['phpdraft.SaltService'] = function() use ($app) {
   return new \PhpDraft\Config\Security\SaltService();
 };
 
+$app['phpdraft.EmailService'] = function() use ($app) {
+  return new \PhpDraft\Domain\Services\EmailService($app);
+};
+
 $app['phpdraft.LoginUserService'] = function () use ($app) {
   return new \PhpDraft\Domain\Services\LoginUserService($app);
 };
@@ -21,4 +25,4 @@ $app['phpdraft.LoginUserRepository'] = function () use ($app) {
 //Validators
 $app['phpdraft.LoginUserValidator'] = function () use($app) {
   return new \PhpDraft\Domain\Validators\LoginUserValidator($app);
-}
+};

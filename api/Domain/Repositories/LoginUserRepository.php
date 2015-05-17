@@ -40,7 +40,7 @@ class LoginUserRepository {
     $insert_stmt->bindParam(3, $user->password);
     $insert_stmt->bindParam(4, $user->salt);
     $insert_stmt->bindParam(5, $user->name);
-    $insert_stmt->bindParam(6, explode(',', $user->roles));
+    $insert_stmt->bindParam(6, implode(',', $user->roles));
     $insert_stmt->bindParam(7, $user->verificationKey);
 
     if (!$insert_stmt->execute()) {
@@ -53,10 +53,65 @@ class LoginUserRepository {
   }
 
   public function Update(LoginUser $user) {
-    //TODO: Immplement.
+    $update_stmt = $this->app['db']->prepare("UPDATE users 
+        SET username = ?, email = ?, password = ?, salt = ?,
+          name = ?, roles = ?, verificationKey = ?, enabled = ?
+        WHERE id = ?");
+
+    $update_stmt->bindParam(1, $user->username);
+    $update_stmt->bindParam(2, $user->email);
+    $update_stmt->bindParam(3, $user->password);
+    $update_stmt->bindParam(4, $user->salt);
+    $update_stmt->bindParam(5, $user->name);
+    $update_stmt->bindParam(6, $user->roles);
+    $update_stmt->bindParam(7, $user->verificationKey);
+    $update_stmt->bindParam(8, $user->enabled);
+    $update_stmt->bindParam(9, $user->id);
+
+    $result = $update_stmt->execute();
+
+    if ($result == false) {
+      throw new Exception("Unable to update user.");
+    }
+
+    return $user;
   }
 
   public function Delete(LoginUser $user) {
     //TODO: Find use case & implement
+  }
+
+  public function UsernameIsUnique($username) {
+    $username_stmt = $this->app['db']->prepare("SELECT username FROM users WHERE username = ? LIMIT 1");
+    $username_stmt->bindParam(1, strtolower($username));
+
+    if (!$username_stmt->execute()) {
+      throw new Exception(sprintf('Username "%s" is invalid', $username));
+    }
+
+    return $username_stmt->rowCount() == 0;
+  }
+
+  public function EmailIsUnique($email) {
+    $email_stmt = $this->app['db']->prepare("SELECT email FROM users WHERE email = ? LIMIT 1");
+    $email_stmt->bindParam(1, strtolower($email));
+
+    if(!$email_stmt->execute()) {
+      throw new Exception(sprintf('Email %s is invalid', $email));
+    }
+
+    return $email_stmt->rowCount() == 0;
+  }
+
+  public function VerificationMatches($username, $verificationKey) {
+    $verification_stmt = $this->app['db']->prepare("SELECT username, verificationKey FROM users WHERE username = ? AND verificationKey = ? LIMIT 1");
+    $verification_stmt->bindParam(1, strtolower($username));
+    $verification_stmt->bindParam(2, $verificationKey);
+
+    if(!$verification_stmt->execute()) {
+      throw new Exception('Verification is invalid.');
+    }
+
+    return $verification_stmt->rowCount() == 1;
   }
 }

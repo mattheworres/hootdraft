@@ -4,7 +4,7 @@ require_once __DIR__.'/../../vendor/autoload.php';
 
 $app = new Silex\Application();
 
-$configuration_variables = array('DB_USER', 'DB_PASS', 'AUTH_KEY');
+$configuration_variables = array('DB_USER', 'DB_PASS', 'AUTH_KEY', 'MAIL_USER', 'MAIL_PASS');
 
 foreach($configuration_variables as $variable) {
   define($variable, get_cfg_var("phpdraft.cfg.$variable")); 

@@ -12,7 +12,7 @@ CREATE TABLE `users`
     `email` VARCHAR(255) NOT NULL,
     `password` VARCHAR(255) NOT NULL,
     `salt` VARCHAR(16) NOT NULL,
-    `name` VARCHAR(15) DEFAULT '' NOT NULL,
+    `name` VARCHAR(100) NOT NULL,
     `roles` VARCHAR(255) NOT NULL,
     `verificationKey` VARCHAR(16) NULL,
     `creationTime` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP

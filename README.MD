@@ -17,17 +17,12 @@ Your managers will notify you once they make a selection, and you enter the draf
 
   - PHPMyAdmin or some other MySQL utility that allows import of large SQL dump files
 
-  - Helpful: generate model classes with Propel (run within api folder):
+  - Helpful: install mailcatcher locally to run a "fake" SMTP server:
 
-  `./propel model:build`
+  `sudo gem install mailcatcher`
+  `mailcatcher`
 
-  - Helpful: generate migrations from difference in schema (connects to DB and does a diff):
-
-  `./propel diff`
-
-  - Helpful: generate SQL from schema with Propel (run within api folder):
-
-  `./propel sql:build`
+  - Then, view http://localhost:1080 (server hit in PHP via smtp://localhost:1025)
 
   - TODO - finish
 
@@ -37,6 +32,9 @@ Your managers will notify you once they make a selection, and you enter the draf
 
 	phpdraft.cfg.DB_USER = ‘your_database_username’
 	phpdraft.cfg.DB_PASS = ‘your_database_password’
+  phpdraft.cfg.AUTH_KEY = 'a_random_but_secure_key_used_for_authenticating_users'
+  phpdraft.cfg.MAIL_USER = ‘your.mail@user.com’
+  phpdraft.cfg.MAIL_PASS = ‘your_mail_password’
 
 
  1. Unzip entire PHP Draft project to your local machine, and browse to that folder in your file explorer. 

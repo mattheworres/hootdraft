@@ -6,9 +6,12 @@ use \Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use PhpDraft\Domain\Entities\LoginUser;
 
 class AuthenticationController
 {
+  //See Commish->Index for permissions check
+
   public function Login(Application $app, Request $request) {
     $vars = json_decode($request->getContent(), true);
     $username = $request->get('_username');
@@ -69,7 +72,9 @@ class AuthenticationController
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
-    $user = $app['phpdraft.LoginUserRepository']->Load($request['_username']);
+    $username = urldecode($request->get('_username'));
+
+    $user = $app['phpdraft.LoginUserRepository']->Load($username);
 
     $response = $app['phpdraft.LoginUserService']->VerifyUser($user);
 
