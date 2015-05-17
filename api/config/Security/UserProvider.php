@@ -1,26 +1,43 @@
 <?php
 namespace PhpDraft\Config\Security;
 
+use Silex\Application;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+use PhpDraft\Domain\Entities\LoginUser;
  
 class UserProvider implements UserProviderInterface
 {
+  private $app;
+
+  public function __construct(Application $app) {
+    $this->app = $app;
+  }
+
   public function loadUserByUsername($username)
   {
-    // $stmt = $this->conn->executeQuery('SELECT * FROM users WHERE username = ?', array(strtolower($username)));
-    // if (!$user = $stmt->fetch()) {
-    
-    $userQuery = \UsersQuery::create()->filterByUsername($username)->findOne();
+    //TODO: Use LoginUserRepository
+    $user = new LoginUser();
+    $user_stmt = $this->app['db']->prepare("SELECT * FROM users WHERE username = ? LIMIT 1");
+    $user_stmt->setFetchMode(\PDO::FETCH_INTO, $user);
+    $user_stmt->bindParam(1, $username);
 
-    if(!$userQuery) {
+    if (!$user_stmt->execute())
       throw new UsernameNotFoundException(sprintf('Username "%s" does not exist.', $username));
-    }
 
-    return new PhpDraftSecurityUser($userQuery->getUsername(), $userQuery->getPassword(), '', explode(',', $userQuery->getRoles()));
+    if (!$user_stmt->fetch())
+      throw new UsernameNotFoundException(sprintf('Username "%s" does not exist.', $username));
+
+    return new PhpDraftSecurityUser($user->username,
+      $user->email,
+      $user->password, 
+      $user->salt, 
+      explode(',', $user->roles), 
+      $user->enabled, 
+      $user->verificationKey);
   }
 
   public function refreshUser(UserInterface $user)

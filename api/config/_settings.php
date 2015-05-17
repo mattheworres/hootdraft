@@ -9,6 +9,10 @@ if (!$app instanceof Silex\Application) {
 //Provide the base URL for the API:
 $app['phpdraft.apiBaseUrl'] = 'http://localhost/phpdraft/api';
 
+$app['phpdraft.database_name'] = 'phpdraft';
+
+$app['phpdraft.database_host'] = 'localhost';
+
 //Enable or disable autocomplete on pick entry screen; DEFAULT: true
 $app['phpdraft.use_autocomplete'] = true;
 

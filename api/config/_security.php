@@ -2,68 +2,60 @@
 
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
-use PhpDraft\Config\Security\WsseProvider;
-use PhpDraft\Config\Security\WsseListener;
-//use PhpDraft\Config\Security\WsseFactory;
 use PhpDraft\Config\Security\UserProvider;
 use PhpDraft\Config\Security\AuthenticationEntryPoint;
-use JDesrosiers\Silex\Provider\CorsServiceProvider;
+//use JDesrosiers\Silex\Provider\CorsServiceProvider;
 
 if (!$app instanceof Silex\Application) {
   throw new Exception('Invalid application setup.');
 }
 
-$app['security.authentication_listener.factory.wsse'] = $app->protect(function ($name, $options) use ($app) {
-    // define the authentication provider object
-    $app['security.authentication_provider.'.$name.'.wsse'] = $app->share(function () use ($app) {
-        return new WsseProvider($app['security.user_provider.default'], __DIR__.'/security_cache');
-    });
+$app['users'] = function () use ($app) {
+  return new UserProvider($app);
+};
 
-    // define the authentication listener object
-    $app['security.authentication_listener.'.$name.'.wsse'] = $app->share(function () use ($app) {
-        return new WsseListener($app['security'], $app['security.authentication_manager']);
-    });
+$app['security.jwt'] = [
+    'secret_key' => AUTH_KEY,
+    'life_time'  => 86400,
+    'algorithm'  => ['HS256'],
+    'options'    => [
+        'header_name' => 'X-Access-Token'
+    ]
+];
 
-    return array(
-        // the authentication provider id
-        'security.authentication_provider.'.$name.'.wsse',
-        // the authentication listener id
-        'security.authentication_listener.'.$name.'.wsse',
-        // the entry point id
-        null,
-        // the position of the listener in the stack
-        'pre_auth'
-    );
-});
-
-$app->register(new Silex\Provider\SecurityServiceProvider(), array(
-    //Two secured firewalls: one for /commish (all commissioner role level actions) and /admin (all sitewide admin level actions)
-    'security.user_provider.default' => $app->share(function() use ($app) {
-      return new UserProvider();
-    }),
-    // 'security.entry_point' => $app->share(function() use ($app) {
-    //   return new AuthenticationEntryPoint();
-    // }),
-    'security.firewalls' => array(
-      'admin' => array(
-          'pattern' => '^/admin',
-          'wsse' => true,
-          // 'users' => $app->share(function() use ($app) {
-          //   return new UserProvider();
-          // }),
-      ),
-      'commish' => array(
-          'pattern' => '^/commish',
-          //'wsse' => true,
-          // 'users' => $app->share(function() use ($app) {
-          //   return new UserProvider();
-          // })
-      ),
-    ),
-    'security.role_hierarchy' => array(
-      'ROLE_ADMIN' => array('ROLE_COMMISSIONER', 'ROLE_MANAGER'),
+$app['security.firewalls'] = array(
+  'login' => [
+    'pattern' => 'login|register|oauth|forgotpassword',
+    'anonymous' => true,
+  ],
+  'admin' => array(
+    'pattern' => '^/admin',
+    'logout' => array('logout_path' => '/logout'),
+    'users' => $app['users'],
+    'jwt' => array(
+        'use_forward' => true,
+        'require_previous_session' => false,
+        'stateless' => true,
     )
-));
+  ),
+  'commish' => array(
+    'pattern' => '^/commish',
+    'logout' => array('logout_path' => '/logout'),
+    'users' => $app['users'],
+    'jwt' => array(
+        'use_forward' => true,
+        'require_previous_session' => false,
+        'stateless' => true,
+    )
+  )
+);
+
+$app['security.role_hierarchy'] = array(
+  'ROLE_ADMIN' => array('ROLE_MANAGER'),
+);
+
+$app->register(new Silex\Provider\SecurityServiceProvider());
+$app->register(new Silex\Provider\SecurityJWTServiceProvider());
 
 //Uncomment until we can verify WSSE auth is working on localhost
 // $app->register(new CorsServiceProvider(), array(
