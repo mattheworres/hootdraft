@@ -21,10 +21,28 @@ class LoginUserRepository {
     $load_stmt->bindParam(1, strtolower($username));
 
     if (!$load_stmt->execute())
-      throw new UsernameNotFoundException(sprintf('Username "%s" does not exist.', $username));
+      throw new \Exception(sprintf('Username "%s" does not exist.', $username));
 
     if (!$load_stmt->fetch())
-      throw new UsernameNotFoundException(sprintf('Username "%s" does not exist.', $username));
+      throw new \Exception(sprintf('Username "%s" does not exist.', $username));
+
+    return $user;
+  }
+
+  public function LoadById($id) {
+    $user = new LoginUser();
+
+    $id = (int)$id;
+
+    $load_stmt = $this->app['db']->prepare("SELECT * FROM users WHERE id = ? LIMIT 1");
+    $load_stmt->setFetchMode(\PDO::FETCH_INTO, $user);
+    $load_stmt->bindParam(1, $id);
+
+    if (!$load_stmt->execute())
+      throw new \Exception(sprintf('User #%s does not exist.', $id));
+
+    if (!$load_stmt->fetch())
+      throw new \Exception(sprintf('User #%s does not exist.', $id));
 
     return $user;
   }
@@ -44,7 +62,7 @@ class LoginUserRepository {
     $insert_stmt->bindParam(7, $user->verificationKey);
 
     if (!$insert_stmt->execute()) {
-      throw new Exception("Unable to create user.");
+      throw new \Exception("Unable to create user.");
     }
 
     $user->id = (int) $this->app['db']->lastInsertId();
@@ -71,7 +89,7 @@ class LoginUserRepository {
     $result = $update_stmt->execute();
 
     if ($result == false) {
-      throw new Exception("Unable to update user.");
+      throw new \Exception("Unable to update user.");
     }
 
     return $user;
@@ -86,7 +104,7 @@ class LoginUserRepository {
     $username_stmt->bindParam(1, strtolower($username));
 
     if (!$username_stmt->execute()) {
-      throw new Exception(sprintf('Username "%s" is invalid', $username));
+      throw new \Exception(sprintf('Username "%s" is invalid', $username));
     }
 
     return $username_stmt->rowCount() == 0;
@@ -97,7 +115,7 @@ class LoginUserRepository {
     $username_stmt->bindParam(1, strtolower($username));
 
     if (!$username_stmt->execute()) {
-      throw new Exception(sprintf('Username "%s" is invalid', $username));
+      throw new \Exception(sprintf('Username "%s" is invalid', $username));
     }
 
     return $username_stmt->rowCount() == 1;
@@ -108,7 +126,7 @@ class LoginUserRepository {
     $email_stmt->bindParam(1, strtolower($email));
 
     if(!$email_stmt->execute()) {
-      throw new Exception(sprintf('Email %s is invalid', $email));
+      throw new \Exception(sprintf('Email %s is invalid', $email));
     }
 
     return $email_stmt->rowCount() == 0;
@@ -120,7 +138,7 @@ class LoginUserRepository {
     $verification_stmt->bindParam(2, $verificationKey);
 
     if(!$verification_stmt->execute()) {
-      throw new Exception('Verification is invalid.');
+      throw new \Exception('Verification is invalid.');
     }
 
     return $verification_stmt->rowCount() == 1;

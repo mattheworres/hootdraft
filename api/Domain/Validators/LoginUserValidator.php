@@ -183,4 +183,78 @@ class LoginUserValidator {
 
     return new PhpDraftResponse($valid, $errors);
   }
+
+  public function IsUserProfileUpdateValid(Request $request) {
+    $valid = true;
+    $errors = array();
+
+    $id = (int)$request->get('_id');
+    $email = strtolower($request->get('_email'));
+    $password = $request->get('_password');
+    $newPassword = $request->get('_newPassword');
+    $newConfirmedPassword = $request->get('_newConfirmedPassword');
+    $name = $request->get('_name');
+
+    $user = $this->app['phpdraft.LoginUserRepository']->LoadById($id);
+    $currentUser = $this->app['phpdraft.LoginUserService']->GetCurrentUser();
+
+    if($id == 0 || empty($user) || $user->id != $currentUser->id) {
+      $valid = false;
+      $errors[] = "Invalid user.";
+
+      //Because we need to compare new & old values, we need a valid user record to proceed with vaidation.
+      return new PhpDraftResponse($valid, $errors);
+    }
+
+    //Password required to make any changes
+    if(empty($password) || !$this->app['security.encoder.digest']->isPasswordValid($user->password, $password, $user->salt)) {
+      $errors[] = "Incorrect password entered.";
+      $valid = false;
+    }
+
+    //Need to verify new email
+    if(!empty($email) && !StringUtils::equals($email, $user->email)) {
+      if(strlen($email) > 255) {
+        $errors[] = "Email is above maximum length.";
+        $valid = false;
+      }
+
+      $emailValidator = new EmailValidator;
+
+      if (!$emailValidator->isValid($email)) {
+        $errors[] = "Email is invalid.";
+        $valid = false;
+      }
+
+      if(!$this->app['phpdraft.LoginUserRepository']->EmailIsUnique($email)) {
+        $errors[] = "Email already registered.";
+        $valid = false;
+      }
+    }
+
+    //Need to verify new password, ensure old password is correct
+    if(!empty($newPassword)) {
+      if(strlen($newPassword) < 8) {
+        $errors[] = "New password is below minimum length.";
+        $valid = false;
+      }
+
+      if(strlen($newPassword) > 255) {
+        $errors[] = "New password is above maximum length.";
+        $valid = false;
+      }
+
+      if(!StringUtils::equals($newPassword, $newConfirmedPassword)) {
+        $errors[] = "New password values do not match.";
+        $valid = false;
+      }
+    }
+
+    if(strlen($name) > 100) {
+      $errors[] = "Name is above maximum length";
+      $valid = false;
+    }
+
+    return new PhpDraftResponse($valid, $errors);
+  }
 }

@@ -22,6 +22,10 @@ $app['commish.index.controller'] = function() {
   return new PhpDraft\Controllers\Commish\IndexController();
 };
 
+$app['commish.profile.controller'] = function() {
+  return new PhpDraft\Controllers\Commish\UserProfileController();
+};
+
 $app->post('/login', 'authentication.controller:Login');
 $app->post('/register', 'authentication.controller:Register');
 $app->post('/verify', 'authentication.controller:VerifyAccount');
@@ -33,3 +37,5 @@ $app->get('/', "index.controller:Index");
 $app->get('/admin', "admin.index.controller:Index");
 
 $app->get('/commish', "commish.index.controller:Index");
+$app->get('/commish/profile', "commish.profile.controller:Get");
+$app->put('/commish/profile', "commish.profile.controller:Put");
