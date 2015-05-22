@@ -22,6 +22,10 @@ $app['phpdraft.LoginUserRepository'] = function () use ($app) {
   return new \PhpDraft\Domain\Repositories\LoginUserRepository($app);
 };
 
+$app['phpdraft.DraftRepository'] = function () use ($app) {
+  return new \PhpDraft\Domain\Repositories\DraftRepository($app);
+};
+
 //Validators
 $app['phpdraft.LoginUserValidator'] = function () use($app) {
   return new \PhpDraft\Domain\Validators\LoginUserValidator($app);

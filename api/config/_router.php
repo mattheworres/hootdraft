@@ -14,6 +14,10 @@ $app['index.controller'] = function() {
   return new PhpDraft\Controllers\IndexController();
 };
 
+$app['draft.controller'] = function() {
+  return new PhpDraft\Controllers\DraftController();
+};
+
 $app['admin.index.controller'] = function() {
   return new PhpDraft\Controllers\Admin\IndexController();
 };
@@ -31,6 +35,9 @@ $app->post('/register', 'authentication.controller:Register');
 $app->post('/verify', 'authentication.controller:VerifyAccount');
 $app->post('/lostPassword', 'authentication.controller:LostPassword');
 $app->post('/resetPassword', 'authentication.controller:ResetPassword');
+
+$app->get('/drafts', 'draft.controller:GetAll');
+$app->get('/draft/{id}', 'draft.controller:Get');
 
 $app->get('/', "index.controller:Index");
 
