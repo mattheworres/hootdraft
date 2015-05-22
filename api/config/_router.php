@@ -18,6 +18,10 @@ $app['draft.controller'] = function() {
   return new PhpDraft\Controllers\DraftController();
 };
 
+$app['manager.controller'] = function() {
+  return new PhpDraft\Controllers\ManagerController();
+};
+
 $app['admin.index.controller'] = function() {
   return new PhpDraft\Controllers\Admin\IndexController();
 };
@@ -38,6 +42,8 @@ $app->post('/resetPassword', 'authentication.controller:ResetPassword');
 
 $app->get('/drafts', 'draft.controller:GetAll');
 $app->get('/draft/{id}', 'draft.controller:Get');
+
+$app->get('/draft/{draft_id}/managers', 'manager.controller:GetAll');
 
 $app->get('/', "index.controller:Index");
 
