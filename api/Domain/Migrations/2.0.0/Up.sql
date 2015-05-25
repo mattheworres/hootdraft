@@ -20,7 +20,14 @@ CREATE TABLE `users`
     UNIQUE INDEX `id` (`id`)
 ) ENGINE=MyISAM;
 
+ALTER TABLE `managers` DROP COLUMN `manager_email`;
+
+ALTER TABLE `draft` ADD `commish_id` INT(11) NOT NULL AFTER `draft_id`;
+
+# Run this for existing drafts once you create your admin user, then enter that user ID below:
+UPDATE `draft` SET `commish_id` = 16 WHERE `commish_id` = 0;
+
+
+
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
-
-ALTER TABLE `managers` DROP COLUMN `manager_email`;

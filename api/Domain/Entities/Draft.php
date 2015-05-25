@@ -5,11 +5,19 @@ namespace PhpDraft\Domain\Entities;
  * Represents a PHPDraft "draft" object, which is the parent object.
  *
  * A draft has many managers, and managers have many players (picks).
+ * @property bool $draft_visible True if the draft is publicly visible, false otherwise
+ * @property string $commish_name Name of the owning commissioner. Comes as an outer join with users.
+ * @property array $sports_teams An array of all of the teams in the pro sport. Capitalized abbreviation is key, full name is value.
+ * @property array $sports_positions An array of all the positions in the pro sport. Capitalized abbreviation is key, full name is value.
+ * @property array $sports_colors An array of all the colors used for each position in the draft. Capitalized position abbreviation is key, hex color string is value (with # prepended)
  */
 class Draft {
 
   /** @var int $draft_id The unique identifier for this draft */
   public $draft_id;
+
+  /** @var int $manager_id The unique identifier for the commissioner that owns this draft */
+  public $commish_id;
 
   /** @var string $draft_name The string identifier for this draft */
   public $draft_name;
@@ -43,15 +51,6 @@ class Draft {
 
   /** @var int $draft_current_pick */
   public $draft_current_pick;
-
-  /** @var array $sports_teams An array of all of the teams in the pro sport. Capitalized abbreviation is key, full name is value. */
-  public $sports_teams;
-
-  /** @var array $sports_positions An array of all the positions in the pro sport. Capitalized abbreviation is key, full name is value. */
-  public $sports_positions;
-
-  /** @var array $sports_colors An array of all the colors used for each position in the draft. Capitalized position abbreviation is key, hex color string is value (with # prepended) */
-  public $sports_colors;
 
   public function __construct() {
     //Leaving this here in case any init is needed on new drafts.

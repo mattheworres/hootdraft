@@ -14,16 +14,25 @@ class DraftController {
       throw new \Exception("Unable to load draft.");
     }
 
-    $password = $request->get('password');
+    //Need to put it in headers so the client can easily add it to all requests (similar to token)
+    $password = $request->headers->get($app['phpdraft.draft_password'], '');
 
-    $draft = $app['phpdraft.DraftRepository']->GetPublicDraft($draft_id, $password);
+    $draft = $app['phpdraft.DraftRepository']->GetPublicDraft($request, $draft_id, $password);
 
     return $app->json($draft);
   }
 
-  public function GetAll(Application $app) {
+  public function GetAll(Application $app, Request $request) {
     //TODO: Add paging for datatables
-    $drafts = $app['phpdraft.DraftRepository']->GetPublicDrafts();
+    $drafts = $app['phpdraft.DraftRepository']->GetPublicDrafts($request);
+
+    return $app->json($drafts);
+  }
+
+  public function GetAllByCommish(Application $app, Request $request) {
+    $commish_id = $request->get('commissionerId');
+
+    $drafts = $app['phpdraft.DraftRepository']->GetPublicDraftsByCommish($request, $commish_id);
 
     return $app->json($drafts);
   }

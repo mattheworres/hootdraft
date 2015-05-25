@@ -198,7 +198,7 @@ class LoginUserValidator {
     $user = $this->app['phpdraft.LoginUserRepository']->LoadById($id);
     $currentUser = $this->app['phpdraft.LoginUserService']->GetCurrentUser();
 
-    if($id == 0 || empty($user) || $user->id != $currentUser->id) {
+    if(empty($currentUser) || $id == 0 || empty($user) || $user->id != $currentUser->id) {
       $valid = false;
       $errors[] = "Invalid user.";
 

@@ -16,10 +16,10 @@ $app['users'] = function () use ($app) {
 
 $app['security.jwt'] = [
     'secret_key' => AUTH_KEY,
-    'life_time'  => 86400,
+    'life_time'  => $app['phpdraft.auth_seconds'],
     'algorithm'  => ['HS256'],
     'options'    => [
-        'header_name' => 'X-Access-Token'
+        'header_name' => $app['phpdraft.auth_token']
     ]
 ];
 
@@ -51,7 +51,7 @@ $app['security.firewalls'] = array(
 );
 
 $app['security.role_hierarchy'] = array(
-  'ROLE_ADMIN' => array('ROLE_MANAGER'),
+  'ROLE_ADMIN' => array('ROLE_COMMISH'),
 );
 
 $app->register(new Silex\Provider\SecurityServiceProvider());

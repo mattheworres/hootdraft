@@ -19,7 +19,7 @@ class UserProvider implements UserProviderInterface
 
   public function loadUserByUsername($username)
   {
-    //TODO: Use LoginUserRepository
+    //Won't use repository here because we need to throw the UsernameNotFoundException to kick off Symfony denying the request
     $user = new LoginUser();
     $user_stmt = $this->app['db']->prepare("SELECT * FROM users WHERE username = ? LIMIT 1");
     $user_stmt->setFetchMode(\PDO::FETCH_INTO, $user);

@@ -24,6 +24,15 @@ $app['phpdraft.smtp_server'] = 'localhost';
 //Provide the port to access the SMTP mail server on
 $app['phpdraft.smtp_port'] = 1025;
 
+//Provide the number of seconds for authentication to be set before it needs refreshed (default: 1 day - 86,400)
+$app['phpdraft.auth_seconds'] = 86400;
+
+//Provide the name of the header to store the authorization token in. (Default: "X-Access-Token")
+$app['phpdraft.auth_token'] = 'X-Access-Token';
+
+//Provide the name of the header to store the draft password in (Default: "X-PhpDraft-DraftPassword")
+$app['phpdraft.draft_password'] = 'X-PhpDraft-DraftPassword';
+
 //Enable or disable autocomplete on pick entry screen; DEFAULT: true
 $app['phpdraft.use_autocomplete'] = true;
 

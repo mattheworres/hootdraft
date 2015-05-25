@@ -17,6 +17,10 @@ $app['phpdraft.LoginUserService'] = function () use ($app) {
   return new \PhpDraft\Domain\Services\LoginUserService($app);
 };
 
+$app['phpdraft.DraftService'] = function () use ($app) {
+  return new \PhPDraft\Domain\Services\DraftService($app);
+};
+
 //Repositories
 $app['phpdraft.LoginUserRepository'] = function () use ($app) {
   return new \PhpDraft\Domain\Repositories\LoginUserRepository($app);
@@ -31,6 +35,10 @@ $app['phpdraft.ManagerRepository'] = function() use ($app) {
 };
 
 //Validators
-$app['phpdraft.LoginUserValidator'] = function () use($app) {
+$app['phpdraft.LoginUserValidator'] = function () use ($app) {
   return new \PhpDraft\Domain\Validators\LoginUserValidator($app);
+};
+
+$app['phpdraft.DraftValidator'] = function() use ($app) {
+  return new \PhpDraft\Domain\Validators\DraftValidator($app);
 };

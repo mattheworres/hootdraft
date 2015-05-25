@@ -20,7 +20,10 @@ class LoginUserService {
     $token = $this->app['security']->getToken();
 
     if($token == null) {
-      throw new Exception("Username not found.");
+      //In public actions, this isn't an exception - we're just not logged in.
+      $this->app['monolog']->addDebug('Cant get user sir.');
+      return null;
+      //throw new \Exception("Username not found.");
     }
 
     $usr = $token->getUser();
@@ -28,12 +31,36 @@ class LoginUserService {
     return $this->app['phpdraft.LoginUserRepository']->Load($usr->getUsername());
   }
 
+  //This is a hack to make accessing logged in user info from anonymous routes possible:
+  public function GetUserFromHeaderToken(Request $request) {
+    $request_token = $request->headers->get($this->app['phpdraft.auth_token'],'');
+    
+    if(empty($request_token)) {
+      return null;
+    }
+
+    $encoder = new \Silex\Component\Security\Core\Encoder\JWTEncoder(AUTH_KEY, $this->app['phpdraft.auth_seconds']);
+
+    try {
+      $decoded = $encoder->decode($request_token);
+
+      $token = new \Silex\Component\Security\Http\Token\JWTToken();
+      $token->setTokenContext($decoded);
+
+      $username = $token->getTokenContext()->name;
+
+      return $this->app['phpdraft.LoginUserRepository']->Load($username);
+    }catch(\Exception $ex) {
+      return null;
+    }
+  }
+
   public function CreateUnverifiedNewUser(LoginUser $user) {
     $user->enabled = false;
     $user->verificationKey = $this->app['phpdraft.SaltService']->GenerateSalt();
     $user->salt = $this->app['phpdraft.SaltService']->GenerateSalt();
     $user->password = $this->app['security.encoder.digest']->encodePassword($user->password, $user->salt);
-    $user->roles = array('ROLE_MANAGER');
+    $user->roles = array('ROLE_COMMISH');
 
     $response = new PhpDraftResponse();
 

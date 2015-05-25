@@ -9,18 +9,12 @@ use PhpDraft\Domain\Models\PhpDraftResponse;
 class ManagerController {
   public function GetAll(Application $app, Request $request) {
     $draft_id = (int)$request->get('draft_id');
-    $password = $request->get('password');
 
-    if(empty($draft_id) || $draft_id == 0) {
-      throw new \Exception("Unable to load managers");
-    }
+    $viewable = $app['phpdraft.DraftValidator']->IsDraftViewableForUser($draft_id, $request);
 
-    $draft = $app['phpdraft.DraftRepository']->GetPublicDraft($draft_id, $password);
-
-    //If its password protected and the create time is empty, we did not provide the proper password
-    if(!$draft->draft_visible && empty($draft->draft_create_time)) {
+    if(!$viewable) {
       $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "Draft marked as private, invalid/missing password";
+      $response->errors[] = "Draft marked as private.";
 
       return $app->json($response);
     }

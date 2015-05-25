@@ -42,6 +42,7 @@ $app->post('/resetPassword', 'authentication.controller:ResetPassword');
 
 $app->get('/drafts', 'draft.controller:GetAll');
 $app->get('/draft/{id}', 'draft.controller:Get');
+$app->get('/drafts/{commissionerId}', 'draft.controller:GetAllByCommish');
 
 $app->get('/draft/{draft_id}/managers', 'manager.controller:GetAll');
 
