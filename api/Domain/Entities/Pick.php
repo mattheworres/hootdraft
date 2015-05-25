@@ -2,7 +2,16 @@
 namespace PhpDraft\Domain\Entities;
 
 //Previously known as "Player_Object" - renamed "Pick" to reduce my own confusion
+/**
+* @property string $manager_name Name of the manager that made the pick. NOTE: Only available on selected picks, and is kind've a cheat.
+* @property int $search_score
+* @property bool $selected If this pick has been selected yet - driven from if $pick_time is null or not
+*/
 class Pick {
+  public function __construct() {
+    //Leaving this here in case further init needs to occur
+  }
+
   /** @var int */
   public $player_id;
 
@@ -38,14 +47,4 @@ class Pick {
 
   /** @var int Pick the player was selected at */
   public $player_pick;
-
-  /** @var string Name of the manager that made the pick. NOTE: Only available on selected picks, and is kind've a cheat. */
-  public $manager_name;
-
-  /** @var int */
-  public $search_score;
-
-  public function __construct() {
-    //Leaving this here in case further init needs to occur
-  }
 }

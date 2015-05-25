@@ -22,6 +22,10 @@ $app['manager.controller'] = function() {
   return new PhpDraft\Controllers\ManagerController();
 };
 
+$app['pick.controller'] = function() {
+  return new PhpDraft\Controllers\PickController();
+};
+
 $app['admin.index.controller'] = function() {
   return new PhpDraft\Controllers\Admin\IndexController();
 };
@@ -45,6 +49,8 @@ $app->get('/draft/{id}', 'draft.controller:Get');
 $app->get('/drafts/{commissionerId}', 'draft.controller:GetAllByCommish');
 
 $app->get('/draft/{draft_id}/managers', 'manager.controller:GetAll');
+
+$app->get('/draft/{draft_id}/picks', 'pick.controller:GetUpdated');
 
 $app->get('/', "index.controller:Index");
 

@@ -12,6 +12,9 @@ namespace PhpDraft\Domain\Entities;
  * @property array $sports_colors An array of all the colors used for each position in the draft. Capitalized position abbreviation is key, hex color string is value (with # prepended)
  */
 class Draft {
+  public function __construct() {
+    //Leaving this here in case any init is needed on new drafts.
+  }
 
   /** @var int $draft_id The unique identifier for this draft */
   public $draft_id;
@@ -51,9 +54,4 @@ class Draft {
 
   /** @var int $draft_current_pick */
   public $draft_current_pick;
-
-  public function __construct() {
-    //Leaving this here in case any init is needed on new drafts.
-  }
-
 }

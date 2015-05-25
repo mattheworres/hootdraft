@@ -30,8 +30,12 @@ $app['phpdraft.DraftRepository'] = function () use ($app) {
   return new \PhpDraft\Domain\Repositories\DraftRepository($app);
 };
 
-$app['phpdraft.ManagerRepository'] = function() use ($app) {
+$app['phpdraft.ManagerRepository'] = function () use ($app) {
   return new \PhpDraft\Domain\Repositories\ManagerRepository($app);
+};
+
+$app['phpdraft.PickRepository'] = function () use ($app) {
+  return new \PhpDraft\Domain\Repositories\PickRepository($app);
 };
 
 //Validators
