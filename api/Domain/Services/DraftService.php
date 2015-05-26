@@ -11,5 +11,11 @@ class DraftService {
     $this->app = $app;
   }
 
-  
+  public function GetCurrentPick($draft_id) {
+    $draft_id = (int)$draft_id;
+
+    $draft = $this->app['phpdraft.DraftRepository']->Load($draft_id);
+
+    return (int)$draft->draft_current_pick;
+  }
 }

@@ -50,7 +50,14 @@ $app->get('/drafts/{commissionerId}', 'draft.controller:GetAllByCommish');
 
 $app->get('/draft/{draft_id}/managers', 'manager.controller:GetAll');
 
-$app->get('/draft/{draft_id}/picks', 'pick.controller:GetUpdated');
+$app->get('/draft/{draft_id}/picks', 'pick.controller:GetAll');
+$app->get('/draft/{draft_id}/picks/updated', 'pick.controller:GetUpdated');
+$app->get('/draft/{draft_id}/picks/last', 'pick.controller:GetLast');
+$app->get('/draft/{draft_id}/picks/next', 'pick.controller:GetNext');
+$app->get('/draft/{draft_id}/manager/{manager_id}/picks/all', 'pick.controller:GetAllManagerPicks');
+$app->get('/draft/{draft_id}/manager/{manager_id}/picks/selected', 'pick.controller:GetSelectedManagerPicks');
+$app->get('/draft/{draft_id}/round/{draft_round}/picks/all', 'pick.controller:GetAllRoundPicks');
+$app->get('/draft/{draft_id}/round/{draft_round}/picks/selected', 'pick.controller:GetSelectedRoundPicks');
 
 $app->get('/', "index.controller:Index");
 
