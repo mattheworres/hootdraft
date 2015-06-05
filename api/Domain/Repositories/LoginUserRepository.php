@@ -13,18 +13,18 @@ class LoginUserRepository {
     $this->app = $app;
   }
 
-  public function Load($username) {
+  public function Load($email) {
     $user = new LoginUser();
 
-    $load_stmt = $this->app['db']->prepare("SELECT * FROM users WHERE username = ? LIMIT 1");
+    $load_stmt = $this->app['db']->prepare("SELECT * FROM users WHERE email = ? LIMIT 1");
     $load_stmt->setFetchMode(\PDO::FETCH_INTO, $user);
-    $load_stmt->bindParam(1, strtolower($username));
+    $load_stmt->bindParam(1, strtolower($email));
 
     if (!$load_stmt->execute())
-      throw new \Exception(sprintf('Username "%s" does not exist.', $username));
+      throw new \Exception(sprintf('Email "%s" does not exist.', $email));
 
     if (!$load_stmt->fetch())
-      throw new \Exception(sprintf('Username "%s" does not exist.', $username));
+      throw new \Exception(sprintf('Email "%s" does not exist.', $email));
 
     return $user;
   }
@@ -49,11 +49,10 @@ class LoginUserRepository {
 
   public function Create(LoginUser $user) {
     $insert_stmt = $this->app['db']->prepare("INSERT INTO users 
-        (id, username, email, password, salt, name, roles, verificationKey) 
+        (id, email, password, salt, name, roles, verificationKey) 
         VALUES 
         (NULL, ?, ?, ?, ?, ?, ?, ?)");
 
-    $insert_stmt->bindParam(1, strtolower($user->username));
     $insert_stmt->bindParam(2, strtolower($user->email));
     $insert_stmt->bindParam(3, $user->password);
     $insert_stmt->bindParam(4, $user->salt);
@@ -72,11 +71,10 @@ class LoginUserRepository {
 
   public function Update(LoginUser $user) {
     $update_stmt = $this->app['db']->prepare("UPDATE users 
-        SET username = ?, email = ?, password = ?, salt = ?,
+        SET email = ?, password = ?, salt = ?,
           name = ?, roles = ?, verificationKey = ?, enabled = ?
         WHERE id = ?");
 
-    $update_stmt->bindParam(1, $user->username);
     $update_stmt->bindParam(2, $user->email);
     $update_stmt->bindParam(3, $user->password);
     $update_stmt->bindParam(4, $user->salt);
@@ -99,26 +97,26 @@ class LoginUserRepository {
     //TODO: Find use case & implement
   }
 
-  public function UsernameIsUnique($username) {
-    $username_stmt = $this->app['db']->prepare("SELECT username FROM users WHERE username = ? LIMIT 1");
-    $username_stmt->bindParam(1, strtolower($username));
+  public function NameIsUnique($name) {
+    $name_stmt = $this->app['db']->prepare("SELECT name FROM users WHERE name LIKE ?");
+    $name_stmt->bindParam(1, strtolower($name));
 
-    if (!$username_stmt->execute()) {
-      throw new \Exception(sprintf('Username "%s" is invalid', $username));
+    if(!$name_stmt->execute()) {
+      throw new \Exception(sprintf('Name %s is invalid', $name));
     }
 
-    return $username_stmt->rowCount() == 0;
+    return $name_stmt->rowCount() == 0;
   }
 
-  public function UsernameExists($username) {
-    $username_stmt = $this->app['db']->prepare("SELECT username FROM users WHERE username = ? LIMIT 1");
-    $username_stmt->bindParam(1, strtolower($username));
+  public function EmailExists($email) {
+    $email_stmt = $this->app['db']->prepare("SELECT email FROM users WHERE email = ?");
+    $email_stmt->bindParam(1, $email);
 
-    if (!$username_stmt->execute()) {
-      throw new \Exception(sprintf('Username "%s" is invalid', $username));
+    if (!$email_stmt->execute()) {
+      throw new \Exception(sprintf('Email "%s" is invalid', $email));
     }
 
-    return $username_stmt->rowCount() == 1;
+    return $email_stmt->rowCount() == 1;
   }
 
   public function EmailIsUnique($email) {
@@ -132,9 +130,9 @@ class LoginUserRepository {
     return $email_stmt->rowCount() == 0;
   }
 
-  public function VerificationMatches($username, $verificationKey) {
-    $verification_stmt = $this->app['db']->prepare("SELECT username, verificationKey FROM users WHERE username = ? AND verificationKey = ? LIMIT 1");
-    $verification_stmt->bindParam(1, strtolower($username));
+  public function VerificationMatches($email, $verificationKey) {
+    $verification_stmt = $this->app['db']->prepare("SELECT email, verificationKey FROM users WHERE email = ? AND verificationKey = ? LIMIT 1");
+    $verification_stmt->bindParam(1, strtolower($email));
     $verification_stmt->bindParam(2, $verificationKey);
 
     if(!$verification_stmt->execute()) {

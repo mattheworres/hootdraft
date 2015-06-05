@@ -21,7 +21,6 @@ class LoginUserService {
 
     if($token == null) {
       //In public actions, this isn't an exception - we're just not logged in.
-      $this->app['monolog']->addDebug('Cant get user sir.');
       return null;
       //throw new \Exception("Username not found.");
     }
@@ -47,9 +46,9 @@ class LoginUserService {
       $token = new \Silex\Component\Security\Http\Token\JWTToken();
       $token->setTokenContext($decoded);
 
-      $username = $token->getTokenContext()->name;
+      $email = $token->getTokenContext()->name;
 
-      return $this->app['phpdraft.LoginUserRepository']->Load($username);
+      return $this->app['phpdraft.LoginUserRepository']->Load($email);
     }catch(\Exception $ex) {
       return null;
     }
@@ -78,14 +77,14 @@ class LoginUserService {
       $message->subject = "PHPDraft: Verify your email address";
       $message->is_html = true;
       $verificationLink = $this->_CreateEmailVerificationLink($user);
-      $message->body = sprintf("The username <strong>%s</strong> was created but needs the associated email address <strong>%s</strong> verified before the account can be activated.<br/><br/>\n\n
+      $message->body = sprintf("The account for the email <strong>%s</strong> was created but the email address must be verified before the account can be activated.<br/><br/>\n\n
         
         Visit this address in your web browser to activate the user:<br/><br/>\n\n
 
         <a href=\"%s\">%s</a><br/>\n
         (For non-HTML enabled email:)<br/>\n
         %s
-      ", $user->username, $user->email, $verificationLink, $verificationLink, $verificationLink);
+      ", $user->email, $user->email, $verificationLink, $verificationLink, $verificationLink);
 
       $this->app['phpdraft.EmailService']->SendMail($message);
 
@@ -130,7 +129,7 @@ class LoginUserService {
       $message->subject = "PHPDraft: Reset Password Request";
       $message->is_html = true;
       $verificationLink = $this->_CreateForgottenPasswordLink($user);
-      $message->body = sprintf("A password recovery request has been made for the username <strong>%s</strong><br/><br/>\n\n
+      $message->body = sprintf("A password recovery request has been made for the account <strong>%s</strong><br/><br/>\n\n
         
         To reset your password, visit the following address in your web browser:<br/><br/>\n\n
 
@@ -139,7 +138,7 @@ class LoginUserService {
         %s<br/><br/>\n\n
 
         If you remember your old password, no longer want to change it, or didn't request a password reset - you can ignore this email.
-      ", $user->username, $verificationLink, $verificationLink, $verificationLink);
+      ", $user->email, $verificationLink, $verificationLink, $verificationLink);
 
       $this->app['phpdraft.EmailService']->SendMail($message);
 
@@ -223,14 +222,14 @@ class LoginUserService {
         $message->subject = "PHPDraft: Verify your email address";
         $message->is_html = true;
         $verificationLink = $this->_CreateEmailVerificationLink($user);
-        $message->body = sprintf("The username <strong>%s</strong> was updated but needs the associated email address <strong>%s</strong> verified before the account can be re-activated.<br/><br/>\n\n
+        $message->body = sprintf("The account <strong>%s</strong> was updated but the email address must be verified before the account can be re-activated.<br/><br/>\n\n
           
           Visit this address in your web browser to re-activate the user:<br/><br/>\n\n
 
           <a href=\"%s\">%s</a><br/>\n
           (For non-HTML enabled email:)<br/>\n
           %s
-        ", $user->username, $user->email, $verificationLink, $verificationLink, $verificationLink);
+        ", $user->email, $user->email, $verificationLink, $verificationLink, $verificationLink);
 
         $this->app['phpdraft.EmailService']->SendMail($message);
       }
@@ -249,16 +248,16 @@ class LoginUserService {
   }
 
   private function _CreateEmailVerificationLink(LoginUser $user) {
-    $encodedUsername = urlencode($user->username);
+    $encodedEmail = urlencode($user->email);
     $encodedToken = urlencode($user->verificationKey);
 
-    return sprintf("%s/verify?_username=%s&_verificationToken=%s", $this->app['phpdraft.appBaseUrl'], $encodedUsername, $encodedToken);
+    return sprintf("%s/verify?_email=%s&_verificationToken=%s", $this->app['phpdraft.appBaseUrl'], $encodedEmail, $encodedToken);
   }
 
   private function _CreateForgottenPasswordLink(LoginUser $user) {
-    $encodedUsername = urlencode($user->username);
+    $encodedEmail = urlencode($user->email);
     $encodedToken = urlencode($user->verificationKey);
 
-    return sprintf("%s/resetPassword?_username=%s&_verificationToken=%s", $this->app['phpdraft.appBaseUrl'], $encodedUsername, $encodedToken);
+    return sprintf("%s/resetPassword?_email=%s&_verificationToken=%s", $this->app['phpdraft.appBaseUrl'], $encodedEmail, $encodedToken);
   }
 }

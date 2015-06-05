@@ -14,18 +14,18 @@ class AuthenticationController
 
   public function Login(Application $app, Request $request) {
     $vars = json_decode($request->getContent(), true);
-    $username = $request->get('_username');
+    $email = $request->get('_email');
     $password = $request->get('_password');
 
     try {
-      if (empty($username) || empty($password)) {
-        throw new UsernameNotFoundException(sprintf('Username "%s" does not exist.', $username));
+      if($app['phpdraft.LoginUserValidator']->IsLoginUserValid($email, $password)) {
+        throw new UsernameNotFoundException(sprintf('Email %s does not exist', $email));
       }
 
-      $user = $app['users']->loadUserByUsername($username);
+      $user = $app['users']->loadUserByUsername($email);
 
       if (!$user->isEnabled() || !$app['security.encoder.digest']->isPasswordValid($user->getPassword(), $password, $user->getSalt())) {
-        throw new UsernameNotFoundException(sprintf('Username "%s" does not exist', $username));
+        throw new UsernameNotFoundException(sprintf('Email "%s" does not exist', $email));
       } else {
         $response = [
           'success' => true,
@@ -53,7 +53,6 @@ class AuthenticationController
 
     $user = new LoginUser();
 
-    $user->username = $request->get('_username');
     $user->email = $request->get('_email');
     $user->password = $request->get('_password');
     $user->name = $request->get('_name');
@@ -72,9 +71,9 @@ class AuthenticationController
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
-    $username = urldecode($request->get('_username'));
+    $email = urldecode($request->get('_email'));
 
-    $user = $app['phpdraft.LoginUserRepository']->Load($username);
+    $user = $app['phpdraft.LoginUserRepository']->Load($email);
 
     $response = $app['phpdraft.LoginUserService']->VerifyUser($user);
 
@@ -90,9 +89,9 @@ class AuthenticationController
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
-    $username = $request->get('_username');
+    $email = $request->get('_email');
 
-    $user = $app['phpdraft.LoginUserRepository']->Load($username);
+    $user = $app['phpdraft.LoginUserRepository']->Load($email);
 
     $response = $app['phpdraft.LoginUserService']->BeginForgottenPasswordProcess($user);
 
@@ -108,10 +107,10 @@ class AuthenticationController
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
-    $username = urldecode($request->get('_username'));
+    $email = urldecode($request->get('_email'));
     $password = $request->get('_password');
 
-    $user = $app['phpdraft.LoginUserRepository']->Load($username);
+    $user = $app['phpdraft.LoginUserRepository']->Load($email);
 
     $user->password = $password;
 

@@ -7,7 +7,6 @@ use Symfony\Component\Security\Core\Util\StringUtils;
 
 class PhpDraftSecurityUser implements UserInterface, EquatableInterface
 {
-    private $username;
     private $email;
     private $enabled;
     private $password;
@@ -15,9 +14,9 @@ class PhpDraftSecurityUser implements UserInterface, EquatableInterface
     private $roles;
     private $verificationKey;
 
-    public function __construct($username, $email, $password, $salt, array $roles, $enabled, $verificationKey)
+    public function __construct($email, $password, $salt, array $roles, $enabled, $verificationKey)
     {
-        $this->username = $username;
+        $this->email = $email;
         $this->password = $password;
         $this->salt = $salt;
         $this->roles = $roles;
@@ -41,7 +40,7 @@ class PhpDraftSecurityUser implements UserInterface, EquatableInterface
 
     public function getUsername()
     {
-        return $this->username;
+        return $this->email;
     }
 
     public function getEmail() {
@@ -74,7 +73,7 @@ class PhpDraftSecurityUser implements UserInterface, EquatableInterface
             return false;
         }
 
-        if ($this->username !== $user->getUsername()) {
+        if ($this->email !== $user->getUsername()) {
             return false;
         }
 

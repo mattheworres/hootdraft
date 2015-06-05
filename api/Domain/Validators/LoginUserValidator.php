@@ -20,14 +20,12 @@ class LoginUserValidator {
     $valid = true;
     $errors = array();
 
-    $username = $request->get('_username');
     $password = $request->get('_password');
     $confirmPassword = $request->get('_confirmPassword');
     $email = $request->get('_email');
     $name = $request->get('_name');
 
-    if(empty($username)
-      || empty($password)
+    if(empty($password)
       || empty($confirmPassword)
       || empty($email)
       || empty($name)) {
@@ -37,16 +35,6 @@ class LoginUserValidator {
 
     if(!StringUtils::equals($password, $confirmPassword)) {
       $errors[] = "Password values do not match.";
-      $valid = false;
-    }
-
-    if(strlen($username) < 3) {
-      $errors[] = "Username is below minimum length.";
-      $valid = false;
-    }
-
-    if(strlen($username) > 100) {
-      $errors[] = "Username is above maximum length.";
       $valid = false;
     }
 
@@ -77,8 +65,8 @@ class LoginUserValidator {
       $valid = false;
     }
 
-    if(!$this->app['phpdraft.LoginUserRepository']->UsernameIsUnique($username)) {
-      $errors[] = "Username already taken.";
+    if(!$this->app['phpdraft.LoginUserRepository']->NameIsUnique($name)) {
+      $errors[] = "Name already taken.";
       $valid = false;
     }
 
@@ -94,7 +82,7 @@ class LoginUserValidator {
     $valid = true;
     $errors = array();
 
-    $username = urldecode($request->get('_username'));
+    $email = urldecode($request->get('_email'));
     $verificationToken = $this->app['phpdraft.SaltService']->UrlDecodeSalt($request->get('_verificationToken'));
 
     if(strlen($verificationToken) != 16) {
@@ -102,12 +90,14 @@ class LoginUserValidator {
       $valid = false;
     }
 
-    if(strlen($username) < 3 || strlen($username) > 100) {
-      $errors[] = "Username invalid.";
+    $emailValidator = new EmailValidator;
+
+    if(!$emailValidator->isValid($email) || strlen($email) > 255) {
+      $errors[] = "Email invalid.";
       $valid = false;
     }
 
-    if(!$this->app['phpdraft.LoginUserRepository']->VerificationMatches($username, $verificationToken)) {
+    if(!$this->app['phpdraft.LoginUserRepository']->VerificationMatches($email, $verificationToken)) {
       $errors[] = "Verification token invalid.";
       $valid = false;
     }
@@ -115,14 +105,41 @@ class LoginUserValidator {
     return new PhpDraftResponse($valid, $errors);
   }
 
+  public function IsLoginUserValid($email, $password) {
+    $valid = true;
+    $errors = array();
+
+    $emailValidator = new EmailValidator;
+
+    if (!$emailValidator->isValid($email)) {
+      $errors[] = "Email is invalid.";
+      $valid = false;
+    }
+
+    if(strlen($email) > 255) {
+      $errors[] = "Email is above maximum length.";
+      $valid = false;
+    }
+
+    if(strlen($password) < 8) {
+      $errors[] = "Password is below minimum length.";
+      $valid = false;
+    }
+
+    if(strlen($password) > 255) {
+      $errors[] = "Password is above maximum length.";
+      $valid = false;
+    }
+  }
+
   public function IsForgottenPasswordUserValid(Request $request) {
     $valid = true;
     $errors = array();
 
-    $username = $request->get('_username');
+    $email = $request->get('_email');
 
-    if(!$this->app['phpdraft.LoginUserRepository']->UsernameExists($username)) {
-      $errors[] = "Username invalid.";
+    if(!$this->app['phpdraft.LoginUserRepository']->EmailExists($email)) {
+      $errors[] = "Email invalid.";
       $valid = false;
     }
 
@@ -133,12 +150,12 @@ class LoginUserValidator {
     $valid = true;
     $errors = array();
 
-    $username = urldecode($request->get('_username'));
+    $email = urldecode($request->get('_email'));
     $password = $request->get('_password');
     $confirmPassword = $request->get('_confirmPassword');
     $verificationToken = $this->app['phpdraft.SaltService']->UrlDecodeSalt($request->get('_verificationToken'));
 
-    if(empty($username)
+    if(empty($email)
       || empty($password)
       || empty($confirmPassword)
       || empty($verificationToken)) {
@@ -151,18 +168,25 @@ class LoginUserValidator {
       $valid = false;
     }
 
-    if(strlen($username) < 3 || strlen($username) > 100) {
-      $errors[] = "Username invalid.";
+    if(!$this->app['phpdraft.LoginUserRepository']->VerificationMatches($email, $verificationToken)) {
+      $errors[] = "Verification token invalid.";
       $valid = false;
     }
 
-    if(!$this->app['phpdraft.LoginUserRepository']->VerificationMatches($username, $verificationToken)) {
-      $errors[] = "Verification token invalid.";
+    $emailValidator = new EmailValidator;
+
+    if (!$emailValidator->isValid($email)) {
+      $errors[] = "Email is invalid.";
       $valid = false;
     }
 
     if(!StringUtils::equals($password, $confirmPassword)) {
       $errors[] = "Password values do not match.";
+      $valid = false;
+    }
+
+    if(strlen($email) > 255) {
+      $errors[] = "Email is above maximum length.";
       $valid = false;
     }
 
@@ -176,8 +200,8 @@ class LoginUserValidator {
       $valid = false;
     }
 
-    if(!$this->app['phpdraft.LoginUserRepository']->UsernameExists($username)) {
-      $errors[] = "Invalid username.";
+    if(!$this->app['phpdraft.LoginUserRepository']->EmailExists($email)) {
+      $errors[] = "Invalid email.";
       $valid = false;
     }
 

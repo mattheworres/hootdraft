@@ -16,11 +16,10 @@ class UserProfileController {
       return $app->json(new PhpDraftResponse(false));
     }
 
-    return $app->json(new UserProfile($user->id, $user->username, $user->email), Response::HTTP_OK);
+    return $app->json(new UserProfile($user->id, $user->email, $user->name), Response::HTTP_OK);
   }
 
   public function Put(Application $app, Request $request) {
-    $app['monolog']->debug('GET OF VALUE: ' . $request->get('_id'));
     $validity = $app['phpdraft.LoginUserValidator']->IsUserProfileUpdateValid($request);
 
     if(!$validity->success) {

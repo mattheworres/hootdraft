@@ -17,22 +17,21 @@ class UserProvider implements UserProviderInterface
     $this->app = $app;
   }
 
-  public function loadUserByUsername($username)
+  public function loadUserByUsername($email)
   {
     //Won't use repository here because we need to throw the UsernameNotFoundException to kick off Symfony denying the request
     $user = new LoginUser();
-    $user_stmt = $this->app['db']->prepare("SELECT * FROM users WHERE username = ? LIMIT 1");
+    $user_stmt = $this->app['db']->prepare("SELECT * FROM users WHERE email = ? LIMIT 1");
     $user_stmt->setFetchMode(\PDO::FETCH_INTO, $user);
-    $user_stmt->bindParam(1, $username);
+    $user_stmt->bindParam(1, $email);
 
     if (!$user_stmt->execute())
-      throw new UsernameNotFoundException(sprintf('Username "%s" does not exist.', $username));
+      throw new UsernameNotFoundException(sprintf('Email "%s" does not exist.', $email));
 
     if (!$user_stmt->fetch())
-      throw new UsernameNotFoundException(sprintf('Username "%s" does not exist.', $username));
+      throw new UsernameNotFoundException(sprintf('Email "%s" does not exist.', $email));
 
-    return new PhpDraftSecurityUser($user->username,
-      $user->email,
+    return new PhpDraftSecurityUser($user->email,
       $user->password, 
       $user->salt, 
       explode(',', $user->roles), 
