@@ -145,4 +145,31 @@ class PickController {
 
     return $app->json($app['phpdraft.PickRepository']->LoadRoundPicks($draft_id, $draft_round, $sort_ascending));
   }
+
+  public function SearchPicks(Application $app, Request $request) {
+    $draft_id = (int)$request->get('draft_id');
+    $draft_round = (int)$request->get('draft_round');
+    $keywords = $request->get('keywords');
+    $team = $request->get('team');
+    $position = $request->get('position');
+
+    $viewable = $app['phpdraft.DraftValidator']->IsDraftViewableForUser($draft_id, $request);
+
+    if(!$viewable) {
+      $response = new PhpDraftResponse(false, array());
+      $response->errors[] = "Draft marked as private.";
+
+      return $app->json($response);
+    }
+
+    $team = isset($team) ? $team : null;
+    $position = isset($position) ? $position : null;
+
+    $pickSearchModel = new \PhpDraft\Domain\Models\PickSearchModel($draft_id, $keywords, $team, $position);
+
+    $pickSearchModel = $app['phpdraft.PickRepository']->SearchStrict($pickSearchModel);
+    $pickSearchModel = $app['phpdraft.PickRepository']->SearchLoose($pickSearchModel);
+
+    return $app->json($pickSearchModel);
+  }
 }

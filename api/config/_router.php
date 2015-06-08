@@ -26,6 +26,10 @@ $app['pick.controller'] = function() {
   return new PhpDraft\Controllers\PickController();
 };
 
+$app['trade.controller'] = function() {
+  return new PhpDraft\Controllers\TradeController();
+};
+
 $app['admin.index.controller'] = function() {
   return new PhpDraft\Controllers\Admin\IndexController();
 };
@@ -58,6 +62,9 @@ $app->get('/draft/{draft_id}/manager/{manager_id}/picks/all', 'pick.controller:G
 $app->get('/draft/{draft_id}/manager/{manager_id}/picks/selected', 'pick.controller:GetSelectedManagerPicks');
 $app->get('/draft/{draft_id}/round/{draft_round}/picks/all', 'pick.controller:GetAllRoundPicks');
 $app->get('/draft/{draft_id}/round/{draft_round}/picks/selected', 'pick.controller:GetSelectedRoundPicks');
+$app->get('/draft/{draft_id}/picks/search', 'pick.controller:SearchPicks');
+
+$app->get('/draft/{draft_id}/trades', 'trade.controller:GetAll');
 
 $app->get('/', "index.controller:Index");
 

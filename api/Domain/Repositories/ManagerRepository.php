@@ -2,13 +2,29 @@
 namespace PhpDraft\Domain\Repositories;
 
 use Silex\Application;
-use PhpDraft\Domain\Entities\Draft;
+use PhpDraft\Domain\Entities\Manager;
 
 class ManagerRepository {
   private $app;
 
   public function __construct(Application $app) {
     $this->app = $app;
+  }
+
+  public function Load($id) {
+    $manager = new Manager();
+
+    $load_stmt = $this->app['db']->prepare("SELECT * FROM managers WHERE manager_id = ? LIMIT 1");
+    $load_stmt->setFetchMode(\PDO::FETCH_INTO, $manager);
+    $load_stmt->bindParam(1, (int) $id);
+
+    if (!$load_stmt->execute())
+      throw new \Exception(sprintf('Manager "%s" does not exist.', $manager));
+
+    if (!$load_stmt->fetch())
+      throw new \Exception(sprintf('Manager "%s" does not exist.', $id));
+
+    return $manager;
   }
 
   public function GetPublicManagers($draft_id) {
@@ -27,4 +43,6 @@ class ManagerRepository {
 
     return $managers;
   }
+
+
 }

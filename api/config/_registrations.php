@@ -38,6 +38,10 @@ $app['phpdraft.PickRepository'] = function () use ($app) {
   return new \PhpDraft\Domain\Repositories\PickRepository($app);
 };
 
+$app['phpdraft.TradeRepository'] = function () use ($app) {
+  return new \PhpDraft\Domain\Repositories\TradeRepository($app);
+};
+
 //Validators
 $app['phpdraft.LoginUserValidator'] = function () use ($app) {
   return new \PhpDraft\Domain\Validators\LoginUserValidator($app);

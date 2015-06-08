@@ -8,7 +8,6 @@ CREATE TABLE `users`
 (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
     `enabled` BIT(1) NOT NULL DEFAULT b'0',
-    `username` VARCHAR(100) NOT NULL,
     `email` VARCHAR(255) NOT NULL,
     `password` VARCHAR(255) NOT NULL,
     `salt` VARCHAR(16) NOT NULL,
@@ -17,8 +16,10 @@ CREATE TABLE `users`
     `verificationKey` VARCHAR(16) NULL,
     `creationTime` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `id` (`id`)
+    UNIQUE INDEX `id` (`id`),
+    UNIQUE INDEX `UNIQUE_USER` (`email`, `name`)
 ) ENGINE=MyISAM;
+ALTER TABLE `users` ADD UNIQUE `UNIQUE_USER` (`email`, `name`);
 
 ALTER TABLE `managers` DROP COLUMN `manager_email`;
 
