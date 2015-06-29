@@ -53,12 +53,12 @@ class LoginUserRepository {
         VALUES 
         (NULL, ?, ?, ?, ?, ?, ?, ?)");
 
-    $insert_stmt->bindParam(2, strtolower($user->email));
-    $insert_stmt->bindParam(3, $user->password);
-    $insert_stmt->bindParam(4, $user->salt);
-    $insert_stmt->bindParam(5, $user->name);
-    $insert_stmt->bindParam(6, implode(',', $user->roles));
-    $insert_stmt->bindParam(7, $user->verificationKey);
+    $insert_stmt->bindParam(1, strtolower($user->email));
+    $insert_stmt->bindParam(2, $user->password);
+    $insert_stmt->bindParam(3, $user->salt);
+    $insert_stmt->bindParam(4, $user->name);
+    $insert_stmt->bindParam(5, implode(',', $user->roles));
+    $insert_stmt->bindParam(6, $user->verificationKey);
 
     if (!$insert_stmt->execute()) {
       throw new \Exception("Unable to create user.");
@@ -75,14 +75,14 @@ class LoginUserRepository {
           name = ?, roles = ?, verificationKey = ?, enabled = ?
         WHERE id = ?");
 
-    $update_stmt->bindParam(2, $user->email);
-    $update_stmt->bindParam(3, $user->password);
-    $update_stmt->bindParam(4, $user->salt);
-    $update_stmt->bindParam(5, $user->name);
-    $update_stmt->bindParam(6, $user->roles);
-    $update_stmt->bindParam(7, $user->verificationKey);
-    $update_stmt->bindParam(8, $user->enabled);
-    $update_stmt->bindParam(9, $user->id);
+    $update_stmt->bindParam(1, $user->email);
+    $update_stmt->bindParam(2, $user->password);
+    $update_stmt->bindParam(3, $user->salt);
+    $update_stmt->bindParam(4, $user->name);
+    $update_stmt->bindParam(5, $user->roles);
+    $update_stmt->bindParam(6, $user->verificationKey);
+    $update_stmt->bindParam(7, $user->enabled);
+    $update_stmt->bindParam(8, $user->id);
 
     $result = $update_stmt->execute();
 
@@ -91,6 +91,22 @@ class LoginUserRepository {
     }
 
     return $user;
+  }
+
+  public function EraseVerificationKey($user_email) {
+    $update_stmt = $this->app['db']->prepare("UPDATE users
+      SET verificationKey = NULL
+      WHERE email = ?");
+
+    $update_stmt->bindParam(1, $user_email);
+
+    $result = $update_stmt->execute();
+
+    if($result == false) {
+      throw new \Exception("Unable to erase verification key for user.");
+    }
+
+    return;
   }
 
   public function Delete(LoginUser $user) {

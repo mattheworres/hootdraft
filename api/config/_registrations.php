@@ -42,6 +42,14 @@ $app['phpdraft.TradeRepository'] = function () use ($app) {
   return new \PhpDraft\Domain\Repositories\TradeRepository($app);
 };
 
+$app['phpdraft.DraftDataRepository'] = function () use ($app) {
+  return new \PhpDraft\Domain\Repositories\DraftDataRepository($app);
+};
+
+$app['phpdraft.RoundTimeRepository'] = function () use ($app) {
+  return new \PhpDraft\Domain\Repositories\RoundTimeRepository($app);
+};
+
 //Validators
 $app['phpdraft.LoginUserValidator'] = function () use ($app) {
   return new \PhpDraft\Domain\Validators\LoginUserValidator($app);

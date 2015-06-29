@@ -11,6 +11,7 @@ class IndexController
     $isAuthenticated = false;
     $roles = array();
 
+    //Leaving this here as we also grab roles below, but LoginUserService->GetCurrentUser() will fetch user via this method too:
     $token = $app['security']->getToken();
 
     if($token !== null) {

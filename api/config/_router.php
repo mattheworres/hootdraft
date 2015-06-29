@@ -42,6 +42,10 @@ $app['commish.profile.controller'] = function() {
   return new PhpDraft\Controllers\Commish\UserProfileController();
 };
 
+$app['commish.draft.controller'] = function() {
+  return new PhpDraft\Controllers\Commish\DraftController();
+};
+
 $app->post('/login', 'authentication.controller:Login');
 $app->post('/register', 'authentication.controller:Register');
 $app->post('/verify', 'authentication.controller:VerifyAccount');
@@ -73,3 +77,7 @@ $app->get('/admin', "admin.index.controller:Index");
 $app->get('/commish', "commish.index.controller:Index");
 $app->get('/commish/profile', "commish.profile.controller:Get");
 $app->put('/commish/profile', "commish.profile.controller:Put");
+
+$app->get('/commish/draft/create', "commish.draft.controller:GetCreate");
+$app->get('/commish/draft/{draft_id}', "commish.draft.controller:Get");
+$app->get('/commish/draft/{draft_id}/timers', "commish.draft.controller:GetTimers");

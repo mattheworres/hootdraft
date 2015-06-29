@@ -125,11 +125,16 @@ class DraftRepository {
 
   /*
   * This method is only to be used internally or when the user has been verified as owner of the draft (or is admin)
+  * (in other words, don't call this then return the result as JSON!)
   */
   public function Load($id) {
     $draft = new Draft();
 
-    $draft_stmt = $this->app['db']->prepare("SELECT * FROM draft WHERE draft_id = ? LIMIT 1");
+    $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
+    LEFT OUTER JOIN users u
+    ON d.commish_id = u.id
+    WHERE draft_id = ? LIMIT 1");
+
     $draft_stmt->setFetchMode(\PDO::FETCH_INTO, $draft);
 
     $draft_stmt->bindParam(1, $id, \PDO::PARAM_INT);

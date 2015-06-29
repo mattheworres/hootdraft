@@ -25,6 +25,10 @@ ALTER TABLE `managers` DROP COLUMN `manager_email`;
 
 ALTER TABLE `draft` ADD `commish_id` INT(11) NOT NULL AFTER `draft_id`;
 
+#Add flag to draft for extended rosters.
+#NOTE: If any existing drafts used extended rosters, you will need to manually set the flag to 1 for said drafts.
+ALTER TABLE `draft` ADD `nfl_extended` BIT(1) NOT NULL DEFAULT b'0' AFTER `draft_current_pick`;
+
 # Run this for existing drafts once you create your admin user, then enter that user ID below:
 UPDATE `draft` SET `commish_id` = 16 WHERE `commish_id` = 0;
 

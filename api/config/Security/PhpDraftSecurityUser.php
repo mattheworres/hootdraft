@@ -21,6 +21,7 @@ class PhpDraftSecurityUser implements UserInterface, EquatableInterface
         $this->salt = $salt;
         $this->roles = $roles;
         $this->enabled = $enabled;
+        $this->verificationKey = $verificationKey;
     }
 
     public function getRoles()
@@ -53,6 +54,10 @@ class PhpDraftSecurityUser implements UserInterface, EquatableInterface
 
     public function isEnabled() {
         return $this->enabled;
+    }
+
+    public function hasVerificationKey() {
+        return !empty($this->verificationKey);
     }
 
     public function verificationKeyMatches($provided_key) {

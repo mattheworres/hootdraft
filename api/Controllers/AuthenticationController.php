@@ -31,6 +31,11 @@ class AuthenticationController
           'success' => true,
           'token' => $app['security.jwt.encoder']->encode(['name' => $user->getUsername()]),
         ];
+
+        //If user is enabled, provided valid password and has a verification (pwd reset) key, wipe it (no longer needed)
+        if($user->hasVerificationKey()) {
+          $app['phpdraft.LoginUserRepository']->EraseVerificationKey($user->getEmail());
+        }
       }
     } catch (UsernameNotFoundException $e) {
       $response = [

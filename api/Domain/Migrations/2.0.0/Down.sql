@@ -20,3 +20,4 @@ SET FOREIGN_KEY_CHECKS = 1;
 ALTER TABLE `managers` ADD COLUMN `manager_email` TEXT;
 
 ALTER TABLE `draft` DROP COLUMN `commish_id`;
+ALTER TABLE `draft` DROP COLUMN `nfl_extended`;

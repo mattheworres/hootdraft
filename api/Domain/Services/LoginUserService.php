@@ -247,6 +247,12 @@ class LoginUserService {
     return $response;
   }
 
+  public function CurrentUserIsAdmin(LoginUser $user) {
+    $roles = explode(',', $user->roles);
+    
+    return in_array('ROLE_ADMIN', $roles);
+  }
+
   private function _CreateEmailVerificationLink(LoginUser $user) {
     $encodedEmail = urlencode($user->email);
     $encodedToken = urlencode($user->verificationKey);

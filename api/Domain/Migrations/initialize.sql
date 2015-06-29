@@ -29,7 +29,8 @@ CREATE TABLE IF NOT EXISTS `draft` (
   `draft_start_time` datetime default NULL,
   `draft_end_time` datetime default NULL ,
   `draft_current_round` int(5) unsigned NOT NULL default '1',
-  `draft_current_pick` int(5) unsigned NOT NULL default '1'
+  `draft_current_pick` int(5) unsigned NOT NULL default '1',
+  `nfl_extended` BIT(1) NOT NULL DEFAULT b'0',
   PRIMARY KEY  (`draft_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
