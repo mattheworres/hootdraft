@@ -135,7 +135,23 @@ class DraftController
   }
 
   public function Delete(Application $app, Request $request) {
-    return $app->json('not implemented', Response::HTTP_NO_CONTENT);
+    $current_user = $app['phpdraft.LoginUserService']->GetCurrentUser();
+    $draft_id = (int)$request->get('draft_id');
+    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
+
+    $editable = $app['phpdraft.DraftValidator']->IsDraftEditableForUser($draft, $current_user);
+
+    if(!$editable) {
+      $response = new PhpDraftResponse(false, array());
+      $response->errors[] = "You do not have permission to this draft.";
+
+      return $app->json($response);
+    }
+
+    $response = $app['phpdraft.DraftService']->DeleteDraft($draft);
+    $responseType = ($response->success ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST);
+
+    return $app->json($response, $responseType);
   }
 
   public function GetTimers(Application $app, Request $request) {

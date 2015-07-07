@@ -263,6 +263,17 @@ class DraftRepository {
     return $name_stmt->rowCount() == 0;
   }
 
+  public function DeleteDraft($draft_id) {
+    $delete_stmt = $this->app['db']->prepare("DELETE FROM draft WHERE draft_id = ?");
+    $delete_stmt->bindParam(1, $draft_id);
+
+    if(!$delete_stmt->execute()) {
+      throw new \Exception("Unable to delete draft $draft_id.");
+    }
+
+    return;
+  }
+
   private function ProtectPrivateDraft(Draft $draft) {
     $draft->commish_id = 0;
     $draft->commish_name = '';

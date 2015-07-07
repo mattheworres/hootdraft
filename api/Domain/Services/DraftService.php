@@ -82,4 +82,24 @@ class DraftService {
 
     return $response;
   }
+
+  public function DeleteDraft(Draft $draft) {
+    $response = new PhpDraftResponse();
+
+    try {
+      //Delete all trades
+      $this->app['phpdraft.TradeRepository']->DeleteAllTrades($draft->draft_id);
+      //Delete all picks
+      $this->app['phpdraft.PickRepository']->DeleteAllPicks($draft->draft_id);
+      //Delete the draft
+      $this->app['phpdraft.DraftRepository']->DeleteDraft($draft->draft_id);
+
+      $response->success = true;
+    } catch(\Exception $e) {
+      $response->success = false;
+      $response->errors = array($e->getMessage());
+    }
+
+    return $response;
+  }
 }
