@@ -91,10 +91,20 @@ class DraftValidator {
     return new PhpDraftResponse($valid, $errors);
   }
 
-  public function IsDraftStatusValid(Draft $draft) {
+  public function IsDraftStatusValid(Draft $draft, $old_status) {
     $valid = true;
     $errors = array();
     $draft_statuses = $this->app['phpdraft.DraftDataRepository']->GetStatuses();
+
+    if($old_status == "complete") {
+      $valid = false;
+      $errors[] = "The draft is completed, therefore its status cannot be changed.";
+    }
+
+    if($draft->draft_status == "complete") {
+      $valid = false;
+      $errors[] = "You cannot set the draft as completed manually.";
+    }
 
     if(empty($draft->draft_status)) {
       $errors[] = "One or more missing fields.";
@@ -104,6 +114,11 @@ class DraftValidator {
     if(!array_key_exists($draft->draft_status, $draft_statuses)) {
       $errors[] = "Draft status is an invalid value.";
       $valid = false;
+    }
+
+    if($draft->draft_status == "in_progress" && !$this->app['phpdraft.ManagerRepository']->DraftHasManagers($draft->draft_id)) {
+      $valid = false;
+      $errors[] = "A draft must have at least 2 managers before it can begin.";
     }
 
     return new PhpDraftResponse($valid, $errors);

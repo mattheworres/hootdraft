@@ -309,15 +309,14 @@ class PickRepository {
     return;
   }
 
-  //This logic will create all pick objects according to the draft information.
-  //The two lists are used in alternation for serpentine drafts. Only first list is
-  //used for standard drafts.
+  /*This logic will create all pick objects according to the draft information.
+    The two lists are used in alternation for serpentine drafts. Only first list is
+    used for standard drafts.*/
   public function SetupPicks(Draft $draft, $ascending_managers, $descending_managers = null) {
     $pick = 1;
     $even = true;
 
     for ($current_round = 1; $current_round <= $draft->draft_rounds; $current_round++) {
-      $this->app['monolog']->addDebug('Starting round $current_round');
       if ($draft->draft_style == "serpentine") {
         if ($even) {
           $managers = $ascending_managers;
@@ -335,7 +334,6 @@ class PickRepository {
         $managers = $ascending_managers;
 
       foreach ($managers as $manager) {
-        $this->app['monolog']->addDebug("Creating pick #$pick");
         $new_pick = new Pick();
         $new_pick->manager_id = $manager->manager_id;
         $new_pick->draft_id = $draft->draft_id;

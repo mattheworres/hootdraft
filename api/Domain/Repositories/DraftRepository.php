@@ -237,14 +237,13 @@ class DraftRepository {
       draft_start_time = UTC_TIMESTAMP(), draft_end_time = NULL
       WHERE draft_id = ?");
 
-    $reset_stmt->bindParam(1, $reset_value);
-    $reset_stmt->bindParam(2, $draft->draft_id);
+    $reset_stmt->bindParam(1, $draft->draft_id);
 
-    if(!$increment_stmt->execute()) {
+    if(!$reset_stmt->execute()) {
       throw new \Exception("Unable to set draft to in progress.");
     }
 
-    return $reset_value;
+    return 0;
   }
 
   public function NameIsUnique($name, $id = null) {

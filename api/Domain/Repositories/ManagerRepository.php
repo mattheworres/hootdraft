@@ -45,13 +45,12 @@ class ManagerRepository {
   }
 
   public function GetManagersByDraftOrder($draft_id, $descending = false) {
-    $managers_sql = "SELECT * FROM managers WHERE draft_id = ? ORDER BY draft_order";
-
     if($descending) {
-      $managers_sql = $managers_sql . " DESC";
+      $managers_stmt = $this->app['db']->prepare("SELECT * FROM managers WHERE draft_id = ? ORDER BY draft_order DESC");
+    } else {
+      $managers_stmt = $this->app['db']->prepare("SELECT * FROM managers WHERE draft_id = ? ORDER BY draft_order");  
     }
 
-    $managers_stmt = $this->app['db']->prepare($managers_sql);
     $managers_stmt->bindParam(1, $draft_id);
 
     $managers_stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Manager');
@@ -65,5 +64,17 @@ class ManagerRepository {
     }
 
     return $managers;
+  }
+
+  //Ensure a draft has the minimum number of managers - 2
+  public function DraftHasManagers($draft_id) {
+    $manager_stmt = $this->app['db']->prepare("SELECT manager_name FROM managers WHERE draft_id = ?");
+    $manager_stmt->bindParam(1, $draft_id);
+
+    if(!$manager_stmt->execute()) {
+      throw new \Exception("Draft id '%s' is invalid", $draft_id);
+    }
+
+    return $manager_stmt->rowCount() > 1;
   }
 }

@@ -86,8 +86,6 @@ class DraftController
       return $app->json($response);
     }
 
-    $app['monolog']->addDebug("Name: " . $request->get('name') . " Sporty: " . $request->get('sport'));
-
     $draft->draft_name = $request->get('name');
     $draft->draft_sport = $request->get('sport');
     $draft->draft_style = $request->get('style');
@@ -121,22 +119,10 @@ class DraftController
       return $app->json($response);
     }
 
-    if($draft->draft_status == "completed") {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "The draft is completed, therefore its status cannot be changed.";
-      return $app->json($response, Response::HTTP_BAD_REQUEST);
-    }
-
     $old_status = $draft->draft_status;
     $draft->draft_status = $request->get('status');
 
-    if($draft->draft_status == "completed") {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "You cannot set the draft as completed manually.";
-      return $app->json($response, Response::HTTP_BAD_REQUEST);
-    }
-
-    $validity = $app['phpdraft.DraftValidator']->IsDraftStatusValid($draft);
+    $validity = $app['phpdraft.DraftValidator']->IsDraftStatusValid($draft, $old_status);
 
     if(!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);

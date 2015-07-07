@@ -50,7 +50,7 @@ class Draft {
   /** @var string $draft_start_time datetime of when the draft was put into "started" status */
   public $draft_start_time;
 
-  /** @var string $draft_end_time datetime of when the draft was put into "completed" status */
+  /** @var string $draft_end_time datetime of when the draft was put into "complete" status */
   public $draft_end_time;
 
   /** @var int $draft_current_round */
