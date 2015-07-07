@@ -81,3 +81,6 @@ $app->put('/commish/profile', "commish.profile.controller:Put");
 $app->get('/commish/draft/create', "commish.draft.controller:GetCreate");
 $app->get('/commish/draft/{draft_id}', "commish.draft.controller:Get");
 $app->get('/commish/draft/{draft_id}/timers', "commish.draft.controller:GetTimers");
+$app->post('/commish/draft/create', "commish.draft.controller:Create");
+$app->put('/commish/draft/{draft_id}', "commish.draft.controller:Update");
+$app->put('/commish/draft/{draft_id}/status', "commish.draft.controller:UpdateStatus");

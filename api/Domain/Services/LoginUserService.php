@@ -64,6 +64,7 @@ class LoginUserService {
     $response = new PhpDraftResponse();
 
     try {
+      //Note: This uses transactions but I don't think our MySQL engine (Inno?) actually allows them, so this is ignored by the DB driver IIRC
       $this->app['db']->beginTransaction();
 
       $user = $this->app['phpdraft.LoginUserRepository']->Create($user);

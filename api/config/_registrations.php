@@ -18,7 +18,7 @@ $app['phpdraft.LoginUserService'] = function () use ($app) {
 };
 
 $app['phpdraft.DraftService'] = function () use ($app) {
-  return new \PhPDraft\Domain\Services\DraftService($app);
+  return new \PhpDraft\Domain\Services\DraftService($app);
 };
 
 //Repositories

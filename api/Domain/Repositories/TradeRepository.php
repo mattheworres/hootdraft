@@ -73,4 +73,37 @@ class TradeRepository {
 
     return $assets;
   }
+
+  public function DeleteAllTrades($draft_id) {
+    $draft_trade_stmt = $this->app['db']->prepare("SELECT * FROM trades WHERE draft_id = ?");
+    $draft_trade_stmt->bindParam(1, $draft_id);
+    $draft_trade_stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Trade');
+
+    if(!$draft_trade_stmt->execute()) {
+      throw new \Exception("Unable to delete trades for draft $draft_id");
+    }
+
+    $trades = array();
+
+    while ($trade = $draft_trade_stmt->fetch())
+      $trades[] = $trade;
+
+    $delete_assets_stmt = $this->app['db']->prepare("DELETE FROM trade_assets WHERE trade_id = :trade_id");
+    $delete_trade_stmt = $this->app['db']->prepare("DELETE FROM trades WHERE trade_id = :trade_id");
+
+    foreach ($trades as $trade) {
+      /* @var $trade trade_object */
+      $delete_assets_stmt->bindValue(":trade_id", $trade->trade_id);
+
+      if (!$delete_assets_stmt->execute())
+        throw new \Exception("Unable to delete trade assets for $draft_id.");
+
+      $delete_trade_stmt->bindValue(":trade_id", $trade->trade_id);
+
+      if (!$delete_trade_stmt->execute())
+        throw new \Exception("Unable to delete trade assets for $draft_id.");
+    }
+
+    return;
+  }
 }

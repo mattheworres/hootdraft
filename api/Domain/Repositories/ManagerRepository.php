@@ -44,5 +44,26 @@ class ManagerRepository {
     return $managers;
   }
 
+  public function GetManagersByDraftOrder($draft_id, $descending = false) {
+    $managers_sql = "SELECT * FROM managers WHERE draft_id = ? ORDER BY draft_order";
 
+    if($descending) {
+      $managers_sql = $managers_sql . " DESC";
+    }
+
+    $managers_stmt = $this->app['db']->prepare($managers_sql);
+    $managers_stmt->bindParam(1, $draft_id);
+
+    $managers_stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Manager');
+
+    if(!$managers_stmt->execute()) {
+      throw new \Exception("Unable to load managers for draft #$draft_id");
+    }
+
+    while($manager = $managers_stmt->fetch()) {
+      $managers[] = $manager;
+    }
+
+    return $managers;
+  }
 }

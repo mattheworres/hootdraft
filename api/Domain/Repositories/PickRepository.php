@@ -3,6 +3,7 @@ namespace PhpDraft\Domain\Repositories;
 
 use Silex\Application;
 use PhpDraft\Domain\Entities\Pick;
+use PhpDraft\Domain\Entities\Draft;
 use PhpDraft\Domain\Models\PickSearchModel;
 
 class PickRepository {
@@ -295,5 +296,79 @@ class PickRepository {
     $searchModel->player_results = $players;
 
     return $searchModel;
+  }
+
+  public function DeleteAllPicks($draft_id) {
+    $delete_stmt = $this->app['db']->prepare("DELETE FROM players WHERE draft_id = ?");
+    $delete_stmt->bindParam(1, $draft_id);
+
+    if(!$delete_stmt->execute()) {
+      throw new \Exception("Unable to delete picks for $draft_id.");
+    }
+
+    return;
+  }
+
+  //This logic will create all pick objects according to the draft information.
+  //The two lists are used in alternation for serpentine drafts. Only first list is
+  //used for standard drafts.
+  public function SetupPicks(Draft $draft, $ascending_managers, $descending_managers = null) {
+    $pick = 1;
+    $even = true;
+
+    for ($current_round = 1; $current_round <= $draft->draft_rounds; $current_round++) {
+      $this->app['monolog']->addDebug('Starting round $current_round');
+      if ($draft->draft_style == "serpentine") {
+        if ($even) {
+          $managers = $ascending_managers;
+          $even = false;
+        } else {
+          if($descending_managers == null) {
+            throw new \Exception("Descending managers list is empty - unable to setup draft.");
+          }
+
+          $managers = $descending_managers;
+          $even = true;
+        }
+      }
+      else
+        $managers = $ascending_managers;
+
+      foreach ($managers as $manager) {
+        $this->app['monolog']->addDebug("Creating pick #$pick");
+        $new_pick = new Pick();
+        $new_pick->manager_id = $manager->manager_id;
+        $new_pick->draft_id = $draft->draft_id;
+        $new_pick->player_round = $current_round;
+        $new_pick->player_pick = $pick;
+
+        try {
+          $this->_saveNewPick($new_pick);
+        } catch (Exception $e) {
+          throw new Exception($e->getMessage());
+        }
+
+        $pick++;
+      }
+    }
+    return;
+  }
+
+  private function _saveNewPick(Pick $pick) {
+    $insert_stmt = $this->app['db']->prepare("INSERT INTO players
+      (manager_id, draft_id, player_round, player_pick)
+      VALUES
+      (?, ?, ?, ?)");
+
+    $insert_stmt->bindParam(1, $pick->manager_id);
+    $insert_stmt->bindParam(2, $pick->draft_id);
+    $insert_stmt->bindParam(3, $pick->player_round);
+    $insert_stmt->bindParam(4, $pick->player_pick);
+
+    if(!$insert_stmt->execute()) {
+      throw new \Exception("Unable to insert pick #$pick->player_pick for draft $pick->draft_id");
+    }
+
+    return;
   }
 }
