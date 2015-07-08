@@ -190,8 +190,9 @@ class DraftController
     $createModel = new \PhpDraft\Domain\Models\RoundTimeCreateModel();
     $createModel->isRoundTimesEnabled = (bool)$request->get('isRoundTimesEnabled');
 
-    if($createmodel->isRoundTimesEnabled) {
+    if($createModel->isRoundTimesEnabled) {
       $roundTimesJson = $request->get('roundTimes');
+      $app['monolog']->addDebug($roundTimesJson);
 
       foreach($roundTimesJson as $roundTimeRequest) {
         $newRoundTime = new \PhpDraft\Domain\Entities\RoundTime();

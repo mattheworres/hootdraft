@@ -26,7 +26,7 @@ class RoundTimeValidator {
 
     if($model->isRoundTimesEnabled) {
       $roundTimeNumber = 0;
-      foreach($model->$roundTimes as $roundTime) {
+      foreach($model->roundTimes as $roundTime) {
         $roundTimeNumber++;
 
         if(empty($roundTime->draft_id) ||

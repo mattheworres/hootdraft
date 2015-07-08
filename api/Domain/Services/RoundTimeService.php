@@ -20,7 +20,7 @@ class RoundTimeService {
 
     try {
       $this->app['phpdraft.RoundTimeRepository']->DeleteAll($draft->draft_id);
-      $roundTimes = $this->app['phpdraft.RoundTimeRepository']->Update($model->roundTimes);
+      $roundTimes = $this->app['phpdraft.RoundTimeRepository']->Save($model);
 
       $response->success = true;
       $response->roundTimes = $roundTimes;
