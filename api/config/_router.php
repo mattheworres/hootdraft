@@ -85,3 +85,4 @@ $app->post('/commish/draft/create', "commish.draft.controller:Create");
 $app->put('/commish/draft/{draft_id}', "commish.draft.controller:Update");
 $app->put('/commish/draft/{draft_id}/status', "commish.draft.controller:UpdateStatus");
 $app->delete('/commish/draft/{draft_id}', "commish.draft.controller:Delete");
+$app->post('/commish/draft/{draft_id}/timers', "commish.draft.controller:SetTimers");

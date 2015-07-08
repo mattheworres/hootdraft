@@ -5,6 +5,9 @@ if (!$app instanceof Silex\Application) {
 }
 
 //Services
+//Services are classes that contain the vast majority of business logic.
+//Controllers gather and organize request data and responses to requests,
+//but hand all necessary data to a service for processing.
 $app['phpdraft.SaltService'] = function() use ($app) {
   return new \PhpDraft\Config\Security\SaltService();
 };
@@ -21,7 +24,12 @@ $app['phpdraft.DraftService'] = function () use ($app) {
   return new \PhpDraft\Domain\Services\DraftService($app);
 };
 
+$app['phpdraft.RoundTimeService'] = function () use ($app) {
+  return new \PhpDraft\Domain\Services\RoundTimeService($app);
+};
+
 //Repositories
+//Repositories are classes that are responsible for loading and saving data.
 $app['phpdraft.LoginUserRepository'] = function () use ($app) {
   return new \PhpDraft\Domain\Repositories\LoginUserRepository($app);
 };
@@ -51,10 +59,16 @@ $app['phpdraft.RoundTimeRepository'] = function () use ($app) {
 };
 
 //Validators
+//Validators are for ensuring that request data is valid, and ensures save data
+//does not result in corrupt data.
 $app['phpdraft.LoginUserValidator'] = function () use ($app) {
   return new \PhpDraft\Domain\Validators\LoginUserValidator($app);
 };
 
 $app['phpdraft.DraftValidator'] = function() use ($app) {
   return new \PhpDraft\Domain\Validators\DraftValidator($app);
+};
+
+$app['phpdraft.RoundTimeValidator'] = function () use ($app) {
+  return new \PhpDraft\Domain\Validators\RoundTimeValidator($app);
 };

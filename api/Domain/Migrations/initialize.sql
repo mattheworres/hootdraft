@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `draft` (
   `draft_end_time` datetime default NULL ,
   `draft_current_round` int(5) unsigned NOT NULL default '1',
   `draft_current_pick` int(5) unsigned NOT NULL default '1',
-  `nfl_extended` BIT(1) NOT NULL DEFAULT b'0',
+  `nfl_extended` TINYINT(1) NOT NULL DEFAULT '0',
   PRIMARY KEY  (`draft_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `players` (
 CREATE TABLE `users`
 (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-    `enabled` BIT(1) NOT NULL DEFAULT b'0',
+    `enabled` TINYINT(1) NOT NULL DEFAULT '0',
     `email` VARCHAR(255) NOT NULL,
     `password` VARCHAR(255) NOT NULL,
     `salt` VARCHAR(16) NOT NULL,
@@ -125,7 +125,7 @@ CREATE TABLE IF NOT EXISTS `trade_assets` (
 `player_id` INT( 11 ) UNSIGNED NOT NULL,
 `oldmanager_id` INT( 11 ) UNSIGNED NOT NULL,
 `newmanager_id` INT( 11 ) UNSIGNED NOT NULL,
-`was_drafted` TINYINT( 1 ) NOT NULL,
+`was_drafted` TINYINT(1) NOT NULL,
 INDEX ( `trade_id` , `player_id` , `oldmanager_id` , `newmanager_id` )
 ) ENGINE = MYISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
 
