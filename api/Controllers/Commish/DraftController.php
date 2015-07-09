@@ -192,14 +192,15 @@ class DraftController
 
     if($createModel->isRoundTimesEnabled) {
       $roundTimesJson = $request->get('roundTimes');
-      $app['monolog']->addDebug($roundTimesJson);
 
       foreach($roundTimesJson as $roundTimeRequest) {
         $newRoundTime = new \PhpDraft\Domain\Entities\RoundTime();
         $newRoundTime->draft_id = $draft_id;
-        $newRoundTime->is_static_time = (bool)$roundTimeRequest['is_static_time'];
+        $newRoundTime->is_static_time = $roundTimeRequest['is_static_time'] == "true";
         $newRoundTime->draft_round = $newRoundTime->is_static_time ? null : (int)$roundTimeRequest['draft_round'];
         $newRoundTime->round_time_seconds = (int)$roundTimeRequest['round_time_seconds'];
+
+        $createModel->roundTimes[] = $newRoundTime;
       }
     }
 
