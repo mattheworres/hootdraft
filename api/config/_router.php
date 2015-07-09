@@ -46,6 +46,10 @@ $app['commish.draft.controller'] = function() {
   return new PhpDraft\Controllers\Commish\DraftController();
 };
 
+$app['commish.manager.controller'] = function() {
+  return new PhpDraft\Controllers\Commish\ManagerController();
+};
+
 $app->post('/login', 'authentication.controller:Login');
 $app->post('/register', 'authentication.controller:Register');
 $app->post('/verify', 'authentication.controller:VerifyAccount');
@@ -86,3 +90,4 @@ $app->put('/commish/draft/{draft_id}', "commish.draft.controller:Update");
 $app->put('/commish/draft/{draft_id}/status', "commish.draft.controller:UpdateStatus");
 $app->delete('/commish/draft/{draft_id}', "commish.draft.controller:Delete");
 $app->post('/commish/draft/{draft_id}/timers', "commish.draft.controller:SetTimers");
+$app->get('/commish/draft/{draft_id}/managers', "commish.manager.controller:Get");

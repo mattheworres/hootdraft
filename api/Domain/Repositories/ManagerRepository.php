@@ -28,6 +28,8 @@ class ManagerRepository {
   }
 
   public function GetPublicManagers($draft_id) {
+    $managers = array();
+
     $managers_stmt = $this->app['db']->prepare("SELECT * FROM managers WHERE draft_id = ? ORDER BY draft_order");
     $managers_stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Manager');
 
@@ -45,6 +47,8 @@ class ManagerRepository {
   }
 
   public function GetManagersByDraftOrder($draft_id, $descending = false) {
+    $managers = array();
+
     if($descending) {
       $managers_stmt = $this->app['db']->prepare("SELECT * FROM managers WHERE draft_id = ? ORDER BY draft_order DESC");
     } else {
