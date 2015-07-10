@@ -123,4 +123,18 @@ class DraftValidator {
 
     return new PhpDraftResponse($valid, $errors);
   }
+
+  public function IsDraftSettingUp(Draft $draft) {
+    $valid = true;
+    $errors = array();
+    $draft_statuses = $this->app['phpdraft.DraftDataRepository']->GetStatuses();
+    $current_status_text = $draft_statuses[$draft->draft_status];
+
+    if($draft->draft_status != "undrafted") {
+      $valid = false;
+      $errors[] = "Unable to work on draft #$draft->draft_id: draft is $current_status_text";
+    }
+
+    return new PhpDraftResponse($valid, $errors);
+  }
 }
