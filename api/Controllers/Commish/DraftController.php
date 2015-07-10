@@ -86,6 +86,12 @@ class DraftController
       return $app->json($response);
     }
 
+    $setting_up = $app['phpdraft.DraftValidator']->IsDraftSettingUp($draft);
+
+    if(!$setting_up->success) {
+      return $app->json($setting_up, Response::HTTP_BAD_REQUEST);
+    }
+
     $draft->draft_name = $request->get('name');
     $draft->draft_sport = $request->get('sport');
     $draft->draft_style = $request->get('style');
@@ -185,6 +191,12 @@ class DraftController
       $response->errors[] = "You do not have permission to this draft.";
 
       return $app->json($response);
+    }
+
+    $setting_up = $app['phpdraft.DraftValidator']->IsDraftSettingUpOrInProgress($draft);
+
+    if(!$setting_up->success) {
+      return $app->json($setting_up, Response::HTTP_BAD_REQUEST);
     }
 
     $createModel = new \PhpDraft\Domain\Models\RoundTimeCreateModel();
