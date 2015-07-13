@@ -58,7 +58,7 @@ $app->post('/resetPassword', 'authentication.controller:ResetPassword');
 
 $app->get('/drafts', 'draft.controller:GetAll');
 $app->get('/draft/{id}', 'draft.controller:Get');
-$app->get('/drafts/{commissionerId}', 'draft.controller:GetAllByCommish');
+$app->get('/drafts/{commish_id}', 'draft.controller:GetAllByCommish');
 
 $app->get('/draft/{draft_id}/managers', 'manager.controller:GetAll');
 
@@ -95,3 +95,5 @@ $app->get('/commish/draft/{draft_id}/managers', "commish.manager.controller:Get"
 $app->post('/commish/draft/{draft_id}/manager', "commish.manager.controller:Create");
 $app->post('/commish/draft/{draft_id}/managers', "commish.manager.controller:CreateMany");
 $app->put('/commish/draft/{draft_id}/managers/reorder', "commish.manager.controller:Reorder");
+$app->put('/commish/draft/{draft_id}/manager/{manager_id}', "commish.manager.controller:Update");
+$app->delete('/commish/draft/{draft_id}/manager/{manager_id}', "commish.manager.controller:Delete");

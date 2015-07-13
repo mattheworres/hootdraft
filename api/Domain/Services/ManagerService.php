@@ -60,34 +60,27 @@ class ManagerService {
     return $response;
   }
 
-  /*public function UpdateManager(Draft $draft) {
-    //TODO: Implement
+  public function UpdateManager(Manager $manager) {
     $response = new PhpDraftResponse();
 
     try {
-      $draft = $this->app['phpdraft.DraftRepository']->Update($draft);
+      $manager = $this->app['phpdraft.ManagerRepository']->Update($manager);
 
       $response->success = true;
-      $response->draft = $draft;
-    }catch(\Exception $e) {
+      $response->manager = $manager;
+    } catch (\Exception $e) {
       $response->success = false;
       $response->errors = array($e->getMessage());
     }
 
     return $response;
-  }*/
+  }
 
-  /*public function DeleteManager(Draft $draft) {
-    //TODO: Implement
+  public function DeleteManager(Manager $manager) {
     $response = new PhpDraftResponse();
 
     try {
-      //Delete all trades
-      $this->app['phpdraft.TradeRepository']->DeleteAllTrades($draft->draft_id);
-      //Delete all picks
-      $this->app['phpdraft.PickRepository']->DeleteAllPicks($draft->draft_id);
-      //Delete the draft
-      $this->app['phpdraft.DraftRepository']->DeleteDraft($draft->draft_id);
+      $this->app['phpdraft.ManagerRepository']->DeleteManager($manager->manager_id);
 
       $response->success = true;
     } catch(\Exception $e) {
@@ -96,5 +89,5 @@ class ManagerService {
     }
 
     return $response;
-  }*/
+  }
 }

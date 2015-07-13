@@ -30,7 +30,7 @@ class DraftController {
   }
 
   public function GetAllByCommish(Application $app, Request $request) {
-    $commish_id = $request->get('commissionerId');
+    $commish_id = $request->get('commish_id');
 
     $drafts = $app['phpdraft.DraftRepository']->GetPublicDraftsByCommish($request, $commish_id);
 

@@ -16,7 +16,7 @@ class ManagerRepository {
 
     $load_stmt = $this->app['db']->prepare("SELECT * FROM managers WHERE manager_id = ? LIMIT 1");
     $load_stmt->setFetchMode(\PDO::FETCH_INTO, $manager);
-    $load_stmt->bindParam(1, (int) $id);
+    $load_stmt->bindParam(1, $id);
 
     if (!$load_stmt->execute())
       throw new \Exception(sprintf('Manager "%s" does not exist.', $manager));
@@ -93,14 +93,16 @@ class ManagerRepository {
     return (int)$manager_stmt->fetchColumn(0);
   }
 
-  public function NameIsUnique($name, $id = null) {
+  public function NameIsUnique($name, $draft_id, $id = null) {
     if(!empty($id)) {
-      $name_stmt = $this->app['db']->prepare("SELECT manager_name FROM managers WHERE manager_name LIKE ? AND manager_id <> ?");
+      $name_stmt = $this->app['db']->prepare("SELECT manager_name FROM managers WHERE manager_name LIKE ? AND draft_id = ? AND manager_id <> ?");
       $name_stmt->bindParam(1, $name);
-      $name_stmt->bindParam(2, $id);
+      $name_stmt->bindParam(2, $draft_id);
+      $name_stmt->bindParam(3, $id);
     } else {
-      $name_stmt = $this->app['db']->prepare("SELECT manager_name FROM managers WHERE manager_name LIKE ?");
+      $name_stmt = $this->app['db']->prepare("SELECT manager_name FROM managers WHERE manager_name LIKE ? AND draft_id = ?");
       $name_stmt->bindParam(1, $name);
+      $name_stmt->bindParam(2, $draft_id);
     }
 
     if(!$name_stmt->execute()) {
@@ -162,6 +164,18 @@ class ManagerRepository {
     return $newManagers;
   }
 
+  public function Update(Manager $manager) {
+    $update_stmt = $this->app['db']->prepare("UPDATE managers SET manager_name = ? WHERE manager_id = ?");
+    $update_stmt->bindParam(1, $manager->manager_name);
+    $update_stmt->bindParam(2, $manager->manager_id);
+
+    if(!$update_stmt->execute()) {
+      throw new \Exception("Unable to update manager #$manager->manager_id");
+    }
+
+    return $manager;
+  }
+
   public function ReorderManagers($managersIdArray) {
     $reorder_stmt = $this->app['db']->prepare("UPDATE managers SET draft_order = :draft_order WHERE manager_id = :manager_id");
 
@@ -174,6 +188,28 @@ class ManagerRepository {
       if(!$reorder_stmt->execute()) {
         throw new \Exception("Unable to update manager order for manager #$manager_id");
       }
+    }
+
+    return;
+  }
+
+  public function DeleteManager($manager_id) {
+    $delete_stmt = $this->app['db']->prepare("DELETE FROM managers WHERE manager_id = ?");
+    $delete_stmt->bindParam(1, $manager_id);
+
+    if(!$delete_stmt->execute()) {
+      throw new \Exception("Unable to delete manager $manager_id.");
+    }
+
+    return;
+  }
+
+  public function DeleteAllManagers($draft_id) {
+    $delete_stmt = $this->app['db']->prepare("DELETE FROM managers WHERE draft_id = ?");
+    $delete_stmt->bindParam(1, $draft_id);
+
+    if(!$delete_stmt->execute()) {
+      throw new \Exception("Unable to delete managers for draft $draft_id.");
     }
 
     return;

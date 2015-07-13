@@ -91,6 +91,10 @@ class DraftService {
       $this->app['phpdraft.TradeRepository']->DeleteAllTrades($draft->draft_id);
       //Delete all picks
       $this->app['phpdraft.PickRepository']->DeleteAllPicks($draft->draft_id);
+      //Delete all managers
+      $this->app['phpdraft.ManagerRepository']->DeleteAllManagers($draft->draft_id);
+      //Delete all round timers
+      $this->app['phpdraft.RoundTimeRepository']->DeleteAll($draft->draft_id);
       //Delete the draft
       $this->app['phpdraft.DraftRepository']->DeleteDraft($draft->draft_id);
 

@@ -83,7 +83,7 @@ class ManagerValidator {
         $valid = false;
       }
 
-      if(!$this->app['phpdraft.ManagerRepository']->NameIsUnique($manager->manager_name)) {
+      if(!$this->app['phpdraft.ManagerRepository']->NameIsUnique($manager->manager_name, $draft->draft_id)) {
         $errors[] = "Manager name '$manager->manager_name' already exists - please choose another name.";
         $valid = false;
       }
@@ -124,6 +124,35 @@ class ManagerValidator {
           $valid = false;
         }
       }
+    }
+
+    return new PhpDraftResponse($valid, $errors);
+  }
+
+  public function IsManagerValidForUpdate(Draft $draft, Manager $manager) {
+    $valid = true;
+    $errors = array();
+    
+    if(empty($manager->manager_id)
+      || empty($manager->draft_id)
+      || empty($manager->manager_name)) {
+      $errors[] = "One or more missing fields.";
+      $valid = false;
+    }
+
+    if($draft->draft_id != $manager->draft_id) {
+      $errors[] = "Manager does not belong to draft #$draft->draft_id";
+      $valid = false;
+    }
+
+    if(!empty($manager->manager_name) && strlen($manager->manager_name) > 255) {
+      $errors[] = "Manager name is above maximum length.";
+      $valid = false;
+    }
+
+    if(!$this->app['phpdraft.ManagerRepository']->NameIsUnique($manager->manager_name, $draft->draft_id, $manager->manager_id)) {
+      $errors[] = "Manager name '$manager->manager_name' already exists - please choose another name.";
+      $valid = false;
     }
 
     return new PhpDraftResponse($valid, $errors);
