@@ -80,7 +80,18 @@ class ManagerService {
     $response = new PhpDraftResponse();
 
     try {
+      $draft_id = $manager->draft_id;
       $this->app['phpdraft.ManagerRepository']->DeleteManager($manager->manager_id);
+
+      //When we delete a manager, re-order them to exclude deleted manager:
+      $managers = $this->app['phpdraft.ManagerRepository']->GetManagersByDraftOrder($draft_id);
+      $managersIdArray = array();
+
+      foreach($managers as $manager) {
+        $managersIdArray[] = $manager->manager_id;
+      }
+
+      $this->ReorderManagers($managersIdArray);
 
       $response->success = true;
     } catch(\Exception $e) {
