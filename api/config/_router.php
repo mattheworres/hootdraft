@@ -50,6 +50,10 @@ $app['commish.manager.controller'] = function() {
   return new PhpDraft\Controllers\Commish\ManagerController();
 };
 
+$app['commish.proplayer.controller'] = function() {
+  return new PhpDraft\Controllers\Commish\ProPlayerController();
+};
+
 $app->post('/login', 'authentication.controller:Login');
 $app->post('/register', 'authentication.controller:Register');
 $app->post('/verify', 'authentication.controller:VerifyAccount');
@@ -97,3 +101,5 @@ $app->post('/commish/draft/{draft_id}/managers', "commish.manager.controller:Cre
 $app->put('/commish/draft/{draft_id}/managers/reorder', "commish.manager.controller:Reorder");
 $app->put('/commish/draft/{draft_id}/manager/{manager_id}', "commish.manager.controller:Update");
 $app->delete('/commish/draft/{draft_id}/manager/{manager_id}', "commish.manager.controller:Delete");
+
+$app->get('/commish/proplayers/search', "commish.proplayer.controller:Search");

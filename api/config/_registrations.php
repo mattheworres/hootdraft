@@ -32,6 +32,10 @@ $app['phpdraft.ManagerService'] = function () use ($app) {
   return new \PhpDraft\Domain\Services\ManagerService($app);
 };
 
+$app['phpdraft.ProPlayerService'] = function () use ($app) {
+  return new \PhpDraft\Domain\Services\ProPlayerService($app);
+};
+
 //Repositories
 //Repositories are classes that are responsible for loading and saving data.
 $app['phpdraft.LoginUserRepository'] = function () use ($app) {
@@ -60,6 +64,10 @@ $app['phpdraft.DraftDataRepository'] = function () use ($app) {
 
 $app['phpdraft.RoundTimeRepository'] = function () use ($app) {
   return new \PhpDraft\Domain\Repositories\RoundTimeRepository($app);
+};
+
+$app['phpdraft.ProPlayerRepository'] = function () use ($app) {
+  return new \PhpDraft\Domain\Repositories\ProPlayerRepository($app);
 };
 
 //Validators
