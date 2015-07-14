@@ -54,6 +54,10 @@ $app['commish.proplayer.controller'] = function() {
   return new PhpDraft\Controllers\Commish\ProPlayerController();
 };
 
+$app['commish.trade.controller'] = function() {
+  return new PhpDraft\Controllers\Commish\TradeController();
+};
+
 $app->post('/login', 'authentication.controller:Login');
 $app->post('/register', 'authentication.controller:Register');
 $app->post('/verify', 'authentication.controller:VerifyAccount');
@@ -103,3 +107,5 @@ $app->put('/commish/draft/{draft_id}/manager/{manager_id}', "commish.manager.con
 $app->delete('/commish/draft/{draft_id}/manager/{manager_id}', "commish.manager.controller:Delete");
 
 $app->get('/commish/proplayers/search', "commish.proplayer.controller:Search");
+
+$app->get('/commish/draft/{draft_id}/manager/{manager_id}/assets', "commish.trade.controller:GetAssets");

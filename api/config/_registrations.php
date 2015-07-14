@@ -36,6 +36,10 @@ $app['phpdraft.ProPlayerService'] = function () use ($app) {
   return new \PhpDraft\Domain\Services\ProPlayerService($app);
 };
 
+$app['phpdraft.TradeService'] = function () use ($app) {
+  return new \PhpDraft\Domain\Services\TradeService($app);
+};
+
 //Repositories
 //Repositories are classes that are responsible for loading and saving data.
 $app['phpdraft.LoginUserRepository'] = function () use ($app) {
@@ -87,4 +91,8 @@ $app['phpdraft.RoundTimeValidator'] = function () use ($app) {
 
 $app['phpdraft.ManagerValidator'] = function () use ($app) {
   return new \PhpDraft\Domain\Validators\ManagerValidator($app);
+};
+
+$app['phpdraft.TradeValidator'] = function () use ($app) {
+  return new \PhpDraft\Domain\Validators\TradeValidator($app);
 };

@@ -128,7 +128,7 @@ class DraftValidator {
     $valid = true;
     $errors = array();
     $draft_statuses = $this->app['phpdraft.DraftDataRepository']->GetStatuses();
-    $current_status_text = $draft_statuses[$draft->draft_status];
+    $current_status_text = strtolower($draft_statuses[$draft->draft_status]);
 
     if($draft->draft_status != "undrafted") {
       $valid = false;
@@ -142,7 +142,7 @@ class DraftValidator {
     $valid = true;
     $errors = array();
     $draft_statuses = $this->app['phpdraft.DraftDataRepository']->GetStatuses();
-    $current_status_text = $draft_statuses[$draft->draft_status];
+    $current_status_text = strtolower($draft_statuses[$draft->draft_status]);
 
     if($draft->draft_status == "complete") {
       $valid = false;
@@ -156,7 +156,7 @@ class DraftValidator {
     $valid = true;
     $errors = array();
     $draft_statuses = $this->app['phpdraft.DraftDataRepository']->GetStatuses();
-    $current_status_text = $draft_statuses[$draft->draft_status];
+    $current_status_text = strtolower($draft_statuses[$draft->draft_status]);
 
     if($draft->draft_status != "in_progress") {
       $valid = false;
