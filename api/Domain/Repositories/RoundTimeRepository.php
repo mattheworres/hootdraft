@@ -76,15 +76,40 @@ class RoundTimeRepository {
     return;
   }
 
-  /*
-  * This method is only to be used internally or when the user has been verified as owner of the draft (or is admin)
-  * (in other words, don't call this then return the result as JSON!)
-  */
-  public function LoadByRound($draft_id, $round) {
-    /*$timer = new RoundTime();
+  public function LoadByRound(Draft $draft) {
+    $round_time = new RoundTime();
 
-    $draft_stmt = $this->app['db']->prepare("SELECT * FROM round_times
-    WHERE draft_id = ? LIMIT 1");*/
-    //TODO: Implement. Will need to 
+    $static_round_time_stmt = $this->app['db']->prepare("SELECT * FROM round_times WHERE draft_id = ? AND is_static_time = 1 LIMIT 1");
+    $static_round_time_stmt->setFetchMode(\PDO::FETCH_INTO, $round_time);
+    $static_round_time_stmt->bindParam(1, $draft->draft_id);
+
+    if(!$static_round_time_stmt->execute()) {
+      throw new \Exception("Unable to get static round time.");
+    }
+
+    if($static_round_time_stmt->rowCount() == 1) {
+      $static_round_time_stmt->fetch();
+
+      return $round_time;
+    }
+
+    $round_time_stmt = $this->app['db']->prepare("SELECT * FROM round_times WHERE draft_id = ? AND draft_round = ? LIMIT 1");
+    $round_time_stmt->setFetchMode(\PDO::FETCH_INTO, $round_time);
+    $round_time_stmt->bindParam(1, $draft->draft_id);
+    $round_time_stmt->bindParam(2, $draft->draft_current_round);
+
+    if (!$round_time_stmt->execute()) {
+      throw new \Exception("Unable to load round time:" . $this->app['db']->errorInfo());
+    }
+
+    if($round_time_stmt->rowCount() == 0) {
+      return null;
+    }
+
+    if (!$round_time_stmt->fetch()) {
+      throw new \Exception("Unable to load round time:" . $this->app['db']->errorInfo());
+    }
+
+    return $round_time;
   }
 }

@@ -92,6 +92,61 @@ class PickRepository {
     return $pick;
   }
 
+  public function GetCurrentPick(Draft $draft) {
+    $stmt = $this->app['db']->prepare("SELECT p.*, m.* " .
+            "FROM players p " .
+            "LEFT OUTER JOIN managers m " .
+            "ON m.manager_id = p.manager_id " .
+            "WHERE p.draft_id = ? " .
+            "AND p.player_round = ? " .
+            "AND p.player_pick = ? " .
+            "LIMIT 1");
+
+    $stmt->bindParam(1, $draft->draft_id);
+    $stmt->bindParam(2, $draft->draft_current_round);
+    $stmt->bindParam(3, $draft->draft_current_pick);
+
+    $stmt->setFetchMode(\PDO::FETCH_CLASS, '\Phpdraft\Domain\Entities\Pick');
+
+    if (!$stmt->execute()) {
+      throw new \Exception("Unable to get current pick.");
+    }
+
+    if ($stmt->rowCount() == 0) {
+      throw new \Exception("Unable to get current pick.");
+    }
+
+    return $stmt->fetch();
+  }
+
+  public function GetPreviousPick(Draft $draft) {
+    $stmt = $this->app['db']->prepare("SELECT p.*, m.* " .
+            "FROM players p " .
+            "LEFT OUTER JOIN managers m " .
+            "ON m.manager_id = p.manager_id " .
+            "WHERE p.draft_id = ? " .
+            "AND p.player_pick = ? " .
+            "AND p.pick_time IS NOT NULL " .
+            "LIMIT 1");
+
+    $stmt->bindParam(1, $draft->draft_id);
+    $stmt->bindParam(2, $previous_pick);
+
+    $previous_pick = ($draft->draft_current_pick - 1);
+
+    $stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Pick');
+
+    if (!$stmt->execute()) {
+      throw new \Exception("Unable to get last pick: " . implode(":", $stmt->errorInfo()));
+    }
+
+    if ($stmt->rowCount() == 0) {
+      return null;
+    }
+
+    return $stmt->fetch();
+  }
+
   public function LoadLastPicks($draft_id, $amount) {
     $picks = array();
 

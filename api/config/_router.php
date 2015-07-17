@@ -30,6 +30,10 @@ $app['trade.controller'] = function() {
   return new PhpDraft\Controllers\TradeController();
 };
 
+$app['roundtime.controller'] = function() {
+  return new PhpDraft\Controllers\RoundTimeController();
+};
+
 $app['admin.index.controller'] = function() {
   return new PhpDraft\Controllers\Admin\IndexController();
 };
@@ -81,6 +85,8 @@ $app->get('/draft/{draft_id}/round/{draft_round}/picks/selected', 'pick.controll
 $app->get('/draft/{draft_id}/picks/search', 'pick.controller:SearchPicks');
 
 $app->get('/draft/{draft_id}/trades', 'trade.controller:GetAll');
+
+$app->get('/draft/{draft_id}/timer/remaining', 'roundtime.controller:GetTimeRemaining');
 
 $app->get('/', "index.controller:Index");
 

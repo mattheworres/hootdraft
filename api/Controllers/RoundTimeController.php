@@ -4,10 +4,11 @@ namespace PhpDraft\Controllers;
 
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use PhpDraft\Domain\Models\PhpDraftResponse;
 
-class TradeController {
-  public function GetAll(Application $app, Request $request) {
+class RoundTimeController {
+  public function GetTimeRemaining(Application $app, Request $request) {
     $draft_id = (int)$request->get('draft_id');
 
     $viewable = $app['phpdraft.DraftValidator']->IsDraftViewableForUser($draft_id, $request);
@@ -19,12 +20,11 @@ class TradeController {
       return $app->json($response, Response::HTTP_BAD_REQUEST);
     }
 
-    $in_progress = $app['phpdraft.DraftValidator']->IsDraftInProgress($draft);
+    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
 
-    if(!$in_progress->success) {
-      return $app->json($in_progress, Response::HTTP_BAD_REQUEST);
-    }
+    $response = $app['phpdraft.RoundTimeService']->GetCurrentPickTimeRemaining($draft);
+    $response_type = ($response->success ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST);
 
-    return $app->json($app['phpdraft.TradeRepository']->GetTrades($draft_id), Response::HTTP_OK);
+    return $app->json($response, $response_type);
   }
 }
