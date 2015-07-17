@@ -62,6 +62,10 @@ $app['commish.trade.controller'] = function() {
   return new PhpDraft\Controllers\Commish\TradeController();
 };
 
+$app['commish.pick.controller'] = function() {
+  return new PhpDraft\Controllers\Commish\PickController();
+};
+
 $app->post('/login', 'authentication.controller:Login');
 $app->post('/register', 'authentication.controller:Register');
 $app->post('/verify', 'authentication.controller:VerifyAccount');
@@ -115,4 +119,8 @@ $app->delete('/commish/draft/{draft_id}/manager/{manager_id}', "commish.manager.
 $app->get('/commish/proplayers/search', "commish.proplayer.controller:Search"); //Only requires commish role, handled by firewall
 
 $app->get('/commish/draft/{draft_id}/manager/{manager_id}/assets', "commish.trade.controller:GetAssets")->before($commishEditableDraft)->before($draftInProgress);
-$app->post('/commish/draft/{draft_id}/trade', "commish.trade.controller:Create")->before($commishEditableDraft)->before($commishDraftInProgress);
+$app->post('/commish/draft/{draft_id}/trade', "commish.trade.controller:Create")->before($commishEditableDraft)->before($draftInProgress);
+
+$app->get('/commish/draft/{draft_id}/pick/current', "commish.pick.controller:GetCurrent")->before($commishEditableDraft)->before($draftInProgress);
+
+

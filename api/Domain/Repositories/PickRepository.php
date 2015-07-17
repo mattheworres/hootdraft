@@ -93,7 +93,7 @@ class PickRepository {
   }
 
   public function GetCurrentPick(Draft $draft) {
-    $stmt = $this->app['db']->prepare("SELECT p.*, m.* " .
+    $stmt = $this->app['db']->prepare("SELECT p.*, m.manager_id, m.manager_name " .
             "FROM players p " .
             "LEFT OUTER JOIN managers m " .
             "ON m.manager_id = p.manager_id " .
@@ -106,7 +106,9 @@ class PickRepository {
     $stmt->bindParam(2, $draft->draft_current_round);
     $stmt->bindParam(3, $draft->draft_current_pick);
 
-    $stmt->setFetchMode(\PDO::FETCH_CLASS, '\Phpdraft\Domain\Entities\Pick');
+    //Saw some extra numbered properties in the object when a FETCH_CLASS was performed instead. Possibly from the JOIN? Use FETCH_INTO instead:
+    $current_pick = new Pick();
+    $stmt->setFetchMode(\PDO::FETCH_INTO, $current_pick);
 
     if (!$stmt->execute()) {
       throw new \Exception("Unable to get current pick.");
@@ -116,11 +118,13 @@ class PickRepository {
       throw new \Exception("Unable to get current pick.");
     }
 
-    return $stmt->fetch();
+    $stmt->fetch();
+
+    return $current_pick;
   }
 
   public function GetPreviousPick(Draft $draft) {
-    $stmt = $this->app['db']->prepare("SELECT p.*, m.* " .
+    $stmt = $this->app['db']->prepare("SELECT p.*, m.manager_id, m.manager_name " .
             "FROM players p " .
             "LEFT OUTER JOIN managers m " .
             "ON m.manager_id = p.manager_id " .
@@ -134,7 +138,8 @@ class PickRepository {
 
     $previous_pick = ($draft->draft_current_pick - 1);
 
-    $stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Pick');
+    $previous_pick = new Pick();
+    $stmt->setFetchMode(\PDO::FETCH_INTO, $previous_pick);
 
     if (!$stmt->execute()) {
       throw new \Exception("Unable to get last pick: " . implode(":", $stmt->errorInfo()));
@@ -144,13 +149,16 @@ class PickRepository {
       return null;
     }
 
-    return $stmt->fetch();
+    $stmt->fetch();
+
+    return $previous_pick;
   }
 
   public function LoadLastPicks($draft_id, $amount) {
+    $this->app['monolog']->addDebug("Getting $amount pics for drafty $draft_id");
     $picks = array();
 
-    $stmt = $this->app['db']->prepare("SELECT p.*, m.manager_name FROM players p ".
+    $stmt = $this->app['db']->prepare("SELECT p.*, m.manager_name, m.manager_id FROM players p ".
             "LEFT OUTER JOIN managers m " .
             "ON m.manager_id = p.manager_id " .
             "WHERE p.draft_id = ? " .
@@ -178,7 +186,7 @@ class PickRepository {
   public function LoadNextPicks($draft_id, $currentPick, $amount) {
     $picks = array();
 
-    $stmt = $this->app['db']->prepare("SELECT p.*, m.manager_name FROM players p ".
+    $stmt = $this->app['db']->prepare("SELECT p.*, m.manager_name, m.manager_id FROM players p ".
             "LEFT OUTER JOIN managers m " .
             "ON m.manager_id = p.manager_id " .
             "WHERE p.draft_id = ? " .
