@@ -21,7 +21,7 @@ class DraftValidator {
     $current_user = $this->app['phpdraft.LoginUserService']->GetUserFromHeaderToken($request);
     $draft_password = $request->headers->get($this->app['phpdraft.draft_password'], '');
 
-    if(!empty($current_user) && $draft->commish_id == $current_user->id) {
+    if($current_user != null && $draft->commish_id == $current_user->id) {
       return true;
     }
 

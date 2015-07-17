@@ -287,6 +287,7 @@ class DraftRepository {
     $draft->draft_current_pick = '';
     $draft->draft_current_round = '';
     $draft->draft_create_time = '';
+    $draft->nfl_extended = null;
 
     return $draft;
   }

@@ -38,10 +38,8 @@ class LoginUserService {
       return null;
     }
 
-    $encoder = new \Silex\Component\Security\Core\Encoder\JWTEncoder(AUTH_KEY, $this->app['phpdraft.auth_seconds']);
-
     try {
-      $decoded = $encoder->decode($request_token);
+      $decoded = $this->app['security.jwt.encoder']->decode($request_token);
 
       $token = new \Silex\Component\Security\Http\Token\JWTToken();
       $token->setTokenContext($decoded);
