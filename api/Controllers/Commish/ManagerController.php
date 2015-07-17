@@ -10,49 +10,21 @@ use PhpDraft\Domain\Models\PhpDraftResponse;
 
 class ManagerController {
   public function Get(Application $app, Request $request) {
-    $current_user = $app['phpdraft.LoginUserService']->GetCurrentUser();
     $draft_id = (int)$request->get('draft_id');
-    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
 
-    $editable = $app['phpdraft.DraftValidator']->IsDraftEditableForUser($draft, $current_user);
-
-    if(!$editable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "You do not have permission to this draft.";
-
-      return $app->json($response, Response::HTTP_BAD_REQUEST);
-    }
-
-    $managers = $app['phpdraft.ManagerRepository']->GetManagersByDraftOrder($draft->draft_id);
+    $managers = $app['phpdraft.ManagerRepository']->GetManagersByDraftOrder($draft_id);
 
     return $app->json($managers, Response::HTTP_OK);
   }
 
   public function Create(Application $app, Request $request) {
-    $current_user = $app['phpdraft.LoginUserService']->GetCurrentUser();
     $draft_id = (int)$request->get('draft_id');
-    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
-
-    $editable = $app['phpdraft.DraftValidator']->IsDraftEditableForUser($draft, $current_user);
-
-    if(!$editable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "You do not have permission to this draft.";
-
-      return $app->json($response, Response::HTTP_BAD_REQUEST);
-    }
-
-    $setting_up = $app['phpdraft.DraftValidator']->IsDraftSettingUp($draft);
-
-    if(!$setting_up->success) {
-      return $app->json($setting_up, Response::HTTP_BAD_REQUEST);
-    }
 
     $manager = new Manager();
     $manager->draft_id = $draft_id;
     $manager->manager_name = $request->get('manager_name');
 
-    $validity = $app['phpdraft.ManagerValidator']->IsManagerValidForCreate($draft, $manager);
+    $validity = $app['phpdraft.ManagerValidator']->IsManagerValidForCreate($draft_id, $manager);
 
     if(!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
@@ -65,24 +37,7 @@ class ManagerController {
   }
 
   public function CreateMany(Application $app, Request $request) {
-    $current_user = $app['phpdraft.LoginUserService']->GetCurrentUser();
     $draft_id = (int)$request->get('draft_id');
-    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
-
-    $editable = $app['phpdraft.DraftValidator']->IsDraftEditableForUser($draft, $current_user);
-
-    if(!$editable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "You do not have permission to this draft.";
-
-      return $app->json($response, Response::HTTP_BAD_REQUEST);
-    }
-
-    $setting_up = $app['phpdraft.DraftValidator']->IsDraftSettingUp($draft);
-
-    if(!$setting_up->success) {
-      return $app->json($setting_up, Response::HTTP_BAD_REQUEST);
-    }
 
     $managersJson = $request->get('managers');
     $newManagers = array();
@@ -95,7 +50,7 @@ class ManagerController {
       $newManagers[] = $newManager;
     }
 
-    $validity = $app['phpdraft.ManagerValidator']->AreManagersValidForCreate($draft, $newManagers);
+    $validity = $app['phpdraft.ManagerValidator']->AreManagersValidForCreate($draft_id, $newManagers);
 
     if(!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
@@ -108,24 +63,7 @@ class ManagerController {
   }
 
   public function Reorder(Application $app, Request $request) {
-    $current_user = $app['phpdraft.LoginUserService']->GetCurrentUser();
     $draft_id = (int)$request->get('draft_id');
-    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
-
-    $editable = $app['phpdraft.DraftValidator']->IsDraftEditableForUser($draft, $current_user);
-
-    if(!$editable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "You do not have permission to this draft.";
-
-      return $app->json($response, Response::HTTP_BAD_REQUEST);
-    }
-
-    $setting_up = $app['phpdraft.DraftValidator']->IsDraftSettingUp($draft);
-
-    if(!$setting_up->success) {
-      return $app->json($setting_up, Response::HTTP_BAD_REQUEST);
-    }
 
     $managersIdJson = $request->get('ordered_manager_ids');
     $manager_ids = array();
@@ -147,25 +85,7 @@ class ManagerController {
   }
 
   public function Update(Application $app, Request $request) {
-    $current_user = $app['phpdraft.LoginUserService']->GetCurrentUser();
     $draft_id = (int)$request->get('draft_id');
-    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
-
-    $editable = $app['phpdraft.DraftValidator']->IsDraftEditableForUser($draft, $current_user);
-
-    if(!$editable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "You do not have permission to this draft.";
-
-      return $app->json($response, Response::HTTP_BAD_REQUEST);
-    }
-
-    $setting_up = $app['phpdraft.DraftValidator']->IsDraftSettingUp($draft);
-
-    if(!$setting_up->success) {
-      return $app->json($setting_up, Response::HTTP_BAD_REQUEST);
-    }
-
     $manager_id = $request->get('manager_id');
 
     try {
@@ -179,7 +99,7 @@ class ManagerController {
 
     $manager->manager_name = $request->get('name');
 
-    $validity = $app['phpdraft.ManagerValidator']->IsManagerValidForUpdate($draft, $manager);
+    $validity = $app['phpdraft.ManagerValidator']->IsManagerValidForUpdate($draft_id, $manager);
 
     if(!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
@@ -192,25 +112,7 @@ class ManagerController {
   }
 
   public function Delete(Application $app, Request $request) {
-    $current_user = $app['phpdraft.LoginUserService']->GetCurrentUser();
     $draft_id = (int)$request->get('draft_id');
-    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
-
-    $editable = $app['phpdraft.DraftValidator']->IsDraftEditableForUser($draft, $current_user);
-
-    if(!$editable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "You do not have permission to this draft.";
-
-      return $app->json($response, Response::HTTP_BAD_REQUEST);
-    }
-
-    $setting_up = $app['phpdraft.DraftValidator']->IsDraftSettingUp($draft);
-
-    if(!$setting_up->success) {
-      return $app->json($setting_up, Response::HTTP_BAD_REQUEST);
-    }
-
     $manager_id = $request->get('manager_id');
 
     try {
@@ -222,7 +124,7 @@ class ManagerController {
       return $app->json($response, Response::HTTP_BAD_REQUEST);
     }
 
-    if($manager->draft_id != $draft->draft_id) {
+    if($manager->draft_id != $draft_id) {
       $response = new PhpDraftResponse(false, array());
       $response->errors[] = "Unable to delete manager #$manager_id";
 

@@ -10,30 +10,12 @@ class PickController {
   public function GetAll(Application $app, Request $request) {
     $draft_id = (int)$request->get('draft_id');
 
-    $viewable = $app['phpdraft.DraftValidator']->IsDraftViewableForUser($draft_id, $request);
-
-    if(!$viewable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "Draft marked as private.";
-
-      return $app->json($response);
-    }
-
     return $app->json($app['phpdraft.PickRepository']->LoadAll($draft_id));
   }
 
   public function GetUpdated(Application $app, Request $request) {
     $draft_id = (int)$request->get('draft_id');
     $pick_counter = (int)$request->get('pick_counter');
-
-    $viewable = $app['phpdraft.DraftValidator']->IsDraftViewableForUser($draft_id, $request);
-
-    if(!$viewable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "Draft marked as private.";
-
-      return $app->json($response);
-    }
 
     return $app->json($app['phpdraft.PickRepository']->LoadUpdatedPicks($draft_id, $pick_counter));
   }
@@ -44,15 +26,6 @@ class PickController {
 
     if($amount == 0) {
       $amount = 10;
-    }
-
-    $viewable = $app['phpdraft.DraftValidator']->IsDraftViewableForUser($draft_id, $request);
-
-    if(!$viewable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "Draft marked as private.";
-
-      return $app->json($response);
     }
 
     return $app->json($app['phpdraft.PickRepository']->LoadLastPicks($draft_id, $amount));
@@ -66,15 +39,6 @@ class PickController {
       $amount = 10;
     }
 
-    $viewable = $app['phpdraft.DraftValidator']->IsDraftViewableForUser($draft_id, $request);
-
-    if(!$viewable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "Draft marked as private.";
-
-      return $app->json($response);
-    }
-
     $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
 
     return $app->json($app['phpdraft.PickRepository']->LoadNextPicks($draft_id, $draft->draft_current_pick, $amount));
@@ -84,30 +48,12 @@ class PickController {
     $draft_id = (int)$request->get('draft_id');
     $manager_id  = (int)$request->get('manager_id');
 
-    $viewable = $app['phpdraft.DraftValidator']->IsDraftViewableForUser($draft_id, $request);
-
-    if(!$viewable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "Draft marked as private.";
-
-      return $app->json($response);
-    }
-
     return $app->json($app['phpdraft.PickRepository']->LoadManagerPicks($manager_id, false));
   }
 
   public function GetSelectedManagerPicks(Application $app, Request $request) {
     $draft_id = (int)$request->get('draft_id');
     $manager_id = (int)$request->get('manager_id');
-
-    $viewable = $app['phpdraft.DraftValidator']->IsDraftViewableForUser($draft_id, $request);
-
-    if(!$viewable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "Draft marked as private.";
-
-      return $app->json($response);
-    }
 
     return $app->json($app['phpdraft.PickRepository']->LoadManagerPicks($manager_id));
   }
@@ -117,15 +63,6 @@ class PickController {
     $draft_round = (int)$request->get('draft_round');
     $sort_ascending = (bool)$request->get('sort_ascending');
 
-    $viewable = $app['phpdraft.DraftValidator']->IsDraftViewableForUser($draft_id, $request);
-
-    if(!$viewable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "Draft marked as private.";
-
-      return $app->json($response);
-    }
-
     return $app->json($app['phpdraft.PickRepository']->LoadRoundPicks($draft_id, $draft_round, $sort_ascending, false));
   }
 
@@ -133,15 +70,6 @@ class PickController {
     $draft_id = (int)$request->get('draft_id');
     $draft_round = (int)$request->get('draft_round');
     $sort_ascending = (bool)$request->get('sort_ascending');
-
-    $viewable = $app['phpdraft.DraftValidator']->IsDraftViewableForUser($draft_id, $request);
-
-    if(!$viewable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "Draft marked as private.";
-
-      return $app->json($response);
-    }
 
     return $app->json($app['phpdraft.PickRepository']->LoadRoundPicks($draft_id, $draft_round, $sort_ascending));
   }
@@ -152,15 +80,6 @@ class PickController {
     $keywords = $request->get('keywords');
     $team = $request->get('team');
     $position = $request->get('position');
-
-    $viewable = $app['phpdraft.DraftValidator']->IsDraftViewableForUser($draft_id, $request);
-
-    if(!$viewable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "Draft marked as private.";
-
-      return $app->json($response);
-    }
 
     $team = isset($team) ? $team : null;
     $position = isset($position) ? $position : null;

@@ -72,21 +72,21 @@ $app->get('/drafts', 'draft.controller:GetAll');
 $app->get('/draft/{id}', 'draft.controller:Get');
 $app->get('/drafts/{commish_id}', 'draft.controller:GetAllByCommish');
 
-$app->get('/draft/{draft_id}/managers', 'manager.controller:GetAll');
+$app->get('/draft/{draft_id}/managers', 'manager.controller:GetAll')->before($draftViewable);
 
-$app->get('/draft/{draft_id}/picks', 'pick.controller:GetAll');
-$app->get('/draft/{draft_id}/picks/updated', 'pick.controller:GetUpdated');
-$app->get('/draft/{draft_id}/picks/last', 'pick.controller:GetLast');
-$app->get('/draft/{draft_id}/picks/next', 'pick.controller:GetNext');
-$app->get('/draft/{draft_id}/manager/{manager_id}/picks/all', 'pick.controller:GetAllManagerPicks');
-$app->get('/draft/{draft_id}/manager/{manager_id}/picks/selected', 'pick.controller:GetSelectedManagerPicks');
-$app->get('/draft/{draft_id}/round/{draft_round}/picks/all', 'pick.controller:GetAllRoundPicks');
-$app->get('/draft/{draft_id}/round/{draft_round}/picks/selected', 'pick.controller:GetSelectedRoundPicks');
-$app->get('/draft/{draft_id}/picks/search', 'pick.controller:SearchPicks');
+$app->get('/draft/{draft_id}/picks', 'pick.controller:GetAll')->before($draftViewable);
+$app->get('/draft/{draft_id}/picks/updated', 'pick.controller:GetUpdated')->before($draftViewable);
+$app->get('/draft/{draft_id}/picks/last', 'pick.controller:GetLast')->before($draftViewable);
+$app->get('/draft/{draft_id}/picks/next', 'pick.controller:GetNext')->before($draftViewable);
+$app->get('/draft/{draft_id}/manager/{manager_id}/picks/all', 'pick.controller:GetAllManagerPicks')->before($draftViewable);
+$app->get('/draft/{draft_id}/manager/{manager_id}/picks/selected', 'pick.controller:GetSelectedManagerPicks')->before($draftViewable);
+$app->get('/draft/{draft_id}/round/{draft_round}/picks/all', 'pick.controller:GetAllRoundPicks')->before($draftViewable);
+$app->get('/draft/{draft_id}/round/{draft_round}/picks/selected', 'pick.controller:GetSelectedRoundPicks')->before($draftViewable);
+$app->get('/draft/{draft_id}/picks/search', 'pick.controller:SearchPicks')->before($draftViewable);
 
-$app->get('/draft/{draft_id}/trades', 'trade.controller:GetAll');
+$app->get('/draft/{draft_id}/trades', 'trade.controller:GetAll')->before($draftViewable)->before($draftInProgress);
 
-$app->get('/draft/{draft_id}/timer/remaining', 'roundtime.controller:GetTimeRemaining');
+$app->get('/draft/{draft_id}/timer/remaining', 'roundtime.controller:GetTimeRemaining')->before($draftViewable)->before($draftInProgress);
 
 $app->get('/', "index.controller:Index");
 
@@ -96,23 +96,23 @@ $app->get('/commish', "commish.index.controller:Index");
 $app->get('/commish/profile', "commish.profile.controller:Get");
 $app->put('/commish/profile', "commish.profile.controller:Put");
 
-$app->get('/commish/draft/create', "commish.draft.controller:GetCreate");
-$app->get('/commish/draft/{draft_id}', "commish.draft.controller:Get");
-$app->get('/commish/draft/{draft_id}/timers', "commish.draft.controller:GetTimers");
-$app->post('/commish/draft/create', "commish.draft.controller:Create");
-$app->put('/commish/draft/{draft_id}', "commish.draft.controller:Update");
-$app->put('/commish/draft/{draft_id}/status', "commish.draft.controller:UpdateStatus");
-$app->delete('/commish/draft/{draft_id}', "commish.draft.controller:Delete");
-$app->post('/commish/draft/{draft_id}/timers', "commish.draft.controller:SetTimers");
+$app->get('/commish/draft/create', "commish.draft.controller:GetCreate"); //Only requires commish role, handled by firewall
+$app->get('/commish/draft/{draft_id}', "commish.draft.controller:Get")->before($commishEditableDraft);
+$app->get('/commish/draft/{draft_id}/timers', "commish.draft.controller:GetTimers")->before($commishEditableDraft);
+$app->post('/commish/draft/create', "commish.draft.controller:Create"); //Only requires commish role, handled by firewall
+$app->put('/commish/draft/{draft_id}', "commish.draft.controller:Update")->before($commishEditableDraft)->before($draftSettingUp);
+$app->put('/commish/draft/{draft_id}/status', "commish.draft.controller:UpdateStatus")->before($commishEditableDraft);
+$app->delete('/commish/draft/{draft_id}', "commish.draft.controller:Delete")->before($commishEditableDraft);
+$app->post('/commish/draft/{draft_id}/timers', "commish.draft.controller:SetTimers")->before($commishEditableDraft)->before($draftSettingUp);
 
-$app->get('/commish/draft/{draft_id}/managers', "commish.manager.controller:Get");
-$app->post('/commish/draft/{draft_id}/manager', "commish.manager.controller:Create");
-$app->post('/commish/draft/{draft_id}/managers', "commish.manager.controller:CreateMany");
-$app->put('/commish/draft/{draft_id}/managers/reorder', "commish.manager.controller:Reorder");
-$app->put('/commish/draft/{draft_id}/manager/{manager_id}', "commish.manager.controller:Update");
-$app->delete('/commish/draft/{draft_id}/manager/{manager_id}', "commish.manager.controller:Delete");
+$app->get('/commish/draft/{draft_id}/managers', "commish.manager.controller:Get")->before($commishEditableDraft);
+$app->post('/commish/draft/{draft_id}/manager', "commish.manager.controller:Create")->before($commishEditableDraft)->before($draftSettingUp);
+$app->post('/commish/draft/{draft_id}/managers', "commish.manager.controller:CreateMany")->before($commishEditableDraft)->before($draftSettingUp);
+$app->put('/commish/draft/{draft_id}/managers/reorder', "commish.manager.controller:Reorder")->before($commishEditableDraft)->before($draftSettingUp);
+$app->put('/commish/draft/{draft_id}/manager/{manager_id}', "commish.manager.controller:Update")->before($commishEditableDraft)->before($draftSettingUp);
+$app->delete('/commish/draft/{draft_id}/manager/{manager_id}', "commish.manager.controller:Delete")->before($commishEditableDraft)->before($draftSettingUp);
 
-$app->get('/commish/proplayers/search', "commish.proplayer.controller:Search");
+$app->get('/commish/proplayers/search', "commish.proplayer.controller:Search"); //Only requires commish role, handled by firewall
 
-$app->get('/commish/draft/{draft_id}/manager/{manager_id}/assets', "commish.trade.controller:GetAssets");
-$app->post('/commish/draft/{draft_id}/trade', "commish.trade.controller:Create");
+$app->get('/commish/draft/{draft_id}/manager/{manager_id}/assets', "commish.trade.controller:GetAssets")->before($commishEditableDraft)->before($draftInProgress);
+$app->post('/commish/draft/{draft_id}/trade', "commish.trade.controller:Create")->before($commishEditableDraft)->before($commishDraftInProgress);

@@ -12,24 +12,8 @@ use PhpDraft\Domain\Models\PhpDraftResponse;
 
 class TradeController {
   public function GetAssets(Application $app, Request $request) {
-    $current_user = $app['phpdraft.LoginUserService']->GetCurrentUser();
     $draft_id = (int)$request->get('draft_id');
     $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
-
-    $editable = $app['phpdraft.DraftValidator']->IsDraftEditableForUser($draft, $current_user);
-
-    if(!$editable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "You do not have permission to this draft.";
-
-      return $app->json($response, Response::HTTP_BAD_REQUEST);
-    }
-
-    $in_progress = $app['phpdraft.DraftValidator']->IsDraftInProgress($draft);
-
-    if(!$in_progress->success) {
-      return $app->json($in_progress, Response::HTTP_BAD_REQUEST);
-    }
 
     $manager_id = (int)$request->get('manager_id');
 
@@ -53,24 +37,8 @@ class TradeController {
   }
 
   public function Create(Application $app, Request $request) {
-    $current_user = $app['phpdraft.LoginUserService']->GetCurrentUser();
     $draft_id = (int)$request->get('draft_id');
     $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
-
-    $editable = $app['phpdraft.DraftValidator']->IsDraftEditableForUser($draft, $current_user);
-
-    if(!$editable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "You do not have permission to this draft.";
-
-      return $app->json($response, Response::HTTP_BAD_REQUEST);
-    }
-
-    $in_progress = $app['phpdraft.DraftValidator']->IsDraftInProgress($draft);
-
-    if(!$in_progress->success) {
-      return $app->json($in_progress, Response::HTTP_BAD_REQUEST);
-    }
 
     $new_trade = new Trade();
     $new_trade->draft_id = $draft_id;

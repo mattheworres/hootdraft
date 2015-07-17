@@ -52,18 +52,8 @@ class DraftController
   }
 
   public function Get(Application $app, Request $request) {
-    $current_user = $app['phpdraft.LoginUserService']->GetCurrentUser();
     $draft_id = (int)$request->get('draft_id');
     $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
-
-    $editable = $app['phpdraft.DraftValidator']->IsDraftEditableForUser($draft, $current_user);
-
-    if(!$editable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "You do not have permission to this draft.";
-
-      return $app->json($response);
-    }
 
     $draft->sports = $app['phpdraft.DraftDataRepository']->GetSports();
     $draft->styles = $app['phpdraft.DraftDataRepository']->GetStyles();
@@ -73,24 +63,8 @@ class DraftController
   }
 
   public function Update(Application $app, Request $request) {
-    $current_user = $app['phpdraft.LoginUserService']->GetCurrentUser();
     $draft_id = (int)$request->get('draft_id');
     $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
-
-    $editable = $app['phpdraft.DraftValidator']->IsDraftEditableForUser($draft, $current_user);
-
-    if(!$editable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "You do not have permission to this draft.";
-
-      return $app->json($response);
-    }
-
-    $setting_up = $app['phpdraft.DraftValidator']->IsDraftSettingUp($draft);
-
-    if(!$setting_up->success) {
-      return $app->json($setting_up, Response::HTTP_BAD_REQUEST);
-    }
 
     $draft->draft_name = $request->get('name');
     $draft->draft_sport = $request->get('sport');
@@ -112,18 +86,8 @@ class DraftController
   }
 
   public function UpdateStatus(Application $app, Request $request) {
-    $current_user = $app['phpdraft.LoginUserService']->GetCurrentUser();
     $draft_id = (int)$request->get('draft_id');
     $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
-
-    $editable = $app['phpdraft.DraftValidator']->IsDraftEditableForUser($draft, $current_user);
-
-    if(!$editable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "You do not have permission to this draft.";
-
-      return $app->json($response);
-    }
 
     $old_status = $draft->draft_status;
     $draft->draft_status = $request->get('status');
@@ -141,18 +105,8 @@ class DraftController
   }
 
   public function Delete(Application $app, Request $request) {
-    $current_user = $app['phpdraft.LoginUserService']->GetCurrentUser();
     $draft_id = (int)$request->get('draft_id');
     $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
-
-    $editable = $app['phpdraft.DraftValidator']->IsDraftEditableForUser($draft, $current_user);
-
-    if(!$editable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "You do not have permission to this draft.";
-
-      return $app->json($response);
-    }
 
     $response = $app['phpdraft.DraftService']->DeleteDraft($draft);
     $responseType = ($response->success ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST);
@@ -161,18 +115,7 @@ class DraftController
   }
 
   public function GetTimers(Application $app, Request $request) {
-    $current_user = $app['phpdraft.LoginUserService']->GetCurrentUser();
     $draft_id = (int)$request->get('draft_id');
-    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
-
-    $editable = $app['phpdraft.DraftValidator']->IsDraftEditableForUser($draft, $current_user);
-
-    if(!$editable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "You do not have permission to this draft.";
-
-      return $app->json($response);
-    }
 
     $timers = $app['phpdraft.RoundTimeRepository']->GetDraftTimers($draft_id);
 
@@ -180,24 +123,7 @@ class DraftController
   }
 
   public function SetTimers(Application $app, Request $request) {
-    $current_user = $app['phpdraft.LoginUserService']->GetCurrentUser();
     $draft_id = (int)$request->get('draft_id');
-    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
-
-    $editable = $app['phpdraft.DraftValidator']->IsDraftEditableForUser($draft, $current_user);
-
-    if(!$editable) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "You do not have permission to this draft.";
-
-      return $app->json($response);
-    }
-
-    $setting_up = $app['phpdraft.DraftValidator']->IsDraftSettingUpOrInProgress($draft);
-
-    if(!$setting_up->success) {
-      return $app->json($setting_up, Response::HTTP_BAD_REQUEST);
-    }
 
     $createModel = new \PhpDraft\Domain\Models\RoundTimeCreateModel();
     $createModel->isRoundTimesEnabled = (bool)$request->get('isRoundTimesEnabled');
