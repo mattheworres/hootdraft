@@ -5,6 +5,8 @@ namespace PhpDraft\Controllers\Commish;
 use \Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use PhpDraft\Domain\Entities\Trade;
+use PhpDraft\Domain\Entities\TradeAsset;
 use PhpDraft\Domain\Entities\Manager;
 use PhpDraft\Domain\Models\PhpDraftResponse;
 
@@ -70,20 +72,56 @@ class TradeController {
       return $app->json($in_progress, Response::HTTP_BAD_REQUEST);
     }
 
-    /*$manager = new Manager();
-    $manager->draft_id = $draft_id;
-    $manager->manager_name = $request->get('manager_name');
+    $new_trade = new Trade();
+    $new_trade->draft_id = $draft_id;
+    $new_trade->manager1_id = $request->get('manager1_id');
+    $new_trade->manager2_id = $request->get('manager2_id');
 
-    $validity = $app['phpdraft.ManagerValidator']->IsManagerValidForCreate($draft, $manager);
+    $assets_json = $request->get('trade_assets');
+
+    try {
+      $new_trade->manager1 = $app['phpdraft.ManagerRepository']->Load($new_trade->manager1_id);
+      $new_trade->manager2 = $app['phpdraft.ManagerRepository']->Load($new_trade->manager2_id);
+
+      foreach($assets_json as $asset_id) {
+        $new_trade_asset = new TradeAsset();
+        $new_trade_asset->player = $app['phpdraft.PickRepository']->Load($asset_id);
+        $new_trade_asset->was_drafted = $app['phpdraft.PickService']->PickHasBeenSelected($new_trade_asset->player);
+        $app['monolog']->addDebug("So, wasDrafted is this: $new_trade_asset->was_drafted");
+
+        if($new_trade_asset->player->manager_id == $new_trade->manager1_id) {
+          $new_trade_asset->oldmanager_id = $new_trade->manager1_id;
+          $new_trade_asset->newmanager_id = $new_trade->manager2_id;
+          $new_trade_asset->oldmanager = $new_trade->manager1;
+          $new_trade_asset->newmanager = $new_trade->manager2;
+        } else if($new_trade_asset->player->manager_id == $new_trade->manager2_id) {
+          $new_trade_asset->oldmanager_id = $new_trade->manager2_id;
+          $new_trade_asset->newmanager_id = $new_trade->manager1_id;
+          $new_trade_asset->oldmanager = $new_trade->manager2;
+          $new_trade_asset->newmanager = $new_trade->manager1;
+        } else {
+          throw new \Exception("Invalid trade data.");
+        }
+
+        $new_trade->trade_assets[] = $new_trade_asset;
+      }
+    } catch(\Exception $e) {
+      $response = new PhpDraftResponse(false, array());
+      $message = $e->getMessage();
+      $response->errors[] = "Unable to build trade: $message";
+
+      return $app->json($response, Response::HTTP_BAD_REQUEST);
+    }
+
+    $validity = $app['phpdraft.TradeValidator']->IsTradeValid($draft, $new_trade);
 
     if(!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
-    $response = $app['phpdraft.ManagerService']->CreateNewManager($manager);
+    $response = $app['phpdraft.TradeService']->EnterTrade($draft, $new_trade);
     $responseType = ($response->success ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST);
 
-    return $app->json($response, $responseType);*/
-    return $app->json('not implemented bro');
+    return $app->json($response, $responseType);
   }
 }

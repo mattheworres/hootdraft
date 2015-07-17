@@ -109,3 +109,4 @@ $app->delete('/commish/draft/{draft_id}/manager/{manager_id}', "commish.manager.
 $app->get('/commish/proplayers/search', "commish.proplayer.controller:Search");
 
 $app->get('/commish/draft/{draft_id}/manager/{manager_id}/assets', "commish.trade.controller:GetAssets");
+$app->post('/commish/draft/{draft_id}/trade', "commish.trade.controller:Create");

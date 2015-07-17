@@ -17,7 +17,7 @@ class PickRepository {
     $pick = new Pick();
 
     $pick_stmt = $this->app['db']->prepare("SELECT * FROM players WHERE player_id = ? LIMIT 1");
-    $pick_stmt->bindParam(1, (int) $id);
+    $pick_stmt->bindParam(1, $id);
 
     $pick_stmt->setFetchMode(\PDO::FETCH_INTO, $pick);
 
@@ -70,6 +70,26 @@ class PickRepository {
     }
     
     return $picks;
+  }
+
+  public function UpdatePick(Pick $pick) {
+    $update_stmt = $this->app['db']->prepare("UPDATE players SET first_name = ?, last_name = ?, team = ?, position = ?,
+      pick_time = ?, pick_duration = ?, player_counter = ? WHERE player_id = ?");
+
+    $update_stmt->bindParam(1, $pick->first_name);
+    $update_stmt->bindParam(2, $pick->last_name);
+    $update_stmt->bindParam(3, $pick->team);
+    $update_stmt->bindParam(4, $pick->position);
+    $update_stmt->bindParam(5, $pick->pick_time);
+    $update_stmt->bindParam(6, $pick->pick_duration);
+    $update_stmt->bindParam(7, $pick->player_counter);
+    $update_stmt->bindParam(8, $pick->player_id);
+
+    if(!$update_stmt->execute()) {
+      throw new \Exception("Unable to update pick #$pick->player_id");
+    }
+
+    return $pick;
   }
 
   public function LoadLastPicks($draft_id, $amount) {

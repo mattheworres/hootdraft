@@ -40,6 +40,10 @@ $app['phpdraft.TradeService'] = function () use ($app) {
   return new \PhpDraft\Domain\Services\TradeService($app);
 };
 
+$app['phpdraft.PickService'] = function () use ($app) {
+  return new \PhpDraft\Domain\Services\PickService($app);
+};
+
 //Repositories
 //Repositories are classes that are responsible for loading and saving data.
 $app['phpdraft.LoginUserRepository'] = function () use ($app) {

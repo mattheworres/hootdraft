@@ -64,6 +64,7 @@ class TradeRepository {
       $asset->player = $this->app['phpdraft.PickRepository']->Load($asset->player_id);
       $asset->newmanager = $asset->newmanager_id == $manager1->manager_id ? $manager1 : $manager2;
       $asset->oldmanager = $asset->oldmanager_id == $manager1->manager_id ? $manager1 : $manager2;
+      $asset->was_drafted = $this->app['phpdraft.PickService']->PickHasBeenSelected($asset->player);
 
       if ($asset->player == false || $asset->newmanager == false || $asset->oldmanager == false)
         throw new \Exception('Invalid asset loaded.');
@@ -105,5 +106,45 @@ class TradeRepository {
     }
 
     return;
+  }
+
+  public function SaveTrade(Trade $trade) {
+    $stmt = $this->app['db']->prepare("INSERT INTO trades (draft_id, manager1_id, manager2_id, trade_time) VALUES (?, ?, ?, UTC_TIMESTAMP())");
+    $stmt->bindParam(1, $trade->draft_id);
+    $stmt->bindParam(2, $trade->manager1->manager_id);
+    $stmt->bindParam(3, $trade->manager2->manager_id);
+
+    if (!$stmt->execute()) {
+      throw new Exception("Unable to save trade.");
+    }
+
+    $trade->trade_id = (int)$this->app['db']->lastInsertId();
+
+    return $trade;
+  }
+
+  public function SaveAssets(Trade $trade) {
+    $stmt = $this->app['db']->prepare("INSERT INTO trade_assets
+      (trade_id, player_id, oldmanager_id, newmanager_id, was_drafted)
+      VALUES
+      (:trade_id, :player_id, :oldmanager_id, :newmanager_id, :was_drafted)");
+
+    $stmt->bindParam(':trade_id', $trade->trade_id);
+
+    foreach($trade->trade_assets as &$asset) {
+      $stmt->bindParam(':player_id', $asset->player->player_id);
+      $stmt->bindParam(':oldmanager_id', $asset->oldmanager->manager_id);
+      $stmt->bindParam(':newmanager_id', $asset->newmanager->manager_id);
+      $stmt->bindParam(':was_drafted', $asset->was_drafted);
+
+      if(!$stmt->execute()) {
+        throw new Exception("Unable to save trade asset #$asset->player_id");
+      }
+
+      $asset->trade_id = $trade->trade_id;
+      $asset->trade_asset_id = $this->app['db']->lastInsertId();
+    }
+
+    return $trade;
   }
 }

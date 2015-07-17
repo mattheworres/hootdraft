@@ -2,6 +2,10 @@
 namespace PhpDraft\Domain\Entities;
 
 class TradeAsset {
+  public function __toString() {
+    return $this->player->player_id;
+  }
+
   /** @var int */
   public $trade_asset_id;
 
@@ -9,23 +13,20 @@ class TradeAsset {
   public $trade_id;
 
   /** @var int */
-  protected $player_id;
+  public $oldmanager_id;
 
   /** @var int */
-  protected $oldmanager_id;
+  public $newmanager_id;
 
-  /** @var int */
-  protected $newmanager_id;
-
-  /** @var player_object */
+  /** @var Player */
   public $player;
 
-  /** @var manager_object */
+  /** @var Manager */
   public $oldmanager;
 
-  /** @var manager_object */
+  /** @var Manager */
   public $newmanager;
 
-  /** @var bool Used for loading from the DB */
-  protected $was_drafted;
+  /** @var bool */
+  public $was_drafted;
 }

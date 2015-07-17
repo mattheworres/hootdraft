@@ -57,7 +57,7 @@ class ManagerValidator {
     $numberOfNewManagers = count($managersArray);
     $maxNumberOfManagers = 20 - $current_manager_count;
     $numberOfManagersOver = $numberOfNewManagers-$maxNumberOfManagers;
-    $uniqueManagers = array_unique($managersArray);
+    $uniqueManagersCount = count(array_unique($managersArray));
 
     if($numberOfNewManagers > $maxNumberOfManagers) {
       $manager_noun = $numberOfManagersOver > 1 ? "managers" : "manager";
@@ -65,7 +65,7 @@ class ManagerValidator {
       $valid = false;
     }
 
-    if($numberOfNewManagers != count($uniqueManagers)) {
+    if($numberOfNewManagers != $uniqueManagersCount) {
       $errors[] = "Two or more managers had the same name - please ensure all managers have unique names.";
       $valid = false;
     }
