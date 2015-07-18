@@ -92,7 +92,9 @@ class PickService {
     //Get the current time
     $now_utc = new \DateTime(null, new \DateTimeZone("UTC"));
     $now_utc_timestamp = $now_utc->getTimestamp();
-    $pick->pick_time = (int)$now_utc_timestamp;
+    $pick->pick_time = $now_utc->format('Y-m-d H:i:s');
+
+    $this->app['monolog']->addDebug("Pick time now: $pick->pick_time");
 
     //Calculate the pick duration
     if ($pick->player_pick == 1 || $previous_pick == null)
