@@ -24,7 +24,7 @@ $draftSettingUp = function(Symfony\Component\HttpFoundation\Request $request, Si
   $setting_up = $app['phpdraft.DraftValidator']->IsDraftSettingUpOrInProgress($draft);
 
   if(!$setting_up->success) {
-    return $app->json($setting_up, Response::HTTP_BAD_REQUEST);
+    return $app->json($setting_up, $setting_up->responseType());
   }
 };
 
@@ -35,7 +35,7 @@ $draftInProgress = function(Symfony\Component\HttpFoundation\Request $request, S
   $in_progress = $app['phpdraft.DraftValidator']->IsDraftInProgress($draft);
 
   if(!$in_progress->success) {
-    return $app->json($in_progress, Response::HTTP_BAD_REQUEST);
+    return $app->json($in_progress, $in_progress->responseType());
   }
 };
 

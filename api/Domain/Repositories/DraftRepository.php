@@ -228,7 +228,8 @@ class DraftRepository {
     return $incrementedCounter;
   }
 
-  public function MoveDraftForward(Draft $draft, Pick $next_pick) {
+  //$next_pick can't be type-hinted - can be null
+  public function MoveDraftForward(Draft $draft, $next_pick) {
     if ($next_pick !== null) {
       $draft->draft_current_pick = (int) $next_pick->player_pick;
       $draft->draft_current_round = (int) $next_pick->player_round;
@@ -243,7 +244,7 @@ class DraftRepository {
       }
     } else {
       $draft->draft_status = 'complete';
-      $stmt = $DBH->prepare("UPDATE draft SET draft_status = ?, draft_end_time = UTC_TIMESTAMP() WHERE draft_id = ?");
+      $stmt = $this->app['db']->prepare("UPDATE draft SET draft_status = ?, draft_end_time = UTC_TIMESTAMP() WHERE draft_id = ?");
       $stmt->bindParam(1, $draft->draft_status);
       $stmt->bindParam(2, $draft->draft_id);
 
