@@ -111,6 +111,7 @@ $app->post('/admin/draft/{draft_id}/stats', "admin.draftstats.controller:Create"
 $app->post('/admin/proplayers', "admin.proplayers.controller:Upload");
 $app->get('/admin/users', "admin.users.controller:Get");
 $app->put('/admin/user/{user_id}', "admin.users.controller:Update");
+$app->delete('/admin/user/{user_id}', "admin.users.controller:Delete");
 
 $app->get('/commish', "commish.index.controller:Index");
 $app->get('/commish/profile', "commish.profile.controller:Get");

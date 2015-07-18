@@ -96,6 +96,32 @@ class DraftRepository {
     return $drafts;
   }
 
+  //Note: this method is to be used by admin section only
+  public function GetAllDraftsByCommish($commish_id) {
+    $commish_id = (int)$commish_id;
+
+    $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
+    LEFT OUTER JOIN users u
+    ON d.commish_id = u.id
+    WHERE commish_id = ?
+    ORDER BY draft_create_time");
+
+    $draft_stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Draft');
+    $draft_stmt->bindParam(1, $commish_id);
+
+    if(!$draft_stmt->execute()) {
+      throw new \Exception("Unable to load drafts.");
+    }
+
+    $drafts = array();
+
+    while($draft = $draft_stmt->fetch()) {
+      $drafts[] = $draft;
+    }
+
+    return $drafts;
+  }
+
   public function GetPublicDraft(Request $request, $id, $password = '') {
     $draft = new Draft();
 

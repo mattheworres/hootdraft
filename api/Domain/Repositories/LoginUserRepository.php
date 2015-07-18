@@ -128,7 +128,14 @@ class LoginUserRepository {
   }
 
   public function Delete(LoginUser $user) {
-    //TODO: Find use case & implement
+    $delete_stmt = $this->app['db']->prepare("DELETE FROM users WHERE id = ?");
+    $delete_stmt->bindParam(1, $user->id);
+
+    if(!$delete_stmt->execute()) {
+      throw new \Exception("Unable to delete user #$user->id");
+    }
+
+    return;
   }
 
   public function NameIsUnique($name, $id = null) {

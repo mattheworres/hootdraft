@@ -262,6 +262,30 @@ class LoginUserService {
     return $response;
   }
 
+  public function DeleteUser(LoginUser $user) {
+    $response = new PhpDraftResponse();
+
+    try {
+      //Find all drafts this user owns
+      $drafts = $this->app['phpdraft.DraftRepository']->GetAllDraftsByCommish($user->id);
+      foreach($drafts as $draft) {
+        $response = $this->app['phpdraft.DraftService']->DeleteDraft($draft);
+        if(!$response->success) {
+          throw new \Exception("Unable to recursively delete draft or one of its children.");
+        }
+      }
+      $this->app['phpdraft.LoginUserRepository']->Delete($user);
+
+      $response->success = true;
+    } catch(\Exception $e) {
+      $message = $e->getMessage();
+      $response->success = false;
+      $response->errors[] = $message;
+    }
+
+    return $response;
+  }
+
   public function CurrentUserIsAdmin(LoginUser $user) {
     $roles = explode(',', $user->roles);
     

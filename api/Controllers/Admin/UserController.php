@@ -40,5 +40,19 @@ class UserController
     return $app->json($response, $response->responseType());
   }
 
-  
+  public function Delete(Application $app, Request $request) {
+    $user_id = $request->get('user_id');
+    $user = $app['phpdraft.LoginUserRepository']->LoadById($user_id);
+
+    if($app['phpdraft.LoginUserService']->CurrentUserIsAdmin($user)) {
+      $response = new PhpDraftResponse(false, array());
+      $response->errors[] = "Unable to delete user - user is admin.";
+
+      return $app->json($response, $response->responseType());
+    }
+
+    $response = $app['phpdraft.LoginUserService']->DeleteUser($user);
+
+    return $app->json($response, $response->responseType());
+  }
 }
