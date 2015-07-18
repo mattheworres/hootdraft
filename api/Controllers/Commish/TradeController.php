@@ -88,8 +88,7 @@ class TradeController {
     }
 
     $response = $app['phpdraft.TradeService']->EnterTrade($draft, $new_trade);
-    $responseType = ($response->success ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST);
 
-    return $app->json($response, $responseType);
+    return $app->json($response, $response->responseType(Response::HTTP_CREATED));
   }
 }

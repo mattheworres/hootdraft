@@ -31,9 +31,8 @@ class ManagerController {
     }
 
     $response = $app['phpdraft.ManagerService']->CreateNewManager($manager);
-    $responseType = ($response->success ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST);
 
-    return $app->json($response, $responseType);
+    return $app->json($response, $response->responseType(Response::HTTP_CREATED));
   }
 
   public function CreateMany(Application $app, Request $request) {
@@ -57,9 +56,8 @@ class ManagerController {
     }
 
     $response = $app['phpdraft.ManagerService']->CreateManyManagers($draft_id, $newManagers);
-    $responseType = ($response->success ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST);
 
-    return $app->json($response, $responseType);
+    return $app->json($response, $response->responseType(Response::HTTP_CREATED));
   }
 
   public function Reorder(Application $app, Request $request) {
@@ -79,9 +77,8 @@ class ManagerController {
     }
 
     $response = $app['phpdraft.ManagerService']->ReorderManagers($manager_ids);
-    $responseType = ($response->success ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST);
 
-    return $app->json($response, $responseType);
+    return $app->json($response, $response->responseType());
   }
 
   public function Update(Application $app, Request $request) {
@@ -106,9 +103,8 @@ class ManagerController {
     }
 
     $response = $app['phpdraft.ManagerService']->UpdateManager($manager);
-    $responseType = ($response->success ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST);
 
-    return $app->json($response, $responseType);
+    return $app->json($response, $response->responseType());
   }
 
   public function Delete(Application $app, Request $request) {
@@ -132,8 +128,7 @@ class ManagerController {
     }
 
     $response = $app['phpdraft.ManagerService']->DeleteManager($manager);
-    $responseType = ($response->success ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST);
 
-    return $app->json($response, $responseType);
+    return $app->json($response, $response->responseType());
   }
 }

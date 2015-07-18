@@ -22,8 +22,7 @@ class ProPlayerController {
     $position = strlen($position) == 0 ? "NA" : $position;
     
     $response = $app['phpdraft.ProPlayerService']->SearchPlayers($league, $first, $last, $team, $position);
-    $responseType = ($response->success ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST);
 
-    return $app->json($response, $responseType);
+    return $app->json($response, $response->responseType());
   }
 }

@@ -46,9 +46,8 @@ class DraftController
     }
 
     $response = $app['phpdraft.DraftService']->CreateNewDraft($draft);
-    $responseType = ($response->success ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST);
 
-    return $app->json($response, $responseType);
+    return $app->json($response, $response->responseType(Response::HTTP_CREATED));
   }
 
   public function Get(Application $app, Request $request) {
@@ -80,9 +79,8 @@ class DraftController
     }
 
     $response = $app['phpdraft.DraftService']->UpdateDraft($draft);
-    $responseType = ($response->success ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST);
 
-    return $app->json($response, $responseType);
+    return $app->json($response, $response->responseType());
   }
 
   public function UpdateStatus(Application $app, Request $request) {
@@ -99,9 +97,8 @@ class DraftController
     }
 
     $response = $app['phpdraft.DraftService']->UpdateDraftStatus($draft, $old_status);
-    $responseType = ($response->success ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST);
 
-    return $app->json($response, $responseType);
+    return $app->json($response, $response->responseType());
   }
 
   public function Delete(Application $app, Request $request) {
@@ -109,9 +106,8 @@ class DraftController
     $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
 
     $response = $app['phpdraft.DraftService']->DeleteDraft($draft);
-    $responseType = ($response->success ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST);
 
-    return $app->json($response, $responseType);
+    return $app->json($response, $response->responseType());
   }
 
   public function GetTimers(Application $app, Request $request) {
@@ -150,8 +146,7 @@ class DraftController
 
     //Save round times
     $response = $app['phpdraft.RoundTimeService']->SaveRoundTimes($draft, $createModel);
-    $responseType = ($response->success ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST);
 
-    return $app->json($response, $responseType);
+    return $app->json($response, $response->responseType(Response::HTTP_CREATED));
   }
 }

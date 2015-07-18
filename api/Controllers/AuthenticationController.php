@@ -44,9 +44,7 @@ class AuthenticationController
       ];
     }
 
-    $responseType = ($response['success'] == true ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST);
-
-    return $app->json($response, $responseType);
+    return $app->json($response, $response->responseType());
   }
 
   public function Register(Application $app, Request $request) {
@@ -64,9 +62,7 @@ class AuthenticationController
     
     $response = $app['phpdraft.LoginUserService']->CreateUnverifiedNewUser($user);
 
-    $responseType = ($response->success == true ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST);
-
-    return $app->json($response, $responseType);
+    return $app->json($response, $response->responseType());
   }
 
   public function VerifyAccount(Application $app, Request $request) {
@@ -82,9 +78,7 @@ class AuthenticationController
 
     $response = $app['phpdraft.LoginUserService']->VerifyUser($user);
 
-    $responseType = ($response->success == true ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST);
-
-    return $app->json($response, $responseType);
+    return $app->json($response, $response->responseType());
   }
 
   public function LostPassword(Application $app, Request $request) {
@@ -100,9 +94,7 @@ class AuthenticationController
 
     $response = $app['phpdraft.LoginUserService']->BeginForgottenPasswordProcess($user);
 
-    $responseType = ($response->success == true ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST);
-
-    return $app->json($response, $responseType);
+    return $app->json($response, $response->responseType());
   }
 
   public function ResetPassword(Application $app, Request $request) {
@@ -121,8 +113,6 @@ class AuthenticationController
 
     $response = $app['phpdraft.LoginUserService']->ResetPassword($user);
 
-    $responseType = ($response->success == true ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST);
-
-    return $app->json($response, $responseType);
+    return $app->json($response, $response->responseType());
   }
 }

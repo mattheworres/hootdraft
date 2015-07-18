@@ -28,8 +28,6 @@ class UserProfileController {
 
     $response = $app['phpdraft.LoginUserService']->UpdateUserProfile($request);
 
-    $responseType = ($response->success == true ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST);
-
-    return $app->json($response, $responseType);
+    return $app->json($response, $response->responseType());
   }
 }

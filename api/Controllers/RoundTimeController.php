@@ -13,8 +13,7 @@ class RoundTimeController {
     $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
 
     $response = $app['phpdraft.RoundTimeService']->GetCurrentPickTimeRemaining($draft);
-    $response_type = ($response->success ? Response::HTTP_OK : Response::HTTP_BAD_REQUEST);
 
-    return $app->json($response, $response_type);
+    return $app->json($response, $response->responseType());
   }
 }
