@@ -108,3 +108,7 @@ $app['phpdraft.TradeValidator'] = function () use ($app) {
 $app['phpdraft.PickValidator'] = function () use ($app) {
   return new \PhpDraft\Domain\Validators\PickValidator($app);
 };
+
+$app['phpdraft.ProPlayerValidator'] = function () use ($app) {
+  return new \PhpDraft\Domain\Validators\ProPlayerValidator($app);
+};

@@ -42,6 +42,10 @@ $app['admin.draftstats.controller'] = function() {
   return new PhpDraft\Controllers\Admin\DraftStatsController();
 };
 
+$app['admin.proplayers.controller'] = function() {
+  return new PhpDraft\Controllers\Admin\ProPlayerController();
+};
+
 $app['commish.index.controller'] = function() {
   return new PhpDraft\Controllers\Commish\IndexController();
 };
@@ -99,8 +103,9 @@ $app->get('/draft/{draft_id}/timer/remaining', 'roundtime.controller:GetTimeRema
 
 $app->get('/', "index.controller:Index");
 
-$app->get('/admin', "admin.index.controller:Index");
 $app->post('/admin/draft/{draft_id}/stats', "admin.draftstats.controller:Create");
+
+$app->post('/admin/proplayers', "admin.proplayers.controller:Upload");
 
 $app->get('/commish', "commish.index.controller:Index");
 $app->get('/commish/profile', "commish.profile.controller:Get");

@@ -78,4 +78,53 @@ class ProPlayerRepository {
 
     return $found_players;
   }
+
+  /**
+   * Delete existing players for a given league, upload new players
+   * @param array $players Array of pro_player_object's
+   */
+  public function SaveProPlayers($league, $pro_players) {
+    $delete_sql = "DELETE FROM pro_players WHERE league = '" . $league . "'";
+
+    $delete_success = $this->app['db']->exec($delete_sql);
+
+    if ($delete_success === false) {
+      throw new \Exception("Unable to empty existing pro players first.");
+    }
+
+    foreach ($pro_players as $pro_player) {
+      $this->_saveProPlayer($pro_player);
+    }
+
+    return;
+  }
+
+   /**
+   * Adds a new pro player to the DB
+   * @return boolean success whether or not the database operation succeeded.
+   */
+  private function _saveProPlayer(ProPlayer $pro_player) {
+    if ($pro_player->pro_player_id > 0) {
+      throw new \Exception("Unable to save pro player: invalid ID.");
+    } else {
+      $insert_stmt = $this->app['db']->prepare("INSERT INTO pro_players 
+        (pro_player_id, league, first_name, last_name, position, team) 
+        VALUES 
+        (NULL, ?, ?, ?, ?, ?)");
+
+      $insert_stmt->bindParam(1, $pro_player->league);
+      $insert_stmt->bindParam(2, $pro_player->first_name);
+      $insert_stmt->bindParam(3, $pro_player->last_name);
+      $insert_stmt->bindParam(4, $pro_player->position);
+      $insert_stmt->bindParam(5, $pro_player->team);
+
+      if (!$insert_stmt->execute()) {
+        throw new \Exception("Unable to save pro player.");
+      }
+
+      $pro_player->draft_id = (int) $this->app['db']->lastInsertId();
+
+      return $pro_player;
+    }
+  }
 }
