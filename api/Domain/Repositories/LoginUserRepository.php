@@ -47,6 +47,24 @@ class LoginUserRepository {
     return $user;
   }
 
+  public function LoadAll() {
+    $load_stmt = $this->app['db']->prepare("SELECT * FROM users");
+    $load_stmt->setFetchMode(\PDO::FETCH_CLASS, 'PhpDraft\Domain\Entities\LoginUser');
+
+    $users = array();
+
+    if(!$load_stmt->execute()) {
+      throw new \Exception("Unable to load users.");
+    }
+
+    while($user = $load_stmt->fetch()) {
+      
+      $users[] = $this->_ScrubUser($user);
+    }
+
+    return $users;
+  }
+
   public function Create(LoginUser $user) {
     $insert_stmt = $this->app['db']->prepare("INSERT INTO users 
         (id, email, password, salt, name, roles, verificationKey) 
@@ -113,9 +131,15 @@ class LoginUserRepository {
     //TODO: Find use case & implement
   }
 
-  public function NameIsUnique($name) {
-    $name_stmt = $this->app['db']->prepare("SELECT name FROM users WHERE name LIKE ?");
-    $name_stmt->bindParam(1, strtolower($name));
+  public function NameIsUnique($name, $id = null) {
+    if($id == null) {
+      $name_stmt = $this->app['db']->prepare("SELECT name FROM users WHERE name LIKE ?");
+      $name_stmt->bindParam(1, strtolower($name));
+    } else {
+      $name_stmt = $this->app['db']->prepare("SELECT name FROM users WHERE name LIKE ? AND id <> ?");
+      $name_stmt->bindParam(1, strtolower($name));
+      $name_stmt->bindParam(2, $id);
+    }
 
     if(!$name_stmt->execute()) {
       throw new \Exception(sprintf('Name %s is invalid', $name));
@@ -124,9 +148,15 @@ class LoginUserRepository {
     return $name_stmt->rowCount() == 0;
   }
 
-  public function EmailExists($email) {
-    $email_stmt = $this->app['db']->prepare("SELECT email FROM users WHERE email = ?");
-    $email_stmt->bindParam(1, $email);
+  public function EmailExists($email, $id = null) {
+    if($id == null) {
+      $email_stmt = $this->app['db']->prepare("SELECT email FROM users WHERE email = ?");
+      $email_stmt->bindParam(1, $email);
+    } else {
+      $email_stmt = $this->app['db']->prepare("SELECT email FROM users WHERE email = ? AND id <> ?");
+      $email_stmt->bindParam(1, $email);
+      $email_stmt->bindParam(2, $id);
+    }
 
     if (!$email_stmt->execute()) {
       throw new \Exception(sprintf('Email "%s" is invalid', $email));
@@ -156,5 +186,22 @@ class LoginUserRepository {
     }
 
     return $verification_stmt->rowCount() == 1;
+  }
+
+  public function GetRoles() {
+    $roles = array();
+
+    $roles['ROLE_COMMISH'] = "Commissioner";
+    $roles['ROLE_ADMIN'] = "Administrator";
+
+    return $roles;
+  }
+
+  private function _ScrubUser(LoginUser $user) {
+    unset($user->password);
+    unset($user->salt);
+    unset($user->verificationKey);
+
+    return $user;
   }
 }

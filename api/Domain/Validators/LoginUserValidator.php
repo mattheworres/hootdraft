@@ -281,4 +281,51 @@ class LoginUserValidator {
 
     return new PhpDraftResponse($valid, $errors);
   }
+
+  public function IsAdminUserUpdateValid(LoginUser $user) {
+    $valid = true;
+    $errors = array();
+
+    $loadedUser = $this->app['phpdraft.LoginUserRepository']->LoadById($user->id);
+
+    if($user->id == 0 || empty($loadedUser)) {
+      $valid = false;
+      $errors[] = "Invalid user.";
+
+      //Because we need to compare new & old values, we need a valid user record to proceed with vaidation.
+      return new PhpDraftResponse($valid, $errors);
+    }
+
+    //Need to verify new email
+    if(!empty($user->email) && !StringUtils::equals($user->email, $loadedUser->email)) {
+      if(strlen($user->email) > 255) {
+        $errors[] = "Email is above maximum length.";
+        $valid = false;
+      }
+
+      $emailValidator = new EmailValidator;
+
+      if (!$emailValidator->isValid($user->email)) {
+        $errors[] = "Email is invalid.";
+        $valid = false;
+      }
+
+      if(!$this->app['phpdraft.LoginUserRepository']->EmailIsUnique($user->email)) {
+        $errors[] = "Email already registered.";
+        $valid = false;
+      }
+    }
+
+    if(strlen($user->name) > 100) {
+      $errors[] = "Name is above maximum length";
+      $valid = false;
+    }
+
+    if(!$this->app['phpdraft.LoginUserRepository']->NameIsUnique($user->name, $user->id)) {
+      $errors[] = "Name already taken.";
+      $valid = false;
+    }
+
+    return new PhpDraftResponse($valid, $errors);
+  }
 }

@@ -52,6 +52,22 @@ class LoginUserService {
     }
   }
 
+  public function GetAll() {
+    $response = new PhpDraftResponse();
+
+    try {
+      $response->users = $this->app['phpdraft.LoginUserRepository']->LoadAll();
+      $response->roles = $this->app['phpdraft.LoginUserRepository']->GetRoles();
+      $response->success = true;
+    } catch(\Exception $e) {
+      $message = $e->getMessage();
+      $response->success = false;
+      $response->errors[] = $message;
+    }
+
+    return $response;
+  }
+
   public function CreateUnverifiedNewUser(LoginUser $user) {
     $user->enabled = false;
     $user->verificationKey = $this->app['phpdraft.SaltService']->GenerateSalt();
