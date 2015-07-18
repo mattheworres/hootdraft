@@ -106,4 +106,16 @@ class DraftService {
 
     return $response;
   }
+
+  public function DraftSettingUp(Draft $draft) {
+    return $draft->draft_status == "undrafted";
+  }
+
+  public function DraftInProgress(Draft $draft) {
+    return $draft->draft_status == "in_progress";
+  }
+
+  public function DraftComplete(Draft $draft) {
+    return $draft->draft_status == "complete";
+  }
 }

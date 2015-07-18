@@ -100,3 +100,7 @@ $app['phpdraft.ManagerValidator'] = function () use ($app) {
 $app['phpdraft.TradeValidator'] = function () use ($app) {
   return new \PhpDraft\Domain\Validators\TradeValidator($app);
 };
+
+$app['phpdraft.PickValidator'] = function () use ($app) {
+  return new \PhpDraft\Domain\Validators\PickValidator($app);
+};

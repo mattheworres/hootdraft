@@ -4,6 +4,7 @@ namespace PhpDraft\Domain\Repositories;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use PhpDraft\Domain\Entities\Draft;
+use PhpDraft\Domain\Entities\Pick;
 
 class DraftRepository {
   private $app;
@@ -225,6 +226,33 @@ class DraftRepository {
     }
 
     return $incrementedCounter;
+  }
+
+  public function MoveDraftForward(Draft $draft, Pick $next_pick) {
+    if ($next_pick !== null) {
+      $draft->draft_current_pick = (int) $next_pick->player_pick;
+      $draft->draft_current_round = (int) $next_pick->player_round;
+
+      $stmt = $this->app['db']->prepare("UPDATE draft SET draft_current_pick = ?, draft_current_round = ? WHERE draft_id = ?");
+      $stmt->bindParam(1, $draft->draft_current_pick);
+      $stmt->bindParam(2, $draft->draft_current_round);
+      $stmt->bindParam(3, $draft->draft_id);
+
+      if (!$stmt->execute()) {
+        throw new \Exception("Unable to move draft forward.");
+      }
+    } else {
+      $draft->draft_status = 'complete';
+      $stmt = $DBH->prepare("UPDATE draft SET draft_status = ?, draft_end_time = UTC_TIMESTAMP() WHERE draft_id = ?");
+      $stmt->bindParam(1, $draft->draft_status);
+      $stmt->bindParam(2, $draft->draft_id);
+
+      if (!$stmt->execute()) {
+        throw new \Exception("Unable to move draft forward.");
+      }
+    }
+
+    return $draft;
   }
 
   //Used when we move a draft from "undrafted" to "in_progress":

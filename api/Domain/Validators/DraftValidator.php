@@ -129,8 +129,9 @@ class DraftValidator {
     $errors = array();
     $draft_statuses = $this->app['phpdraft.DraftDataRepository']->GetStatuses();
     $current_status_text = strtolower($draft_statuses[$draft->draft_status]);
+    $is_setting_up = $this->app['phpdraft.DraftService']->DraftSettingUp($draft);
 
-    if($draft->draft_status != "undrafted") {
+    if(!$is_setting_up) {
       $valid = false;
       $errors[] = "Unable to work on draft #$draft->draft_id: draft is $current_status_text";
     }
@@ -143,8 +144,10 @@ class DraftValidator {
     $errors = array();
     $draft_statuses = $this->app['phpdraft.DraftDataRepository']->GetStatuses();
     $current_status_text = strtolower($draft_statuses[$draft->draft_status]);
+    $is_setting_up = $this->app['phpdraft.DraftService']->DraftSettingUp($draft);
+    $is_in_progress = $this->app['phpdraft.DraftService']->DraftInProgress($draft);
 
-    if($draft->draft_status == "complete") {
+    if(!$is_setting_up && !$is_in_progress) {
       $valid = false;
       $errors[] = "Unable to work on draft #$draft->draft_id: draft is $current_status_text";
     }
@@ -157,8 +160,9 @@ class DraftValidator {
     $errors = array();
     $draft_statuses = $this->app['phpdraft.DraftDataRepository']->GetStatuses();
     $current_status_text = strtolower($draft_statuses[$draft->draft_status]);
+    $is_in_progress = $this->app['phpdraft.DraftService']->DraftInProgress($draft);
 
-    if($draft->draft_status != "in_progress") {
+    if(!$is_in_progress) {
       $valid = false;
       $errors[] = "Unable to work on draft #$draft->draft_id: draft is $current_status_text";
     }

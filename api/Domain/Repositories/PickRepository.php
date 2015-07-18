@@ -13,10 +13,34 @@ class PickRepository {
     $this->app = $app;
   }
 
+  //Used for when a pick is entered (made)
+  public function AddPick(Pick $pick) {
+    $add_stmt = $this->app['db']->prepare("UPDATE players 
+      SET first_name = ?, last_name = ?, team = ?, position = ?, player_counter = ?, pick_time = ?, pick_duration = ?
+      WHERE player_id = ?");
+
+    $add_stmt->bindParam(1, $pick->first_name);
+    $add_stmt->bindParam(2, $pick->last_name);
+    $add_stmt->bindParam(3, $pick->team);
+    $add_stmt->bindParam(4, $pick->position);
+    $add_stmt->bindParam(5, $pick->player_counter);
+    $add_stmt->bindParam(6, $pick->pick_time);
+    $add_stmt->bindParam(7, $pick->pick_duration);
+    $add_stmt->bindParam(8, $pick->player_id);
+
+    if (!$add_stmt->execute()) {
+      throw new Exception("Unable to save pick #$pick->player_pick.");
+    }
+
+    return $pick;
+  }
+
   public function Load($id) {
     $pick = new Pick();
 
-    $pick_stmt = $this->app['db']->prepare("SELECT * FROM players WHERE player_id = ? LIMIT 1");
+    $pick_stmt = $this->app['db']->prepare("SELECT p.*, m.manager_name, m.manager_id FROM players p 
+      LEFT OUTER JOIN managers m ON p.manager_id = m.manager_id
+      WHERE player_id = ? LIMIT 1");
     $pick_stmt->bindParam(1, $id);
 
     $pick_stmt->setFetchMode(\PDO::FETCH_INTO, $pick);
@@ -134,9 +158,11 @@ class PickRepository {
             "LIMIT 1");
 
     $stmt->bindParam(1, $draft->draft_id);
-    $stmt->bindParam(2, $previous_pick);
+    $stmt->bindParam(2, $previous_pick_number);
 
-    $previous_pick = ($draft->draft_current_pick - 1);
+    $previous_pick_number = ($draft->draft_current_pick - 1);
+
+    $this->app['monolog']->addDebug("Getting prev pick for draft $draft->draft_id of pick $previous_pick_number");
 
     $previous_pick = new Pick();
     $stmt->setFetchMode(\PDO::FETCH_INTO, $previous_pick);
@@ -152,6 +178,35 @@ class PickRepository {
     $stmt->fetch();
 
     return $previous_pick;
+  }
+
+  public function GetNextPick(Draft $draft) {
+    $stmt = $this->app['db']->prepare("SELECT p.*, m.manager_id, m.manager_name " .
+            "FROM players p " .
+            "LEFT OUTER JOIN managers m " .
+            "ON m.manager_id = p.manager_id " .
+            "WHERE p.draft_id = ? " .
+            "AND p.player_pick = ? LIMIT 1");
+
+    $stmt->bindParam(1, $draft->draft_id);
+    $stmt->bindParam(2, $current_pick_number);
+
+    $current_pick_number = $draft->draft_current_pick + 1;
+
+    $next_pick = new Pick();
+    $stmt->setFetchMode(\PDO::FETCH_INTO, $next_pick);
+
+    if (!$stmt->execute()) {
+      throw new Exception("Unable to get next pick.");
+    }
+
+    if ($stmt->rowCount() == 0) {
+      return null;
+    }
+
+    $stmt->fetch();
+
+    return $next_pick;
   }
 
   public function LoadLastPicks($draft_id, $amount) {
@@ -424,7 +479,7 @@ class PickRepository {
         $new_pick->player_pick = $pick;
 
         try {
-          $this->_saveNewPick($new_pick);
+          $this->_saveSetupPick($new_pick);
         } catch (Exception $e) {
           throw new Exception($e->getMessage());
         }
@@ -435,7 +490,8 @@ class PickRepository {
     return;
   }
 
-  private function _saveNewPick(Pick $pick) {
+  //Used when SetupPicks is called, which is when a draft is flipped to "in_progress"
+  private function _saveSetupPick(Pick $pick) {
     $insert_stmt = $this->app['db']->prepare("INSERT INTO players
       (manager_id, draft_id, player_round, player_pick)
       VALUES

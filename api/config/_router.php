@@ -122,5 +122,5 @@ $app->get('/commish/draft/{draft_id}/manager/{manager_id}/assets', "commish.trad
 $app->post('/commish/draft/{draft_id}/trade', "commish.trade.controller:Create")->before($commishEditableDraft)->before($draftInProgress);
 
 $app->get('/commish/draft/{draft_id}/pick/current', "commish.pick.controller:GetCurrent")->before($commishEditableDraft)->before($draftInProgress);
-
+$app->put('/commish/draft/{draft_id}/pick/{pick_id}', "commish.pick.controller:Add")->before($commishEditableDraft)->before($draftInProgress);
 
