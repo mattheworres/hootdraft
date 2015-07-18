@@ -436,6 +436,37 @@ class PickRepository {
     return $searchModel;
   }
 
+  //Analogous to 1.3's "getAlreadyDrafted" method from the player service - used on the add pre-check
+  public function SearchAlreadyDrafted($draft_id, $first_name, $last_name) {
+    $picks = array();
+
+    $stmt = $this->app['db']->prepare("SELECT p.*, m.manager_name " .
+    "FROM players p " .
+    "LEFT OUTER JOIN managers m " .
+    "ON m.manager_id = p.manager_id " .
+    "WHERE p.draft_id = ? " .
+    "AND p.pick_time IS NOT NULL " .
+    "AND p.first_name = ? " .
+    "AND p.last_name = ? " .
+    "ORDER BY p.player_pick");
+
+    $stmt->bindParam(1, $draft_id);
+    $stmt->bindParam(2, $first_name);
+    $stmt->bindParam(3, $last_name);
+
+    $stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Pick');
+
+    if(!$stmt->execute()) {
+        throw new \Exception("Unable to check to see if $first_name $last_name was already drafted.");
+    }
+
+    while($pick = $stmt->fetch()) {
+        $picks[] = $pick;
+    }
+
+    return $picks;
+  }
+
   public function DeleteAllPicks($draft_id) {
     $delete_stmt = $this->app['db']->prepare("DELETE FROM players WHERE draft_id = ?");
     $delete_stmt->bindParam(1, $draft_id);

@@ -77,9 +77,47 @@ class PickService {
 
       $errorMessage = $e->getMessage();
 
-      var_dump($errorMessage);
+      $response->errors[] = "Unable to add pick: $errorMessage";
+    }
+
+    return $response;
+  }
+
+  public function UpdatePick(Draft $draft, Pick $pick) {
+    $response = new PhpDraftResponse();
+
+    try {
+      //Increment the draft counter
+      $draft->draft_counter = $this->app['phpdraft.DraftRepository']->IncrementDraftCounter($draft);
+      //Set the value on the pick
+      $pick->player_counter = $draft->draft_counter;
+      //Save the pick
+      $pick = $this->app['phpdraft.PickRepository']->AddPick($pick);
+
+      $response->pick = $pick;
+      $response->success = true;
+    } catch(\Exception $e) {
+      $response = new PhpDraftResponse(false, array());
+
+      $errorMessage = $e->getMessage();
 
       $response->errors[] = "Unable to add pick: $errorMessage";
+    }
+
+    return $response;
+  }
+
+  public function AlreadyDrafted($draft_id, $first_name, $last_name) {
+    $response = new PhpDraftResponse();
+
+    try {
+      $response->matches = $this->app['phpdraft.PickRepository']->SearchAlreadyDrafted($draft_id, $first_name, $last_name);
+      $response->possibleMatchExists = count($response->matches) > 0;
+      $response->success = true;
+    } catch(\Exception $e) {
+      $response = new PhpDraftResponse(false, array());
+      $errorMessage = $e->getMessage();
+      $response->errors[] = "Unable to check for already drafted: $errorMessage";
     }
 
     return $response;

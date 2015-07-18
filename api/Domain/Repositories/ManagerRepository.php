@@ -233,7 +233,7 @@ class ManagerRepository {
     }
 
     if (!$row = $stmt->fetch()) {
-      throw new Exception("Unable to get lowest manager draft order.");
+      throw new \Exception("Unable to get lowest manager draft order.");
     }
 
     return (int)$row['draft_order'];
