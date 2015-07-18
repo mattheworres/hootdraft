@@ -123,4 +123,6 @@ $app->post('/commish/draft/{draft_id}/trade', "commish.trade.controller:Create")
 
 $app->get('/commish/draft/{draft_id}/pick/current', "commish.pick.controller:GetCurrent")->before($commishEditableDraft)->before($draftInProgress);
 $app->put('/commish/draft/{draft_id}/pick/{pick_id}', "commish.pick.controller:Add")->before($commishEditableDraft)->before($draftInProgress);
+$app->get('/commish/draft/{draft_id}/picks/lastFive', "commish.pick.controller:GetLast5")->before($commishEditableDraft)->before($draftInProgress);
+$app->get('/commish/draft/{draft_id}/round/{draft_round}/picks', "commish.pick.controller:GetByRound")->before($commishEditableDraft)->before($draftInProgress);
 

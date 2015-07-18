@@ -47,4 +47,36 @@ class PickController {
 
     return $app->json($response, $response->responseType());
   }
+
+  public function GetLast5(Application $app, Request $request) {
+    $draft_id = $request->get('draft_id');
+    $response = new PhpDraftResponse();
+
+    try {
+      $response->last_5_picks = $app['phpdraft.PickRepository']->LoadLastPicks($draft_id, 5);
+      $response->success = true;
+    } catch(\Exception $e) {
+      $response->success = false;
+      $response->errors[] = "Unable to load last 5 picks.";
+    }
+
+    return $app->json($response, $response->responseType());
+  }
+
+  public function GetByRound(Application $app, Request $request) {
+    $draft_id = $request->get('draft_id');
+    $round = (int)$request->get('draft_round');
+    $response = new PhpDraftResponse();
+
+    try {
+      $response->round = $round;
+      $response->round_picks = $app['phpdraft.PickRepository']->LoadRoundPicks($draft_id, $round, false, true);
+      $response->success = true;
+    } catch(\Exception $e) {
+      $response->success = false;
+      $response->errors[] = "Unable to load round #$round's picks";
+    }
+
+    return $app->json($response, $response->responseType());
+  }
 }
