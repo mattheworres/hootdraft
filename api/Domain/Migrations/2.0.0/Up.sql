@@ -32,5 +32,35 @@ ALTER TABLE `draft` ADD `nfl_extended` TINYINT(1) NOT NULL DEFAULT '0' AFTER `dr
 # Run this for existing drafts once you create your admin user, then enter that user ID below:
 UPDATE `draft` SET `commish_id` = 16 WHERE `commish_id` = 0;
 
+# Add Draft Stats computed table
+CREATE TABLE `draft_stats` (
+  `draft_stat_id` int(11) NOT NULL auto_increment,
+  `draft_id` int(11) NOT NULL,
+  `drafting_time_seconds` int(11) NOT NULL,
+  `longest_avg_pick_manager_name` text NOT NULL,
+  `longest_avg_pick_seconds` INT(11) NOT NULL,
+  `shortest_avg_pick_manager_name` text NOT NULL,
+  `shortest_avg_pick_seconds` INT(11) NOT NULL,
+  `longest_single_pick_manager_name` text NOT NULL,
+  `longest_single_pick_seconds` INT(11) NOT NULL,
+  `shortest_single_pick_manager_name` text NOT NULL,
+  `shortest_single_pick_seconds` INT(11) NOT NULL,
+  `average_pick_seconds` INT(11) NOT NULL,
+  `longest_round` INT(11) NOT NULL,
+  `longest_round_seconds` INT(11) NOT NULL,
+  `shortest_round` INT(11) NOT NULL,
+  `shortest_round_seconds` INT(11) NOT NULL,
+  `average_round_seconds` INT(11) NOT NULL,
+  `most_drafted_team` text NOT NULL,
+  `most_drafted_team_count` int(11) NOT NULL,
+  `least_drafted_team` text NOT NULL,
+  `least_drafted_team_count` int(11) NOT NULL,
+  `most_drafted_position` text NOT NULL,
+  `most_drafted_position_count` int(11) NOT NULL,
+  `least_drafted_position` text NOT NULL,
+  `least_drafted_position_count` int(11) NOT NULL,
+  PRIMARY KEY  (`draft_stat_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

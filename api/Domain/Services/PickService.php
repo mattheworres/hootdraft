@@ -66,6 +66,11 @@ class PickService {
       $draft = $this->app['phpdraft.DraftRepository']->MoveDraftForward($draft, $next_pick);
 
       $response->draft_is_complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);
+
+      if($response->draft_is_complete) {
+        $response->draft_statistics = $this->app['phpdraft.DraftStatsRepository']->CalculateDraftStatistics($draft);
+      }
+
       $response->pick = $pick;
       $response->next_pick = $next_pick;
       $response->last_5_picks = $this->app['phpdraft.PickRepository']->LoadLastPicks($draft->draft_id, 5);

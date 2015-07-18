@@ -78,6 +78,10 @@ $app['phpdraft.ProPlayerRepository'] = function () use ($app) {
   return new \PhpDraft\Domain\Repositories\ProPlayerRepository($app);
 };
 
+$app['phpdraft.DraftStatsRepository'] = function () use ($app) {
+  return new \PhpDraft\Domain\Repositories\DraftStatsRepository($app);
+};
+
 //Validators
 //Validators are for ensuring that request data is valid, and ensures save data
 //does not result in corrupt data.

@@ -107,6 +107,21 @@ class DraftService {
     return $response;
   }
 
+  public function GetDraftStats($draft_id) {
+    $response = new PhpDraftResponse();
+
+    try {
+      $response->draft_statistics = $this->app['phpdraft.DraftStatsRepository']->LoadDraftStats($draft_id);
+      $response->success = true;
+    } catch(\Exception $e) {
+      $message = $e->getMessage();
+      $response->success = false;
+      $response->errors[] = $message;
+    }
+
+    return $response;
+  }
+
   public function DraftSettingUp(Draft $draft) {
     return $draft->draft_status == "undrafted";
   }

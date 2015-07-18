@@ -36,4 +36,11 @@ class DraftController {
 
     return $app->json($drafts);
   }
+
+  public function GetStats(Application $app, Request $request) {
+    $draft_id = $request->get('draft_id');
+    $response = $app['phpdraft.DraftService']->GetDraftStats($draft_id);
+
+    return $app->json($response, $response->responseType());
+  }
 }

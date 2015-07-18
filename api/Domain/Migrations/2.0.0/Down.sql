@@ -3,6 +3,7 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `draft_stats`;
 
 CREATE TABLE `user_login`
 (

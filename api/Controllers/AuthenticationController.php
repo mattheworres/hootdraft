@@ -44,7 +44,7 @@ class AuthenticationController
       ];
     }
 
-    return $app->json($response, $response->responseType());
+    return $app->json($response, Response::HTTP_OK);
   }
 
   public function Register(Application $app, Request $request) {
