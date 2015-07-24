@@ -20,8 +20,7 @@
             "PhpDraft\\Domain\\Entities\\": "api/Domain/Entities",
             "PhpDraft\\Domain\\Repositories\\": "api/Domain/Repositories",
             "PhpDraft\\Domain\\Services\\": "api/Domain/Services",
-            "PhpDraft\\Domain\\Validators\\": "api/Domain/Validators",
-            "Map\\": "api/Domain/Entities/Map"
+            "PhpDraft\\Domain\\Validators\\": "api/Domain/Validators"
         }
     }
 }

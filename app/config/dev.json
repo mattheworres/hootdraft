@@ -1,0 +1,6 @@
+{
+    "ENV":
+    {
+        "apiEndpoint": "http://localhost/phpdraft/api/"
+    }
+}

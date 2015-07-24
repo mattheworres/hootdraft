@@ -6,3 +6,8 @@ images/icons/Thumbs.db
 apiy/config/logs
 vendor
 api/config/security_cache
+bower_components
+node_modules
+css
+js
+fonts
