@@ -41,6 +41,14 @@ module.exports =
             ],
             js: [
                 'bower_components/jquery/dist/jquery.min.js'
-                'bower_components/angular/angular.min.js'
-                'bower_components/angular-route/angular-route.min.js'
+                'bower_components/angular/angular.js'
+                'bower_components/angular-route/angular-route.js'
+                'bower_components/angular-animate.js'
+                'bower_components/angular-ui-bootstrap-bower/ui-bootstrap-tpls.js'
+                'bower_components/angular-resource/angular-resource.js'
+                'bower_components/ng-lodash/build/ng-lodash.js'
+                'bower_components/angular-toastr/dist/angular-toastr.tpls.js'
+            ],
+            css: [
+                'bower_components/angular-toastr/dist/angular-toastr.css'
             ]

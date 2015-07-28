@@ -5,6 +5,11 @@
     "angular-route": "1.4.3",
     "bootstrap": "3.3.5",
     "jquery": "2.1.4",
-    "font-awesome": "~4.3.0"
+    "font-awesome": "~4.3.0",
+    "ng-lodash": "~0.2.3",
+    "angular-ui-bootstrap-bower": "~0.13.1",
+    "angular-resource": "~1.4.3",
+    "angular-toastr": "~1.4.1",
+    "angular-animate": "~1.4.3"
   }
 }
