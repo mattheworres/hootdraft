@@ -40,7 +40,6 @@ module.exports =
                 'bower_components/font-awesome/fonts/**/*'
             ],
             js: [
-                'bower_components/jquery/dist/jquery.min.js'
                 'bower_components/angular/angular.js'
                 'bower_components/angular-route/angular-route.js'
                 'bower_components/angular-animate.js'
@@ -50,5 +49,6 @@ module.exports =
                 'bower_components/angular-toastr/dist/angular-toastr.tpls.js'
             ],
             css: [
+                'bower_components/angular-ui-bootstrap-bower/ui-bootstrap-csp.css'
                 'bower_components/angular-toastr/dist/angular-toastr.css'
             ]
