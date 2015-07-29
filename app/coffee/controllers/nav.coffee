@@ -3,8 +3,7 @@ class NavController extends BaseController
   @inject 'messageService'
 
   initialize: ->
-    @draftNavHidden = false
+    @draftNavHidden = true
 
-  changeDraftNav: =>
-    console.log "Flipping the prop to #{!@draftNavHidden}"
+  changeDraftNav: ->
     @draftNavHidden = !@draftNavHidden

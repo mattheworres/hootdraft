@@ -7,4 +7,4 @@ class HomeController extends BaseController
     @$scope.greeting = 'Welcome to '
     @$scope.appName = "PHP Draft"
     
-    @messageService.showInfo "Yay we have a message!"
+    #@messageService.showInfo "Yay we have a message!"
