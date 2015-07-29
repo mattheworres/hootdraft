@@ -1,13 +1,47 @@
 class HomeController extends BaseController
   @register 'HomeController'
-  @inject '$scope',
+  @inject '$q',
+  'api',
   'messageService',
-  'workingModalService'
+  'workingModalService',
+  'DTOptionsBuilder',
+  'DTColumnDefBuilder'
 
   initialize: ->
-    @$scope.greeting = 'Welcome to '
-    @$scope.appName = "PHP Draft"
+    @drafts = []
 
+    @workingModalService.openModal()
 
-    #@workingModalService.openModal(5000)
-    #@messageService.showInfo "Yay we have a message!"
+    draftSuccessHandler = (data) =>
+      @workingModalService.closeModal()
+      @drafts = data
+
+    errorHandler = =>
+      @workingModalService.closeModal()
+      @messageService.showError "Unable to load drafts" 
+
+    draftsPromise = @api.Draft.getDraftList({}, draftSuccessHandler, errorHandler)
+
+  setupDatatable: =>
+    @dtOptions = @DTOptionsBuilder
+        .newOptions()
+        .withPaginationType('simple')
+        .withDisplayLength(25)
+        .withBootstrap()
+        .withBootstrapOptions({
+            ColVis: {
+                classes: {
+                    masterButton: 'btn btn-primary'
+                }
+            }
+          })
+        .withColVis()
+
+    @dtColumnDefs = [
+      @DTColumnDefBuilder.newColumnDef(0).notSortable().withOption("bSearchable", false).withClass('checkbox-col')
+      @DTColumnDefBuilder.newColumnDef(1).withOption("bSearchable", true)
+      @DTColumnDefBuilder.newColumnDef(2).withOption("bSearchable", true)
+    ]
+
+    @$scope.$on 'event:dataTableLoaded', (event, loadedDT) =>
+      @datatable = loadedDT.DataTable

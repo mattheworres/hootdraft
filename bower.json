@@ -9,6 +9,7 @@
     "angular-ui-bootstrap-bower": "~0.13.1",
     "angular-resource": "~1.4.3",
     "angular-toastr": "~1.4.1",
-    "angular-animate": "~1.4.3"
+    "angular-animate": "~1.4.3",
+    "angular-datatables": "~0.4.3"
   }
 }

@@ -40,7 +40,11 @@ module.exports =
                 'bower_components/font-awesome/fonts/**/*'
             ],
             js: [
+                'bower_components/jquery/dist/jquery.js'
+                'bower_components/datatables/media/js/jquery.dataTables.js'
                 'bower_components/angular/angular.js'
+                'bower_components/angular-datatables/dist/angular-datatables.js'
+                'bower_components/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.js'
                 'bower_components/angular-route/angular-route.js'
                 'bower_components/angular-animate.js'
                 'bower_components/angular-ui-bootstrap-bower/ui-bootstrap-tpls.js'
@@ -51,4 +55,7 @@ module.exports =
             css: [
                 'bower_components/angular-ui-bootstrap-bower/ui-bootstrap-csp.css'
                 'bower_components/angular-toastr/dist/angular-toastr.css'
+                'bower_components/datatables/media/css/jquery.dataTables.css'
+                'bower_components/angular-datatables/dist/plugins/bootstrap/datatables.bootstrap.css'
+                #'bower_components/datatables/media/css/jquery.dataTables_themeroller.css'
             ]

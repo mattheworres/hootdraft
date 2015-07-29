@@ -5,4 +5,5 @@ angular.module('app').config ($routeProvider, $locationProvider) ->
 
     $routeProvider.when '/',
         controller: 'HomeController'
+        controllerAs: 'homeCtrl'
         templateUrl: 'app/templates/home/home.html'

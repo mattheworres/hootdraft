@@ -1,45 +1,39 @@
 <div data-ng-cloak>
-    <div class="container-fluid">
-        <div class="jumbotron">
-            <h1 class="text-center">{{greeting}} <span class="title-text">{{appName}}</span>!</h1>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            Yay some content down here.
-        </div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+      <div class="col-xs-12 col-sm-12 col-md-10">
+        <h2>Welcome to PHP Draft!</h2>
+        <p>Find a draft below, or select "Drafts by Commissioner" to find your league through your commissioner.</p>
+      </div>
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
     </div>
+    <div class="row">
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+      <div class="col-xs-12 col-sm-12 col-md-10">
+        <table datatable="ng" dt-options="homeCtrl.dtOptions" dt-column-defs="homeCtrl.dtColumnDefs" class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>League Name</th>
+              <th>Sport</th>
+              <th>Commissioner</th>
+              <th>Rounds</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="draft in homeCtrl.drafts">
+              <td><a href="#">{{draft.draft_name}}</a></td>
+              <td>{{draft.draft_sport}}</td>
+              <td>{{draft.commish_name}}</td>
+              <td>{{draft.draft_rounds}}</td>
+              <td>{{draft.draft_status}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+    </div>
+  </div>
 </div>
 
