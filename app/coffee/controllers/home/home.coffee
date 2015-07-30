@@ -24,8 +24,8 @@ class HomeController extends BaseController
 
   setupDatatable: =>
     @dtOptions = @DTOptionsBuilder
-        .newOptions()
         .withPaginationType('simple')
+        .newOptions()
         .withDisplayLength(25)
         .withBootstrap()
         .withBootstrapOptions({
@@ -38,9 +38,11 @@ class HomeController extends BaseController
         .withColVis()
 
     @dtColumnDefs = [
-      @DTColumnDefBuilder.newColumnDef(0).notSortable().withOption("bSearchable", false).withClass('checkbox-col')
+      @DTColumnDefBuilder.newColumnDef(0).withOption("bSearchable", true)
       @DTColumnDefBuilder.newColumnDef(1).withOption("bSearchable", true)
       @DTColumnDefBuilder.newColumnDef(2).withOption("bSearchable", true)
+      @DTColumnDefBuilder.newColumnDef(3).withOption("bSearchable", true)
+      @DTColumnDefBuilder.newColumnDef(4).withOption("bSearchable", true)
     ]
 
     @$scope.$on 'event:dataTableLoaded', (event, loadedDT) =>

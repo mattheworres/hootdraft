@@ -23,7 +23,10 @@
           </thead>
           <tbody>
             <tr ng-repeat="draft in homeCtrl.drafts">
-              <td><a href="#">{{draft.draft_name}}</a></td>
+              <td>
+                <i ng-hide="draft.draft_visible" class="fa fa-lock" alt="Locked" title="This draft is password protected!"></i>&nbsp;
+                <strong><a href="#">{{draft.draft_name}}</a></strong>
+              </td>
               <td>{{draft.draft_sport}}</td>
               <td>{{draft.commish_name}}</td>
               <td>{{draft.draft_rounds}}</td>

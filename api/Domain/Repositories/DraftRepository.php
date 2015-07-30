@@ -330,8 +330,6 @@ class DraftRepository {
   }
 
   private function ProtectPrivateDraft(Draft $draft) {
-    $draft->commish_id = 0;
-    $draft->commish_name = '';
     $draft->draft_sport = '';
     $draft->draft_status = '';
     $draft->draft_style = '';
