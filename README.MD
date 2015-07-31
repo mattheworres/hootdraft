@@ -13,7 +13,7 @@ Your managers will notify you once they make a selection, and you enter the draf
 
   - PHP 5.4+ installed
 
-  - SQL database compatible with Propel 2
+  - SQL database compatible with Doctrine DBAL (Silex)
 
   - PHPMyAdmin or some other MySQL utility that allows import of large SQL dump files
 

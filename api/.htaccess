@@ -1,8 +1,0 @@
-<IfModule mod_rewrite.c>
-    Options -MultiViews
-
-    RewriteEngine On
-    RewriteBase /phpdraft
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ api/bootstrap.php [L]
-</IfModule>
