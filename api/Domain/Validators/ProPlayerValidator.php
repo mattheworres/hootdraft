@@ -33,18 +33,11 @@ class ProPlayerValidator {
     if (!isset($file)) {
       $valid = false;
       $errors[] =  "Must upload a CSV file";
-    }
-
-    if ($file->getError() > 0) {
-      $valid = false;
-      $errors[] = "Upload error - " . $file->getError();
-    }
-
-    $extension = $file->getExtension();
-
-    if ($extension != "csv") {
-      $valid = false;
-      $errors[] = "File uploaded must be a CSV!";
+    } else {
+      if ($file->getError() > 0) {
+        $valid = false;
+        $errors[] = "Upload error - " . $file->getError();
+      }
     }
 
     return new PhpDraftResponse($valid, $errors);

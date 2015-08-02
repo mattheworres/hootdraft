@@ -80,6 +80,7 @@ class DraftDataRepository {
 
     $this->sports = array(
       "NFL" => "Football (NFL)",
+      "NFLE" => "Football - Extended (NFL)",
       "MLB" => "Baseball (MLB)",
       "NBA" => "Basketball (NBA)",
       "NHL" => "Hockey (NHL)"
