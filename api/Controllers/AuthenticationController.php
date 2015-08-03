@@ -7,30 +7,33 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use PhpDraft\Domain\Entities\LoginUser;
+use PhpDraft\Domain\Models\PhpDraftResponse;
 
 class AuthenticationController
 {
   //See Commish->Index for permissions check
 
   public function Login(Application $app, Request $request) {
-    $vars = json_decode($request->getContent(), true);
     $email = $request->get('_email');
     $password = $request->get('_password');
+
+    $response = new PhpDraftResponse();
 
     try {
       if($app['phpdraft.LoginUserValidator']->IsLoginUserValid($email, $password)) {
         throw new UsernameNotFoundException(sprintf('Email %s does not exist', $email));
       }
 
+      $app['monolog']->addDebug("We have email of $email and pwd of $password, so lets log em in yeah?");
+
       $user = $app['users']->loadUserByUsername($email);
 
       if (!$user->isEnabled() || !$app['security.encoder.digest']->isPasswordValid($user->getPassword(), $password, $user->getSalt())) {
-        throw new UsernameNotFoundException(sprintf('Email "%s" does not exist', $email));
+        throw new UsernameNotFoundException(sprintf('Email %s does not exist', $email));
       } else {
-        $response = [
-          'success' => true,
-          'token' => $app['security.jwt.encoder']->encode(['name' => $user->getUsername()]),
-        ];
+        $response->success = true;
+        $response->name = $user->getName();
+        $response->token = $app['security.jwt.encoder']->encode(['name' => $user->getUsername()]);
 
         //If user is enabled, provided valid password and has a verification (pwd reset) key, wipe it (no longer needed)
         if($user->hasVerificationKey()) {
@@ -38,13 +41,12 @@ class AuthenticationController
         }
       }
     } catch (UsernameNotFoundException $e) {
-      $response = [
-        'success' => false,
-        'errors' => 'Invalid credentials.',
-      ];
+      $app['monolog']->addDebug($e);
+      $response->success = false;
+      $response->errors[] =  'Invalid credentials.';
     }
 
-    return $app->json($response, Response::HTTP_OK);
+    return $app->json($response, $response->responseType());
   }
 
   public function Register(Application $app, Request $request) {
@@ -52,6 +54,18 @@ class AuthenticationController
 
     if(!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
+    }
+
+    $captcha = $request->get('g-recaptcha-response');
+    $user_ip = $request->getClientIp();
+
+    $recaptcha = new \ReCaptcha\ReCaptcha(RECAPTCHA_SECRET);
+    $recaptcha_response = $recaptcha->verify($captcha, $user_ip);
+
+    if(!$recaptcha_response->isSuccess()) {
+      $response = new PhpDraftResponse(false, array());
+      $response->errors = $recaptcha_response->getErrorCodes();
+      return $app->json($response, $response->responseType());
     }
 
     $user = new LoginUser();

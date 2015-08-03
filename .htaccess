@@ -3,19 +3,21 @@
 
     RewriteEngine On
     RewriteBase /phpdraft
+
+    #H/T to anubhava http://stackoverflow.com/a/29874382/324527
+    DirectoryIndex bootstrap.php index.html
+    Options +FollowSymLinks
+    RewriteEngine on
+
+    # redirect all api calls to /api/index.php
+    RewriteRule ^api/((?!bootstrap\.php$).+)$ api/bootstrap.php [L,NC]
+
+    # If the request is a file, folder or symlink that exists, serve it up
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
 
-    # API Rules
-    RewriteRule ^api/([^/\.]+)/?$ - [L]
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^api/([^/\.]+)/?$ api/bootstrap.php [QSA,L]
-
-    # AngularJS Rules
-    RewriteRule ^index\.html$ - [L]
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.html [QSA,L]
+    # otherwise, serve your index.html app
+    RewriteRule ^(.+)$ index.html [L]
     
 </IfModule>

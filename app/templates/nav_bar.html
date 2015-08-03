@@ -6,7 +6,7 @@
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
     </button>
-    <a class="navbar-brand" href="/">PHP Draft</a>
+    <a class="navbar-brand" href="home">PHP Draft</a>
   </div>
   <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
     <ul class="nav navbar-nav">
@@ -37,6 +37,21 @@
       </div>
       <button type="submit" class="btn btn-primary" ng-click="navCtrl.changeDraftNav()">Search</button>
     </form>
+    <ul class="nav navbar-nav navbar-right navbar-form">
+      <li ng-hide="isAuthenticated()">
+        <a class="btn btn-primary" role="button" href="login">
+          Commissioner Login
+        </a>
+      </li>
+      <li ng-show="isAuthenticated()">
+        <strong>{{authenticatedName()}}</strong> logged in
+      </li>
+      <li ng-show="isAuthenticated()">
+        <button class="btn btn-primary">
+          Log Out
+        </button>
+      </li>
+    </ul>
   </div>
 </nav>
 

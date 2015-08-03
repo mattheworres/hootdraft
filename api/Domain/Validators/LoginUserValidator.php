@@ -24,11 +24,13 @@ class LoginUserValidator {
     $confirmPassword = $request->get('_confirmPassword');
     $email = $request->get('_email');
     $name = $request->get('_name');
+    $recaptcha = $request->get('g-recaptcha-response');
 
     if(empty($password)
       || empty($confirmPassword)
       || empty($email)
-      || empty($name)) {
+      || empty($name)
+      || empty($recaptcha)) {
       $errors[] = "One or more missing fields.";
       $valid = false;
     }

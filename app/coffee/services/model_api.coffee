@@ -14,6 +14,12 @@
   };
 ###
 angular.module('app').factory 'api', ($resource, ENV) ->
+  Authentication: $resource "#{ENV.apiEndpoint}authentication", {}, {
+    'login':
+      { method: 'POST', url: "#{ENV.apiEndpoint}login" }
+      ##{ method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, url: "#{ENV.apiEndpoint}login" }
+  }
+
   Draft: $resource "#{ENV.apiEndpoint}draft/:id", {id: '@id'}, {
     'getDraftList':
       { method: 'GET', url: "#{ENV.apiEndpoint}drafts", isArray: true }

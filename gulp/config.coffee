@@ -46,16 +46,20 @@ module.exports =
                 'bower_components/angular-datatables/dist/angular-datatables.js'
                 'bower_components/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.js'
                 'bower_components/angular-route/angular-route.js'
+                'bower_components/ngstorage/ngStorage.js'
                 'bower_components/angular-animate.js'
                 'bower_components/angular-ui-bootstrap-bower/ui-bootstrap-tpls.js'
                 'bower_components/angular-resource/angular-resource.js'
                 'bower_components/ng-lodash/build/ng-lodash.js'
                 'bower_components/angular-toastr/dist/angular-toastr.tpls.js'
+                'bower_components/angular-re-captcha/angular-re-captcha.js'
+                'bower_components/angular-toggle-switch/angular-toggle-switch.js'
             ],
             css: [
                 'bower_components/angular-ui-bootstrap-bower/ui-bootstrap-csp.css'
                 'bower_components/angular-toastr/dist/angular-toastr.css'
                 'bower_components/datatables/media/css/jquery.dataTables.css'
                 'bower_components/angular-datatables/dist/plugins/bootstrap/datatables.bootstrap.css'
-                #'bower_components/datatables/media/css/jquery.dataTables_themeroller.css'
+                'bower_components/angular-toggle-switch/angular-toggle-switch.css'
+                'bower_components/angular-toggle-switch/angular-toggle-switch-bootstrap.css'
             ]

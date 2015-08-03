@@ -1,0 +1,73 @@
+<div data-ng-cloak>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+      <div class="col-xs-12 col-sm-12 col-md-10">
+        <h2 class="text-center">Commissioner Login</h2>
+      </div>
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+    </div>
+    <div class="row">
+      <div class="col-xs-1 col-sm-2 col-md-4">&nbsp;</div>
+      <div class="col-xs-10 col-sm-10 col-md-4">
+        <form class="form-horizontal" name="loginCtrl.form">
+          <fieldset>
+            <div class="row">
+              <div class="col-xs-12 v-offset-2">
+                <div class="form-group" show-errors>
+                  <div class="col-xs-12">
+                    <input name="email" ng-model="user.email" type="email" class="form-control" maxlength="255" ng-required="true" placeholder="Email" autofocus />
+                    <div ng-show="loginCtrl.form.$submitted || loginCtrl.form.email.$touched">
+                      <span ng-show="loginCtrl.form.email.$error.required" class="help-block">Email is missing</span>
+                      <span ng-show="loginCtrl.form.email.$error.email" class="help-block">Email is invalid</span>
+                      <span ng-show="loginCtrl.form.email.$error.maxlength" class="help-block">Email is too long</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12 v-offset-1">
+                <div class="form-group" show-errors>
+                  <div class="col-xs-10">
+                    <input name="password" ng-model="user.password" class="form-control" minlength="8" maxlength="255" type="{{loginCtrl.passwordInputType()}}" ng-required="true" placeholder="Password" />
+                    <div ng-show="loginCtrl.form.$submitted || loginCtrl.form.password.$touched">
+                      <span ng-show="loginCtrl.form.password.$error.required" class="help-block">Password is missing</span>
+                      <span ng-show="!loginCtrl.form.password.$error.required && loginCtrl.form.password.$error.minlength" class="help-block">Password is too short - 8 characters minimum</span>
+                      <span ng-show="loginCtrl.form.password.$error.maxlength" class="help-block">Password is too long</span>
+                    </div>
+                  </div>
+                  <div class="col-xs-2">
+                    <toggle-switch name="showPassword" ng-model="showPassword" knob-label="Show"></toggle-switch>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12 text-center v-offset-2">
+                <button type="submit" class="btn btn-primary btn-large" ng-click="loginCtrl.submitClicked()" ng-submit="loginCtrl.submitClicked()" ng-disabled="loginCtrl.loginInProgress">
+                  Login
+                </button>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+      <div class="col-xs-1 col-sm-2 col-md-4">&nbsp;</div>
+    </div>
+    <div class="row v-offset-6 text-center">
+      <div class="col-xs-1 col-sm-2 col-md-4">&nbsp;</div>
+      <div class="col-xs-10 col-sm-8 col-md-4">
+        <p>Don't have a commissioner login?</p>
+        <p>
+          <a class="btn btn-success" role="button" href="register">
+            Create a new account!
+          </a>
+        </p>
+      </div>
+      <div class="col-xs-1 col-sm-2 col-md-4">&nbsp;</div>
+    </div>
+  </div>
+</div>
+
+  

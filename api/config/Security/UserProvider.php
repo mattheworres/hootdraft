@@ -32,6 +32,7 @@ class UserProvider implements UserProviderInterface
       throw new UsernameNotFoundException(sprintf('Email "%s" does not exist.', $email));
 
     return new PhpDraftSecurityUser($user->email,
+      $user->name,
       $user->password, 
       $user->salt, 
       explode(',', $user->roles), 

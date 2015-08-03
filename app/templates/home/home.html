@@ -18,7 +18,7 @@
               <th>Sport</th>
               <th>Commissioner</th>
               <th>Rounds</th>
-              <th>Status</th>
+              <th style="width: 50px;">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -30,7 +30,11 @@
               <td>{{draft.draft_sport}}</td>
               <td>{{draft.commish_name}}</td>
               <td>{{draft.draft_rounds}}</td>
-              <td>{{draft.draft_status}}</td>
+              <td class="text-center">
+                <span class="draft-status label label-warning" ng-show="draft.draft_status == 'undrafted'">Setting Up</span>
+                <span class="draft-status label label-info" ng-show="draft.draft_status == 'in_progress'">In Progress</span>
+                <span class="draft-status label label-success" ng-show="draft.draft_status == 'complete'">Completed</span>
+              </td>
             </tr>
           </tbody>
         </table>
