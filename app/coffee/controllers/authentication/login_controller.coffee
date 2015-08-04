@@ -13,8 +13,11 @@ class LoginController extends BaseController
   initialize: ->
     @$scope.showPassword = false
 
+    if @authenticationService.isAuthenticated()
+      @messageService.showInfo "Already logged in as #{@$sessionStorage.user_name}.", 'Logged In'
+      @sendToPreviousPath()
+
   passwordInputType: =>
-    console.log "Show password is #{@$scope.showPassword}"
     if @$scope.showPassword
       'text'
     else
@@ -41,10 +44,7 @@ class LoginController extends BaseController
       @loginInProgress = false
       @workingModalService.closeModal()
 
-      if @$sessionStorage.previousRoute?
-        @$location.path @$sessionStorage.previousRoute
-      else
-        @$location.path '/home'
+      @sendToPreviousPath()
 
       @messageService.showSuccess "Welcome back, #{@$sessionStorage.user_name}!", 'Logged In'
 
@@ -62,3 +62,9 @@ class LoginController extends BaseController
       @messageService.showError "#{loginError}", 'Unable to Login'
 
     loginResult.promise.then loginSuccessHandler, loginFailureHandler
+
+  sendToPreviousPath: ->
+    if @$sessionStorage.previousRoute?
+      @$location.path @$sessionStorage.previousRoute
+    else
+      @$location.path '/home'

@@ -1,10 +1,13 @@
 class @BaseController extends AngularController
   #default dependencies in case @inject is never called from the child
-  @$inject: ["$routeParams", "$scope", "$location", "$sessionStorage"]
+  @$inject: ["$routeParams", "$scope", "$location", "$sessionStorage", "authenticationService", "messageService"]
   @inject: (args...) ->
       args.push '$routeParams'
       args.push '$scope'
       args.push '$location'
+      args.push '$sessionStorage'
+      args.push 'authenticationService'
+      args.push 'messageService'
       super args...
 
   constructor: ->
@@ -15,4 +18,9 @@ class @BaseController extends AngularController
     @$sessionStorage.authenticated
 
   authenticatedName: =>
-    @$sessionStorage.username
+    @$sessionStorage.user_name
+
+  logOut: =>
+    @authenticationService.logout()
+    @messageService.showInfo("Logged Out")
+    @$location.path '/home'

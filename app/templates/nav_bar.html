@@ -13,19 +13,25 @@
       <li dropdown>
         <a href="#" id="draftDropdown" class="dropdown-toggle" dropdown-toggle role="button" aria-expended="false" ng-click="navCtrl.changeDraftNav">
           <i class="fa fa-sitemap"></i>
-          Drafts <span class="caret"></span>
+          Leagues <span class="caret"></span>
         </a>
         <ul class="dropdown-menu" aria-labelledby="draftDropdown">
           <li>
             <a href="#">
               <i class="fa fa-table"></i>
-              All Drafts
+              All Leagues
             </a>
           </li>
           <li>
             <a href="#">
               <i class="fa fa-users"></i>
-              Drafts by Commissioner
+              Leagues by Commissioner
+            </a>
+          </li>
+          <li ng-show="navCtrl.isAuthenticated()">
+            <a href="#">
+              <i class="fa fa-plus"></i>
+              Add New League
             </a>
           </li>
         </ul>
@@ -38,20 +44,18 @@
       <button type="submit" class="btn btn-primary" ng-click="navCtrl.changeDraftNav()">Search</button>
     </form>
     <ul class="nav navbar-nav navbar-right navbar-form">
-      <li ng-hide="isAuthenticated()">
+      <li ng-hide="navCtrl.isAuthenticated()">
         <a class="btn btn-primary" role="button" href="login">
           Commissioner Login
         </a>
       </li>
-      <li ng-show="isAuthenticated()">
-        <strong>{{authenticatedName()}}</strong> logged in
-      </li>
-      <li ng-show="isAuthenticated()">
-        <button class="btn btn-primary">
+      <li ng-show="navCtrl.isAuthenticated()">
+        <a class="btn btn-primary" role="button" ng-click="navCtrl.logOut()">
           Log Out
-        </button>
+        </a>
       </li>
     </ul>
+    <p ng-show="navCtrl.isAuthenticated()" class="navbar-text navbar-right"><strong>{{navCtrl.authenticatedName()}}</strong> logged in</p>
   </div>
 </nav>
 

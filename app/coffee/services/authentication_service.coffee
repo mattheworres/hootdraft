@@ -15,12 +15,14 @@ class AuthenticationService extends AngularService
   cacheRoles: (roles) ->
     @$sessionStorage.roles = roles
 
+  isAuthenticated: ->
+    @$sessionStorage.authenticated
+
   login: (model) ->
     result = @$q.defer()
 
     @uncacheSession()
 
-    #authData = "grant_type=password&username=#{model.login}&password=#{model.password}"
     successHandler = (data, status, headers, config) =>
       @cacheSession(data)
       result.resolve(
@@ -35,16 +37,6 @@ class AuthenticationService extends AngularService
       )
 
     @api.Authentication.login(model, successHandler, errorHandler)
-    ###@$http(
-        method: 'POST'
-        url: "#{@ENV.webEndpoint}token"
-        data: authData
-        headers:
-            'Content-Type': 'application/x-www-form-url-encoded'
-    )
-    .success (data, status, headers, config) =>
-        
-    .error (data, status, headers, config) ->###
         
 
     return result

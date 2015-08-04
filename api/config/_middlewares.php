@@ -1,8 +1,18 @@
 <?php
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 if (!$app instanceof Silex\Application) {
   throw new Exception('Invalid application setup.');
 }
+
+//If we get application/json, decode the data so controllers can use it
+$app->before(function (Request $request) {
+  if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+    $data = json_decode($request->getContent(), true);
+    $request->request->replace(is_array($data) ? $data : array());
+  }
+});
 
 $draftViewable = function(Symfony\Component\HttpFoundation\Request $request, Silex\Application $app) {
   $draft_id = (int)$request->get('draft_id');
