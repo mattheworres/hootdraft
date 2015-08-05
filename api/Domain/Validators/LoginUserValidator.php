@@ -24,7 +24,7 @@ class LoginUserValidator {
     $confirmPassword = $request->get('_confirmPassword');
     $email = $request->get('_email');
     $name = $request->get('_name');
-    $recaptcha = $request->get('g-recaptcha-response');
+    $recaptcha = $request->get('_recaptcha');
 
     if(empty($password)
       || empty($confirmPassword)

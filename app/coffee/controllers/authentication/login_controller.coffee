@@ -6,9 +6,7 @@ class LoginController extends BaseController
   'messageService',
   'workingModalService',
   'authenticationService',
-  '$sessionStorage',
-  'DTOptionsBuilder',
-  'DTColumnDefBuilder'
+  '$sessionStorage'
 
   initialize: ->
     @$scope.showPassword = false
@@ -51,10 +49,8 @@ class LoginController extends BaseController
     loginFailureHandler = (response) =>
       @loginInProgress = false
       @workingModalService.closeModal()
-
-      console.log response
       
-      if response?.data?.status is 400
+      if response.status is 400
         loginError = response.data.data?.errors?.join('\n')
       else
         loginError = "Whoops! We hit a snag - looks like it's on our end (#{response.data.status})"

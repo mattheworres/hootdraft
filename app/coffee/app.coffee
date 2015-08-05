@@ -8,4 +8,7 @@ angular.module("app", [
   "ngStorage"
   "toastr"
   "toggle-switch"
+  "vcRecaptcha"
+  "validation.match"
+  "ngCapsLock"
 ])

@@ -1,6 +1,6 @@
 class AuthenticationService extends AngularService
   @register 'authenticationService'
-  @inject 'api', 'ENV', '$q', '$sessionStorage'
+  @inject 'api', '$q', '$sessionStorage'
 
   cacheSession: (userData) ->
     @$sessionStorage.authenticated = true
@@ -23,21 +23,20 @@ class AuthenticationService extends AngularService
 
     @uncacheSession()
 
-    successHandler = (data, status, headers, config) =>
+    successHandler = (data) =>
       @cacheSession(data)
       result.resolve(
         data: data
-        status: status
+        status: data.status
       )
 
-    errorHandler = (data, status, headers, config) =>
+    errorHandler = (data) =>
       result.reject(
         data: data
-        status: status
+        status: data.status
       )
 
     @api.Authentication.login(model, successHandler, errorHandler)
-        
 
     return result
 
@@ -46,3 +45,24 @@ class AuthenticationService extends AngularService
 
   isLoggedIn: ->
     @sessionService.get('authenticated')
+
+  register: (model) ->
+    result = @$q.defer()
+
+    successHandler = (data) =>
+      @cacheSession(data)
+      result.resolve(
+        data: data
+        status: data.status
+      )
+
+    errorHandler = (data) =>
+      result.reject(
+        data: data
+        status: data.status
+      )
+
+    @api.Authentication.register(model, successHandler, errorHandler)
+
+    return result
+

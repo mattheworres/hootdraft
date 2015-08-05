@@ -24,8 +24,6 @@ class AuthenticationController
         throw new UsernameNotFoundException(sprintf('Email %s does not exist', $email));
       }
 
-      $app['monolog']->addDebug("We have email of $email and pwd of $password, so lets log em in yeah?");
-
       $user = $app['users']->loadUserByUsername($email);
 
       if (!$user->isEnabled() || !$app['security.encoder.digest']->isPasswordValid($user->getPassword(), $password, $user->getSalt())) {
@@ -41,7 +39,6 @@ class AuthenticationController
         }
       }
     } catch (UsernameNotFoundException $e) {
-      $app['monolog']->addDebug($e);
       $response->success = false;
       $response->errors[] =  'Invalid credentials.';
     }
@@ -56,7 +53,7 @@ class AuthenticationController
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
-    $captcha = $request->get('g-recaptcha-response');
+    $captcha = $request->get('_recaptcha');
     $user_ip = $request->getClientIp();
 
     $recaptcha = new \ReCaptcha\ReCaptcha(RECAPTCHA_SECRET);

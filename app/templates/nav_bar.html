@@ -41,17 +41,22 @@
       <div class="form-group">
         <input type="text" class="form-control" placeholder="Search Drafts" />
       </div>
-      <button type="submit" class="btn btn-primary" ng-click="navCtrl.changeDraftNav()">Search</button>
+      <button type="submit" class="btn btn-primary" ng-click="navCtrl.changeDraftNav()">
+        Search&nbsp;
+        <i class="fa fa-search"></i>
+      </button>
     </form>
     <ul class="nav navbar-nav navbar-right navbar-form">
       <li ng-hide="navCtrl.isAuthenticated()">
         <a class="btn btn-primary" role="button" href="login">
-          Commissioner Login
+          Commissioner Login&nbsp;
+          <i class="fa fa-sign-in"></i>
         </a>
       </li>
       <li ng-show="navCtrl.isAuthenticated()">
         <a class="btn btn-primary" role="button" ng-click="navCtrl.logOut()">
-          Log Out
+          Log Out&nbsp;
+          <i class="fa fa-sign-out"></i>
         </a>
       </li>
     </ul>

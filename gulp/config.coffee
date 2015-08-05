@@ -52,8 +52,10 @@ module.exports =
                 'bower_components/angular-resource/angular-resource.js'
                 'bower_components/ng-lodash/build/ng-lodash.js'
                 'bower_components/angular-toastr/dist/angular-toastr.tpls.js'
-                'bower_components/angular-re-captcha/angular-re-captcha.js'
+                'bower_components/angular-recaptcha/release/angular-recaptcha.js'
                 'bower_components/angular-toggle-switch/angular-toggle-switch.js'
+                'bower_components/angular-validation-match/dist/angular-validation-match.js'
+                'bower_components/ng-caps-lock/ng-caps-lock.js'
             ],
             css: [
                 'bower_components/angular-ui-bootstrap-bower/ui-bootstrap-csp.css'

@@ -3,7 +3,7 @@
   [
     {
       "path": ".",
-      "folder_exclude_patterns": []
+      "folder_exclude_patterns": ["node_modules", "bower_components", "js", "css", "fonts", "vendor"]
     }
   ],
   "settings":
@@ -13,3 +13,4 @@
   }
 
 }
+

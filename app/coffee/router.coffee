@@ -17,3 +17,8 @@ angular.module('app').config ($routeProvider, $locationProvider) ->
     controller: 'LoginController'
     controllerAs: 'loginCtrl'
     templateUrl: 'app/templates/authentication/login.html'
+
+  $routeProvider.when '/register',
+    controller: 'RegisterController'
+    controllerAs: 'registerCtrl'
+    templateUrl: 'app/templates/authentication/register.html'
