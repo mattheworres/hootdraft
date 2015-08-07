@@ -24,3 +24,20 @@ class @BaseController extends AngularController
     @authenticationService.logout()
     @messageService.showInfo("Logged Out")
     @$location.path '/home'
+
+  sendToPreviousPath: ->
+    if @$sessionStorage.previousRoute? and not @_pathIsWhitelisted(@$sessionStorage.previousRoute)
+      @$location.path @$sessionStorage.previousRoute
+    else
+      @$location.path '/home'
+
+  _pathIsWhitelisted: (path) ->
+    whitelisted_paths = [
+      '/login'
+      '/verify'
+      '/resetPassword'
+      '/forgotPassword'
+      '/register'
+    ]
+
+    whitelisted_paths.some (whitelisted_path) -> ~path.indexOf whitelisted_path

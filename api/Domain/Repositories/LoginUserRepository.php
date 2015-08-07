@@ -69,7 +69,7 @@ class LoginUserRepository {
     $insert_stmt = $this->app['db']->prepare("INSERT INTO users 
         (id, email, password, salt, name, roles, verificationKey) 
         VALUES 
-        (NULL, ?, ?, ?, ?, ?, ?, ?)");
+        (NULL, ?, ?, ?, ?, ?, ?)");
 
     $insert_stmt->bindParam(1, strtolower($user->email));
     $insert_stmt->bindParam(2, $user->password);

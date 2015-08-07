@@ -16,6 +16,11 @@
               <div class="col-xs-12 v-offset-2">
                 <div class="form-group" show-errors>
                   <div class="col-xs-12">
+                    <label class="control-label" for="email">
+                      Email
+                    </label>
+                  </div>
+                  <div class="col-xs-12">
                     <input name="email" ng-model="user.email" type="email" class="form-control" maxlength="255" ng-required="true" placeholder="Email" autofocus />
                     <div ng-show="loginCtrl.form.$submitted || loginCtrl.form.email.$touched">
                       <span ng-show="loginCtrl.form.email.$error.required" class="help-block">Email is missing</span>
@@ -29,6 +34,16 @@
             <div class="row">
               <div class="col-xs-12 v-offset-1">
                 <div class="form-group" show-errors>
+                  <div class="col-xs-6">
+                    <label class="control-label" for="password">
+                      Password
+                    </label>
+                  </div>
+                  <div class="col-xs-6">
+                    <span class="text-right">
+                      <a href="lostPassword">Lost password?</a>
+                    </span>
+                  </div>
                   <div class="col-xs-9">
                     <input name="password" tooltip="Capslock is on" tooltip-trigger="focus" tooltip-enable="isCapsLockOn" ng-model="user.password" class="form-control" minlength="8" maxlength="255" type="{{loginCtrl.passwordInputType()}}" ng-required="true" placeholder="Password" />
                     <div ng-show="loginCtrl.form.$submitted || loginCtrl.form.password.$touched">

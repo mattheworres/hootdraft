@@ -84,8 +84,10 @@ class LoginUserValidator {
     $valid = true;
     $errors = array();
 
-    $email = urldecode($request->get('_email'));
+    $email = $request->get('_email');
     $verificationToken = $this->app['phpdraft.SaltService']->UrlDecodeSalt($request->get('_verificationToken'));
+
+    $this->app['monolog']->addDebug("Checking validation for email $email and token of $verificationToken");
 
     if(strlen($verificationToken) != 16) {
       $errors[] = "Verification token invalid.";
@@ -148,11 +150,51 @@ class LoginUserValidator {
     return new PhpDraftResponse($valid, $errors);
   }
 
+  public function IsResetPasswordTokenValid($email, $verificationToken) {
+    $valid = true;
+    $errors = array();
+
+    if(empty($email)
+      || empty($verificationToken)) {
+      $errors[] = "One or more missing fields";
+      $valid = false;
+    }
+
+    if(strlen($verificationToken) != 16) {
+      $errors[] = "Verification token invalid.";
+      $valid = false;
+    }
+
+    if(!$this->app['phpdraft.LoginUserRepository']->VerificationMatches($email, $verificationToken)) {
+      $errors[] = "Verification token invalid.";
+      $valid = false;
+    }
+
+    $emailValidator = new EmailValidator;
+
+    if (!$emailValidator->isValid($email)) {
+      $errors[] = "Email is invalid.";
+      $valid = false;
+    }
+
+    if(strlen($email) > 255) {
+      $errors[] = "Email is above maximum length.";
+      $valid = false;
+    }
+
+    if(!$this->app['phpdraft.LoginUserRepository']->EmailExists($email)) {
+      $errors[] = "Invalid email.";
+      $valid = false;
+    }
+
+    return new PhpDraftResponse($valid, $errors);
+  }
+
   public function IsResetPasswordRequestValid(Request $request) {
     $valid = true;
     $errors = array();
 
-    $email = urldecode($request->get('_email'));
+    $email = $request->get('_email');
     $password = $request->get('_password');
     $confirmPassword = $request->get('_confirmPassword');
     $verificationToken = $this->app['phpdraft.SaltService']->UrlDecodeSalt($request->get('_verificationToken'));

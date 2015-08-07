@@ -82,6 +82,7 @@ $app->post('/login', 'authentication.controller:Login');
 $app->post('/register', 'authentication.controller:Register');
 $app->post('/verify', 'authentication.controller:VerifyAccount');
 $app->post('/lostPassword', 'authentication.controller:LostPassword');
+$app->get('/verifyToken', 'authentication.controller:VerifyResetPasswordToken');
 $app->post('/resetPassword', 'authentication.controller:ResetPassword');
 
 $app->get('/drafts', 'draft.controller:GetAll');

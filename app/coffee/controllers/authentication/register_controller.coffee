@@ -3,7 +3,6 @@ class RegisterController extends BaseController
   @inject '$q',
   'ENV',
   '$scope',
-  'api',
   'messageService',
   'workingModalService',
   'authenticationService',
@@ -18,7 +17,6 @@ class RegisterController extends BaseController
     if @authenticationService.isAuthenticated()
       @messageService.showInfo "Already logged in as #{@$sessionStorage.user_name}.", 'Logged In'
       @sendToPreviousPath()
-
 
     @$scope.recaptchaPublicKey = @ENV.recaptchaPublicKey
 
@@ -36,8 +34,6 @@ class RegisterController extends BaseController
       @register()
 
   registerFormIsInvalid: =>
-    invalid = @registerInProgress or not @form.$valid or @form._recaptcha?.length == 0
-    console.log "Invalidity: #{invalid}"
     return @registerInProgress or not @form.$valid or @form._recaptcha?.length == 0
 
   register: =>
@@ -62,6 +58,8 @@ class RegisterController extends BaseController
 
       @$scope.newUserName = @form.name.$viewValue
       @$scope.newUserEmail = @form.email.$viewValue
+
+      @form.$setPristine()
       @$scope.showRegistrationForm = false
 
       @messageService.showInfo "Verification email sent"
@@ -69,8 +67,6 @@ class RegisterController extends BaseController
     registerFailureHandler = (response) =>
       @registerInProgress = false
       @workingModalService.closeModal()
-
-      console.log response
       
       if response?.data?.status is 400
         registerError = response.data.data?.errors?.join('\n')
@@ -80,9 +76,3 @@ class RegisterController extends BaseController
       @messageService.showError "#{registerError}", 'Unable to register'
 
     registerResult.promise.then registerSuccessHandler, registerFailureHandler
-
-  sendToPreviousPath: ->
-    if @$sessionStorage.previousRoute?
-      @$location.path @$sessionStorage.previousRoute
-    else
-      @$location.path '/home'

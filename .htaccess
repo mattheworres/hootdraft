@@ -12,9 +12,11 @@
     # redirect all api calls to /api/index.php
     RewriteRule ^api/((?!bootstrap\.php$).+)$ api/bootstrap.php [L,NC]
 
-    # If the request is a file, folder or symlink that exists, serve it up
+    # If the request is a file, folder or symlink that exists, or is for the mail server, serve it up
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
+    #RewriteCond %{SERVER_PORT} ^1025$
+    #RewriteCond %{SERVER_PORT} ^1080$
     RewriteRule ^ - [L]
 
     # otherwise, serve your index.html app

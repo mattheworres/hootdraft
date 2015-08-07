@@ -58,9 +58,3 @@ class LoginController extends BaseController
       @messageService.showError "#{loginError}", 'Unable to Login'
 
     loginResult.promise.then loginSuccessHandler, loginFailureHandler
-
-  sendToPreviousPath: ->
-    if @$sessionStorage.previousRoute?
-      @$location.path @$sessionStorage.previousRoute
-    else
-      @$location.path '/home'

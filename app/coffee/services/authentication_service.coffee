@@ -16,7 +16,7 @@ class AuthenticationService extends AngularService
     @$sessionStorage.roles = roles
 
   isAuthenticated: ->
-    @$sessionStorage.authenticated
+    @$sessionStorage.authenticated && @$sessionStorage.user_name? && @$sessionStorage.auth_token?
 
   login: (model) ->
     result = @$q.defer()
@@ -43,14 +43,10 @@ class AuthenticationService extends AngularService
   logout: ->
     @uncacheSession()
 
-  isLoggedIn: ->
-    @sessionService.get('authenticated')
-
   register: (model) ->
     result = @$q.defer()
 
     successHandler = (data) =>
-      @cacheSession(data)
       result.resolve(
         data: data
         status: data.status
@@ -63,6 +59,82 @@ class AuthenticationService extends AngularService
       )
 
     @api.Authentication.register(model, successHandler, errorHandler)
+
+    return result
+
+  verify: (model) ->
+    result = @$q.defer()
+
+    successHandler = (data) =>
+      result.resolve(
+        data: data
+        status: data.status
+      )
+
+    errorHandler = (data) =>
+      result.reject(
+        data: data
+        status: data.status
+      )
+
+    @api.Authentication.verify(model, successHandler, errorHandler)
+
+    return result
+
+  lostPassword: (model) ->
+    result = @$q.defer()
+
+    successHandler = (data) =>
+      result.resolve(
+        data: data
+        status: data.status
+      )
+
+    errorHandler = (data) =>
+      result.reject(
+        data: data
+        status: data.status
+      )
+
+    @api.Authentication.lostPassword(model, successHandler, errorHandler)
+
+    return result
+
+  verifyResetToken: (model) ->
+    result = @$q.defer()
+
+    successHandler = (data) =>
+      result.resolve(
+        data: data
+        status: data.status
+      )
+
+    errorHandler = (data) =>
+      result.reject(
+        data: data
+        status: data.status
+      )
+
+    @api.Authentication.verifyResetToken(model, successHandler, errorHandler)
+
+    return result
+
+  resetPassword: (model) ->
+    result = @$q.defer()
+
+    successHandler = (data) =>
+      result.resolve(
+        data: data
+        status: data.status
+      )
+
+    errorHandler = (data) =>
+      result.reject(
+        data: data
+        status: data.status
+      )
+
+    @api.Authentication.resetPassword(model, successHandler, errorHandler)
 
     return result
 

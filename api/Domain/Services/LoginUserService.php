@@ -78,9 +78,6 @@ class LoginUserService {
     $response = new PhpDraftResponse();
 
     try {
-      //Note: This uses transactions but I don't think our MySQL engine (Inno?) actually allows them, so this is ignored by the DB driver IIRC
-      $this->app['db']->beginTransaction();
-
       $user = $this->app['phpdraft.LoginUserRepository']->Create($user);
 
       $message = new MailMessage();
@@ -101,16 +98,17 @@ class LoginUserService {
         %s
       ", $user->email, $user->email, $verificationLink, $verificationLink, $verificationLink);
 
+      //TODO: Remove once registration is tested end to end
+      $this->app['monolog']->addDebug("Verification link: $verificationLink");
+
       $this->app['phpdraft.EmailService']->SendMail($message);
 
       $response->success = true;
-
-      $this->app['db']->commit();
     }catch(\Exception $e) {
       $this->app['db']->rollback();
 
       $response->success = false;
-      $response->errors = array($e->getMessage());
+      $response->errors = array("Unable to create new user or send verification email.");
     }
 
     return $response;
@@ -127,6 +125,11 @@ class LoginUserService {
 
   public function BeginForgottenPasswordProcess(LoginUser $user) {
     $user->verificationKey = $this->app['phpdraft.SaltService']->GenerateSalt();
+
+    //Found out that forward slashes are no good for URLs. Go figure.
+    while(strpos($user->verificationKey, '/') != 0) {
+      $user->verificationKey = $this->app['phpdraft.SaltService']->GenerateSalt();
+    }
 
     $response = new PhpDraftResponse();
 
@@ -154,6 +157,9 @@ class LoginUserService {
 
         If you remember your old password, no longer want to change it, or didn't request a password reset - you can ignore this email.
       ", $user->email, $verificationLink, $verificationLink, $verificationLink);
+
+      //TODO: Remove once registration is tested end to end
+      $this->app['monolog']->addDebug("Verification link: $verificationLink");
 
       $this->app['phpdraft.EmailService']->SendMail($message);
 
@@ -296,13 +302,13 @@ class LoginUserService {
     $encodedEmail = urlencode($user->email);
     $encodedToken = urlencode($user->verificationKey);
 
-    return sprintf("%s/verify?_email=%s&_verificationToken=%s", $this->app['phpdraft.appBaseUrl'], $encodedEmail, $encodedToken);
+    return sprintf("%s/verify/%s/%s", $this->app['phpdraft.appBaseUrl'], $encodedEmail, $encodedToken);
   }
 
   private function _CreateForgottenPasswordLink(LoginUser $user) {
     $encodedEmail = urlencode($user->email);
     $encodedToken = urlencode($user->verificationKey);
 
-    return sprintf("%s/resetPassword?_email=%s&_verificationToken=%s", $this->app['phpdraft.appBaseUrl'], $encodedEmail, $encodedToken);
+    return sprintf("%s/resetPassword/%s/%s", $this->app['phpdraft.appBaseUrl'], $encodedEmail, $encodedToken);
   }
 }

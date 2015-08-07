@@ -22,3 +22,18 @@ angular.module('app').config ($routeProvider, $locationProvider) ->
     controller: 'RegisterController'
     controllerAs: 'registerCtrl'
     templateUrl: 'app/templates/authentication/register.html'
+
+  $routeProvider.when '/verify/:email?/:token?',
+    controller: 'VerificationController'
+    controllerAs: 'verificationCtrl'
+    templateUrl: 'app/templates/authentication/verify.html'
+
+  $routeProvider.when '/lostPassword',
+    controller: 'LostPasswordController'
+    controllerAs: 'lostPasswordCtrl'
+    templateUrl: 'app/templates/authentication/lost.html'
+
+  $routeProvider.when '/resetPassword/:email?/:token?',
+    controller: 'ResetPasswordController'
+    controllerAs: 'resetCtrl'
+    templateUrl: 'app/templates/authentication/reset.html'

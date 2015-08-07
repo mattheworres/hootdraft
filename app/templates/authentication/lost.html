@@ -1,0 +1,101 @@
+<div data-ng-cloak>
+  <div class="container-fluid" ng-show="showLostForm">
+    <div class="row">
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+      <div class="col-xs-12 col-sm-12 col-md-10">
+        <h2 class="text-center">Lost Password</h2>
+      </div>
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+    </div>
+    <div class="row">
+      <div class="col-xs-1 col-sm-2 col-md-3">&nbsp;</div>
+      <div class="col-xs-10 col-sm-8 col-md-6">
+        <form class="form-horizontal" name="lostPasswordCtrl.form">
+          <fieldset>
+            <div class="row">
+              <div class="col-xs-12">
+                <p class="text-justify">
+                  Lost your password, huh? That stinks.
+                </p>
+                <p>
+                  *kicks a rock* 
+                </p>
+                <p>
+                  Oh, but no worries! We can help, but you need to let us know what email you registered with first.
+                </p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12 v-offset-2">
+                <div class="form-group" show-errors>
+                  <div class="col-xs-3 text-right text-right">
+                    <label class="control-label" for="email">
+                      <span class="text-danger">*</span>&nbsp;Email
+                    </label>
+                  </div>
+                  <div class="col-xs-9">
+                    <input name="email" ng-model="user.email" type="email" class="form-control" maxlength="255" ng-required="true" placeholder="Email" autofocus />
+                    <div ng-show="lostPasswordCtrl.form.$submitted || lostPasswordCtrl.form.email.$touched">
+                      <span ng-show="lostPasswordCtrl.form.email.$error.required" class="help-block">Email is missing</span>
+                      <span ng-show="lostPasswordCtrl.form.email.$error.email" class="help-block">Email is invalid</span>
+                      <span ng-show="lostPasswordCtrl.form.email.$error.maxlength" class="help-block">Email is too long</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12 v-offset-1">
+                <div class="form-group" show-errors>
+                  <div class="col-xs-12 col-sm-3">
+                    <label class="control-label" for="confirmedPassword">
+                      <span class="text-danger">*</span>&nbsp;Human?
+                    </label>
+                  </div>
+                  <div class="col-xs-12 col-sm-9">
+                    <div vc-recaptcha
+                      theme="light"
+                      key="recaptchaPublicKey"
+                      on-success="setRecaptchaResponse(response)"
+                  ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12 text-center v-offset-2">
+                <button type="submit" class="btn btn-info btn-large" ng-click="lostPasswordCtrl.submitClicked()" ng-submit="lostPasswordCtrl.submitClicked()" ng-disabled="lostPasswordCtrl.lostInProgress">
+                  Reset Password&nbsp;
+                  <i class="fa fa-unlock-alt"></i>
+                </button>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+      <div class="col-xs-1 col-sm-2 col-md-3">&nbsp;</div>
+    </div>
+  </div>
+  <div class="container-fluid" ng-hide="showLostForm">
+    <div class="row">
+      <div class="col-xs-1 col-sm-2 col-md-3">&nbsp;</div>
+      <div class="col-xs-10 col-sm-8 col-md-6">
+        <h2 class="text-center">Reset Password Email Sent</h2>
+        <p>
+          <strong>Hey there</strong>,
+        </p>
+        <p class="text-justify">
+          An email was sent to {{userEmail}} to kick off the reset password process. Once you
+          receive that email, follow the instructions to get a chance to reset your password, so you can get back to running that
+          draft like a bawse.
+        </p>
+        <p>
+          If you don't see the email soon, check your spam filters/folders/whatnots.
+        </p>
+      </div>
+      <div class="col-xs-1 col-sm-2 col-md-3">&nbsp;</div>
+    </div>
+  </div>
+</div>
+
+  

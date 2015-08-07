@@ -18,7 +18,15 @@ angular.module('app').factory 'api', ($resource, ENV) ->
     'login':
       { method: 'POST', url: "#{ENV.apiEndpoint}login" }
     'register':
-      { method: 'POST', url: "#{ENV.apiEndpoint}register"}
+      { method: 'POST', url: "#{ENV.apiEndpoint}register" }
+    'verify':
+      { method: 'POST', url: "#{ENV.apiEndpoint}verify" }
+    'verifyResetToken':
+      { method: 'GET', url: "#{ENV.apiEndpoint}verifyToken" }
+    'lostPassword':
+      { method: 'POST', url: "#{ENV.apiEndpoint}lostPassword" }
+    'resetPassword':
+      { method: 'POST', url: "#{ENV.apiEndpoint}resetPassword" }
   }
 
   Draft: $resource "#{ENV.apiEndpoint}draft/:id", {id: '@id'}, {

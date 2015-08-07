@@ -53,16 +53,25 @@ class AuthenticationController
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
+    //TODO: Remove. Temporary workaround to disable Recaptcha verifications on localhost
+    $whitelist = array(
+      '127.0.0.1',
+      '::1'
+    );
+
     $captcha = $request->get('_recaptcha');
     $user_ip = $request->getClientIp();
 
-    $recaptcha = new \ReCaptcha\ReCaptcha(RECAPTCHA_SECRET);
-    $recaptcha_response = $recaptcha->verify($captcha, $user_ip);
+    if(!in_array($user_ip, $whitelist)){
 
-    if(!$recaptcha_response->isSuccess()) {
-      $response = new PhpDraftResponse(false, array());
-      $response->errors = $recaptcha_response->getErrorCodes();
-      return $app->json($response, $response->responseType());
+      $recaptcha = new \ReCaptcha\ReCaptcha(RECAPTCHA_SECRET);
+      $recaptcha_response = $recaptcha->verify($captcha, $user_ip);
+
+      if(!$recaptcha_response->isSuccess()) {
+        $response = new PhpDraftResponse(false, array());
+        $response->errors = $recaptcha_response->getErrorCodes();
+        return $app->json($response, $response->responseType());
+      }
     }
 
     $user = new LoginUser();
@@ -83,7 +92,7 @@ class AuthenticationController
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
-    $email = urldecode($request->get('_email'));
+    $email = $request->get('_email');
 
     $user = $app['phpdraft.LoginUserRepository']->Load($email);
 
@@ -101,11 +110,41 @@ class AuthenticationController
 
     $email = $request->get('_email');
 
+    //TODO: Remove. Temporary workaround to disable Recaptcha verifications on localhost
+    $whitelist = array(
+      '127.0.0.1',
+      '::1'
+    );
+
+    $captcha = $request->get('_recaptcha');
+    $user_ip = $request->getClientIp();
+
+    if(!in_array($user_ip, $whitelist)){
+
+      $recaptcha = new \ReCaptcha\ReCaptcha(RECAPTCHA_SECRET);
+      $recaptcha_response = $recaptcha->verify($captcha, $user_ip);
+
+      if(!$recaptcha_response->isSuccess()) {
+        $response = new PhpDraftResponse(false, array());
+        $response->errors = $recaptcha_response->getErrorCodes();
+        return $app->json($response, $response->responseType());
+      }
+    }
+
     $user = $app['phpdraft.LoginUserRepository']->Load($email);
 
     $response = $app['phpdraft.LoginUserService']->BeginForgottenPasswordProcess($user);
 
     return $app->json($response, $response->responseType());
+  }
+
+  public function VerifyResetPasswordToken(Application $app, Request $request) {
+    $email = $request->get('_email');
+    $verificationToken = $request->get('_verificationToken');
+
+    $validity = $app['phpdraft.LoginUserValidator']->IsResetPasswordTokenValid($email, $verificationToken);
+
+    return $app->json($validity, $validity->responseType());
   }
 
   public function ResetPassword(Application $app, Request $request) {
@@ -115,7 +154,7 @@ class AuthenticationController
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
-    $email = urldecode($request->get('_email'));
+    $email = $request->get('_email');
     $password = $request->get('_password');
 
     $user = $app['phpdraft.LoginUserRepository']->Load($email);
