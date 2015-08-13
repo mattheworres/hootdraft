@@ -1,17 +1,26 @@
 class @BaseController extends AngularController
   #default dependencies in case @inject is never called from the child
-  @$inject: ["$routeParams", "$scope", "$location", "$sessionStorage", "authenticationService", "messageService"]
+  @$inject: ["$routeParams", "$scope", "$rootScope", "$location", "$sessionStorage",
+  "$routeParams", "authenticationService", "messageService",
+  "draftService", "subscriptionKeys", "DTOptionsBuilder", "api"]
   @inject: (args...) ->
       args.push '$routeParams'
       args.push '$scope'
+      args.push '$rootScope'
       args.push '$location'
       args.push '$sessionStorage'
+      args.push '$routeParams'
       args.push 'authenticationService'
       args.push 'messageService'
+      args.push 'draftService'
+      args.push 'subscriptionKeys'
+      args.push 'DTOptionsBuilder'
+      args.push 'api'
       super args...
 
   constructor: ->
     super(arguments...)
+
     @initialize?()
 
   isAuthenticated: =>
@@ -30,6 +39,21 @@ class @BaseController extends AngularController
       @$location.path @$sessionStorage.previousRoute
     else
       @$location.path '/home'
+
+  defaultDatatablesOptions: ->
+    @DTOptionsBuilder
+        .withPaginationType('simple')
+        .newOptions()
+        .withDisplayLength(25)
+        .withBootstrap()
+        .withBootstrapOptions({
+            ColVis: {
+                classes: {
+                    masterButton: 'btn btn-primary'
+                }
+            }
+          })
+        .withColVis()
 
   _pathIsWhitelisted: (path) ->
     whitelisted_paths = [

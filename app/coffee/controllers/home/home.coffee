@@ -1,6 +1,8 @@
 class HomeController extends BaseController
   @register 'HomeController'
   @inject '$q',
+  '$scope',
+  'subscriptionKeys',
   'api',
   'messageService',
   'workingModalService',

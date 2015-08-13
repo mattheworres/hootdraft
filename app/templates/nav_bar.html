@@ -65,9 +65,19 @@
   </div>
 </nav>
 
-<nav class="navbar navbar-inverse navbar-draft navbar-default" ng-hide="navCtrl.draftNavHidden" role="navigation">
+<nav class="navbar navbar-inverse navbar-draft navbar-default" ng-show="showDraftMenu" role="navigation">
   <div class="container-fluid">
-    <div class="row">
+    <div class="row" ng-show="draftError">
+      <div class="col-xs-12 text-center">
+        <i class="fa fa-exclamation-triangle"></i>&nbsp;
+      </div>
+    </div>
+    <div class="row" ng-show="draftLoading">
+      <div class="col-xs-12 text-center">
+        <i class="fa fa-spinner fa-spin"></i>&nbsp;Loading . . .
+      </div>
+    </div>
+    <div class="row" ng-hide="draftLoading">
       <div class="col-xs-12 col-sm-6 col-md-6 navbar-header-middle">
         <button type="button" class="navbar-toggle collapsed" ng-init="draftNavCollapsed = true" ng-click="draftNavCollapsed = !draftNavCollapsed" aria-expanded="false">
           <span class="sr-only">Toggle navigation</span>
@@ -75,7 +85,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">Keep her in the McCutchen</a>
+        <a class="navbar-brand" href="#">{{draft.draft_name}}</a>
       </div>
       <div class="col-xs-12 col-sm-6 col-md-6 navbar-header-left collapse navbar-collapse" ng-class="!draftNavCollapsed && 'in'">
         <ul class="nav navbar-nav">

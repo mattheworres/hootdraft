@@ -37,3 +37,8 @@ angular.module('app').config ($routeProvider, $locationProvider) ->
     controller: 'ResetPasswordController'
     controllerAs: 'resetCtrl'
     templateUrl: 'app/templates/authentication/reset.html'
+
+  $routeProvider.when '/draft/:draft_id',
+    controller: 'DraftIndexController'
+    controllerAs: 'draftCtrl'
+    templateUrl: 'app/templates/draft/index.html'
