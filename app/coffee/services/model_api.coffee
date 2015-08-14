@@ -14,7 +14,7 @@
   };
 ###
 angular.module('app').factory 'api', ($resource, ENV) ->
-  Authentication: $resource "#{ENV.apiEndpoint}authentication", {}, {
+  Authentication: $resource "#{ENV.apiEndpoint}authentication", {},
     'login':
       { method: 'POST', url: "#{ENV.apiEndpoint}login" }
     'register':
@@ -27,9 +27,17 @@ angular.module('app').factory 'api', ($resource, ENV) ->
       { method: 'POST', url: "#{ENV.apiEndpoint}lostPassword" }
     'resetPassword':
       { method: 'POST', url: "#{ENV.apiEndpoint}resetPassword" }
-  }
 
-  Draft: $resource "#{ENV.apiEndpoint}draft/:id", {id: '@id'}, {
+  Draft: $resource "#{ENV.apiEndpoint}draft/:id", {id: '@id'},
     'getDraftList':
       { method: 'GET', url: "#{ENV.apiEndpoint}drafts", isArray: true }
-  }
+
+  Manager: $resource "#{ENV.apiEndpoint}draft/:draft_id/manager/:manager_id", { draft_id: '@draft_id', manager_id: '@manager_id' },
+    'getManagers':
+      { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/managers", isArray: true }
+
+  Pick: $resource "#{ENV.apiEndpoint}draft/:draft_id/pick/:pick_id", { draft_id: '@draft_id', pick_id: '@pick_id' },
+    'getLast':
+      { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/picks/last", isArray: true }
+    'getNext':
+      { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/picks/next", isArray: true }

@@ -139,9 +139,11 @@ class DraftRepository {
     $currentUserOwnsIt = !empty($current_user) && $draft->commish_id == $current_user->id;
 
     $draft->draft_visible = empty($draft->draft_password);
+    $draft->setting_up = $this->app['phpdraft.DraftService']->DraftSettingUp($draft);
+    $draft->in_progress = $this->app['phpdraft.DraftService']->DraftInProgress($draft);
+    $draft->complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);
 
     if(!$currentUserOwnsIt && !$draft->draft_visible && $password != $draft->draft_password) {
-      
       $draft = $this->ProtectPrivateDraft($draft);
     }
 
@@ -332,6 +334,9 @@ class DraftRepository {
   private function ProtectPrivateDraft(Draft $draft) {
     $draft->draft_sport = '';
     $draft->draft_status = '';
+    $draft->setting_up = '';
+    $draft->in_progress = '';
+    $draft->completed = '';
     $draft->draft_style = '';
     $draft->draft_rounds = '';
     $draft->draft_counter = '';
