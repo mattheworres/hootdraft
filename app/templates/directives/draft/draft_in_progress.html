@@ -12,7 +12,9 @@
         </h3>
       </div>
       <div class="panel-body pick-list-display future-picks">
-        <div class="row" ng-repeat="pick in nextFivePicks">
+        <section-loading show-loading=nextLoading></section-loading>
+        <section-error show-error=nextError section-name="upcoming picks"></section-error>
+        <div class="row" ng-repeat="pick in nextFivePicks" ng-hide="nextError">
           <div class="pick col-xs-12">
             <div class="pick-data col-xs-2">
               <div class="pick-number"><small>#</small>{{pick.player_pick}}</div>
@@ -45,7 +47,9 @@
         </h3>
       </div>
       <div class="panel-body pick-list-display">
-        <div class="row" ng-repeat="pick in lastFivePicks">
+        <section-loading show-loading=lastLoading></section-loading>
+        <section-error show-error=lastError section-name="last 5 picks"></section-error>
+        <div class="row" ng-repeat="pick in lastFivePicks" ng-hide="lastError">
           <div class="pick pick{{pick.position}} col-xs-12">
             <div class="pick-data col-xs-2">
               <div class="pick-number"><small>#</small>{{pick.player_pick}}</div>

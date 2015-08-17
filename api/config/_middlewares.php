@@ -1,11 +1,18 @@
 <?php
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use PhpDraft\Domain\Models\PhpDraftResponse;
+use Symfony\Component\Debug\ErrorHandler;
+use Symfony\Component\Debug\ExceptionHandler;
 
 if (!$app instanceof Silex\Application) {
   throw new Exception('Invalid application setup.');
 }
+
+$app->error(function (\Exception $e, $code) use($app) {
+  return $app->json(array("error" => $e->getMessage()), Response::HTTP_INTERNAL_SERVER_ERROR);
+});
 
 //If we get application/json, decode the data so controllers can use it
 $app->before(function (Request $request) {

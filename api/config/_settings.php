@@ -44,4 +44,4 @@ $app['phpdraft.set_csv_timeout'] = false;
 $app['phpdraft.use_nfl_extended'] = false;
 
 //Set Silex into debug mode; DEFAULT: false
-$app['debug'] = true;
+$app['debug'] = false;

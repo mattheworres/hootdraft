@@ -10,5 +10,5 @@ angular.module("app").run ($rootScope, $sessionStorage, $routeParams, $interval,
       $rootScope.draftIntervalPromise = undefined
     else
       $rootScope.$broadcast subscriptionKeys.reloadDraft, { draft_id: $routeParams.draft_id, onPageLoad: true }
-      ###if $rootScope.draftIntervalPromise == undefined
-        $rootScope.draftIntervalPromise = $interval $rootScope.draftIntervalHandler, 5000###
+      if $rootScope.draftIntervalPromise == undefined
+        $rootScope.draftIntervalPromise = $interval $rootScope.draftIntervalHandler, 5000
