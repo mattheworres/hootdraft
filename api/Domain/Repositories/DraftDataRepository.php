@@ -320,7 +320,7 @@ class DraftDataRepository {
     }
   }
 
-  public function GetPositions($pro_league, $use_nfl_extended = false) {
+  public function GetPositions($pro_league) {
     switch (strtolower($pro_league)) {
       case 'nhl':
       case 'hockey':
@@ -328,9 +328,10 @@ class DraftDataRepository {
         break;
       case 'nfl':
       case 'football':
-        return $use_nfl_extended 
-                 ? $this->extended_nfl_positions
-                 : $this->nfl_positions;
+        return $this->nfl_positions;
+        break;
+      case 'nfle':
+        return $this->extended_nfl_positions;
         break;
       case 'mlb':
       case 'baseball':

@@ -3,19 +3,21 @@
 namespace PhpDraft\Controllers;
 
 use \Silex\Application;
-use \PhpDraft\Domain\Entities\Draft;
+use Symfony\Component\HttpFoundation\Response;
 
 class IndexController
 {
-  public function Index(Application $app) {
-    $stmt = $app['db']->prepare("SELECT * FROM draft ORDER BY draft_create_time");
+  public function Style(Application $app) {
+    $colors = $app['phpdraft.DraftDataRepository']->GetPositionColors();
 
-    $stmt->setFetchMode(\PDO::FETCH_CLASS, 'Draft');
-    $stmt->execute();
+    $minified_css = '';
 
-    while ($draft_row = $stmt->fetch())
-      $drafts[] = $draft_row;
+    foreach($colors as $position => $hex_color_key) {
+      $minified_css .= "div.pick$position{background-color:$hex_color_key;}";
+    }
 
-    return $app->json($drafts);
+    return new Response($minified_css, 200, array(
+        "Content-Type" => "text/css"
+    ));
   }
 }

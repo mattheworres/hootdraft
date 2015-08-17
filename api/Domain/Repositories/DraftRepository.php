@@ -125,7 +125,10 @@ class DraftRepository {
   public function GetPublicDraft(Request $request, $id, $password = '') {
     $draft = new Draft();
 
-    $draft_stmt = $this->app['db']->prepare("SELECT * FROM draft WHERE draft_id = ? LIMIT 1");
+    $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
+      LEFT OUTER JOIN users u
+      ON d.commish_id = u.id
+      WHERE d.draft_id = ? LIMIT 1");
     $draft_stmt->setFetchMode(\PDO::FETCH_INTO, $draft);
 
     $draft_stmt->bindParam(1, $id, \PDO::PARAM_INT);
@@ -142,8 +145,15 @@ class DraftRepository {
     $draft->setting_up = $this->app['phpdraft.DraftService']->DraftSettingUp($draft);
     $draft->in_progress = $this->app['phpdraft.DraftService']->DraftInProgress($draft);
     $draft->complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);
+    $draft->sports = $this->app['phpdraft.DraftDataRepository']->GetSports();
+    $draft->styles = $this->app['phpdraft.DraftDataRepository']->GetStyles();
+    $draft->statuses = $this->app['phpdraft.DraftDataRepository']->GetStatuses();
+    $draft->teams = $this->app['phpdraft.DraftDataRepository']->GetTeams($draft->draft_sport);
+    $draft->positions = $this->app['phpdraft.DraftDataRepository']->GetPositions($draft->draft_sport);
+    $draft->is_locked = false;
 
     if(!$currentUserOwnsIt && !$draft->draft_visible && $password != $draft->draft_password) {
+      $draft->is_locked = true;
       $draft = $this->ProtectPrivateDraft($draft);
     }
 
@@ -346,6 +356,11 @@ class DraftRepository {
     $draft->draft_current_round = '';
     $draft->draft_create_time = '';
     $draft->nfl_extended = null;
+    $draft->sports = null;
+    $draft->styles = null;
+    $draft->statuses = null;
+    $draft->teams = null;
+    $draft->positions = null;
 
     return $draft;
   }

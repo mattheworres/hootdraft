@@ -1,0 +1,70 @@
+<div class="row" ng-show="draftValid && draft.in_progress">
+  <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+  <div class="col-xs-12 col-sm-6 col-md-5">
+    <draft-information draft=draft></draft-information>
+  </div>
+  <div class="col-xs-12 col-sm-6 col-md-5">
+    <div class="panel panel-primary panel-no-border">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          <i class="fa fa-forward"></i>&nbsp;&nbsp;
+          Upcoming Picks
+        </h3>
+      </div>
+      <div class="panel-body pick-list-display future-picks">
+        <div class="row" ng-repeat="pick in nextFivePicks">
+          <div class="pick col-xs-12">
+            <div class="pick-data col-xs-2">
+              <div class="pick-number"><small>#</small>{{pick.player_pick}}</div>
+              <div class="round-number">Rd {{pick.player_round}}</div>
+            </div>
+            <div class="player-data col-xs-10">
+              <div class="manager">{{pick.manager_name}}</div>
+              <div class="on-clock" ng-show="$first"><i class="fa fa-clock-o"></i>&nbsp;On the clock</div>
+            </div>
+          </div>
+        </div>
+        <div class="row text-center" ng-show="nextFivePicks.length == 0">
+          <div class="col-xs-12">
+            <h3>No more picks to make - is this real life?</h3>
+            <h5>This is weird. Maybe try refreshing your browser? You shouldn't be here, partner.</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+</div>
+<div class="row" ng-show="draftValid && draft.in_progress">
+  <div class="col-xs-12 col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3">
+    <div class="panel panel-primary panel-no-border">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          <i class="fa fa-backward"></i>&nbsp;&nbsp;
+          Last 5 Picks
+        </h3>
+      </div>
+      <div class="panel-body pick-list-display">
+        <div class="row" ng-repeat="pick in lastFivePicks">
+          <div class="pick pick{{pick.position}} col-xs-12">
+            <div class="pick-data col-xs-2">
+              <div class="pick-number"><small>#</small>{{pick.player_pick}}</div>
+              <div class="round-number">Rd {{pick.player_round}}</div>
+            </div>
+            <div class="player-data col-xs-10">
+              <div class="first-name">{{pick.first_name}}</div>
+              <div class="last-name">{{pick.last_name}}</div>
+              <div class="sports-data">{{draft.positions[pick.position]}} &ndash; {{draft.teams[pick.team]}}</div>
+              <div class="manager">{{pick.manager_name}}</div>
+            </div>
+          </div>
+        </div>
+        <div class="row text-center" ng-show="lastFivePicks.length == 0">
+          <div class="col-xs-12">
+            <h3>No picks have been made yet...</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

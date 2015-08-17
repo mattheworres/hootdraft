@@ -1,4 +1,4 @@
-class DraftPasswordModalController extends AngularController
+class DraftPasswordModalController extends BaseController
   @register 'DraftPasswordModalController'
   @inject '$modalInstance',
   '$rootScope',
@@ -9,7 +9,6 @@ class DraftPasswordModalController extends AngularController
   '$location'
 
   initialize: =>
-    super()
     @password = @$sessionStorage.draft_password
 
   isUnauthenticated: ->
@@ -18,7 +17,7 @@ class DraftPasswordModalController extends AngularController
   setPassword: =>
     @$sessionStorage.draft_password = @form.password.$viewValue
 
-    @$rootScope.$broadcast(@subscriptionKeys.reloadDraft, { draft_id: @$routeParams.draft_id });
+    @$rootScope.$broadcast(@subscriptionKeys.reloadDraft, { draft_id: @$routeParams.draft_id, hasResetPassword: true });
     @cancel()
 
   gotoLogin: =>

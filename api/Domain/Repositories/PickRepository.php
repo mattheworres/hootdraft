@@ -210,7 +210,6 @@ class PickRepository {
   }
 
   public function LoadLastPicks($draft_id, $amount) {
-    $this->app['monolog']->addDebug("Getting $amount pics for drafty $draft_id");
     $picks = array();
 
     $stmt = $this->app['db']->prepare("SELECT p.*, m.manager_name, m.manager_id FROM players p ".
@@ -219,7 +218,8 @@ class PickRepository {
             "WHERE p.draft_id = ? " .
             "AND p.pick_time IS NOT NULL " .
             "AND p.pick_duration IS NOT NULL " .
-            "ORDER BY p.player_pick DESC LIMIT ?");
+            "ORDER BY p.player_pick DESC " .
+            "LIMIT ?");
     
     $stmt->bindParam(1, $draft_id);
     $stmt->bindParam(2, $amount, \PDO::PARAM_INT);

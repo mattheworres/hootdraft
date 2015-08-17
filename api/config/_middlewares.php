@@ -1,6 +1,7 @@
 <?php
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use PhpDraft\Domain\Models\PhpDraftResponse;
 
 if (!$app instanceof Silex\Application) {
   throw new Exception('Invalid application setup.');

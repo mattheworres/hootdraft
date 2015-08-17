@@ -32,7 +32,7 @@ class DraftStatsRepository {
     $draft_stats = new DraftStats();
     $draft_stats->draft_id = $draft->draft_id;
     $teams = $this->app['phpdraft.DraftDataRepository']->GetTeams($draft->draft_sport);
-    $positions = $this->app['phpdraft.DraftDataRepository']->GetPositions($draft->draft_sport, $draft->nfl_extended);
+    $positions = $this->app['phpdraft.DraftDataRepository']->GetPositions($draft->draft_sport);
 
     $this->_DeleteExistingStats($draft->draft_id);
 

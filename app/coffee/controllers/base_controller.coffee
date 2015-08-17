@@ -2,7 +2,7 @@ class @BaseController extends AngularController
   #default dependencies in case @inject is never called from the child
   @$inject: ["$routeParams", "$scope", "$rootScope", "$location", "$sessionStorage",
   "$routeParams", "authenticationService", "messageService",
-  "draftService", "subscriptionKeys", "DTOptionsBuilder", "api"]
+  "draftService", "subscriptionKeys", "DTOptionsBuilder"]
   @inject: (args...) ->
       args.push '$routeParams'
       args.push '$scope'
@@ -39,6 +39,9 @@ class @BaseController extends AngularController
       @$location.path @$sessionStorage.previousRoute
     else
       @$location.path '/home'
+
+  showDraftPasswordModal: ->
+    @draftService.showPasswordModal()
 
   defaultDatatablesOptions: ->
     @DTOptionsBuilder

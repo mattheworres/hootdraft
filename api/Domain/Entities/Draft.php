@@ -5,6 +5,7 @@ namespace PhpDraft\Domain\Entities;
  * Represents a PHPDraft "draft" object, which is the parent object.
  *
  * A draft has many managers, and managers have many players (picks).
+ * @property bool $is_locked True if the draft is locked for the current user, false if it's accessible
  * @property bool $draft_visible True if the draft is publicly visible, false otherwise
  * @property string $commish_name Name of the owning commissioner. Comes as an outer join with users.
  * @property string $status_display A string that can be used in display of the draft's status

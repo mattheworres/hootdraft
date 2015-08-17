@@ -18,7 +18,7 @@ class PickValidator {
     $valid = true;
     $errors = array();
     $teams = $this->app['phpdraft.DraftDataRepository']->GetTeams($draft->draft_sport);
-    $positions = $this->app['phpdraft.DraftDataRepository']->GetPositions($draft->draft_sport, $draft->nfl_extended);
+    $positions = $this->app['phpdraft.DraftDataRepository']->GetPositions($draft->draft_sport);
 
     if(empty($pick->first_name)
       || empty($pick->last_name)
@@ -65,7 +65,7 @@ class PickValidator {
     $valid = true;
     $errors = array();
     $teams = $this->app['phpdraft.DraftDataRepository']->GetTeams($draft->draft_sport);
-    $positions = $this->app['phpdraft.DraftDataRepository']->GetPositions($draft->draft_sport, $draft->nfl_extended);
+    $positions = $this->app['phpdraft.DraftDataRepository']->GetPositions($draft->draft_sport);
 
     if(empty($pick->first_name)
       || empty($pick->last_name)

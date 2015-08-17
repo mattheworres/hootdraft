@@ -106,7 +106,7 @@ $app->get('/draft/{draft_id}/trades', 'trade.controller:GetAll')->before($draftV
 
 $app->get('/draft/{draft_id}/timer/remaining', 'roundtime.controller:GetTimeRemaining')->before($draftViewable)->before($draftInProgress);
 
-$app->get('/', "index.controller:Index");
+$app->get('/style', "index.controller:Style");
 
 $app->post('/admin/draft/{draft_id}/stats', "admin.draftstats.controller:Create");
 $app->post('/admin/proplayers', "admin.proplayers.controller:Upload");
