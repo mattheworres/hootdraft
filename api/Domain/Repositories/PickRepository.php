@@ -288,8 +288,10 @@ class PickRepository {
       throw new \Exception("Unable to load manager #$manager_id's picks.");
     }
 
-    while ($pick = $stmt->fetch())
+    while ($pick = $stmt->fetch()) {
+      $pick->selected = strlen($pick->pick_time) > 0 && $pick->pick_duration > 0;
       $picks[] = $pick;
+    }
 
     return $picks;
   }
@@ -319,8 +321,10 @@ class PickRepository {
       throw new \Exception("Unable to load round #$round's picks.");
     }
 
-    while ($pick = $stmt->fetch())
+    while ($pick = $stmt->fetch()) {
+      $pick->selected = strlen($pick->pick_time) > 0 && $pick->pick_duration > 0;
       $picks[] = $pick;
+    }
 
     return $picks;
   }
@@ -365,8 +369,10 @@ class PickRepository {
       throw new \Exception("Unable to search for picks.");
     }
 
-    while ($player = $stmt->fetch())
+    while ($player = $stmt->fetch()) {
+      $player->selected = strlen($palyer->pick_time) > 0 && $player->pick_duration > 0;
       $players[] = $player;
+    }
 
     $searchModel->player_results = $players;
 
@@ -426,6 +432,7 @@ class PickRepository {
 
     while ($player = $stmt->fetch()) {
       $player->search_score = $loose_search_score;
+      $player->selected = strlen($player->pick_time) > 0 && $player->pick_duration > 0;
       $players[] = $player;
 
       $loose_search_score--;
@@ -461,7 +468,8 @@ class PickRepository {
     }
 
     while($pick = $stmt->fetch()) {
-        $picks[] = $pick;
+      $pick->selected = strlen($pick->pick_time) > 0 && $pick->pick_duration > 0;
+      $picks[] = $pick;
     }
 
     return $picks;
