@@ -1,76 +1,26 @@
 <div class="row" ng-show="draftValid && draft.complete">
   <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
   <div class="col-xs-12 col-sm-6 col-md-5">
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title">
-          <i class="fa fa-info"></i>&nbsp;League Info
-        </h3>
-      </div>
-      <div class="panel-body">
-        <div class="form-horizontal">
-          <div class="form-group">
-            <div class="col-xs-3">
-              <label class="control-label">League Name</label>:
-            </div>
-            <div class="col-xs-9">
-              <div class="form-control-static">{{draft.draft_name}}</div>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-xs-3">
-              <label class="control-label">Commissioner</label>:
-            </div>
-            <div class="col-xs-9">
-              <div class="form-control-static">{{draft.commish_name}}</div>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-xs-3">
-              <label class="control-label">Fantasy Sport</label>:
-            </div>
-            <div class="col-xs-9">
-              <div class="form-control-static">{{draft.sports[draft.draft_sport]}}</div>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-xs-3">
-              <label class="control-label">Draft Status</label>:
-            </div>
-            <div class="col-xs-9">
-              <div class="form-control-static">{{draft.statuses[draft.draft_status]}}</div>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-xs-3">
-              <label class="control-label">Draft Style</label>:
-            </div>
-            <div class="col-xs-9">
-              <div class="form-control-static">{{draft.styles[draft.draft_style]}}</div>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-xs-3">
-              <label class="control-label"># of Rounds</label>:
-            </div>
-            <div class="col-xs-9">
-              <div class="form-control-static">{{draft.draft_rounds}}</div>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-xs-3">
-              <label class="control-label">Draft Date</label>:
-            </div>
-            <div class="col-xs-9">
-              <div class="form-control-static">{{draft.draft_start_time}}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <draft-information draft=draft></draft-information>
   </div>
   <div class="col-xs-12 col-sm-6 col-md-5">
-    A column
+    <div class="panel panel-primary panel-no-border">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          <i class="fa fa-ellipsis-v"></i>&nbsp;&nbsp;
+          Round {{selectedDraftRound}} Picks
+        </h3>
+      </div>
+      <div class="panel-body pick-list-display">
+        <section-loading show-loading=lastLoading></section-loading>
+        <section-error show-error=lastError section-name="round {{selectedDraftRound}} picks"></section-error>
+        <picks-by-round draft=draft
+          selected-draft-round=selectedDraftRound
+          picks=roundPicks
+          pager-item-tally=pagerItemTally>
+        </picks-by-round>
+      </div>
+    </div>
   </div>
   <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
 </div>

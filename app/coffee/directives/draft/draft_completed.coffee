@@ -4,4 +4,6 @@ angular.module("app").directive 'draftCompleted', ->
     scope:
         draft: "="
         draftValid: "="
-        last10Picks: "="
+        roundPicks: "="
+        selectedDraftRound: "="
+        pagerItemTally: "="

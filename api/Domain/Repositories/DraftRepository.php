@@ -14,7 +14,7 @@ class DraftRepository {
   }
 
   //TODO: Add server-side paging
-  public function GetPublicDrafts(Request $request/*$pageSize = 25, $page = 1*/) {
+  public function GetPublicDrafts(Request $request/*$pageSize = 25, $page = 1*/, $password = '') {
     /*$page = (int)$page;
     $pageSize = (int)$pageSize;
     $startIndex = ($page-1) * $pageSize;
@@ -47,7 +47,7 @@ class DraftRepository {
 
       $currentUserOwnsIt = !empty($current_user) && $draft->commish_id == $current_user->id;
 
-      if(!$currentUserOwnsIt && !$draft->draft_visible) {
+      if(!$currentUserOwnsIt && !$draft->draft_visible && $password != $draft->draft_password) {
         $draft = $this->ProtectPrivateDraft($draft);
       }
 
@@ -59,7 +59,7 @@ class DraftRepository {
     return $drafts;
   }
 
-  public function GetPublicDraftsByCommish(Request $request, $commish_id) {
+  public function GetPublicDraftsByCommish(Request $request, $commish_id, $password = '') {
     $commish_id = (int)$commish_id;
 
     $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
@@ -84,7 +84,7 @@ class DraftRepository {
 
       $currentUserOwnsIt = !empty($current_user) && $draft->commish_id == $current_user->id;
 
-      if(!$currentUserOwnsIt && !$draft->draft_visible) {
+      if(!$currentUserOwnsIt && !$draft->draft_visible && $password != $draft->draft_password) {
         $draft = $this->ProtectPrivateDraft($draft);
       }
 

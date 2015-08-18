@@ -41,3 +41,5 @@ angular.module('app').factory 'api', ($resource, ENV) ->
       { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/picks/last", isArray: true }
     'getNext':
       { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/picks/next", isArray: true }
+    'getSelectedByRound':
+      { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/round/:round/picks/selected", isArray: true }
