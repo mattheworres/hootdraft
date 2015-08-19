@@ -109,12 +109,13 @@ class PickController {
 
   public function GetByRound(Application $app, Request $request) {
     $draft_id = $request->get('draft_id');
+    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
     $round = (int)$request->get('draft_round');
     $response = new PhpDraftResponse();
 
     try {
       $response->round = $round;
-      $response->round_picks = $app['phpdraft.PickRepository']->LoadRoundPicks($draft_id, $round, false, true);
+      $response->round_picks = $app['phpdraft.PickRepository']->LoadRoundPicks($draft, $round, false, true);
       $response->success = true;
     } catch(\Exception $e) {
       $response->success = false;

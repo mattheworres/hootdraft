@@ -42,3 +42,13 @@ angular.module('app').config ($routeProvider, $locationProvider) ->
     controller: 'DraftIndexController'
     controllerAs: 'draftCtrl'
     templateUrl: 'app/templates/draft/index.html'
+
+  $routeProvider.when '/draft/:draft_id/picks/manager',
+    controller: 'ByManagerController'
+    controllerAs: 'managerCtrl'
+    templateUrl: 'app/templates/picks/by_manager.html'
+
+  $routeProvider.when '/draft/:draft_id/picks/round',
+    controller: 'ByRoundController'
+    controllerAs: 'roundCtrl'
+    templateUrl: 'app/templates/picks/by_round.html'

@@ -121,7 +121,7 @@ $app->put('/commish/profile', "commish.profile.controller:Put");
 $app->get('/commish/draft/create', "commish.draft.controller:GetCreate"); //Only requires commish role, handled by firewall
 $app->get('/commish/draft/{draft_id}', "commish.draft.controller:Get")->before($commishEditableDraft);
 $app->get('/commish/draft/{draft_id}/timers', "commish.draft.controller:GetTimers")->before($commishEditableDraft);
-$app->post('/commish/draft/create', "commish.draft.controller:Create"); //Only requires commish role, handled by firewall
+$app->post('/commish/draft', "commish.draft.controller:Create"); //Only requires commish role, handled by firewall
 $app->put('/commish/draft/{draft_id}', "commish.draft.controller:Update")->before($commishEditableDraft)->before($draftSettingUp);
 $app->put('/commish/draft/{draft_id}/status', "commish.draft.controller:UpdateStatus")->before($commishEditableDraft);
 $app->delete('/commish/draft/{draft_id}', "commish.draft.controller:Delete")->before($commishEditableDraft);

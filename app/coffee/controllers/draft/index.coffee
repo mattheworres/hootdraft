@@ -20,7 +20,6 @@ class DraftIndexController extends BaseController
         @_loadInProgressData(args.draft.draft_id, args)
       else if args.draft? and args.draft.complete == true
         @$scope.pagerItemTally = @$rootScope.draft.draft_rounds * 10
-        console.log "Pager item tally is #{@$scope.pagerItemTally}"
         @_loadCompletedData(args.draft.draft_id, args)
 
     @$scope.$on @subscriptionKeys.scopeDestroy, (event, args) =>
@@ -44,7 +43,8 @@ class DraftIndexController extends BaseController
     @$scope.managersLoading = args.onPageLoad? and args.onPageLoad
     @$scope.managersError = false
 
-    managersPromise = @api.Manager.getManagers({ draft_id: draft_id }, managersSuccess, managersError)
+    if @$scope.draftValid and not @$scope.draftLocked
+      managersPromise = @api.Manager.getManagers({ draft_id: draft_id }, managersSuccess, managersError)
     #Round times?
 
   _loadInProgressData: (draft_id, args) =>
@@ -59,27 +59,34 @@ class DraftIndexController extends BaseController
     lastErrorHandler = (data) =>
       @$scope.lastLoading = false
       @$scope.lastError = true
-      console.log "Last error"
 
     nextErrorHandler = (data) =>
       @$scope.nextLoading = false
       @$scope.nextError = true
-      console.log "Next error"
-      console.log data
 
     @$scope.lastLoading = args.onPageLoad? and args.onPageLoad
     @$scope.nextLoading = args.onPageLoad? and args.onPageLoad
     @$scope.lastError = false
     @$scope.nextError = false
 
-    lastPromise = @api.Pick.getLast({ draft_id: draft_id, amount: 5 }, lastSuccess, lastErrorHandler)
-    nextPromise = @api.Pick.getNext({ draft_id: draft_id, amount: 5 }, nextSuccess, nextErrorHandler)
+    if @$scope.draftValid and not @$scope.draftLocked
+      lastPromise = @api.Pick.getLast({ draft_id: draft_id, amount: 5 }, lastSuccess, lastErrorHandler)
+      nextPromise = @api.Pick.getNext({ draft_id: draft_id, amount: 5 }, nextSuccess, nextErrorHandler)
 
   _loadCompletedData: (draft_id) =>
     roundSuccess = (data) =>
       @$scope.roundPicks = data
+      @$scope.roundLoading = false
 
     errorHandler = (data) =>
       @messageService.showError "Unable to load picks"
+      @$scope.roundError = true
+      @$scope.roundLoading = false
 
-    roundPromise = @api.Pick.getSelectedByRound({ draft_id: draft_id, round: @$scope.selectedDraftRound, sort_ascending: true }, roundSuccess, errorHandler)
+    if @$scope.draftValid and not @$scope.draftLocked
+      @$scope.roundError = false
+      @$scope.roundLoading = true
+      roundPromise = @api.Pick.getSelectedByRound({ draft_id: draft_id, round: @$scope.selectedDraftRound, sort_ascending: true }, roundSuccess, errorHandler)
+
+
+

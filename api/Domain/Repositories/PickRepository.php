@@ -206,6 +206,8 @@ class PickRepository {
 
     $stmt->fetch();
 
+    $next_pick->on_the_clock = true;
+
     return $next_pick;
   }
 
@@ -261,13 +263,15 @@ class PickRepository {
     
     while($pick = $stmt->fetch()) {
       $pick->selected = strlen($pick->pick_time) > 0 && $pick->pick_duration > 0;
+      $pick->on_the_clock = $pick->player_pick == $currentPick + 1;
+
       $picks[] = $pick;
     }
     
     return $picks;
   }
 
-  public function LoadManagerPicks($manager_id, $selected = true) {
+  public function LoadManagerPicks($manager_id, $draft = null, $selected = true) {
     $manager_id = (int) $manager_id;
 
     if ($manager_id == 0) {
@@ -290,13 +294,15 @@ class PickRepository {
 
     while ($pick = $stmt->fetch()) {
       $pick->selected = strlen($pick->pick_time) > 0 && $pick->pick_duration > 0;
+      $pick->on_the_clock = $draft != null && $pick->player_pick == $draft->draft_current_pick + 1;
+
       $picks[] = $pick;
     }
 
     return $picks;
   }
 
-  public function LoadRoundPicks($draft_id, $draft_round, $sort_ascending = true, $selected = true) {
+  public function LoadRoundPicks(Draft $draft, $draft_round, $sort_ascending = true, $selected = true) {
     $picks = array();
     $sortOrder = $sort_ascending ? "ASC" : "DESC";
 
@@ -312,7 +318,7 @@ class PickRepository {
             "WHERE p.draft_id = ? " .
             " AND p.player_round = ? ORDER BY p.player_pick " . $sortOrder);
 
-    $stmt->bindParam(1, $draft_id);
+    $stmt->bindParam(1, $draft->draft_id);
     $stmt->bindParam(2, $draft_round);
 
     $stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Pick');
@@ -323,6 +329,8 @@ class PickRepository {
 
     while ($pick = $stmt->fetch()) {
       $pick->selected = strlen($pick->pick_time) > 0 && $pick->pick_duration > 0;
+      $pick->on_the_clock = $draft != null && $pick->player_pick == $draft->draft_current_pick + 1;
+
       $picks[] = $pick;
     }
 

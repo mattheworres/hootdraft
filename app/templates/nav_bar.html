@@ -18,7 +18,7 @@
         </a>
         <ul class="dropdown-menu" aria-labelledby="draftDropdown">
           <li>
-            <a href="#">
+            <a href="home">
               <i class="fa fa-table"></i>
               &nbsp;All Leagues
             </a>
@@ -79,33 +79,33 @@
       </div>
       <div class="col-xs-12 col-sm-5 col-md-6 navbar-header-left collapse navbar-collapse" ng-class="!draftNavCollapsed && 'in'">
         <ul class="nav navbar-nav">
-          <li ng-hide="draft.setting_up">
+          <li ng-hide="draftLocked || draft.setting_up">
             <a href="#">
               <i class="fa fa-table"></i>&nbsp;&nbsp;
               Draft Board
             </a>
           </li>
-          <li ng-show="draft.complete">
+          <li ng-show="!draftLocked && draft.complete">
             <a href="#">
             <i class="fa fa-bar-chart"></i>&nbsp;&nbsp;
             Stats
             </a>
           </li>
-          <li dropdown>
+          <li dropdown ng-hide="draftLocked || draft.setting_up">
             <a href="#" id="pickDropdown" class="dropdown-toggle" dropdown-toggle role="button" aria-haspopup="true" aria-expanded="false">
               <i class="fa fa-check-square"></i>&nbsp;&nbsp;
               Picks
               <span class="caret"></span>
             </a>
-            <ul class="dropdown-menu" ng-hide="draft.setting_up" aria-labelledby="pickDropdown">
+            <ul class="dropdown-menu" aria-labelledby="pickDropdown">
               <li>
-                <a href="#">
+                <a href="draft/{{draft.draft_id}}/picks/manager">
                   <i class="fa fa-users"></i>
                   &nbsp;by Manager
                 </a>
               </li>
               <li>
-                <a href="#">
+                <a href="draft/{{draft.draft_id}}/picks/round">
                   <i class="fa fa-list-ol"></i>
                   &nbsp;by Round
                 </a>
@@ -131,34 +131,52 @@
               <span class="caret"></span>
             </a>
             <ul class="dropdown-menu" aria-labelledby="commishDropdown">
-              <li>
+              <li ng-show="draft.setting_up">
+                <a href="#">
+                  <i class="fa fa-play"></i>
+                  &nbsp;Start Draft!
+                </a>
+              </li>
+              <li ng-show="draft.in_progress">
                 <a href="#">
                   <i class="fa fa-plus"></i>
                   &nbsp;Add Next Pick
                 </a>
               </li>
-              <li>
+              <li ng-show="draft.in_progress">
                 <a href="#">
                   <i class="fa fa-pencil"></i>
                   &nbsp;Edit a Pick
                 </a>
               </li>
-              <li>
+              <li ng-show="draft.in_progress">
                 <a href="#">
                   <i class="fa fa-exchange"></i>
                   &nbsp;Enter a Trade
                 </a>
               </li>
-              <li>
+              <li ng-show="!draft.complete">
                 <a href="#">
                   <i class="fa fa-clock-o"></i>
                   &nbsp;Setup Timers
                 </a>
               </li>
-              <li>
+              <li ng-show="!draft.complete">
                 <a href="#">
                   <i class="fa fa-pencil-square-o"></i>
                   &nbsp;Edit Draft
+                </a>
+              </li>
+              <li ng-show="draft.in_progress">
+                <a href="#">
+                  <i class="fa fa-warning"></i>
+                  &nbsp;Reset Draft
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <i class="fa fa-trash"></i>
+                  &nbsp;Delete Draft
                 </a>
               </li>
             </ul>

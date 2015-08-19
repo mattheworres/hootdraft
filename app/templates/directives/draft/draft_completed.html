@@ -12,8 +12,8 @@
         </h3>
       </div>
       <div class="panel-body pick-list-display">
-        <section-loading show-loading=lastLoading></section-loading>
-        <section-error show-error=lastError section-name="round {{selectedDraftRound}} picks"></section-error>
+        <section-loading show-loading=roundLoading></section-loading>
+        <section-error show-error=roundError section-name="round {{selectedDraftRound}} picks"></section-error>
         <picks-by-round draft=draft
           selected-draft-round=selectedDraftRound
           picks=roundPicks

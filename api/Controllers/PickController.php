@@ -48,7 +48,9 @@ class PickController {
     $draft_id = (int)$request->get('draft_id');
     $manager_id  = (int)$request->get('manager_id');
 
-    return $app->json($app['phpdraft.PickRepository']->LoadManagerPicks($manager_id, false));
+    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
+
+    return $app->json($app['phpdraft.PickRepository']->LoadManagerPicks($manager_id, $draft, false));
   }
 
   public function GetSelectedManagerPicks(Application $app, Request $request) {
@@ -60,18 +62,20 @@ class PickController {
 
   public function GetAllRoundPicks(Application $app, Request $request) {
     $draft_id = (int)$request->get('draft_id');
+    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
     $draft_round = (int)$request->get('draft_round');
     $sort_ascending = (bool)$request->get('sort_ascending');
 
-    return $app->json($app['phpdraft.PickRepository']->LoadRoundPicks($draft_id, $draft_round, $sort_ascending, false));
+    return $app->json($app['phpdraft.PickRepository']->LoadRoundPicks($draft, $draft_round, $sort_ascending, false));
   }
 
   public function GetSelectedRoundPicks(Application $app, Request $request) {
     $draft_id = (int)$request->get('draft_id');
+    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
     $draft_round = (int)$request->get('draft_round');
     $sort_ascending = (bool)$request->get('sort_ascending');
 
-    return $app->json($app['phpdraft.PickRepository']->LoadRoundPicks($draft_id, $draft_round, $sort_ascending));
+    return $app->json($app['phpdraft.PickRepository']->LoadRoundPicks($draft, $draft_round, $sort_ascending));
   }
 
   public function SearchPicks(Application $app, Request $request) {

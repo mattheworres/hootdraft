@@ -4,6 +4,7 @@ namespace PhpDraft\Domain\Entities;
 //Previously known as "Player_Object" - renamed "Pick" to reduce my own confusion
 /**
 * @property string $manager_name Name of the manager that made the pick. NOTE: Only available on selected picks, and is kind've a cheat.
+* @property bool $on_the_clock If the current pick is the one "on the clock" in an in-progress draft
 * @property int $search_score
 * @property bool $selected If this pick has been selected yet - driven from if $pick_time is null or not
 */

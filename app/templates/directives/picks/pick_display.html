@@ -11,7 +11,7 @@
     <div class="manager">{{pick.manager_name}}</div>
   </div>
 </div>
-<div class="pick col-xs-12" ng-hide="pick.selected" ng-class="first ? 'active' : ''">
+<div class="pick col-xs-12 unselected" ng-hide="pick.selected" ng-class="pick.on_the_clock ? 'active' : ''">
   <div class="pick-data col-xs-2">
     <div class="pick-number"><small>#</small> {{pick.player_pick}}</div>
     <div class="round-number"><small>Rd</small> {{pick.player_round}}</div>
@@ -19,6 +19,6 @@
   <div class="player-data col-xs-10">
     <div class="visible-xs hidden-sm hidden-md hidden-lg manager-xs">{{pick.manager_name}}</div>
     <div class="hidden-xs visible-sm visible-md visible-lg manager-sm">{{pick.manager_name}}</div>
-    <div class="on-clock" ng-show="first"><i class="fa fa-clock-o"></i>&nbsp;On the clock</div>
+    <div class="on-clock" ng-show="pick.on_the_clock"><i class="fa fa-clock-o"></i>&nbsp;On the clock</div>
   </div>
 </div>

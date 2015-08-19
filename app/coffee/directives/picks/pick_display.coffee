@@ -4,4 +4,3 @@ angular.module("app").directive 'pickDisplay', ->
     scope:
       draft: "="
       pick: "="
-      first: "="
