@@ -45,9 +45,15 @@ class DraftRepository {
     while($draft = $draft_stmt->fetch()) {
       $draft->draft_visible = empty($draft->draft_password);
 
+      $draft->setting_up = $this->app['phpdraft.DraftService']->DraftSettingUp($draft);
+      $draft->in_progress = $this->app['phpdraft.DraftService']->DraftInProgress($draft);
+      $draft->complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);
+      $draft->is_locked = false;
+
       $currentUserOwnsIt = !empty($current_user) && $draft->commish_id == $current_user->id;
 
       if(!$currentUserOwnsIt && !$draft->draft_visible && $password != $draft->draft_password) {
+        $draft->is_locked = true;
         $draft = $this->ProtectPrivateDraft($draft);
       }
 
@@ -82,9 +88,15 @@ class DraftRepository {
     while($draft = $draft_stmt->fetch()) {
       $draft->draft_visible = empty($draft->draft_password);
 
+      $draft->setting_up = $this->app['phpdraft.DraftService']->DraftSettingUp($draft);
+      $draft->in_progress = $this->app['phpdraft.DraftService']->DraftInProgress($draft);
+      $draft->complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);
+      $draft->is_locked = false;
+
       $currentUserOwnsIt = !empty($current_user) && $draft->commish_id == $current_user->id;
 
       if(!$currentUserOwnsIt && !$draft->draft_visible && $password != $draft->draft_password) {
+        $draft->is_locked = true;
         $draft = $this->ProtectPrivateDraft($draft);
       }
 
@@ -348,7 +360,7 @@ class DraftRepository {
     $draft->draft_status = '';
     $draft->setting_up = '';
     $draft->in_progress = '';
-    $draft->completed = '';
+    $draft->complete = '';
     $draft->draft_style = '';
     $draft->draft_rounds = '';
     $draft->draft_counter = '';

@@ -1,0 +1,35 @@
+<div data-ng-cloak>
+  <div class="container-fluid v-offset-3">
+    <draft-state controller=draftCtrl
+      commish-name=draft.commish_name
+      draft-error=draftError
+      draft-loading=draftLoading
+      draft-locked=draftLocked>
+    </draft-state>
+
+    <draft-setting-up
+      draft=draft
+      draft-valid=draftValid
+      managers=managers
+      ng-hide="draftLoading || !draftValid || draftLocked">
+    </draft-setting-up>
+
+    <draft-in-progress
+      draft=draft
+      draft-valid=draftValid
+      last-five-picks=lastFivePicks
+      next-five-picks=nextFivePicks
+      ng-hide="draftLoading || !draftValid || draftLocked">
+    </draft-in-progress>
+
+    <draft-completed
+      draft=draft
+      draft-valid=draftValid
+      round-picks=roundPicks
+      selected-draft-round=selectedDraftRound
+      pager-item-tally=pagerItemTally
+      ng-hide="draftLoading || !draftValid || draftLocked">
+    </draft-completed>
+  </div>
+</div>
+

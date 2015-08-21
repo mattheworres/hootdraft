@@ -1,0 +1,58 @@
+@import "../../bower_components/bootstrap/less/bootstrap.less";
+@import "../../bower_components/font-awesome/less/font-awesome.less";
+@import "variable_overrides.less";
+@import "shared/nav.less";
+@import "shared/modals.less";
+@import "drafts.less";
+@import "trades.less";
+
+html, body {
+  height: 100%;
+}
+
+#page_body {
+  margin-bottom: 40px;
+}
+
+.has-warning .form-control {
+  border-color: #ff9966;
+}
+
+.has-warning .has-error .form-control {
+  border-color: @brand-danger;
+}
+
+.has-warning .help-block {
+  color: #ff9966;
+}
+
+.bg-secondary {
+  color: #000;
+  background-color: #FFEC9A;
+}
+
+/* Vertical Offset Classes */
+.v-offset { margin-top: 2px; }
+.v-offset-1 { margin-top: 5px; }
+.v-offset-2 { margin-top: 10px; }
+.v-offset-3 { margin-top: 15px; }
+.v-offset-4 { margin-top: 30px; }
+.v-offset-5 { margin-top: 40px; }
+.v-offset-6 { margin-top: 60px; }
+.v-offset-7 { margin-top: 80px; }
+.v-offset-8 { margin-top: 100px; }
+.v-offset-9 { margin-top: 150px; }
+
+.panel-no-border {
+  border: 0;
+
+  .panel-body {
+    padding-top: 5px;
+  }
+}
+
+.display-only-form {
+  .form-group {
+    margin-bottom: 5px;
+  }
+}

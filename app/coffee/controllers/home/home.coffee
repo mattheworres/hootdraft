@@ -5,22 +5,21 @@ class HomeController extends BaseController
   'subscriptionKeys',
   'api',
   'messageService',
-  'workingModalService',
   'DTOptionsBuilder',
   'DTColumnDefBuilder'
 
   initialize: ->
     @drafts = []
 
-    @workingModalService.openModal()
+    @$scope.draftTableLoading = true
 
     draftSuccessHandler = (data) =>
-      @workingModalService.closeModal()
+      @$scope.draftTableLoading = false
       @drafts = data
 
     errorHandler = =>
-      @workingModalService.closeModal()
-      @messageService.showError "Unable to load drafts" 
+      @$scope.draftTableLoading = true
+      @messageService.showError "Unable to load drafts"
 
     draftsPromise = @api.Draft.getDraftList({}, draftSuccessHandler, errorHandler)
 

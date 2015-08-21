@@ -5,10 +5,7 @@ class TradesController extends BaseController
   '$routeParams',
   'subscriptionKeys',
   'api',
-  'messageService',
-  'workingModalService',
-  'workingModalService',
-  'api'
+  'messageService'
 
   initialize: ->
     @deregister = @$scope.$on @subscriptionKeys.loadDraftDependentData, (event, args) =>
