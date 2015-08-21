@@ -14,7 +14,7 @@
 </div>
 <div class="trade pick col-xs-12 unselected" ng-hide="asset.was_drafted == 1">
   <div class="player-data col-xs-12 col-md-offset-1 col-lg-offset-1">
-    <div class="asset-name">Round #{{asset.player.player_round}} Pick ({{asset.player.player_pick | ordinal}} overall)</div>
+    <div class="asset-name">{{asset.player.player_round | ordinal}} Round Pick ({{asset.player.player_pick | ordinal}} overall)</div>
     <div class="asset-player" ng-show="asset.player.selected"><small>became</small> {{asset.player.first_name}} {{asset.player.last_name}}, {{asset.player.position}} &ndash; {{asset.player.team}}</div>
   </div>
 </div>
