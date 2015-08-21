@@ -31,7 +31,7 @@ $draftViewable = function(Symfony\Component\HttpFoundation\Request $request, Sil
     $response = new PhpDraftResponse(false, array());
     $response->errors[] = "Draft marked as private.";
 
-    return $app->json($response);
+    return $app->json(array($response), $response->responseType());
   }
 };
 
@@ -42,7 +42,7 @@ $draftSettingUp = function(Symfony\Component\HttpFoundation\Request $request, Si
   $setting_up = $app['phpdraft.DraftValidator']->IsDraftSettingUpOrInProgress($draft);
 
   if(!$setting_up->success) {
-    return $app->json($setting_up, $setting_up->responseType());
+    return $app->json(array($setting_up), $setting_up->responseType());
   }
 };
 
@@ -53,7 +53,18 @@ $draftInProgress = function(Symfony\Component\HttpFoundation\Request $request, S
   $in_progress = $app['phpdraft.DraftValidator']->IsDraftInProgress($draft);
 
   if(!$in_progress->success) {
-    return $app->json($in_progress, $in_progress->responseType());
+    return $app->json(array($in_progress), $in_progress->responseType());
+  }
+};
+
+$draftInProgressOrCompleted = function(Symfony\Component\HttpFoundation\Request $request, Silex\Application $app) {
+  $draft_id = (int)$request->get('draft_id');
+  $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
+
+  $in_progress = $app['phpdraft.DraftValidator']->IsDraftInProgressOrComplete($draft);
+
+  if(!$in_progress->success) {
+    return $app->json(array($in_progress), $in_progress->responseType());
   }
 };
 
@@ -69,6 +80,6 @@ $commishEditableDraft = function(Symfony\Component\HttpFoundation\Request $reque
     $response = new PhpDraft\Domain\Models\PhpDraftResponse(false, array());
     $response->errors[] = "You do not have permission to this draft.";
 
-    return $app->json($response);
+    return $app->json(array($response), $response->responseType());
   }
 };

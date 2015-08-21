@@ -44,6 +44,7 @@ class TradeController {
     $new_trade->draft_id = $draft_id;
     $new_trade->manager1_id = $request->get('manager1_id');
     $new_trade->manager2_id = $request->get('manager2_id');
+    $new_trade->trade_round = $request->get('trade_round');
 
     $assets_json = $request->get('trade_assets');
 
@@ -55,7 +56,6 @@ class TradeController {
         $new_trade_asset = new TradeAsset();
         $new_trade_asset->player = $app['phpdraft.PickRepository']->Load($asset_id);
         $new_trade_asset->was_drafted = $app['phpdraft.PickService']->PickHasBeenSelected($new_trade_asset->player);
-        $app['monolog']->addDebug("So, wasDrafted is this: $new_trade_asset->was_drafted");
 
         if($new_trade_asset->player->manager_id == $new_trade->manager1_id) {
           $new_trade_asset->oldmanager_id = $new_trade->manager1_id;

@@ -49,6 +49,8 @@ class PickRepository {
       throw new \Exception("Unable to load pick " . $id);
     }
 
+    $pick->selected = strlen($pick->pick_time) > 0 && $pick->pick_duration > 0;
+
     return $pick;
   }
 

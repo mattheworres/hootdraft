@@ -25,9 +25,10 @@ ALTER TABLE `managers` DROP COLUMN `manager_email`;
 
 ALTER TABLE `draft` ADD `commish_id` INT(11) NOT NULL AFTER `draft_id`;
 
-#Add flag to draft for extended rosters.
-#NOTE: If any existing drafts used extended rosters, you will need to manually set the flag to 1 for said drafts.
-ALTER TABLE `draft` ADD `nfl_extended` TINYINT(1) NOT NULL DEFAULT '0' AFTER `draft_current_pick`;
+#NOTE: To migrate PHPDraft <1.3.x NFL drafts that use extended rosters, you will have to manually update their
+#draft_sport to "NFLE".
+
+ALTER TABLE `trades` ADD `trade_round` INT(5) NOT NULL AFTER `trade_time`;
 
 # Run this for existing drafts once you create your admin user, then enter that user ID below:
 UPDATE `draft` SET `commish_id` = 16 WHERE `commish_id` = 0;
@@ -61,6 +62,25 @@ CREATE TABLE `draft_stats` (
   `least_drafted_position_count` int(11) NOT NULL,
   PRIMARY KEY  (`draft_stat_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+# Convert timezones from locally-set via PHP (PHPDraft <v1.3.x), to UTC based times (v2.0):
+# NOTE: This should only be run once as it's relative: you will
+# mangle data if you run it multiple times, hence why it's block-commented out.
+# Change 'EST' to whatever timezone you set for PHPDraft <1.3.x
+
+/*
+UPDATE `draft`
+SET `draft_start_time` = CONVERT_TZ(`draft_start_time`, 'EST', 'GMT')
+WHERE `draft_start_time` IS NOT NULL;
+
+UPDATE `draft`
+SET `draft_end_time` = CONVERT_TZ(`draft_end_time`, 'EST', 'GMT')
+WHERE `draft_end_time` IS NOT NULL;
+
+UPDATE `trades`
+SET `trade_time` = CONVERT_TZ(`trade_time`, 'EST', 'GMT')
+WHERE `trade_time` IS NOT NULL;
+*/
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

@@ -1,0 +1,20 @@
+<div class="trade pick pick{{asset.player.position}} col-xs-12" ng-show="asset.was_drafted == 1">
+  <div class="pick-data col-xs-2 col-sm-2 col-md-3 col-lg-3">
+    <div class="hidden-md hidden-lg pick-number"><small>#</small>{{asset.player.player_pick}}</div>
+    <div class="hidden-md hidden-lg round-number">Rd {{asset.player.player_round}}</div>
+    <div class="hidden-xs hidden-sm pick-number"><small>Pick #</small> {{asset.player.player_pick}}</div>
+    <div class="hidden-xs hidden-sm round-number"><small>Round</small> {{asset.player.player_round}}</div>
+  </div>
+  <div class="player-data col-xs-10 col-sm-10 col-md-9 col-lg-9">
+    <div class="visible-xs hidden-sm hidden-md hidden-lg first-name-xs">{{asset.player.first_name}}</div>
+    <div class="visible-xs hidden-sm hidden-md hidden-lg last-name-xs">{{asset.player.last_name}}</div>
+    <div class="hidden-xs visible-sm visible-md visible-lg player-name-sm">{{asset.player.first_name}} {{asset.player.last_name}}</div>
+    <div class="sports-data">{{draft.positions[asset.player.position]}} &ndash; {{draft.teams[asset.player.team]}}</div>
+  </div>
+</div>
+<div class="trade pick col-xs-12 unselected" ng-hide="asset.was_drafted == 1">
+  <div class="player-data col-xs-12 col-md-offset-1 col-lg-offset-1">
+    <div class="asset-name">Round #{{asset.player.player_round}} Pick ({{asset.player.player_pick | ordinal}} overall)</div>
+    <div class="asset-player" ng-show="asset.player.selected"><small>became</small> {{asset.player.first_name}} {{asset.player.last_name}}, {{asset.player.position}} &ndash; {{asset.player.team}}</div>
+  </div>
+</div>

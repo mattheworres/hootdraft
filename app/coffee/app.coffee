@@ -11,4 +11,6 @@ angular.module("app", [
   "vcRecaptcha"
   "validation.match"
   "ngCapsLock"
+  "angularMoment"
+  "ordinal"
 ])

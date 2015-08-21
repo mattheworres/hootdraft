@@ -6,9 +6,7 @@ class DraftIndexController extends BaseController
   'subscriptionKeys',
   'api',
   'messageService',
-  'workingModalService',
-  'workingModalService',
-  'api'
+  'workingModalService'
 
   initialize: ->
     @$scope.selectedDraftRound = 1

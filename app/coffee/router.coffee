@@ -52,3 +52,8 @@ angular.module('app').config ($routeProvider, $locationProvider) ->
     controller: 'ByRoundController'
     controllerAs: 'roundCtrl'
     templateUrl: 'app/templates/picks/by_round.html'
+
+  $routeProvider.when '/draft/:draft_id/trades',
+    controller: 'TradesController'
+    controllerAs: 'tradesCtrl'
+    templateUrl: 'app/templates/draft/trades.html'

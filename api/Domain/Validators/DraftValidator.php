@@ -169,4 +169,20 @@ class DraftValidator {
 
     return new PhpDraftResponse($valid, $errors);
   }
+
+  public function IsDraftInProgressOrComplete(Draft $draft) {
+    $valid = true;
+    $errors = array();
+    $draft_statuses = $this->app['phpdraft.DraftDataRepository']->GetStatuses();
+    $current_status_text = strtolower($draft_statuses[$draft->draft_status]);
+    $is_in_progress = $this->app['phpdraft.DraftService']->DraftInProgress($draft);
+    $is_complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);
+
+    if(!$is_complete && !$is_in_progress) {
+      $valid = false;
+      $errors[] = "Unable to work on draft #$draft->draft_id: draft is $current_status_text";
+    }
+
+    return new PhpDraftResponse($valid, $errors);
+  }
 }

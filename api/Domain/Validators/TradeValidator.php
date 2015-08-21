@@ -35,6 +35,11 @@ class TradeValidator {
     $asset_count = count($trade->trade_assets);
     $unique_asset_count = count(array_unique($trade->trade_assets));
 
+    if(empty($trade->trade_round) || $trade->trade_round < 0 || $trade->trade_round > $draft->draft_rounds) {
+      $errors[] = "Invalid value for trade round.";
+      $valid = false;
+    }
+
     foreach($trade->trade_assets as $trade_asset) {
       if($trade_asset->oldmanager_id == $trade->manager1_id) {
         $manager1_asset_count++;

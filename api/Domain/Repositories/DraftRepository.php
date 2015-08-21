@@ -142,6 +142,8 @@ class DraftRepository {
     $currentUserOwnsIt = !empty($current_user) && $draft->commish_id == $current_user->id;
 
     $draft->draft_visible = empty($draft->draft_password);
+    $draft->draft_start_time .= " UTC";
+    $draft->draft_end_time .= " UTC";
     $draft->setting_up = $this->app['phpdraft.DraftService']->DraftSettingUp($draft);
     $draft->in_progress = $this->app['phpdraft.DraftService']->DraftInProgress($draft);
     $draft->complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);

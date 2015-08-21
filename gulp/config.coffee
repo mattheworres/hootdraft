@@ -56,6 +56,9 @@ module.exports =
                 'bower_components/angular-toggle-switch/angular-toggle-switch.min.js'
                 'bower_components/angular-validation-match/dist/angular-validation-match.min.js'
                 'bower_components/ng-caps-lock/ng-caps-lock.min.js'
+                'bower_components/moment/min/moment.min.js'
+                'bower_components/angular-moment/angular-moment.min.js'
+                'bower_components/angularjs-ordinal-filter/ordinal-browser.js'
             ],
             css: [
                 'bower_components/angular-ui-bootstrap-bower/ui-bootstrap-csp.css'

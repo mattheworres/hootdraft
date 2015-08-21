@@ -15,6 +15,8 @@
     "angular-toggle-switch": "~1.3.0",
     "angular-validation-match": "~1.5.1",
     "ng-caps-lock": "~1.0.2",
-    "angular-recaptcha": "~2.2.4"
+    "angular-recaptcha": "~2.2.4",
+    "angular-moment": "~0.10.2",
+    "angularjs-ordinal-filter": "*"
   }
 }

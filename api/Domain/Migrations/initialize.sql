@@ -108,6 +108,7 @@ CREATE TABLE IF NOT EXISTS `trades` (
   `manager1_id` int(11) unsigned NOT NULL,
   `manager2_id` int(11) unsigned NOT NULL,
   `trade_time` datetime DEFAULT NULL,
+  `trade_round` INT(5) NOT NULL,
   PRIMARY KEY (`trade_id`),
   KEY `manager1_idx` (`manager1_id`),
   KEY `manager2_idx` (`manager2_id`),

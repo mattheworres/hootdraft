@@ -102,7 +102,7 @@ $app->get('/draft/{draft_id}/round/{draft_round}/picks/all', 'pick.controller:Ge
 $app->get('/draft/{draft_id}/round/{draft_round}/picks/selected', 'pick.controller:GetSelectedRoundPicks')->before($draftViewable);
 $app->get('/draft/{draft_id}/picks/search', 'pick.controller:SearchPicks')->before($draftViewable);
 
-$app->get('/draft/{draft_id}/trades', 'trade.controller:GetAll')->before($draftViewable)->before($draftInProgress);
+$app->get('/draft/{draft_id}/trades', 'trade.controller:GetAll')->before($draftViewable)->before($draftInProgressOrCompleted);
 
 $app->get('/draft/{draft_id}/timer/remaining', 'roundtime.controller:GetTimeRemaining')->before($draftViewable)->before($draftInProgress);
 

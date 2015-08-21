@@ -4,6 +4,7 @@ namespace PhpDraft\Domain\Repositories;
 use Silex\Application;
 use PhpDraft\Domain\Entities\Trade;
 use PhpDraft\Domain\Entities\TradeAsset;
+use PhpDraft\Domain\Entities\Manager;
 
 class TradeRepository {
   private $app;
@@ -29,10 +30,13 @@ class TradeRepository {
       try {
         $trade->manager1 = $this->app['phpdraft.ManagerRepository']->Load($trade->manager1_id);
         $trade->manager2 = $this->app['phpdraft.ManagerRepository']->Load($trade->manager2_id);
-        $trade->trade_assets = $this->GetAssets($trade->trade_id, $trade->manager1, $trade->manager2);
+        $trade->trade_assets = $this->GetAssets($trade, $trade->manager1, $trade->manager2);
       }catch(\Exception $e) {
         throw new \Exception("Unable to load managers or trade assets: " . $e->getMessage());
       }
+
+      //To help display of UTC times on client, append UTC to the end of the string
+      $trade->trade_time .= " UTC";
 
       $trades[] = $trade;
     }
@@ -64,7 +68,6 @@ class TradeRepository {
       $asset->player = $this->app['phpdraft.PickRepository']->Load($asset->player_id);
       $asset->newmanager = $asset->newmanager_id == $manager1->manager_id ? $manager1 : $manager2;
       $asset->oldmanager = $asset->oldmanager_id == $manager1->manager_id ? $manager1 : $manager2;
-      $asset->was_drafted = $this->app['phpdraft.PickService']->PickHasBeenSelected($asset->player);
 
       if ($asset->player == false || $asset->newmanager == false || $asset->oldmanager == false)
         throw new \Exception('Invalid asset loaded.');

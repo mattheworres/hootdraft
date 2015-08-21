@@ -1,0 +1,56 @@
+<div data-ng-cloak>
+  <div class="container-fluid v-offset-3">
+    <draft-state controller=tradesCtrl
+      commish-name=draft.commish_name
+      draft-error=draftError
+      draft-loading=draftLoading
+      draft-locked=draftLocked>
+    </draft-state>
+
+    <div class="row" ng-show="draftValid && !draft.setting_up">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-offset-1 col-lg-10">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title">
+              <i class="fa fa-exchange"></i>&nbsp;&nbsp;
+              Trades
+            </h3>
+          </div>
+          <div class="panel-body trades-panel" ng-hide="trades.length > 0">
+            <h3>No trades have been made yet.</h3>
+            <h5><small>Tip</small>&nbsp;&nbsp;Trades can be made at any time once a draft has started &mdash; so get creative and make a move!</h5>
+          </div>
+          <div class="panel-body trades-panel" ng-show="trades.length > 0">
+            <div class="row" ng-repeat="trade in trades">
+              <div class="col-xs-12">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3>Trade between <strong>{{trade.manager1.manager_name}}</strong> and <strong>{{trade.manager2.manager_name}}</strong>:</h3>
+                    <h4>{{trade.trade_time | amCalendar}} (during the {{trade.trade_round | ordinal}} round)</h4>
+                  </div>
+                  <div class="panel-body">
+                    <div class="row">
+                      <div class="col-xs-12 col-sm-6">
+                        <h4><strong>{{trade.manager1.manager_name}}</strong> gets:</h4>
+                        <div class="asset-display" ng-repeat="asset in trade.trade_assets | filter:{ newmanager_id: trade.manager1_id }">
+                          <trade-asset-display draft=draft asset=asset></trade-asset-display>
+                        </div>
+                      </div>
+                      <div class="col-xs-12 col-sm-6">
+                        <h4><strong>{{trade.manager2.manager_name}}</strong> gets:</h4>
+                        <div class="asset-display" ng-repeat="asset in trade.trade_assets | filter:{ newmanager_id: trade.manager2_id }">
+                          <trade-asset-display draft=draft asset=asset></trade-asset-display>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
