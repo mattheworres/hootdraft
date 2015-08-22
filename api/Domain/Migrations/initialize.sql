@@ -80,8 +80,7 @@ CREATE TABLE IF NOT EXISTS `players` (
 --
 -- Table structure for table `users`
 --
-CREATE TABLE `users`
-(
+CREATE TABLE IF NOT EXISTS `users` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
     `enabled` TINYINT(1) NOT NULL DEFAULT '0',
     `email` VARCHAR(255) NOT NULL,
@@ -90,12 +89,10 @@ CREATE TABLE `users`
     `name` VARCHAR(100) NOT NULL,
     `roles` VARCHAR(255) NOT NULL,
     `verificationKey` VARCHAR(16) NULL,
-    `creationTime` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    `creationTime` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `id` (`id`),
-    UNIQUE INDEX `UNIQUE_USER` (`email`, `name`)
+    UNIQUE `UNIQUE_ID` (`id`)
 ) ENGINE=MyISAM;
-ALTER TABLE `users` ADD UNIQUE `UNIQUE_USER` (`email`, `name`);
 
 -- --------------------------------------------------------
 

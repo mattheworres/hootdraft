@@ -2,10 +2,11 @@
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
+use phpdraft;
+
 DROP TABLE IF EXISTS `user_login`;
 
-CREATE TABLE `users`
-(
+CREATE TABLE `users` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
     `enabled` BIT(1) NOT NULL DEFAULT b'0',
     `email` VARCHAR(255) NOT NULL,
@@ -14,12 +15,10 @@ CREATE TABLE `users`
     `name` VARCHAR(100) NOT NULL,
     `roles` VARCHAR(255) NOT NULL,
     `verificationKey` VARCHAR(16) NULL,
-    `creationTime` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    `creationTime` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `id` (`id`),
-    UNIQUE INDEX `UNIQUE_USER` (`email`, `name`)
+    UNIQUE `UNIQUE_ID` (`id`)
 ) ENGINE=MyISAM;
-ALTER TABLE `users` ADD UNIQUE `UNIQUE_USER` (`email`, `name`);
 
 ALTER TABLE `managers` DROP COLUMN `manager_email`;
 

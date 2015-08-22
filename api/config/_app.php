@@ -4,12 +4,14 @@ require_once __DIR__.'/../../vendor/autoload.php';
 
 $app = new Silex\Application();
 
-$configuration_variables = array('DB_USER', 'DB_PASS', 'AUTH_KEY', 'RECAPTCHA_SECRET', 'MAIL_USER', 'MAIL_PASS');
+/*$configuration_variables = array('DB_USER', 'DB_PASS', 'AUTH_KEY', 'RECAPTCHA_SECRET', 'MAIL_USER', 'MAIL_PASS');
 
 foreach($configuration_variables as $variable) {
   define($variable, get_cfg_var("phpdraft.cfg.$variable")); 
-}
+}*/
+require_once __DIR__.'/../../../appsettings.php';
 
+//TODO: Migrate these into appsettings.php:
 require_once __DIR__.'/_settings.php';      //Handles settings users can define
 require_once __DIR__.'/_database.php';      //Sets up database connections
 require_once __DIR__.'/_log.php';           //Sets up logging

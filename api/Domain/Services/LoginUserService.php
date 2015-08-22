@@ -302,13 +302,13 @@ class LoginUserService {
     $encodedEmail = urlencode($user->email);
     $encodedToken = urlencode($user->verificationKey);
 
-    return sprintf("%s/verify/%s/%s", $this->app['phpdraft.appBaseUrl'], $encodedEmail, $encodedToken);
+    return sprintf("%s/verify/%s/%s", APP_BASE_URL, $encodedEmail, $encodedToken);
   }
 
   private function _CreateForgottenPasswordLink(LoginUser $user) {
     $encodedEmail = urlencode($user->email);
     $encodedToken = urlencode($user->verificationKey);
 
-    return sprintf("%s/resetPassword/%s/%s", $this->app['phpdraft.appBaseUrl'], $encodedEmail, $encodedToken);
+    return sprintf("%s/resetPassword/%s/%s", APP_BASE_URL, $encodedEmail, $encodedToken);
   }
 }

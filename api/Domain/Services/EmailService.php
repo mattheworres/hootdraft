@@ -18,13 +18,13 @@ class EmailService {
     $this->mailer->SMTPDebug = 3;                               // Enable verbose debug output
 
     $this->mailer->isSMTP();
-    $this->mailer->Host = $this->app['phpdraft.smtp_server'];
-    $this->mailer->Port = $this->app['phpdraft.smtp_port'];
+    $this->mailer->Host = MAIL_SERVER;
+    $this->mailer->Port = MAIL_PORT;
     //Comment next 4 lines if testing locally with Mailcatcher
-    //$this->mailer->SMTPAuth = true;
-    //$this->mailer->Username = MAIL_USER;
-    //$this->mailer->Password = MAIL_PASS;
-    //$this->mailer->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+    $this->mailer->SMTPAuth = true;
+    $this->mailer->Username = MAIL_USER;
+    $this->mailer->Password = MAIL_PASS;
+    $this->mailer->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
 
     $this->mailer->From = MAIL_USER;
     $this->mailer->FromName = 'PHPDraft System';
