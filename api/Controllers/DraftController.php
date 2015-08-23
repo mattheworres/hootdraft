@@ -15,7 +15,7 @@ class DraftController {
     }
 
     //Need to put it in headers so the client can easily add it to all requests (similar to token)
-    $password = $request->headers->get($app['phpdraft.draft_password'], '');
+    $password = $request->headers->get(DRAFT_PASSWORD_HEADER, '');
 
     $draft = $app['phpdraft.DraftRepository']->GetPublicDraft($request, $draft_id, $password);
 
@@ -24,7 +24,7 @@ class DraftController {
 
   public function GetAll(Application $app, Request $request) {
     //TODO: Add paging for datatables
-    $password = $request->headers->get($app['phpdraft.draft_password'], '');
+    $password = $request->headers->get(DRAFT_PASSWORD_HEADER, '');
     $drafts = $app['phpdraft.DraftRepository']->GetPublicDrafts($request, $password);
 
     return $app->json($drafts);

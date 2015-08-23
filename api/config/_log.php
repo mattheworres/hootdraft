@@ -5,5 +5,5 @@ if (!$app instanceof Silex\Application) {
 }
 
 $app->register(new Silex\Provider\MonologServiceProvider(), array(
-    'monolog.logfile' => __DIR__.'/logs/development.log',
+    'monolog.logfile' => __DIR__.'/logs/' . LOGFILE_NAME,
 ));

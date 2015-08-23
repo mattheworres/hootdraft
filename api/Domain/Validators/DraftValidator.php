@@ -19,7 +19,7 @@ class DraftValidator {
   public function IsDraftViewableForUser($draft_id, Request $request) {
     $draft = $this->app['phpdraft.DraftRepository']->Load($draft_id);
     $current_user = $this->app['phpdraft.LoginUserService']->GetUserFromHeaderToken($request);
-    $draft_password = $request->headers->get($this->app['phpdraft.draft_password'], '');
+    $draft_password = $request->headers->get(DRAFT_PASSWORD_HEADER, '');
 
     if($current_user != null && $draft->commish_id == $current_user->id) {
       return true;

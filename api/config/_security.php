@@ -18,7 +18,7 @@ $app['security.jwt'] = [
     'life_time'  => AUTH_SECONDS,
     'algorithm'  => ['HS256'],
     'options'    => [
-        'header_name' => $app['phpdraft.auth_token']
+        'header_name' => AUTH_KEY_HEADER
     ]
 ];
 

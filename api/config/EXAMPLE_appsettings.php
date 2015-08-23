@@ -32,7 +32,13 @@ $configuration_variables = array(
   //Provide the base URL for the Angular app (no trailing slash):
   'APP_BASE_URL' => 'http://www.yoursite.com',
   //Provide the base URL for the API (no trailing slash):
-  'API_BASE_URL' => 'http://www.yoursite.com/api'
+  'API_BASE_URL' => 'http://www.yoursite.com/api',
+  //Provide the name of the header to store the authorization token in. (Default: "X-Access-Token")
+  'AUTH_KEY_HEADER' => 'X-Access-Token',
+  //Provide the name of the header to store the draft password in (Default: "X-PhpDraft-DraftPassword")
+  'DRAFT_PASSWORD_HEADER' => 'X-PhpDraft-DraftPassword',
+  //Name of the file you have created in /api/config/logs folder to contain Silex logging information
+  'LOGFILE_NAME' => 'development.log'
 );
 
 foreach($configuration_variables as $name => $value) {

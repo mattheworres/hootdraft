@@ -32,7 +32,7 @@ class LoginUserService {
 
   //This is a hack to make accessing logged in user info from anonymous routes possible:
   public function GetUserFromHeaderToken(Request $request) {
-    $request_token = $request->headers->get($this->app['phpdraft.auth_token'],'');
+    $request_token = $request->headers->get(AUTH_KEY_HEADER,'');
     
     if(empty($request_token)) {
       return null;
