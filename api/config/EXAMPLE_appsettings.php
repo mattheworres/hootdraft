@@ -12,6 +12,7 @@ $configuration_variables = array(
   'DB_HOST' => 'localhost',
   //Name of your database
   'DB_NAME' => 'phpdraft',
+  'DB_PORT' => 3306,
   'DB_USER' => 'user',
   'DB_PASS' => 'pass',
 
