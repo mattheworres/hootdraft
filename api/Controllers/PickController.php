@@ -80,15 +80,16 @@ class PickController {
 
   public function SearchPicks(Application $app, Request $request) {
     $draft_id = (int)$request->get('draft_id');
-    $draft_round = (int)$request->get('draft_round');
     $keywords = $request->get('keywords');
     $team = $request->get('team');
     $position = $request->get('position');
+    $sort = $request->get('sort');
 
     $team = isset($team) ? $team : null;
     $position = isset($position) ? $position : null;
+    $sort = isset($sort) ? $sort : 'DESC';
 
-    $pickSearchModel = new \PhpDraft\Domain\Models\PickSearchModel($draft_id, $keywords, $team, $position);
+    $pickSearchModel = new \PhpDraft\Domain\Models\PickSearchModel($draft_id, $keywords, $team, $position, $sort);
 
     $pickSearchModel = $app['phpdraft.PickRepository']->SearchStrict($pickSearchModel);
     $pickSearchModel = $app['phpdraft.PickRepository']->SearchLoose($pickSearchModel);

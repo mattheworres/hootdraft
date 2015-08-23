@@ -57,3 +57,8 @@ angular.module('app').config ($routeProvider, $locationProvider) ->
     controller: 'TradesController'
     controllerAs: 'tradesCtrl'
     templateUrl: 'app/templates/draft/trades.html'
+
+  $routeProvider.when '/draft/:draft_id/search',
+    controller: 'SearchController'
+    controllerAs: 'searchCtrl'
+    templateUrl: 'app/templates/picks/search.html'

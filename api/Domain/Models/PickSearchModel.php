@@ -15,14 +15,18 @@ class PickSearchModel {
   /** @var string Three-char abbreviation */
   public $position;
 
+  /** @var string Sorting by player pick, ASC or DESC */
+  public $sort;
+
   /** @var string */
   public $player_results;
 
-  public function __construct($draft_id, $keywords, $team, $position) {
+  public function __construct($draft_id, $keywords, $team, $position, $sort) {
     $this->draft_id = $draft_id;
     $this->keywords = $keywords;
     $this->team = $team;
     $this->position = $position;
+    $this->sort = $sort;
   }
 
   /**

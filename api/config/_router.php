@@ -92,15 +92,15 @@ $app->get('/draft/{draft_id}/stats', 'draft.controller:GetStats')->before($draft
 
 $app->get('/draft/{draft_id}/managers', 'manager.controller:GetAll')->before($draftViewable);
 
-$app->get('/draft/{draft_id}/picks', 'pick.controller:GetAll')->before($draftViewable);
-$app->get('/draft/{draft_id}/picks/updated', 'pick.controller:GetUpdated')->before($draftViewable);
-$app->get('/draft/{draft_id}/picks/last', 'pick.controller:GetLast')->before($draftViewable);
-$app->get('/draft/{draft_id}/picks/next', 'pick.controller:GetNext')->before($draftViewable);
-$app->get('/draft/{draft_id}/manager/{manager_id}/picks/all', 'pick.controller:GetAllManagerPicks')->before($draftViewable);
-$app->get('/draft/{draft_id}/manager/{manager_id}/picks/selected', 'pick.controller:GetSelectedManagerPicks')->before($draftViewable);
-$app->get('/draft/{draft_id}/round/{draft_round}/picks/all', 'pick.controller:GetAllRoundPicks')->before($draftViewable);
-$app->get('/draft/{draft_id}/round/{draft_round}/picks/selected', 'pick.controller:GetSelectedRoundPicks')->before($draftViewable);
-$app->get('/draft/{draft_id}/picks/search', 'pick.controller:SearchPicks')->before($draftViewable);
+$app->get('/draft/{draft_id}/picks', 'pick.controller:GetAll')->before($draftViewable)->before($draftInProgressOrCompleted);
+$app->get('/draft/{draft_id}/picks/updated', 'pick.controller:GetUpdated')->before($draftViewable)->before($draftInProgressOrCompleted);
+$app->get('/draft/{draft_id}/picks/last', 'pick.controller:GetLast')->before($draftViewable)->before($draftInProgressOrCompleted);
+$app->get('/draft/{draft_id}/picks/next', 'pick.controller:GetNext')->before($draftViewable)->before($draftInProgressOrCompleted);
+$app->get('/draft/{draft_id}/manager/{manager_id}/picks/all', 'pick.controller:GetAllManagerPicks')->before($draftViewable)->before($draftInProgressOrCompleted);
+$app->get('/draft/{draft_id}/manager/{manager_id}/picks/selected', 'pick.controller:GetSelectedManagerPicks')->before($draftViewable)->before($draftInProgressOrCompleted);
+$app->get('/draft/{draft_id}/round/{draft_round}/picks/all', 'pick.controller:GetAllRoundPicks')->before($draftViewable)->before($draftInProgressOrCompleted);
+$app->get('/draft/{draft_id}/round/{draft_round}/picks/selected', 'pick.controller:GetSelectedRoundPicks')->before($draftViewable)->before($draftInProgressOrCompleted);
+$app->get('/draft/{draft_id}/picks/search', 'pick.controller:SearchPicks')->before($draftViewable)->before($draftInProgressOrCompleted);
 
 $app->get('/draft/{draft_id}/trades', 'trade.controller:GetAll')->before($draftViewable)->before($draftInProgressOrCompleted);
 

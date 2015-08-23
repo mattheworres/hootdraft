@@ -47,6 +47,8 @@ angular.module('app').factory 'api', ($resource, ENV) ->
       { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/round/:round/picks/all", isArray: true }
     'getAllByManager':
       { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/manager/:manager_id/picks/all", isArray: true }
+    'search': 
+      { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/picks/search" }
 
   Trade: $resource "#{ENV.apiEndpoint}draft/:draft_id/trades", { draft_id: '@draft_id' },
     

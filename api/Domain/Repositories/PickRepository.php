@@ -357,7 +357,7 @@ class PickRepository {
     if ($searchModel->hasPosition())
       $sql .= "AND p.position = ? ";
 
-    $sql .= "AND p.pick_time IS NOT NULL ORDER BY search_score ASC, p.player_pick DESC";
+    $sql .= "AND p.pick_time IS NOT NULL ORDER BY search_score ASC, p.player_pick $searchModel->sort";
 
     $stmt = $this->app['db']->prepare($sql);
     $stmt->bindParam(1, $searchModel->keywords);
@@ -380,7 +380,7 @@ class PickRepository {
     }
 
     while ($player = $stmt->fetch()) {
-      $player->selected = strlen($palyer->pick_time) > 0 && $player->pick_duration > 0;
+      $player->selected = strlen($player->pick_time) > 0 && $player->pick_duration > 0;
       $players[] = $player;
     }
 
@@ -410,7 +410,7 @@ class PickRepository {
     if ($searchModel->hasPosition())
       $sql .= "AND p.position = ? ";
 
-    $sql .= "AND p.pick_time IS NOT NULL ORDER BY p.player_pick DESC";
+    $sql .= "AND p.pick_time IS NOT NULL ORDER BY p.player_pick $searchModel->sort";
 
     $stmt = $this->app['db']->prepare($sql);
     $stmt->bindParam(1, $draft_id);
