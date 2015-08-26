@@ -52,6 +52,36 @@ class LoginUserService {
     }
   }
 
+  public function SearchCommissioners($searchTerm) {
+    $response = new PhpDraftResponse();
+
+    try {
+      $response->commissioners = $this->app['phpdraft.LoginUserRepository']->SearchCommissioners($searchTerm);
+      $response->success = true;
+    } catch(\Exception $ex) {
+      $message = $ex->getMessage();
+      $response->success = false;
+      $response->errors[] = $message;
+    }
+
+    return $response;
+  }
+
+  public function GetCommissioner($commish_id) {
+    $response = new PhpDraftResponse();
+
+    try {
+      $response->commissioner = $this->app['phpdraft.LoginUserRepository']->LoadPublicById($commish_id);
+      $response->success = true;
+    } catch(\Exception $ex) {
+      $message = $ex->getMessage();
+      $response->success = false;
+      $response->errors[] = $message;
+    }
+
+    return $response;
+  }
+
   public function GetAll() {
     $response = new PhpDraftResponse();
 

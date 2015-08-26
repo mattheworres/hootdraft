@@ -18,6 +18,10 @@ $app['draft.controller'] = function() {
   return new PhpDraft\Controllers\DraftController();
 };
 
+$app['commish.controller'] = function() {
+  return new PhpDraft\Controllers\CommishController();
+};
+
 $app['manager.controller'] = function() {
   return new PhpDraft\Controllers\ManagerController();
 };
@@ -86,9 +90,12 @@ $app->get('/verifyToken', 'authentication.controller:VerifyResetPasswordToken');
 $app->post('/resetPassword', 'authentication.controller:ResetPassword');
 
 $app->get('/drafts', 'draft.controller:GetAll');
-$app->get('/draft/{id}', 'draft.controller:Get');
 $app->get('/drafts/{commish_id}', 'draft.controller:GetAllByCommish');
+$app->get('/draft/{id}', 'draft.controller:Get');
 $app->get('/draft/{draft_id}/stats', 'draft.controller:GetStats')->before($draftViewable);
+
+$app->get('/commissioners/search', 'commish.controller:SearchPublicCommissioners');
+$app->get('/commissioners/{commish_id}', 'commish.controller:GetPublicCommissioner');
 
 $app->get('/draft/{draft_id}/managers', 'manager.controller:GetAll')->before($draftViewable);
 

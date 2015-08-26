@@ -13,6 +13,12 @@ angular.module('app').config ($routeProvider, $locationProvider) ->
     controllerAs: 'homeCtrl'
     templateUrl: 'app/templates/home/home.html'
 
+  $routeProvider.when '/by-commish',
+    controller: 'ByCommishController'
+    controllerAs: 'byCommishCtrl'
+    templateUrl: 'app/templates/home/by_commish.html'
+    reloadOnSearch: false
+
   $routeProvider.when '/login',
     controller: 'LoginController'
     controllerAs: 'loginCtrl'

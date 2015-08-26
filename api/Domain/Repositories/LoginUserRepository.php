@@ -47,6 +47,33 @@ class LoginUserRepository {
     return $user;
   }
 
+  public function LoadPublicById($id) {
+    $user = new LoginUser();
+
+    $id = (int)$id;
+
+    $load_stmt = $this->app['db']->prepare("SELECT id, name FROM users WHERE id = ? LIMIT 1");
+    $load_stmt->setFetchMode(\PDO::FETCH_INTO, $user);
+    $load_stmt->bindParam(1, $id);
+
+    if (!$load_stmt->execute())
+      throw new \Exception(sprintf('User #%s does not exist.', $id));
+
+    if (!$load_stmt->fetch())
+      throw new \Exception(sprintf('User #%s does not exist.', $id));
+
+    unset($user->enabled);
+    unset($user->email);
+    unset($user->password);
+    unset($user->salt);
+    unset($user->roles);
+    unset($user->verificationKey);
+
+    $user = $this->_ScrubUser($user);
+
+    return $user;
+  }
+
   public function LoadAll() {
     $load_stmt = $this->app['db']->prepare("SELECT * FROM users");
     $load_stmt->setFetchMode(\PDO::FETCH_CLASS, 'PhpDraft\Domain\Entities\LoginUser');
@@ -181,6 +208,33 @@ class LoginUserRepository {
     }
 
     return $email_stmt->rowCount() == 0;
+  }
+
+  public function SearchCommissioners($searchTerm) {
+    $searchTerm = "%$searchTerm%";
+    $search_stmt = $this->app['db']->prepare("SELECT id, name FROM users WHERE name LIKE ?");
+    $this->app['monolog']->addDebug("Search term is $searchTerm");
+    $search_stmt->setFetchMode(\PDO::FETCH_CLASS, 'PhpDraft\Domain\Entities\LoginUser');
+    $search_stmt->bindParam(1, $searchTerm);
+
+    $users = array();
+
+    if(!$search_stmt->execute()) {
+      throw new \Exception("Unable to load users");
+    }
+
+    while($user = $search_stmt->fetch()) {
+      unset($user->enabled);
+      unset($user->email);
+      unset($user->password);
+      unset($user->salt);
+      unset($user->roles);
+      unset($user->verificationKey);
+
+      $users[] = $this->_ScrubUser($user);
+    }
+
+    return $users;
   }
 
   public function VerificationMatches($email, $verificationKey) {

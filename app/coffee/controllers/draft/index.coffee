@@ -80,7 +80,7 @@ class DraftIndexController extends BaseController
       @$scope.roundError = true
       @$scope.roundLoading = false
 
-    if @$scope.draftValid and not @$scope.draftLocked
+    if @$scope.draft != undefined and @$scope.draftValid and not @$scope.draftLocked
       @$scope.roundError = false
       @$scope.roundLoading = true
       roundPromise = @api.Pick.getSelectedByRound({ draft_id: draft_id, round: @$scope.selectedDraftRound, sort_ascending: true }, roundSuccess, errorHandler)

@@ -28,9 +28,17 @@ angular.module('app').factory 'api', ($resource, ENV) ->
     'resetPassword':
       { method: 'POST', url: "#{ENV.apiEndpoint}resetPassword" }
 
+  Commish: $resource "#{ENV.apiEndpoint}commissioners/:commish_id", {commish_id: '@commish_id'},
+    'search':
+      { method: 'GET', url: "#{ENV.apiEndpoint}commissioners/search" }
+
   Draft: $resource "#{ENV.apiEndpoint}draft/:id", {id: '@id'},
     'getDraftList':
       { method: 'GET', url: "#{ENV.apiEndpoint}drafts", isArray: true }
+    'searchCommissioners':
+      { method: 'GET', url: "#{ENV.apiEndpoint}drafts/commissioners/search" }
+    'getDraftsByCommish':
+      { method: 'GET', url: "#{ENV.apiEndpoint}drafts/:commish_id", isArray: true}
 
   Manager: $resource "#{ENV.apiEndpoint}draft/:draft_id/manager/:manager_id", { draft_id: '@draft_id', manager_id: '@manager_id' },
     'getManagers':

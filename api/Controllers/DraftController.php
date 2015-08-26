@@ -32,8 +32,9 @@ class DraftController {
 
   public function GetAllByCommish(Application $app, Request $request) {
     $commish_id = $request->get('commish_id');
+    $password = $request->headers->get(DRAFT_PASSWORD_HEADER, '');
 
-    $drafts = $app['phpdraft.DraftRepository']->GetPublicDraftsByCommish($request, $commish_id);
+    $drafts = $app['phpdraft.DraftRepository']->GetPublicDraftsByCommish($request, $commish_id, $password);
 
     return $app->json($drafts);
   }

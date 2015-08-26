@@ -18,7 +18,7 @@ class HomeController extends BaseController
       @drafts = data
 
     errorHandler = =>
-      @$scope.draftTableLoading = true
+      @$scope.draftTableLoading = false
       @messageService.showError "Unable to load drafts"
 
     draftsPromise = @api.Draft.getDraftList({}, draftSuccessHandler, errorHandler)

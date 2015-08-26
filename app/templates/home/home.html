@@ -25,17 +25,17 @@
           <tbody>
             <tr ng-repeat="draft in homeCtrl.drafts">
               <td>
-                <i ng-hide="draft.draft_visible" class="fa fa-lock" alt="Locked" title="This draft is password protected!"></i>&nbsp;
-                <strong><a href="draft/{{draft.draft_id}}">{{draft.draft_name}}</a></strong>
+                <i ng-hide="::draft.draft_visible" class="fa fa-lock" alt="Locked" title="This draft is password protected!"></i>&nbsp;
+                <strong><a href="draft/{{::draft.draft_id}}">{{::draft.draft_name}}</a></strong>
               </td>
-              <td>{{draft.draft_sport}}</td>
-              <td>{{draft.commish_name}}</td>
-              <td>{{draft.draft_rounds}}</td>
+              <td>{{::draft.draft_sport}}</td>
+              <td>{{::draft.commish_name}}</td>
+              <td>{{::draft.draft_rounds}}</td>
               <td class="text-center">
-                <span class="draft-status label label-warning" ng-show="draft.setting_up == true">Setting Up</span>
-                <span class="draft-status label label-info" ng-show="draft.in_progress == true">In Progress</span>
-                <span class="draft-status label label-success" ng-show="draft.complete == true">Completed</span>
-                <span class="draft-status label label-default" ng-show="draft.is_locked">Locked</span>
+                <span class="draft-status label label-warning" ng-show="::draft.setting_up == true">Setting Up</span>
+                <span class="draft-status label label-info" ng-show="::draft.in_progress == true">In Progress</span>
+                <span class="draft-status label label-success" ng-show="::draft.complete == true">Completed</span>
+                <span class="draft-status label label-default" ng-show="::draft.is_locked">Locked</span>
               </td>
             </tr>
           </tbody>
