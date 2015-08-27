@@ -25,7 +25,8 @@ class DraftIndexController extends BaseController
     @$scope.$watch ( =>
       @$scope.selectedDraftRound
     ), =>
-      @_loadCompletedData(@$routeParams.draft_id)
+      if @$scope.draft != undefined and @$scope.draftValid and not @$scope.draftLocked
+        @_loadCompletedData(@$routeParams.draft_id)
 
   _loadSettingUpData: (draft_id, args) =>
     managersSuccess = (data) =>

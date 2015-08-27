@@ -68,3 +68,8 @@ angular.module('app').config ($routeProvider, $locationProvider) ->
     controller: 'SearchController'
     controllerAs: 'searchCtrl'
     templateUrl: 'app/templates/picks/search.html'
+
+  $routeProvider.when '/draft/:draft_id/stats',
+    controller: 'StatsController'
+    controllerAs: 'statsCtrl'
+    templateUrl: 'app/templates/draft/stats.html'

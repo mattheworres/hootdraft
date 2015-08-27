@@ -22,6 +22,7 @@ $app->before(function (Request $request) {
   }
 });
 
+//Ensure the user is allowed to see the draft
 $draftViewable = function(Symfony\Component\HttpFoundation\Request $request, Silex\Application $app) {
   $draft_id = (int)$request->get('draft_id');
 
@@ -65,6 +66,17 @@ $draftInProgressOrCompleted = function(Symfony\Component\HttpFoundation\Request 
 
   if(!$in_progress->success) {
     return $app->json(array($in_progress), $in_progress->responseType());
+  }
+};
+
+$draftCompleted = function(Symfony\Component\HttpFoundation\Request $request, Silex\Application $app) {
+  $draft_id = (int)$request->get('draft_id');
+  $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
+
+  $completed = $app['phpdraft.DraftValidator']->IsDraftComplete($draft);
+
+  if(!$completed->success) {
+    return $app->json(array($completed), $completed->responseType());
   }
 };
 

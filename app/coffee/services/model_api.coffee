@@ -39,6 +39,8 @@ angular.module('app').factory 'api', ($resource, ENV) ->
       { method: 'GET', url: "#{ENV.apiEndpoint}drafts/commissioners/search" }
     'getDraftsByCommish':
       { method: 'GET', url: "#{ENV.apiEndpoint}drafts/:commish_id", isArray: true}
+    'getStats':
+      { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/stats" }
 
   Manager: $resource "#{ENV.apiEndpoint}draft/:draft_id/manager/:manager_id", { draft_id: '@draft_id', manager_id: '@manager_id' },
     'getManagers':

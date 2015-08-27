@@ -21,9 +21,28 @@ class DraftStatsRepository {
 
     $load_stmt->setFetchMode(\PDO::FETCH_INTO, $stats);
 
-    if(!$load_stmt->execute() || !$load_stmt->fetch()) {
+    if(!$load_stmt->execute()) {
       throw new \Exception("Unable to load draft stats");
     }
+
+    if ($load_stmt->rowCount() == 0) {
+      return null;
+    }
+
+    if(!$load_stmt->fetch()) {
+      throw new \Exception("Error while loading draft stats");
+    }
+
+    //Because this cant be changed in PDO, we need to manually make these ints
+    $stats->drafting_time_seconds = (int)$stats->drafting_time_seconds;
+    $stats->longest_avg_pick_seconds = (int)$stats->longest_avg_pick_seconds;
+    $stats->shortest_avg_pick_seconds = (int)$stats->shortest_avg_pick_seconds;
+    $stats->longest_single_pick_seconds = (int)$stats->longest_single_pick_seconds;
+    $stats->shortest_single_pick_seconds = (int)$stats->shortest_single_pick_seconds;
+    $stats->average_pick_seconds = (int)$stats->average_pick_seconds;
+    $stats->longest_round_seconds = (int)$stats->longest_round_seconds;
+    $stats->shortest_round_seconds = (int)$stats->shortest_round_seconds;
+    $stats->average_round_seconds = (int)$stats->average_round_seconds;
 
     return $stats;
   }
@@ -207,7 +226,7 @@ class DraftStatsRepository {
     $stats->average_pick_seconds = (int) $row['pick_average'];
   }
 
-  private function _LoadRoundTimes($draft_id, DraftStats &$stats) {
+  private function _LoadRoundTimes(Draft $draft, DraftStats &$stats) {
     $stmt = $this->app['db']->prepare("SELECT DISTINCT p.player_round, sum( p.pick_duration ) AS round_time
     FROM players p
     WHERE p.draft_id = ?
@@ -216,7 +235,7 @@ class DraftStatsRepository {
     ORDER BY round_time DESC
     LIMIT 1");
 
-    $stmt->bindParam(1, $draft_id);
+    $stmt->bindParam(1, $draft->draft_id);
 
     $stmt->execute();
 
@@ -234,7 +253,7 @@ class DraftStatsRepository {
     ORDER BY round_time ASC
     LIMIT 1");
 
-    $stmt->bindParam(1, $draft_id);
+    $stmt->bindParam(1, $draft->draft_id);
 
     $stmt->execute();
 
@@ -243,14 +262,15 @@ class DraftStatsRepository {
     $stats->shortest_round = (int) $row['player_round'];
     $stats->shortest_round_seconds = (int) $row['round_time'];
 
-    $stmt = $this->app['db']->prepare("SELECT p.player_round, sum( p.pick_duration ) / COUNT(DISTINCT p.manager_id) AS avg_round_time
+    $stmt = $this->app['db']->prepare("SELECT p.player_round, sum( p.pick_duration ) / ? AS avg_round_time
     FROM players p
     WHERE p.draft_id = ?
     AND p.pick_duration IS NOT NULL
     GROUP BY player_round
     LIMIT 1");
 
-    $stmt->bindParam(1, $draft_id);
+    $stmt->bindParam(1, $draft->draft_rounds);
+    $stmt->bindParam(2, $draft->draft_id);
 
     $stmt->execute();
 

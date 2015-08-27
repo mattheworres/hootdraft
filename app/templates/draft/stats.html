@@ -1,0 +1,140 @@
+<div data-ng-cloak>
+  <div class="container-fluid v-offset-3">
+    <draft-state controller=tradesCtrl
+      commish-name=draft.commish_name
+      draft-error=draftError
+      draft-loading=draftLoading
+      draft-locked=draftLocked>
+    </draft-state>
+
+    <div class="row" ng-show="draftValid && draft.complete">
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+      <div class="col-xs-12 col-sm-6 col-md-5">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title">
+              <i class="fa fa-exchange"></i>&nbsp;&nbsp;
+              Draft Statistics
+            </h3>
+          </div>
+          <div class="panel-body trades-panel" ng-hide="stats_generated">
+            <h3>Statistics have not been generated for this draft.</h3>
+          </div>
+          <div class="panel-body trades-panel" ng-show="stats_generated">
+            <div class="form-horizontal display-only-form">
+              <div class="form-group">
+                <div class="col-xs-5 control-label">
+                  <strong>Time Spent Drafting</strong>:
+                </div>
+                <div class="col-xs-7">
+                  <div class="form-control-static">{{stats.drafting_time_seconds | preciseHumanizedSeconds }}</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-xs-5 control-label">
+                  <strong>Longest Average Pick</strong>:
+                </div>
+                <div class="col-xs-7">
+                  <div class="form-control-static">{{stats.longest_avg_pick_seconds | preciseHumanizedSeconds}} ({{stats.longest_avg_pick_manager_name}})</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-xs-5 control-label">
+                  <strong>Shortest Average Pick</strong>:
+                </div>
+                <div class="col-xs-7">
+                  <div class="form-control-static">{{stats.shortest_avg_pick_seconds | preciseHumanizedSeconds}} ({{stats.shortest_avg_pick_manager_name}})</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-xs-5 control-label">
+                  <strong>Longest Single Pick</strong>:
+                </div>
+                <div class="col-xs-7">
+                  <div class="form-control-static">{{stats.longest_single_pick_seconds | preciseHumanizedSeconds}} ({{stats.longest_single_pick_manager_name}})</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-xs-5 control-label">
+                  <strong>Shortest Single Pick</strong>:
+                </div>
+                <div class="col-xs-7">
+                  <div class="form-control-static">{{stats.shortest_single_pick_seconds | preciseHumanizedSeconds}} ({{stats.shortest_single_pick_manager_name}})</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-xs-5 control-label">
+                  <strong>Average Pick</strong>:
+                </div>
+                <div class="col-xs-7">
+                  <div class="form-control-static">{{stats.average_pick_seconds | preciseHumanizedSeconds }}</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-xs-5 control-label">
+                  <strong>Longest Round</strong>:
+                </div>
+                <div class="col-xs-7">
+                  <div class="form-control-static">{{stats.longest_round_seconds | preciseHumanizedSeconds }} ({{stats.longest_round | ordinal}} round)</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-xs-5 control-label">
+                  <strong>Shortest Round</strong>:
+                </div>
+                <div class="col-xs-7">
+                  <div class="form-control-static">{{stats.shortest_round_seconds | preciseHumanizedSeconds }} ({{stats.shortest_round | ordinal}} round)</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-xs-5 control-label">
+                  <strong>Average Round</strong>:
+                </div>
+                <div class="col-xs-7">
+                  <div class="form-control-static">{{stats.average_round_seconds | preciseHumanizedSeconds }}</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-xs-5 control-label">
+                  <strong>Most Drafted Team</strong>:
+                </div>
+                <div class="col-xs-7">
+                  <div class="form-control-static">{{stats.most_drafted_team}} ({{stats.most_drafted_team_count}} times)</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-xs-5 control-label">
+                  <strong>Least Drafted Team</strong>:
+                </div>
+                <div class="col-xs-7">
+                  <div class="form-control-static">{{stats.least_drafted_team}} ({{stats.least_drafted_team_count}} times)</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-xs-5 control-label">
+                  <strong>Most Drafted Position</strong>:
+                </div>
+                <div class="col-xs-7">
+                  <div class="form-control-static">{{stats.most_drafted_position}} ({{stats.most_drafted_position_count}} times)</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-xs-5 control-label">
+                  <strong>Least Drafted Position</strong>:
+                </div>
+                <div class="col-xs-7">
+                  <div class="form-control-static">{{stats.least_drafted_position}} ({{stats.least_drafted_position_count}} times)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-5">
+        <draft-information draft=draft></draft-information>
+      </div>
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+    </div>
+  </div>
+</div>
+
