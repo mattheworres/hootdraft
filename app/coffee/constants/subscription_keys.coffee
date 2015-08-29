@@ -3,7 +3,9 @@ class SubscriptionKeys extends AngularService
 
   scopeDestroy: '$destroy'
   viewContentLoaded: '$viewContentLoaded'
+  routeChangeStart: '$routeChangeStart'
   routeChangeSuccess: '$routeChangeSuccess'
+  locationChangeStart: '$locationChangeStart'
 
   reloadDraft: 'reloadDraft'
   loadDraftDependentData: 'loadDraftDependentData'

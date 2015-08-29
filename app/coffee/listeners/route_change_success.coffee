@@ -1,4 +1,8 @@
-angular.module("app").run ($rootScope, $sessionStorage, $routeParams, subscriptionKeys) ->
+angular.module("app").run ($rootScope, $sessionStorage, $routeParams, $location, subscriptionKeys) ->
   $rootScope.$on subscriptionKeys.routeChangeSuccess, (event, current, previous) ->
-    if previous? and previous.$$route? and previous.$$route.originalPath?
-      $sessionStorage.previousRoute = previous.$$route.originalPath
+    if $location.$$path?
+      $sessionStorage.$default(
+        previousRoutes: []
+      )
+
+      $sessionStorage.previousRoutes.push $location.$$path

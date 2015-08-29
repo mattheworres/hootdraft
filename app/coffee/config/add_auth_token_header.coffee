@@ -2,7 +2,7 @@ angular.module('app').factory 'authTokenHttpRequestInterceptor', ($sessionStorag
     request: (config) ->
         if $sessionStorage.authenticated
             config.headers ?= {}
-            config.headers['X-Access-Token'] = "#{sessionStorage.auth_token}"
+            config.headers['X-Access-Token'] = "#{$sessionStorage.auth_token}"
 
         config
 

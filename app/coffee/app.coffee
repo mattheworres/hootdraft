@@ -13,4 +13,5 @@ angular.module("app", [
   "ngCapsLock"
   "angularMoment"
   "ordinal"
+  "ngMask"
 ])

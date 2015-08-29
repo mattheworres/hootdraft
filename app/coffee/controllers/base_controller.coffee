@@ -1,7 +1,7 @@
 class @BaseController extends AngularController
   #default dependencies in case @inject is never called from the child
   @$inject: ["$routeParams", "$scope", "$rootScope", "$location", "$sessionStorage",
-  "$routeParams", "authenticationService", "messageService",
+  "$routeParams", "$window", "authenticationService", "messageService",
   "draftService", "subscriptionKeys", "DTOptionsBuilder"]
   @inject: (args...) ->
       args.push '$routeParams'
@@ -10,6 +10,7 @@ class @BaseController extends AngularController
       args.push '$location'
       args.push '$sessionStorage'
       args.push '$routeParams'
+      args.push '$window'
       args.push 'authenticationService'
       args.push 'messageService'
       args.push 'draftService'
@@ -35,8 +36,9 @@ class @BaseController extends AngularController
     @$location.path '/home'
 
   sendToPreviousPath: ->
-    if @$sessionStorage.previousRoute? and not @_pathIsWhitelisted(@$sessionStorage.previousRoute)
-      @$location.path @$sessionStorage.previousRoute
+    storedPreviousRoute = @$sessionStorage.previousRoutes.splice(-2)[0]
+    if @$sessionStorage.previousRoutes.length > 1 and not @_pathIsWhitelisted(storedPreviousRoute)
+      @$location.path @$sessionStorage.previousRoutes.splice(-2)[0]
     else
       @$location.path '/home'
 

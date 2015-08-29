@@ -24,7 +24,6 @@ class StatsController extends BaseController
       @$scope.statsLoading = false
       @$scope.stats = data.draft_statistics
       @$scope.stats_generated = data.draft_statistics != null
-      console.log "We got stats, and they are #{data.draft_statistics} so, is our bool being set? #{@$scope.stats_generated}"
 
     errorHandler = (data) =>
       @$scope.statsLoading = false

@@ -59,6 +59,7 @@ module.exports =
                 'bower_components/moment/min/moment.min.js'
                 'bower_components/angular-moment/angular-moment.min.js'
                 'bower_components/angularjs-ordinal-filter/ordinal-browser.js'
+                'bower_components/angular-mask/dist/ngMask.min.js'
             ],
             css: [
                 'bower_components/angular-ui-bootstrap-bower/ui-bootstrap-csp.css'

@@ -37,6 +37,12 @@
           </li>
         </ul>
       </li>
+      <li ng-show="navCtrl.isAuthenticated()">
+        <a href="commish/draft/create">
+          <i class="fa fa-plus"></i>&nbsp;&nbsp;
+          New League
+        </a>
+      </li>
     </ul>
     <ul class="nav navbar-nav navbar-right navbar-form">
       <li ng-hide="navCtrl.isAuthenticated()">
@@ -116,7 +122,7 @@
             </ul>
           </li>
           <li dropdown>
-            <a href="#" id="commishDropdown" class="dropdown-toggle" dropdown-toggle role="button" aria-haspopup="true" aria-expanded="false">
+            <a href="#" id="commishDropdown" ng-show="draft.commish_editable" class="dropdown-toggle" dropdown-toggle role="button" aria-haspopup="true" aria-expanded="false">
               <i class="fa fa-cogs"></i>&nbsp;&nbsp;
               Commish Functions
               <span class="caret"></span>

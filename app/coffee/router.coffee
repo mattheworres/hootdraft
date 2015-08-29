@@ -73,3 +73,9 @@ angular.module('app').config ($routeProvider, $locationProvider) ->
     controller: 'StatsController'
     controllerAs: 'statsCtrl'
     templateUrl: 'app/templates/draft/stats.html'
+
+
+  $routeProvider.when '/commish/draft/create',
+    controller: 'DraftCreateController'
+    controllerAs: 'draftCreateCtrl'
+    templateUrl: 'app/templates/commish/draft_create.html'

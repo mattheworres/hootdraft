@@ -17,6 +17,7 @@
     "ng-caps-lock": "~1.0.2",
     "angular-recaptcha": "~2.2.4",
     "angular-moment": "~0.10.2",
-    "angularjs-ordinal-filter": "*"
+    "angularjs-ordinal-filter": "*",
+    "angular-mask": "~3.0.12"
   }
 }

@@ -37,7 +37,6 @@ class DraftController
     $draft->draft_style = $request->get('style');
     $draft->draft_rounds = (int)$request->get('rounds');
     $draft->draft_password = $request->get('password');
-    $draft->nfl_extended = (bool)$request->get('nfl_extended');
 
     $validity = $app['phpdraft.DraftValidator']->IsDraftValidForCreateAndUpdate($draft);
 

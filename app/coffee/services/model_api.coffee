@@ -42,6 +42,11 @@ angular.module('app').factory 'api', ($resource, ENV) ->
     'getStats':
       { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/stats" }
 
+    'getCreate':
+      { method: 'GET', url: "#{ENV.apiEndpoint}commish/draft/create" }
+    save:
+      { method: 'POST', url: "#{ENV.apiEndpoint}commish/draft" }
+
   Manager: $resource "#{ENV.apiEndpoint}draft/:draft_id/manager/:manager_id", { draft_id: '@draft_id', manager_id: '@manager_id' },
     'getManagers':
       { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/managers", isArray: true }

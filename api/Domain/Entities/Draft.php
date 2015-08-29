@@ -6,6 +6,7 @@ namespace PhpDraft\Domain\Entities;
  *
  * A draft has many managers, and managers have many players (picks).
  * @property bool $is_locked True if the draft is locked for the current user, false if it's accessible
+ * @property bool $commish_editable If current user owns the draft OR is an admin
  * @property bool $draft_visible True if the draft is publicly visible, false otherwise
  * @property string $commish_name Name of the owning commissioner. Comes as an outer join with users.
  * @property string $status_display A string that can be used in display of the draft's status
