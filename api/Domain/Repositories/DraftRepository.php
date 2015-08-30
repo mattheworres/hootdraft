@@ -27,7 +27,7 @@ class DraftRepository {
     $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d 
       LEFT OUTER JOIN users u 
       ON d.commish_id = u.id 
-      ORDER BY draft_create_time");
+      ORDER BY draft_create_time DESC");
 
     $draft_stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Draft');
 
@@ -74,7 +74,7 @@ class DraftRepository {
     LEFT OUTER JOIN users u
     ON d.commish_id = u.id
     WHERE commish_id = ?
-    ORDER BY draft_create_time");
+    ORDER BY draft_create_time DESC");
 
     $draft_stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Draft');
     $draft_stmt->bindParam(1, $commish_id);
@@ -120,7 +120,7 @@ class DraftRepository {
     LEFT OUTER JOIN users u
     ON d.commish_id = u.id
     WHERE commish_id = ?
-    ORDER BY draft_create_time");
+    ORDER BY draft_create_time DESC");
 
     $draft_stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Draft');
     $draft_stmt->bindParam(1, $commish_id);
@@ -160,8 +160,15 @@ class DraftRepository {
 
     $draft->draft_visible = empty($draft->draft_password);
     $draft->commish_editable = $currentUserOwnsIt || $currentUserIsAdmin;
-    $draft->draft_start_time .= " UTC";
-    $draft->draft_end_time .= " UTC";
+    if(!empty($draft->draft_create_time)) {
+      $draft->draft_create_time .= " UTC";
+    }
+    if(!empty($draft_start_time)) {
+      $draft->draft_start_time .= " UTC";
+    }
+    if(!empty($draft->draft_end_time)) {
+      $draft->draft_end_time .= " UTC";
+    }
     $draft->setting_up = $this->app['phpdraft.DraftService']->DraftSettingUp($draft);
     $draft->in_progress = $this->app['phpdraft.DraftService']->DraftInProgress($draft);
     $draft->complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);
@@ -202,14 +209,16 @@ class DraftRepository {
       throw new \Exception("Unable to load draft");
     }
 
+    $draft->draft_rounds = (int)$draft->draft_rounds;
+
     return $draft;
   }
 
   public function Create(Draft $draft) {
     $insert_stmt = $this->app['db']->prepare("INSERT INTO draft
-      (draft_id, commish_id, draft_create_time, draft_name, draft_sport, draft_status, draft_style, draft_rounds, draft_password, nfl_extended)
+      (draft_id, commish_id, draft_create_time, draft_name, draft_sport, draft_status, draft_style, draft_rounds, draft_password)
       VALUES
-      (NULL, ?, UTC_TIMESTAMP(), ?, ?, ?, ?, ?, ?, ?)");
+      (NULL, ?, UTC_TIMESTAMP(), ?, ?, ?, ?, ?, ?)");
 
     $insert_stmt->bindParam(1, $draft->commish_id);
     $insert_stmt->bindParam(2, $draft->draft_name);
@@ -218,7 +227,6 @@ class DraftRepository {
     $insert_stmt->bindParam(5, $draft->draft_style);
     $insert_stmt->bindParam(6, $draft->draft_rounds);
     $insert_stmt->bindParam(7, $draft->draft_password);
-    $insert_stmt->bindParam(8, $draft->nfl_extended);
 
     if(!$insert_stmt->execute()) {
       throw new \Exception("Unable to create draft.");
@@ -237,7 +245,7 @@ class DraftRepository {
   public function Update(Draft $draft) {
     $update_stmt = $this->app['db']->prepare("UPDATE draft
       SET commish_id = ?, draft_name = ?, draft_sport = ?,
-      draft_style = ?, draft_password = ?, nfl_extended = ?, draft_rounds = ?
+      draft_style = ?, draft_password = ?, draft_rounds = ?
       WHERE draft_id = ?");
 
     $update_stmt->bindParam(1, $draft->commish_id);
@@ -245,9 +253,8 @@ class DraftRepository {
     $update_stmt->bindParam(3, $draft->draft_sport);
     $update_stmt->bindParam(4, $draft->draft_style);
     $update_stmt->bindParam(5, $draft->draft_password);
-    $update_stmt->bindParam(6, $draft->nfl_extended);
-    $update_stmt->bindParam(7, $draft->draft_rounds);
-    $update_stmt->bindParam(8, $draft->draft_id);
+    $update_stmt->bindParam(6, $draft->draft_rounds);
+    $update_stmt->bindParam(7, $draft->draft_id);
 
     if(!$update_stmt->execute()) {
       throw new \Exception("Unable to update draft.");

@@ -29,9 +29,14 @@ class AuthenticationController
       if (!$user->isEnabled() || !$app['security.encoder.digest']->isPasswordValid($user->getPassword(), $password, $user->getSalt())) {
         throw new UsernameNotFoundException(sprintf('Email %s does not exist', $email));
       } else {
+        $now = new \DateTime("now", new \DateTimeZone('GMT'));
+        $interval = new \DateInterval('P0Y0M0DT0H0M' . AUTH_SECONDS . 'S');
+        $auth_timeout = $now->add($interval);
+
         $response->success = true;
         $response->name = $user->getName();
         $response->token = $app['security.jwt.encoder']->encode(['name' => $user->getUsername()]);
+        $response->auth_timeout = $auth_timeout->format('Y-m-d H:i:s');
 
         //If user is enabled, provided valid password and has a verification (pwd reset) key, wipe it (no longer needed)
         if($user->hasVerificationKey()) {

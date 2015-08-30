@@ -32,7 +32,7 @@ angular.module('app').factory 'api', ($resource, ENV) ->
     'search':
       { method: 'GET', url: "#{ENV.apiEndpoint}commissioners/search" }
 
-  Draft: $resource "#{ENV.apiEndpoint}draft/:id", {id: '@id'},
+  Draft: $resource "#{ENV.apiEndpoint}draft/:id", {draft_id: '@draft_id'},
     'getDraftList':
       { method: 'GET', url: "#{ENV.apiEndpoint}drafts", isArray: true }
     'searchCommissioners':
@@ -46,6 +46,10 @@ angular.module('app').factory 'api', ($resource, ENV) ->
       { method: 'GET', url: "#{ENV.apiEndpoint}commish/draft/create" }
     save:
       { method: 'POST', url: "#{ENV.apiEndpoint}commish/draft" }
+    'update':
+      { method: 'PUT', url: "#{ENV.apiEndpoint}commish/draft/:draft_id" }
+    'commishGet':
+      { method: 'GET', url: "#{ENV.apiEndpoint}commish/draft/:draft_id" }
 
   Manager: $resource "#{ENV.apiEndpoint}draft/:draft_id/manager/:manager_id", { draft_id: '@draft_id', manager_id: '@manager_id' },
     'getManagers':

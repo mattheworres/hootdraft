@@ -6,11 +6,13 @@ class AuthenticationService extends AngularService
     @$sessionStorage.authenticated = true
     @$sessionStorage.auth_token = userData.token
     @$sessionStorage.user_name = userData.name
+    @$sessionStorage.auth_time = userData.auth_timeout
 
   uncacheSession: ->
     @$sessionStorage.authenticated = false
     delete @$sessionStorage.auth_token
     delete @$sessionStorage.user_name
+    delete @$sessionStorage.auth_time
 
   cacheRoles: (roles) ->
     @$sessionStorage.roles = roles
@@ -42,6 +44,19 @@ class AuthenticationService extends AngularService
 
   logout: ->
     @uncacheSession()
+
+  isAuthenticationExpired: =>
+    if not @isAuthenticated()
+      return false
+
+    auth_time = new Date(@$sessionStorage.auth_time)
+    now = new Date()
+
+    if now > auth_time
+      @uncacheSession()
+      return true
+    else
+      return false
 
   register: (model) ->
     result = @$q.defer()

@@ -97,7 +97,7 @@ $app->get('/draft/{draft_id}/stats', 'draft.controller:GetStats')->before($draft
 $app->get('/commissioners/search', 'commish.controller:SearchPublicCommissioners');
 $app->get('/commissioners/{commish_id}', 'commish.controller:GetPublicCommissioner');
 
-$app->get('/draft/{draft_id}/managers', 'manager.controller:GetAll')->before($draftViewable)->before($draftCompleted);
+$app->get('/draft/{draft_id}/managers', 'manager.controller:GetAll')->before($draftViewable);
 
 $app->get('/draft/{draft_id}/picks', 'pick.controller:GetAll')->before($draftViewable)->before($draftInProgressOrCompleted);
 $app->get('/draft/{draft_id}/picks/updated', 'pick.controller:GetUpdated')->before($draftViewable)->before($draftInProgressOrCompleted);

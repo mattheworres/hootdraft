@@ -7,6 +7,19 @@
   </div>
   <div class="panel-body">
     <div class="form-horizontal display-only-form">
+      <div class="form-group" ng-hide="!draft.setting_up || draftLoading">
+        <div class="col-xs-5 control-label">
+          <strong>Edit</strong>:
+        </div>
+        <div class="col-xs-7">
+          <a href="commish/draft/{{draft.draft_id}}/edit">
+            <span class="fa-stack">
+              <i class="fa fa-circle fa-stack-2x"></i>
+              <i class="fa fa-pencil fa-stack-1x" alt="Edit this league"></i>
+            </span>
+          </a>
+        </div>
+      </div>
       <div class="form-group">
         <div class="col-xs-5 control-label">
           <strong>League Name</strong>:

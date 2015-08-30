@@ -19,6 +19,7 @@
               <th>Sport</th>
               <th>Commissioner</th>
               <th>Rounds</th>
+              <th>Created</th>
               <th style="width: 50px;">Status</th>
             </tr>
           </thead>
@@ -31,6 +32,7 @@
               <td>{{::draft.draft_sport}}</td>
               <td>{{::draft.commish_name}}</td>
               <td>{{::draft.draft_rounds}}</td>
+              <td>{{::draft.draft_create_time | amDateFormat:'MMMM D, YYYY'}}</td>
               <td class="text-center">
                 <span class="draft-status label label-warning" ng-show="::draft.setting_up == true">Setting Up</span>
                 <span class="draft-status label label-info" ng-show="::draft.in_progress == true">In Progress</span>

@@ -9,15 +9,16 @@ class DraftCreateController extends BaseController
   'messageService'
 
   initialize: ->
-    @$scope.selectedDraftRound = 1
-
     @draftLoading = true
+    @draftError = false
 
     draftInitializeSuccess = (data) =>
       @draft = data
       @draftLoading = false
 
     draftInitializeErrorHandler = () =>
+      @draftLoading = false
+      @draftError = true
       @messageService.showError "Unable to load draft defaults"
 
     @api.Draft.getCreate({}, draftInitializeSuccess, draftInitializeErrorHandler)
@@ -47,13 +48,10 @@ class DraftCreateController extends BaseController
       @createInProgress = false
       @workingModalService.closeModal()
 
-      console.log "Success brother. Heres what we get: "
-      console.log response
-
       @form.$setPristine()
 
-      @messageService.showSuccess "#{@form.draft_name.$viewValue} created!"
-      @$location "/draft/#{response.draft.draft_id}"
+      @messageService.showSuccess "#{response.draft.draft_name} created!"
+      @$location.path "/draft/#{response.draft.draft_id}"
 
     createFailureHandler = (response) =>
       @createInProgress = false
