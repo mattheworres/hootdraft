@@ -41,6 +41,7 @@ module.exports =
             ],
             js: [
                 'bower_components/jquery/dist/jquery.min.js'
+                'bower_components/slip/slip.js'
                 'bower_components/datatables/media/js/jquery.dataTables.min.js'
                 'bower_components/angular/angular.min.js'
                 'bower_components/angular-datatables/dist/angular-datatables.min.js'
@@ -60,6 +61,7 @@ module.exports =
                 'bower_components/angular-moment/angular-moment.min.js'
                 'bower_components/angularjs-ordinal-filter/ordinal-browser.js'
                 'bower_components/angular-mask/dist/ngMask.min.js'
+                'bower_components/angular-slip/angular-slip.js'
             ],
             css: [
                 'bower_components/angular-ui-bootstrap-bower/ui-bootstrap-csp.css'

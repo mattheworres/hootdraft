@@ -5,9 +5,11 @@ class DraftIndexController extends BaseController
   '$routeParams',
   'subscriptionKeys',
   'api',
+  'workingModalService',
   'messageService'
 
   initialize: ->
+    @loadedCommishManagers = false
     @deregister = @$scope.$on @subscriptionKeys.loadDraftDependentData, (event, args) =>
       if args.draft? and args.draft.setting_up == true
         @_loadSettingUpData(args.draft.draft_id, args)
@@ -30,7 +32,12 @@ class DraftIndexController extends BaseController
   _loadSettingUpData: (draft_id, args) =>
     managersSuccess = (data) =>
       @$scope.managersLoading = false
+      console.log data
       @$scope.managers = data
+
+    commishManagersSuccess = (data) =>
+      @$scope.commishManagersLoading = false
+      @$scope.editableManagers = data
 
     managersError = (response) =>
       @$scope.managersLoading = false
@@ -38,11 +45,60 @@ class DraftIndexController extends BaseController
       @messageService.showError "Unable to load managers"
 
     @$scope.managersLoading = args.onPageLoad? and args.onPageLoad
+    @$scope.commishManagersLoading = args.onPageLoad? and args.onPageLoad
     @$scope.managersError = false
 
     if @$scope.draftValid and not @$scope.draftLocked
-      managersPromise = @api.Manager.getManagers({ draft_id: draft_id }, managersSuccess, managersError)
-    #Round times?
+      if not args.draft.commish_editable
+        @api.Manager.getManagers({ draft_id: draft_id }, managersSuccess, managersError)
+      if not @loadedCommishManagers and args.draft.commish_editable
+        @loadedCommishManagers = true
+        @_reloadEditableManagers()
+
+  reorderManagers: (event, spliceIndex, originalIndex) =>
+    manager = @$scope.editableManagers[originalIndex];
+    @$scope.editableManagers.splice(originalIndex, 1);
+    @$scope.editableManagers.splice(spliceIndex, 0, manager);
+    
+    @_saveManagerOrder(@$scope.editableManagers)
+
+    return true;
+
+  _saveManagerOrder: (managers) ->
+    reorderSuccess = (data) =>
+      draft_order = 1
+      for manager in managers
+        manager.draft_order = draft_order
+        draft_order++
+
+      @workingModalService.closeModal()
+
+    reorderError = (response) =>
+      @workingModalService.closeModal()
+      @messageService.showError "Unable to reorder managers"
+
+    manager_ids = []
+    draft_order = 1
+    for manager in managers
+      manager_ids.push manager.manager_id
+
+    @workingModalService.openModal()
+    @api.Manager.reorder({ draft_id: @$scope.draft.draft_id, ordered_manager_ids: manager_ids }, reorderSuccess, reorderError)
+
+  _reloadEditableManagers: =>
+    commishManagersSuccess = (data) =>
+      @$scope.commishManagersLoading = false
+      @$scope.editableManagers = data
+
+    managersError = (response) =>
+      @$scope.managersLoading = false
+      @$scope.managersError = true
+      @messageService.showError "Unable to load managers"
+
+    @api.Manager.commishGet({ draft_id: @$scope.draft.draft_id }, commishManagersSuccess, managersError)
+
+  beforeSwipe: (event) =>
+    event.preventDefault()
 
   _loadInProgressData: (draft_id, args) =>
     lastSuccess = (data) =>

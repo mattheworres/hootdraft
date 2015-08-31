@@ -14,4 +14,5 @@ angular.module("app", [
   "angularMoment"
   "ordinal"
   "ngMask"
+  "slip"
 ])

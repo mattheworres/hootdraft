@@ -11,15 +11,41 @@
           Draft Order
         </h3>
       </div>
-      <div class="panel-body">
+      <div class="panel-body" ng-hide="draft.commish_editable">
         <div class="list-group draft_order">
           <div class="list-group-item" ng-repeat="manager in managers">
-            <h2 class="order_number"><strong>{{manager.draft_order}}</strong></h2>
+            <h2 class="order_number"><strong>{{manager.draft_order | ordinal}}</strong></h2>
             <h3 class="manager_name">{{manager.manager_name}}</h3>
           </div>
           <div class="list-group-item" ng-show="managers.length == 0">
             <h3><strong>{{draft.commish_name}}</strong> has not added any managers yet.</h3>
           </div>
+        </div>
+      </div>
+      <div class="panel-body" ng-show="draft.commish_editable"> 
+        <!-- <div class="list-group draft_order">
+          <div class="list-group-item" ng-repeat="manager in managers">
+            <h2 class="order_number"><strong>{{manager.draft_order}}</strong></h2>
+            <h3 class="manager_name">{{manager.manager_name}}</h3>
+          </div>
+        </div> -->
+        <ul class="draft_order" slip-list
+          slip-reorder="reorderManagers($event, $spliceIndex, $originalIndex)"
+          slip-before-swipe="beforeSwipe($event)">
+          <li class="col-xs-12 instant" ng-repeat="manager in editableManagers"
+              dnd-moved="editableManagers.splice($index, 1)"
+              dnd-draggable="manager"
+              dnd-effect-allowed="move">
+              <h2 class="col-xs-3 order_number"><strong>{{manager.draft_order | ordinal}}</strong></h2>
+              <h3 class="col-xs-8 manager_name">{{manager.manager_name}}</h3>
+              <h3 class="col-xs-1 text-right">
+                <i class="fa fa-bars"></i>
+              </h3>
+          </li>
+        </ul>
+        <div class="list-group-item" ng-show="managers.length == 0">
+          <h3>There are no managers in your league right now.</h3>
+          <h4><strong>Go ahead and add some.</strong></h4>
         </div>
       </div>
     </div>

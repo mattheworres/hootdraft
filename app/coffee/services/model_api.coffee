@@ -28,11 +28,11 @@ angular.module('app').factory 'api', ($resource, ENV) ->
     'resetPassword':
       { method: 'POST', url: "#{ENV.apiEndpoint}resetPassword" }
 
-  Commish: $resource "#{ENV.apiEndpoint}commissioners/:commish_id", {commish_id: '@commish_id'},
+  Commish: $resource "#{ENV.apiEndpoint}commissioners/:commish_id", { commish_id: '@commish_id' },
     'search':
       { method: 'GET', url: "#{ENV.apiEndpoint}commissioners/search" }
 
-  Draft: $resource "#{ENV.apiEndpoint}draft/:id", {draft_id: '@draft_id'},
+  Draft: $resource "#{ENV.apiEndpoint}draft/:id", { draft_id: '@draft_id' },
     'getDraftList':
       { method: 'GET', url: "#{ENV.apiEndpoint}drafts", isArray: true }
     'searchCommissioners':
@@ -54,6 +54,10 @@ angular.module('app').factory 'api', ($resource, ENV) ->
   Manager: $resource "#{ENV.apiEndpoint}draft/:draft_id/manager/:manager_id", { draft_id: '@draft_id', manager_id: '@manager_id' },
     'getManagers':
       { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/managers", isArray: true }
+    'commishGet':
+      { method: 'GET', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/managers", isArray: true }
+    'reorder':
+      { method: 'PUT', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/managers/reorder" }
 
   Pick: $resource "#{ENV.apiEndpoint}draft/:draft_id/pick/:pick_id", { draft_id: '@draft_id', pick_id: '@pick_id' },
     'getLast':

@@ -6,3 +6,6 @@ angular.module("app").directive 'draftSettingUp', ->
       draft: "="
       draftValid: "="
       managers: "="
+      editableManagers: "="
+      reorderManagers: "="
+      beforeSwipe: "="
