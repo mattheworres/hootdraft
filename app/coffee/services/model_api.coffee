@@ -58,6 +58,8 @@ angular.module('app').factory 'api', ($resource, ENV) ->
       { method: 'GET', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/managers", isArray: true }
     'reorder':
       { method: 'PUT', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/managers/reorder" }
+    'addMultiple':
+      { method: 'POST', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/managers" }
 
   Pick: $resource "#{ENV.apiEndpoint}draft/:draft_id/pick/:pick_id", { draft_id: '@draft_id', pick_id: '@pick_id' },
     'getLast':

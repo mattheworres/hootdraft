@@ -4,7 +4,7 @@
     <draft-information draft=draft></draft-information>
   </div>
   <div class="col-xs-12 col-sm-6 col-md-5">
-    <div class="panel panel-primary">
+    <div class="panel panel-primary panel-no-border">
       <div class="panel-heading">
         <h3 class="panel-title">
           <i class="fa fa-sort-amount-asc"></i>&nbsp;&nbsp;
@@ -23,29 +23,36 @@
         </div>
       </div>
       <div class="panel-body" ng-show="draft.commish_editable"> 
-        <!-- <div class="list-group draft_order">
-          <div class="list-group-item" ng-repeat="manager in managers">
-            <h2 class="order_number"><strong>{{manager.draft_order}}</strong></h2>
-            <h3 class="manager_name">{{manager.manager_name}}</h3>
-          </div>
-        </div> -->
-        <ul class="draft_order" slip-list
+        <section-loading show-loading=commishManagersLoading></section-loading>
+        <ul class="draft_order row" slip-list
+          ng-show="editableManagers.length > 0"
           slip-reorder="reorderManagers($event, $spliceIndex, $originalIndex)"
           slip-before-swipe="beforeSwipe($event)">
           <li class="col-xs-12 instant" ng-repeat="manager in editableManagers"
               dnd-moved="editableManagers.splice($index, 1)"
               dnd-draggable="manager"
               dnd-effect-allowed="move">
-              <h2 class="col-xs-3 order_number"><strong>{{manager.draft_order | ordinal}}</strong></h2>
-              <h3 class="col-xs-8 manager_name">{{manager.manager_name}}</h3>
-              <h3 class="col-xs-1 text-right">
-                <i class="fa fa-bars"></i>
-              </h3>
+              <div class="row">
+                <h2 class="col-xs-3 order_number"><strong>{{manager.draft_order | ordinal}}</strong></h2>
+                <h3 class="col-xs-6 manager_name">{{manager.manager_name}}</h3>
+                <h3 class="col-xs-3 action_items">
+                  <i class="fa fa-trash-o pull-right" alt="Delete Manager"></i>
+                  <i class="fa fa-pencil pull-right" alt="Edit Manager"></i>
+                </h3>
+              </div>
           </li>
         </ul>
-        <div class="list-group-item" ng-show="managers.length == 0">
+        <div class="row" ng-show="editableManagers.length > 0">
+          <div class="col-xs-8 col-xs-offset-2">
+            <button class="btn btn-block btn-primary" ng-click="openAddManagers()">
+              <i class="fa fa-plus"></i>&nbsp;&nbsp;
+              Add Managers
+            </button>
+          </div>
+        </div>
+        <div class="list-group-item" ng-show="editableManagers.length == 0">
           <h3>There are no managers in your league right now.</h3>
-          <h4><strong>Go ahead and add some.</strong></h4>
+          <h4><strong><a href="#" ng-click="openAddManagers()">Go ahead and add some.</a></strong></h4>
         </div>
       </div>
     </div>

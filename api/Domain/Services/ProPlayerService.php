@@ -43,7 +43,7 @@ class ProPlayerService {
       return $response;
     }
 
-    if ($this->app['phpdraft.set_csv_timeout'])
+    if (SET_CSV_TIMEOUT)
       set_time_limit(0);
 
     while (($data = fgetcsv($handle, 1000, ';')) !== FALSE) {

@@ -9,3 +9,4 @@ class SubscriptionKeys extends AngularService
 
   reloadDraft: 'reloadDraft'
   loadDraftDependentData: 'loadDraftDependentData'
+  reloadCommishManagers: 'reloadCommishManagers'

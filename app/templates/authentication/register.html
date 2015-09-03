@@ -43,7 +43,7 @@
                     </label>
                   </div>
                   <div class="col-xs-8">
-                    <input name="name" ng-model="user.name" type="name" class="form-control" maxlength="255" ng-required="true" placeholder="Your name (for display)" />
+                    <input name="name" ng-model="user.name" class="form-control" maxlength="255" ng-required="true" placeholder="Your name (for display)" />
                     <div ng-show="registerCtrl.form.$submitted || registerCtrl.form.name.$touched">
                       <span ng-show="registerCtrl.form.name.$error.required" class="help-block">Name is missing</span>
                       <span ng-show="registerCtrl.form.name.$error.minlength" class="help-block">Name is too short</span>

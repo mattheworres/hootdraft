@@ -9,3 +9,5 @@ angular.module("app").directive 'draftSettingUp', ->
       editableManagers: "="
       reorderManagers: "="
       beforeSwipe: "="
+      openAddManagers: "="
+      commishManagersLoading: "="

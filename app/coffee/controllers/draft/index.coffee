@@ -6,7 +6,8 @@ class DraftIndexController extends BaseController
   'subscriptionKeys',
   'api',
   'workingModalService',
-  'messageService'
+  'messageService',
+  'draftService'
 
   initialize: ->
     @loadedCommishManagers = false
@@ -22,6 +23,10 @@ class DraftIndexController extends BaseController
 
     @$scope.$on @subscriptionKeys.scopeDestroy, (event, args) =>
       @deregister()
+      @deregister_commish_managers()
+
+    @deregister_commish_managers = @$rootScope.$on @subscriptionKeys.updateCommishManagers, (event, args) =>
+      @_reloadEditableManagers()
 
     @$scope.$watch ( =>
       @$scope.selectedDraftRound
@@ -32,7 +37,6 @@ class DraftIndexController extends BaseController
   _loadSettingUpData: (draft_id, args) =>
     managersSuccess = (data) =>
       @$scope.managersLoading = false
-      console.log data
       @$scope.managers = data
 
     commishManagersSuccess = (data) =>
@@ -56,33 +60,35 @@ class DraftIndexController extends BaseController
         @_reloadEditableManagers()
 
   reorderManagers: (event, spliceIndex, originalIndex) =>
-    manager = @$scope.editableManagers[originalIndex];
-    @$scope.editableManagers.splice(originalIndex, 1);
-    @$scope.editableManagers.splice(spliceIndex, 0, manager);
+    manager = @$scope.editableManagers[originalIndex]
+    @$scope.editableManagers.splice originalIndex, 1
+    @$scope.editableManagers.splice spliceIndex, 0, manager
     
     @_saveManagerOrder(@$scope.editableManagers)
 
     return true;
 
+  openAddManagerModal: ->
+    @draftService.showAddManagersModal @$scope.draft.draft_id
+
   _saveManagerOrder: (managers) ->
     reorderSuccess = (data) =>
+      @commishManagersLoading = false
       draft_order = 1
       for manager in managers
         manager.draft_order = draft_order
         draft_order++
 
-      @workingModalService.closeModal()
-
     reorderError = (response) =>
-      @workingModalService.closeModal()
+      @commishManagersLoading = false
       @messageService.showError "Unable to reorder managers"
 
+    @commishManagersLoading = true
     manager_ids = []
     draft_order = 1
     for manager in managers
       manager_ids.push manager.manager_id
 
-    @workingModalService.openModal()
     @api.Manager.reorder({ draft_id: @$scope.draft.draft_id, ordered_manager_ids: manager_ids }, reorderSuccess, reorderError)
 
   _reloadEditableManagers: =>

@@ -38,7 +38,10 @@ $configuration_variables = array(
   //Provide the name of the header to store the draft password in (Default: "X-PhpDraft-DraftPassword")
   'DRAFT_PASSWORD_HEADER' => 'X-PhpDraft-DraftPassword',
   //Name of the file you have created in /api/config/logs folder to contain Silex logging information
-  'LOGFILE_NAME' => 'development.log'
+  'LOGFILE_NAME' => 'development.log',
+
+  'SET_CSV_TIMEOUT' => false
+
 );
 
 foreach($configuration_variables as $name => $value) {

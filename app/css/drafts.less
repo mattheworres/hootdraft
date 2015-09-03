@@ -33,6 +33,7 @@ ul.draft_order {
     border: 1px solid rgba(0,0,0,0.25);
     display: block;
     padding-bottom: 10px;
+    padding-right: 0;
 
     h2.order_number {
       display: inline-block;
@@ -43,6 +44,14 @@ ul.draft_order {
     h3.manager_name {
       user-select: none;
       display: inline-block;
+    }
+
+    h3.action_items {
+      padding-right: 0;
+      font-size: 18px;
+      i.fa {
+        margin-left: 10px;
+      }
     }
 
     &.slip-reordering {
