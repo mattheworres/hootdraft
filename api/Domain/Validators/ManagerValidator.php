@@ -129,7 +129,7 @@ class ManagerValidator {
     return new PhpDraftResponse($valid, $errors);
   }
 
-  public function IsManagerValidForUpdate($draft_id, Manager $manager) {
+  public function IsManagerValidForUpdate(Draft $draft, Manager $manager) {
     $valid = true;
     $errors = array();
     
@@ -150,7 +150,7 @@ class ManagerValidator {
       $valid = false;
     }
 
-    if(!$this->app['phpdraft.ManagerRepository']->NameIsUnique($manager->manager_name, $draft_id, $manager->manager_id)) {
+    if(!$this->app['phpdraft.ManagerRepository']->NameIsUnique($manager->manager_name, $draft->draft_id, $manager->manager_id)) {
       $errors[] = "Manager name '$manager->manager_name' already exists - please choose another name.";
       $valid = false;
     }

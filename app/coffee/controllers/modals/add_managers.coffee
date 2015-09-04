@@ -34,7 +34,6 @@ class AddManagersController extends BaseController
       @messageService.showError "Unable to add managers"
 
     if validManagers.length > 0
-      console.log "Draft ID: #{@draft_id}"
       @api.Manager.addMultiple({draft_id: @draft_id, managers: validManagers}, addManagerSuccess, addManagerError)
     else
       @cancel()

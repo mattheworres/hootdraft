@@ -60,6 +60,10 @@ angular.module('app').factory 'api', ($resource, ENV) ->
       { method: 'PUT', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/managers/reorder" }
     'addMultiple':
       { method: 'POST', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/managers" }
+    delete:
+      { method: 'DELETE', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/manager/:manager_id" }
+    'update':
+      { method: 'PUT', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/manager/:manager_id" }
 
   Pick: $resource "#{ENV.apiEndpoint}draft/:draft_id/pick/:pick_id", { draft_id: '@draft_id', pick_id: '@pick_id' },
     'getLast':

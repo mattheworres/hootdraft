@@ -14,7 +14,6 @@ class DraftEditController extends BaseController
     @draftError = false
 
     @deregister = @$scope.$on @subscriptionKeys.loadDraftDependentData, (event, args) =>
-      console.log "We gots a draft and need to laod dep data"
       if args.draft? and args.draft.setting_up == true
         #Ensure we only get draft data once, assumption is that there's only 1 person editing it at a given time
         if not @draftLoaded

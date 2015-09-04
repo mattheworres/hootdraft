@@ -86,6 +86,7 @@ class ManagerController {
     $manager_id = $request->get('manager_id');
 
     try {
+      $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
       $manager = $app['phpdraft.ManagerRepository']->Load($manager_id);
     } catch(\Exception $e) {
       $response = new PhpDraftResponse(false, array());
@@ -96,7 +97,7 @@ class ManagerController {
 
     $manager->manager_name = $request->get('name');
 
-    $validity = $app['phpdraft.ManagerValidator']->IsManagerValidForUpdate($draft_id, $manager);
+    $validity = $app['phpdraft.ManagerValidator']->IsManagerValidForUpdate($draft, $manager);
 
     if(!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);

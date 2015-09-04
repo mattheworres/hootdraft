@@ -34,10 +34,16 @@
               dnd-effect-allowed="move">
               <div class="row">
                 <h2 class="col-xs-3 order_number"><strong>{{manager.draft_order | ordinal}}</strong></h2>
-                <h3 class="col-xs-6 manager_name">{{manager.manager_name}}</h3>
+                <h3 class="col-xs-6 manager_name" ng-hide="manager.isBeingEdited">{{manager.manager_name}}</h3>
+                <h3 class="col-xs-6 manager_name edit" ng-show="manager.isBeingEdited">
+                  <input class="form-control" ng-model="editableManagers[$index].manager_name" />
+                </h3>
                 <h3 class="col-xs-3 action_items">
-                  <i class="fa fa-trash-o pull-right" alt="Delete Manager"></i>
-                  <i class="fa fa-pencil pull-right" alt="Edit Manager"></i>
+                  <i class="fa fa-trash-o pull-right" alt="Delete Manager" ng-disabled="isEditActive" ng-click="deleteManager($index)"></i>
+                  <i class="fa fa-pencil pull-right" alt="Edit Manager" ng-disabled="isEditActive" ng-hide="manager.isBeingEdited" ng-click="enableManagerEdit($index)"></i>
+                  <i class="fa fa-times pull-right" alt="Cancel" ng-show="!manager.managerSaving && manager.isBeingEdited" ng-click="cancelManagerEdit($index)"></i>
+                  <i class="fa fa-floppy-o pull-right" alt="Save" ng-show="!manager.managerSaving && manager.isBeingEdited" ng-click="saveManager($index)"></i>
+                  <i class="fa fa-spinner fa-spin" alt="Saving..." ng-show="manager.managerSaving" disabled="disabled"></i>
                 </h3>
               </div>
           </li>

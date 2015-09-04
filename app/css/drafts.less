@@ -28,7 +28,7 @@ ul.draft_order {
     -moz-user-select: none;
     user-select: none;
     user-select: none;
-    cursor: move;
+    cursor: -moz-grab; cursor: -webkit-grab; cursor: grab;
     position: relative;
     border: 1px solid rgba(0,0,0,0.25);
     display: block;
@@ -44,18 +44,38 @@ ul.draft_order {
     h3.manager_name {
       user-select: none;
       display: inline-block;
+
+      &.edit {
+        margin-top: 15px;
+        margin-bottom: 10px;
+        
+        input {
+          height: 40px;
+          font-size: 20px;
+          padding-left: 6px;
+          padding-right: 6px;
+        }
+      }
     }
 
     h3.action_items {
       padding-right: 0;
       font-size: 18px;
+      
       i.fa {
         margin-left: 10px;
+        cursor: pointer;
+
+        &[disabled] {
+          color: #BBB;
+          cursor: default;
+        }
       }
     }
 
     &.slip-reordering {
       box-shadow: 0 2px 10px rgba(0,0,0,0.45);
+      cursor: -moz-grabbing; cursor: -webkit-grabbing; cursor: grabbing;
     }
   }
 }

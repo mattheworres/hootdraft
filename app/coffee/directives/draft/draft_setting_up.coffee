@@ -11,3 +11,8 @@ angular.module("app").directive 'draftSettingUp', ->
       beforeSwipe: "="
       openAddManagers: "="
       commishManagersLoading: "="
+      deleteManager: "="
+      enableManagerEdit: "="
+      cancelManagerEdit: "="
+      saveManager: "="
+      isEditActive: "="

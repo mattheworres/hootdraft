@@ -49,8 +49,8 @@ class ManagerService {
     $response = new PhpDraftResponse();
 
     try {
-      $managers = $this->app['phpdraft.ManagerRepository']->ReorderManagers($managersIdArray);
-
+      $this->app['phpdraft.ManagerRepository']->ReorderManagers($managersIdArray);
+      
       $response->success = true;
     }catch(\Exception $e) {
       $response->success = false;
@@ -93,6 +93,9 @@ class ManagerService {
 
       $this->ReorderManagers($managersIdArray);
 
+      $managers = $this->app['phpdraft.ManagerRepository']->GetManagersByDraftOrder($draft_id);
+
+      $response->managers = $managers;
       $response->success = true;
     } catch(\Exception $e) {
       $response->success = false;
