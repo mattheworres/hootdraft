@@ -1,6 +1,6 @@
 class NavController extends BaseController
   @register 'NavController'
-  @inject '$scope', 'messageService', 'confirmActionService'
+  @inject '$scope', '$routeParams', 'messageService', 'confirmActionService', 'api'
 
   initialize: ->
     @draftNavHidden = true
@@ -13,8 +13,15 @@ class NavController extends BaseController
     message = "Are you sure you want to delete the draft? This action cannot be undone."
     iconClass = "fa-exclamation-triangle"
     confirmButtonText = "Yes, Delete the draft"
-    deleteDraft = ->
-      console.log "Yay, we are deleting the draft."
+    deleteDraft = =>
+      deleteSuccess = =>
+        @messageService.showSuccess "Draft deleted"
+        @$location.path '/home'
+
+      deleteError = =>
+        @messageService.showError "Unable to delete draft"
+
+      @api.Draft.delete({draft_id: @$routeParams.draft_id }, deleteSuccess, deleteError)
 
     @confirmActionService.showConfirmationModal(message, deleteDraft, title, iconClass, confirmButtonText)
 

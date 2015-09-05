@@ -50,6 +50,8 @@ angular.module('app').factory 'api', ($resource, ENV) ->
       { method: 'PUT', url: "#{ENV.apiEndpoint}commish/draft/:draft_id" }
     'commishGet':
       { method: 'GET', url: "#{ENV.apiEndpoint}commish/draft/:draft_id" }
+    delete:
+      { method: 'DELETE', url: "#{ENV.apiEndpoint}commish/draft/:draft_id" }
 
   Manager: $resource "#{ENV.apiEndpoint}draft/:draft_id/manager/:manager_id", { draft_id: '@draft_id', manager_id: '@manager_id' },
     'getManagers':
