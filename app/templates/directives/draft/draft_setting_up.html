@@ -23,43 +23,7 @@
         </div>
       </div>
       <div class="panel-body" ng-show="draft.commish_editable"> 
-        <section-loading show-loading=commishManagersLoading></section-loading>
-        <ul class="draft_order row" slip-list
-          ng-show="editableManagers.length > 0"
-          slip-reorder="reorderManagers($event, $spliceIndex, $originalIndex)"
-          slip-before-swipe="beforeSwipe($event)">
-          <li class="col-xs-12 instant" ng-repeat="manager in editableManagers"
-              dnd-moved="editableManagers.splice($index, 1)"
-              dnd-draggable="manager"
-              dnd-effect-allowed="move">
-              <div class="row">
-                <h2 class="col-xs-3 order_number"><strong>{{manager.draft_order | ordinal}}</strong></h2>
-                <h3 class="col-xs-6 manager_name" ng-hide="manager.isBeingEdited">{{manager.manager_name}}</h3>
-                <h3 class="col-xs-6 manager_name edit" ng-show="manager.isBeingEdited">
-                  <input class="form-control" ng-model="editableManagers[$index].manager_name" />
-                </h3>
-                <h3 class="col-xs-3 action_items">
-                  <i class="fa fa-trash-o pull-right" alt="Delete Manager" ng-disabled="isEditActive" ng-click="deleteManager($index)"></i>
-                  <i class="fa fa-pencil pull-right" alt="Edit Manager" ng-disabled="isEditActive" ng-hide="manager.isBeingEdited" ng-click="enableManagerEdit($index)"></i>
-                  <i class="fa fa-times pull-right" alt="Cancel" ng-show="!manager.managerSaving && manager.isBeingEdited" ng-click="cancelManagerEdit($index)"></i>
-                  <i class="fa fa-floppy-o pull-right" alt="Save" ng-show="!manager.managerSaving && manager.isBeingEdited" ng-click="saveManager($index)"></i>
-                  <i class="fa fa-spinner fa-spin" alt="Saving..." ng-show="manager.managerSaving" disabled="disabled"></i>
-                </h3>
-              </div>
-          </li>
-        </ul>
-        <div class="row" ng-show="editableManagers.length > 0">
-          <div class="col-xs-8 col-xs-offset-2">
-            <button class="btn btn-block btn-primary" ng-click="openAddManagers()">
-              <i class="fa fa-plus"></i>&nbsp;&nbsp;
-              Add Managers
-            </button>
-          </div>
-        </div>
-        <div class="list-group-item" ng-show="editableManagers.length == 0">
-          <h3>There are no managers in your league right now.</h3>
-          <h4><strong><a href="#" ng-click="openAddManagers()">Go ahead and add some.</a></strong></h4>
-        </div>
+        <commish-managers draft=draft></commish-managers>
       </div>
     </div>
   </div>

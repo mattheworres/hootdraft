@@ -1,7 +1,7 @@
 class @BaseController extends AngularController
   #default dependencies in case @inject is never called from the child
   @$inject: ["$routeParams", "$scope", "$rootScope", "$location", "$sessionStorage",
-  "$routeParams", "$window", "authenticationService", "messageService",
+  "$window", "authenticationService", "messageService",
   "draftService", "subscriptionKeys", "DTOptionsBuilder"]
   @inject: (args...) ->
       args.push '$routeParams'
@@ -9,7 +9,6 @@ class @BaseController extends AngularController
       args.push '$rootScope'
       args.push '$location'
       args.push '$sessionStorage'
-      args.push '$routeParams'
       args.push '$window'
       args.push 'authenticationService'
       args.push 'messageService'
