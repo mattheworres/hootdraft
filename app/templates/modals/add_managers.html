@@ -13,7 +13,7 @@
         <strong>Manager Name:</strong>
       </div>
       <div class="col-xs-8">
-        <input ng-model="addManagersCtrl.editableManagers[$index].manager_name" class="form-control" maxlength="255" placeholder="Manager {{$index}}'s Name" />
+        <input ng-model="addManagersCtrl.editableManagers[$index].manager_name" class="form-control" maxlength="255" placeholder="Manager {{$index+1}}'s Name" />
       </div>
       <div class="col-xs-1">
         <span class="clickable fa-stack" ng-click="addManagersCtrl.removeManager($index)">
