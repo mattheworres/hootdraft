@@ -10,7 +10,7 @@ angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftSe
       $rootScope.draftLoading = false
 
       if args.hasResetPassword? and args.hasResetPassword and $rootScope.draftIntervalPromise == undefined
-        $rootScope.draftIntervalPromise = $interval $rootScope.draftIntervalHandler, 5000
+        $rootScope.draftIntervalPromise = $interval $rootScope.draftIntervalHandler, 2750
       
       if draft.is_locked
         $rootScope.draftLocked = true

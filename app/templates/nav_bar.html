@@ -129,7 +129,7 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="commishDropdown">
               <li ng-show="draft.setting_up">
-                <a href="#">
+                <a href="#" ng-click="navCtrl.showStartDraftModal()">
                   <i class="fa fa-play"></i>
                   &nbsp;Start Draft!
                 </a>
@@ -165,7 +165,7 @@
                 </a>
               </li>
               <li ng-show="draft.in_progress">
-                <a href="#">
+                <a href="#" ng-click="navCtrl.showResetDraftModal()">
                   <i class="fa fa-warning"></i>
                   &nbsp;Reset Draft
                 </a>

@@ -249,7 +249,7 @@ class PickRepository {
             "LEFT OUTER JOIN managers m " .
             "ON m.manager_id = p.manager_id " .
             "WHERE p.draft_id = ? " .
-            "AND p.player_pick > ? " .
+            "AND p.player_pick >= ? " .
             "ORDER BY p.player_pick ASC " .
             "LIMIT ?");
     
@@ -265,7 +265,7 @@ class PickRepository {
     
     while($pick = $stmt->fetch()) {
       $pick->selected = strlen($pick->pick_time) > 0 && $pick->pick_duration > 0;
-      $pick->on_the_clock = $pick->player_pick == $currentPick + 1;
+      $pick->on_the_clock = $pick->player_pick == $currentPick;
 
       $picks[] = $pick;
     }
@@ -296,7 +296,7 @@ class PickRepository {
 
     while ($pick = $stmt->fetch()) {
       $pick->selected = strlen($pick->pick_time) > 0 && $pick->pick_duration > 0;
-      $pick->on_the_clock = $draft != null && $pick->player_pick == $draft->draft_current_pick + 1;
+      $pick->on_the_clock = $draft != null && $pick->player_pick == $draft->draft_current_pick;
 
       $picks[] = $pick;
     }
@@ -331,7 +331,7 @@ class PickRepository {
 
     while ($pick = $stmt->fetch()) {
       $pick->selected = strlen($pick->pick_time) > 0 && $pick->pick_duration > 0;
-      $pick->on_the_clock = $draft != null && $pick->player_pick == $draft->draft_current_pick + 1;
+      $pick->on_the_clock = $draft != null && $pick->player_pick == $draft->draft_current_pick;
 
       $picks[] = $pick;
     }
