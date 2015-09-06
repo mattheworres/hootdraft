@@ -256,32 +256,32 @@ class LoginUserValidator {
     $valid = true;
     $errors = array();
 
-    $id = (int)$request->get('_id');
     $email = strtolower($request->get('_email'));
+    $name = $request->get('_name');
     $password = $request->get('_password');
     $newPassword = $request->get('_newPassword');
     $newConfirmedPassword = $request->get('_newConfirmedPassword');
-    $name = $request->get('_name');
 
-    $user = $this->app['phpdraft.LoginUserRepository']->LoadById($id);
     $currentUser = $this->app['phpdraft.LoginUserService']->GetCurrentUser();
 
-    if(empty($currentUser) || $id == 0 || empty($user) || $user->id != $currentUser->id) {
+    $this->app['monolog']->addDebug("Current user pwd: " . $currentUser->password);
+
+    if(empty($currentUser) || $currentUser == null) {
       $valid = false;
       $errors[] = "Invalid user.";
 
-      //Because we need to compare new & old values, we need a valid user record to proceed with vaidation.
+      //Because we need to compare new & old values, we need a valid user record to proceed with validation.
       return new PhpDraftResponse($valid, $errors);
     }
 
     //Password required to make any changes
-    if(empty($password) || !$this->app['security.encoder.digest']->isPasswordValid($user->password, $password, $user->salt)) {
+    if(empty($password) || !$this->app['security.encoder.digest']->isPasswordValid($currentUser->password, $password, $currentUser->salt)) {
       $errors[] = "Incorrect password entered.";
       $valid = false;
     }
 
     //Need to verify new email
-    if(!empty($email) && !StringUtils::equals($email, $user->email)) {
+    if(!empty($email) && !StringUtils::equals($email, $currentUser->email)) {
       if(strlen($email) > 255) {
         $errors[] = "Email is above maximum length.";
         $valid = false;
@@ -321,6 +321,24 @@ class LoginUserValidator {
     if(strlen($name) > 100) {
       $errors[] = "Name is above maximum length";
       $valid = false;
+    }
+
+    //If the name has changed, ensure the new one is valid and unique
+    if($currentUser->name != $name) {
+      if(empty($name)) {
+        $errors[] = "Name is required.";
+        $valid = false;
+      }
+
+      if(strlen($name) > 100) {
+        $errors[] = "Name is above maximum length";
+        $valid = false;
+      }
+
+      if(!$this->app['phpdraft.LoginUserRepository']->NameIsUnique($name)) {
+        $errors[] = "Name already taken.";
+        $valid = false;
+      }
     }
 
     return new PhpDraftResponse($valid, $errors);

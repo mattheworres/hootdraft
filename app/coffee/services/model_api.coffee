@@ -27,6 +27,10 @@ angular.module('app').factory 'api', ($resource, ENV) ->
       { method: 'POST', url: "#{ENV.apiEndpoint}lostPassword" }
     'resetPassword':
       { method: 'POST', url: "#{ENV.apiEndpoint}resetPassword" }
+    'getProfile':
+      { method: 'GET', url: "#{ENV.apiEndpoint}commish/profile" }
+    'setProfile':
+      { method: 'PUT', url: "#{ENV.apiEndpoint}commish/profile" }
 
   Commish: $resource "#{ENV.apiEndpoint}commissioners/:commish_id", { commish_id: '@commish_id' },
     'search':

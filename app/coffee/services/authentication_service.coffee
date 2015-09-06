@@ -8,6 +8,10 @@ class AuthenticationService extends AngularService
     @$sessionStorage.user_name = userData.name
     @$sessionStorage.auth_time = userData.auth_timeout
 
+  cacheName: (userName) ->
+    delete @$sessionStorage.user_name
+    @$sessionStorage.user_name = userName
+
   uncacheSession: ->
     @$sessionStorage.authenticated = false
     delete @$sessionStorage.auth_token

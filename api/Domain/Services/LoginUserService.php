@@ -232,14 +232,13 @@ class LoginUserService {
   }
 
   public function UpdateUserProfile(Request $request) {
-    $id = $request->get('_id');
     $email = strtolower($request->get('_email'));
     $name = $request->get('_name');
-    $password = $request->get('_password');
     $newPassword = $request->get('_newPassword');
     $sendEmail = false;
+    $invalidateLogin = false;
 
-    $user = $this->app['phpdraft.LoginUserRepository']->LoadById($id);
+    $user = $this->app['phpdraft.LoginUserService']->GetCurrentUser();
 
     $user->name = $name;
 
@@ -247,11 +246,13 @@ class LoginUserService {
     if(!empty($email) && !StringUtils::equals($email, $user->email)) {
       $user->email = $email;
       $user->enabled = false;
+      $invalidateLogin = true;
       $user->verificationKey = $this->app['phpdraft.SaltService']->GenerateSalt();
       $sendEmail = true;
     }
 
     if(!empty($newPassword)) {
+      $invalidateLogin = true;
       $user->salt = $this->app['phpdraft.SaltService']->GenerateSalt();
       $user->password = $this->app['security.encoder.digest']->encodePassword($newPassword, $user->salt);
     }
@@ -286,6 +287,8 @@ class LoginUserService {
       }
 
       $response->success = true;
+      $response->invalidateLogin = $invalidateLogin;
+      $response->sendEmail = $sendEmail;
 
       $this->app['db']->commit();
     }catch(\Exception $e) {

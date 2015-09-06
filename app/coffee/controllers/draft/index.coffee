@@ -42,7 +42,7 @@ class DraftIndexController extends BaseController
       @$scope.managersError = true
       @messageService.showError "Unable to load managers"
 
-    @$scope.managersLoading = args.onPageLoad? and args.onPageLoad
+    @$scope.managersErrorLoading = args.onPageLoad? and args.onPageLoad
     @$scope.commishManagersLoading = args.onPageLoad? and args.onPageLoad
     @$scope.managersError = false
 

@@ -20,7 +20,6 @@ class @BaseController extends AngularController
 
   constructor: ->
     super(arguments...)
-
     @initialize?()
 
   isAuthenticated: =>
@@ -66,6 +65,7 @@ class @BaseController extends AngularController
       '/resetPassword'
       '/forgotPassword'
       '/register'
+      '/profile'
     ]
 
     whitelisted_paths.some (whitelisted_path) -> ~path.indexOf whitelisted_path

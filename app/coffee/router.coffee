@@ -44,6 +44,11 @@ angular.module('app').config ($routeProvider, $locationProvider) ->
     controllerAs: 'resetCtrl'
     templateUrl: 'app/templates/authentication/reset.html'
 
+  $routeProvider.when '/profile',
+    controller: 'EditProfileController'
+    controllerAs: 'editProfileCtrl'
+    templateUrl: 'app/templates/authentication/edit_profile.html'
+
   $routeProvider.when '/draft/:draft_id',
     controller: 'DraftIndexController'
     controllerAs: 'draftCtrl'
