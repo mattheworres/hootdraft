@@ -31,6 +31,11 @@ class PickTimersController extends BaseController
       @_calculateTotalDraftTime()
     , true
 
+    @$scope.$watch ( =>
+      @$scope.useStaticTime
+    ), =>
+      @_calculateTotalDraftTime()
+
   _loadPickTimerData: (draft_id, args) =>
     pickTimerDataSuccess = (data) =>
       totalManagerSeconds = 0
@@ -174,6 +179,10 @@ class PickTimersController extends BaseController
 
     secondsPerManager = 0
 
+    if @$scope.useStaticTime
+      roundTime = @$scope.pickTimers[0]
+      secondsPerRound = (roundTime.minutes * 60) + roundTime.seconds
+      secondsPerManager = secondsPerRound * @$scope.pickTimers.length
     for roundTime in @$scope.pickTimers
       totalSeconds = (roundTime.minutes * 60) + roundTime.seconds
       secondsPerManager += totalSeconds
