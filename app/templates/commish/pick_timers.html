@@ -38,6 +38,17 @@
               </div>
             </div>
             <div class="form-group" ng-show="roundTimesEnabled">
+              <label class="col-xs-12 col-sm-4 control-label" for="useStaticTime">
+                Max Draft Length (estimated):
+              </label>
+              <div class="col-xs-12 col-sm-4">
+                <strong>{{ totalDraftingTime | preciseHumanizedSeconds }}</strong>
+              </div>
+              <div class="hidden-xs col-sm-1 col-sm-offset-3 text-center text-info">
+                <i class="fa fa-info-circle" tooltip="How much time is that? This is if each and every pick took the full pick time allotment - usage obviously varies." tooltip-trigger="mouseenter"  tooltip-append-to-body="true"></i>
+              </div>
+            </div>
+            <div class="form-group" ng-show="roundTimesEnabled">
               <table class="table table-striped table-hover">
                 <thead>
                   <th>Round</th>
@@ -49,7 +60,7 @@
                     <td>
                       picks will be
                       <input ng-model="timer.minutes" class="timer-minutes" type="number" min="0" max="15" maxlength="2" />&nbsp; minutes and 
-                      <input ng-model="timer.seconds" class="timer-seconds" type="number" min="0" max="59" maxlength="2" />&nbsp; seconds long
+                      <input ng-model="timer.seconds" class="timer-seconds" type="number" min="0" max="59" maxlength="2" step="15" />&nbsp; seconds long
                     </td>
                   </tr>
                 </tbody>

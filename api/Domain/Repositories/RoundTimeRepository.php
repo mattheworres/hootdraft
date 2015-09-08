@@ -53,7 +53,7 @@ class RoundTimeRepository {
   private function _CoalesceDraftTimers(Draft $draft, $existing_timers, $is_static_time) {
     $coalescedTimers = array();
 
-    for($i = 0; $i <= $draft->draft_rounds; $i++) {
+    for($i = 0; $i < $draft->draft_rounds; $i++) {
       if($is_static_time && $i == 0) {
         $timer = $existing_timers[$i];
         $timer->draft_round = $i + 1;

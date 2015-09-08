@@ -25,6 +25,12 @@ class PickTimersController extends BaseController
     @$scope.$on @subscriptionKeys.scopeDestroy, (event, args) =>
       @deregister()
 
+    @$scope.$watch ( =>
+      @$scope.pickTimers
+    ), =>
+      @_calculateTotalDraftTime()
+    , true
+
   _loadPickTimerData: (draft_id, args) =>
     pickTimerDataSuccess = (data) =>
       totalManagerSeconds = 0
@@ -162,7 +168,8 @@ class PickTimersController extends BaseController
     @_calculateTotalDraftTime()
 
   _calculateTotalDraftTime: ->
-    if @timersFormIsInvalid()
+    if not @$scope.pickTimers? || @$scope.numberOfManagers == undefined
+      @$scope.totalDraftingTime = 0
       return
 
     secondsPerManager = 0
@@ -174,5 +181,5 @@ class PickTimersController extends BaseController
     if @$scope.numberOfManagers == 0
       @$scope.totalDraftingTime = 0
     else
-      @$scope.totalDraftingTime = totalSeconds * @$scope.numberOfManagers
+      @$scope.totalDraftingTime = secondsPerManager * @$scope.numberOfManagers
 
