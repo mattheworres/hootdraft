@@ -111,14 +111,16 @@ class DraftController
 
   public function GetTimers(Application $app, Request $request) {
     $draft_id = (int)$request->get('draft_id');
+    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
 
-    $timers = $app['phpdraft.RoundTimeRepository']->GetDraftTimers($draft_id);
+    $timers = $app['phpdraft.RoundTimeRepository']->GetDraftTimers($draft);
 
     return $app->json($timers, Response::HTTP_OK);
   }
 
   public function SetTimers(Application $app, Request $request) {
     $draft_id = (int)$request->get('draft_id');
+    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
 
     $createModel = new \PhpDraft\Domain\Models\RoundTimeCreateModel();
     $createModel->isRoundTimesEnabled = (bool)$request->get('isRoundTimesEnabled');

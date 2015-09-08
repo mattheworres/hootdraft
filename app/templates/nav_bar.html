@@ -153,13 +153,13 @@
                 </a>
               </li>
               <li ng-show="!draft.complete">
-                <a href="#">
+                <a href="commish/draft/{{draft.draft_id}}/timers">
                   <i class="fa fa-clock-o"></i>
                   &nbsp;Setup Timers
                 </a>
               </li>
               <li ng-show="!draft.complete">
-                <a href="commish/draft/:draft_id/edit">
+                <a href="commish/draft/{{draft.draft_id}}/edit">
                   <i class="fa fa-pencil-square-o"></i>
                   &nbsp;Edit Draft
                 </a>

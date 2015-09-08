@@ -18,11 +18,11 @@ class RoundTimeRepository {
     //TODO: Implement
   }
 
-  public function GetDraftTimers($draft_id) {
-    $draft_id = (int)$draft_id;
+  public function GetDraftTimers(Draft $draft) {
+    $draft_id = (int)$draft->draft_id;
 
     $timer_stmt = $this->app['db']->prepare("SELECT * FROM round_times
-    WHERE draft_id = ?");
+    WHERE draft_id = ? ORDER BY draft_round ASC");
 
     $timer_stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\RoundTime');
     $timer_stmt->bindParam(1, $draft_id);
@@ -37,7 +37,43 @@ class RoundTimeRepository {
       $timers[] = $timer;
     }
 
+    $is_static_time = false;
+
+    if(count($timers) == 1 && $timers[0]->is_static_time) {
+      $is_static_time = true;
+    }
+
+    if(empty($timers) || count($timers) != $draft->draft_rounds) {
+      $timers = $this->_CoalesceDraftTimers($draft, $timers, $is_static_time);
+    }
+
     return $timers;
+  }
+
+  private function _CoalesceDraftTimers(Draft $draft, $existing_timers, $is_static_time) {
+    $coalescedTimers = array();
+
+    for($i = 0; $i <= $draft->draft_rounds; $i++) {
+      if($is_static_time && $i == 0) {
+        $timer = $existing_timers[$i];
+        $timer->draft_round = $i + 1;
+        $coalescedTimers[] = $timer;
+        continue;
+      }
+
+      if(array_key_exists($i, $existing_timers)) {
+        $coalescedTimers[] = $existing_timers[$i];
+      } else {
+        $new_timer = new RoundTime();
+        $new_timer->draft_id = $draft->draft_id;
+        $new_timer->is_static_time = false;
+        $new_timer->draft_round = $i + 1;
+        $new_timer->round_time_seconds = 0;
+        $coalescedTimers[] = $new_timer;
+      }
+    }
+
+    return $coalescedTimers;
   }
 
   public function Save(RoundTimeCreateModel $roundTimeCreateModel) {
