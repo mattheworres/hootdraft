@@ -25,22 +25,16 @@ class VerificationController extends BaseController
 
     @workingModalService.openModal()
 
-    verificationModel = 
-      _email: email
-      _verificationToken: token
-
-    verificationResult = @authenticationService.verify(verificationModel)
-
-    @messageService.closeToasts()
-
     successHandler = (response) =>
-      @workingModalService.closeModal()
+      setTimeout =>
+        @workingModalService.closeModal()
 
-      @$scope.showErrorInformation = false
+        @$scope.showErrorInformation = false
 
-      @$location.path '/login'
+        @$location.path '/login'
 
-      @messageService.showInfo "Your account has been enabled - you may log in now"
+        @messageService.showInfo "Your account has been enabled - you may log in now"
+      , 3500
 
     failureHandler = (response) =>
       @workingModalService.closeModal()
@@ -53,5 +47,13 @@ class VerificationController extends BaseController
         verifyError = "Whoops! We hit a snag - looks like it's on our end (#{response.data.status})"
 
       @messageService.showError "#{verifyError}", 'Unable to verify'
+
+    verificationModel = 
+      _email: email
+      _verificationToken: token
+
+    verificationResult = @authenticationService.verify(verificationModel)
+
+    @messageService.closeToasts()
 
     verificationResult.promise.then successHandler, failureHandler
