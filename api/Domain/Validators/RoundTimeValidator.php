@@ -19,11 +19,6 @@ class RoundTimeValidator {
     $valid = true;
     $errors = array();
 
-    if(empty($model->isRoundTimesEnabled)) {
-      $errors[] = "One or more missing fields.";
-      $valid = false;
-    }
-
     if($model->isRoundTimesEnabled) {
       $roundTimeNumber = 0;
       foreach($model->roundTimes as $roundTime) {
