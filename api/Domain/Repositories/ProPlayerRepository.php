@@ -22,7 +22,7 @@ class ProPlayerRepository {
    * @param type $position Player position (abbreviation)
    * @return array
    */
-  public function SearchPlayers($league, $first = "NA", $last = "NA", $team = "NA", $position = "NA") {
+  public function SearchPlayersManual($league, $first = "NA", $last = "NA", $team = "NA", $position = "NA") {
     //Approach taken from: http://stackoverflow.com/a/4540085/324527
 
     $search_sql = "SELECT * FROM pro_players WHERE league = :league";
@@ -67,6 +67,23 @@ class ProPlayerRepository {
     foreach ($regular_params as $key => $value) {
       $stmt->bindValue(':' . $key, $value);
     }
+
+    $stmt->execute();
+
+    $found_players = array();
+
+    while ($newPlayer = $stmt->fetch()) {
+      $found_players[] = $newPlayer;
+    }
+
+    return $found_players;
+  }
+
+  public function SearchPlayers($league, $searchTerm) {
+    $stmt = $this->app['db']->prepare("SELECT * FROM pro_players WHERE league = :league AND (first_name LIKE :search_term OR last_name LIKE :search_term)");
+    $stmt->setFetchMode(\PDO::FETCH_CLASS, 'PhpDraft\Domain\Entities\ProPlayer');
+    $stmt->bindValue(':league', $league);
+    $stmt->bindValue(':search_term', "%" . $searchTerm . "%");
 
     $stmt->execute();
 

@@ -14,11 +14,27 @@ class ProPlayerService {
     $this->app = $app;
   }
   
-  public function SearchPlayers($league, $first, $last, $team, $position) {
+  public function SearchPlayersManual($league, $first, $last, $team, $position) {
     $response = new PhpDraftResponse();
 
     try {
-      $players = $this->app['phpdraft.ProPlayerRepository']->SearchPlayers($league, $first, $last, $team, $position);
+      $players = $this->app['phpdraft.ProPlayerRepository']->SearchPlayersManual($league, $first, $last, $team, $position);
+
+      $response->success = true;
+      $response->players = $players;
+    } catch (\Exception $e) {
+      $response->success = false;
+      $response->errors = array($e->getMessage());
+    }
+
+    return $response;
+  }
+
+  public function SearchPlayers($league, $searchTerm) {
+    $response = new PhpDraftResponse();
+
+    try {
+      $players = $this->app['phpdraft.ProPlayerRepository']->SearchPlayers($league, $searchTerm);
 
       $response->success = true;
       $response->players = $players;

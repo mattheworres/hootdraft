@@ -93,3 +93,8 @@ angular.module('app').config ($routeProvider, $locationProvider) ->
     controller: 'PickTimersController'
     controllerAs: 'pickTimerCtrl'
     templateUrl: 'app/templates/commish/pick_timers.html'
+
+  $routeProvider.when '/commish/draft/:draft_id/picks/add',
+    controller: 'AddPickController'
+    controllerAs: 'addPickCtrl'
+    templateUrl: 'app/templates/commish/add_pick.html'

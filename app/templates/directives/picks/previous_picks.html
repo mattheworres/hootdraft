@@ -1,0 +1,20 @@
+<div class="panel panel-primary panel-no-border">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      <i class="fa fa-backward"></i>&nbsp;&nbsp;
+      Previous Picks
+    </h3>
+  </div>
+  <div class="panel-body pick-list-display previous-picks">
+    <section-loading show-loading=previousLoading></section-loading>
+    <section-error show-error=previousError section-name="previous picks"></section-error>
+    <div class="row" ng-repeat="pick in previousPicks" ng-hide="nextError">
+      <pick-display draft=draft pick=pick first=$first></pick-display>
+    </div>
+    <div class="row text-center" ng-show="previousPicks.length == 0">
+      <div class="col-xs-12">
+        <h3>No picks have been made yet.</h3>
+      </div>
+    </div>
+  </div>
+</div>

@@ -91,5 +91,14 @@ angular.module('app').factory 'api', ($resource, ENV) ->
     'search': 
       { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/picks/search" }
 
+    'getCurrent':
+      { method: 'GET', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/pick/current"}
+    'searchProPlayers':
+      { method: 'GET', url: "#{ENV.apiEndpoint}commish/proplayers/search" }
+    'alreadyDrafted':
+      { method: 'GET', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/picks/alreadyDrafted" }
+    'add':
+      { method: 'POST', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/pick/:pick_id" }
+
   Trade: $resource "#{ENV.apiEndpoint}draft/:draft_id/trades", { draft_id: '@draft_id' },
     

@@ -47,6 +47,7 @@ module.exports =
                 'bower_components/angular-datatables/dist/angular-datatables.min.js'
                 'bower_components/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.min.js'
                 'bower_components/angular-route/angular-route.min.js'
+                'bower_components/angular-sanitize/angular-sanitize.min.js'
                 'bower_components/ngstorage/ngStorage.min.js'
                 'bower_components/angular-animate/angular-animate.min.js'
                 'bower_components/angular-ui-bootstrap-bower/ui-bootstrap-tpls.min.js'

@@ -3,6 +3,7 @@ angular.module("app", [
   "ngRoute"
   "datatables"
   "ngLodash"
+  "ngSanitize"
   "ui.bootstrap"
   "ngResource"
   "ngStorage"

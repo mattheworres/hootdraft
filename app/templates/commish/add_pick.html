@@ -1,0 +1,128 @@
+<div data-ng-cloak>
+  <div class="container-fluid v-offset-3">
+    <draft-state controller=addPickCtrl
+      commish-name=draft.commish_name
+      draft-error=draftError
+      draft-loading=draftLoading
+      draft-locked=draftLocked>
+    </draft-state>
+
+    <div class="row" ng-show="draftValid && draft.in_progress">
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+      <div class="col-xs-12 col-sm-9 col-sm-offset-2 col-md-7 col-md-offset-2">
+        <div class="panel panel-primary panel-no-border">
+          <div class="panel-heading">
+            <h3 class="panel-title">
+              <i class="fa fa-plus"></i>&nbsp;&nbsp;
+              Enter Pick
+            </h3>
+          </div>
+          <div class="panel-body" ng-hide="stats_generated">
+            <form name="addPickCtrl.form" novalidate>
+              <div class="form-horizontal display-only-form">
+                <div class="form-group">
+                  <label class="col-xs-12 col-sm-3 control-label" for="playerSearch">
+                    Search Players
+                  </label>
+                  <div class="col-xs-12 col-sm-8">
+                    <input name="playerSearch" ng-model="playerSearch" id="playerSearch" class="form-control" maxlength="255" placeholder="Search for players, first or last name" autofocus
+                      typeahead="player as addPickCtrl.proPlayerLabel(player) for player in addPickCtrl.proPlayerSearch($viewValue)"
+                      typeahead-loading="searchLoading"
+                      typeahead-on-select="addPickCtrl.selectPlayer($item, $model, $label)"
+                      typeahead-editable="false"
+                      typeahead-wait-ms="250"
+                      typeahead-focus-on-select="false"
+                      typeahead-template-url="autocompletePickTemplate.html" />
+                  </div>
+                  <label class="col-xs-12 col-sm-3 control-label" for="manualEntry">
+                    Manual Entry
+                  </label>
+                  <div class="col-xs-12 col-sm-4">
+                    <toggle-switch name="manualEntry" id="manualEntry" ng-model="manualEntry"></toggle-switch>
+                  </div>
+                </div>
+                <div class="form-group" ng-show="manualEntry">
+                  <label class="col-xs-12 col-sm-3 control-label" for="first_name">
+                    First Name
+                  </label>
+                  <div class="col-xs-12 col-sm-8">
+                    <input name="first_name" ng-model="first_name" id="first_name" class="form-control" ng-required="true" maxlength="255" placeholder="First name" />
+                  </div>
+                  <label class="col-xs-12 col-sm-3 control-label" for="last_name">
+                    Last Name
+                  </label>
+                  <div class="col-xs-12 col-sm-8">
+                    <input name="last_name" ng-model="currentPick.last_name" id="last_name" class="form-control" maxlength="255" ng-required="true" placeholder="Last name" />
+                  </div>
+                  <label class="col-xs-12 col-sm-3 control-label" for="team">
+                    Team
+                  </label>
+                  <div class="col-xs-12 col-sm-8">
+                    <select class="form-control"
+                      ng-options="key as value for (key, value) in teams"
+                      ng-model="currentPick.team"
+                      id="team"
+                      ng-required="true">
+                    </select>
+                  </div>
+                  <label class="col-xs-12 col-sm-3 control-label" for="position">
+                    Position
+                  </label>
+                  <div class="col-xs-12 col-sm-8">
+                    <select class="form-control"
+                      ng-options="key as value for (key, value) in positions"
+                      ng-model="currentPick.position"
+                      id="position"
+                      ng-required="true">
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group pick-list-display">
+                  <pick-display draft=draft pick=currentPick></pick-display>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+    </div>
+
+    <div class="row" ng-show="draftValid && draft.in_progress">
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+      <div class="col-xs-12 col-sm-6 col-md-5">
+        <div class="panel panel-primary panel-no-border">
+          <previous-picks
+            draft=draft
+            next-picks=previous_5_picks
+            next-loading=currentLoading
+            next-error=currentError>
+          </previous-picks>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-5">
+        <div class="panel panel-primary panel-no-border">
+          <upcoming-picks
+            draft=draft
+            next-picks=next_5_picks
+            next-loading=currentLoading
+            next-error=currentError>
+          </upcoming-picks>
+        </div>
+      </div>
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+    </div>
+  </div>
+</div>
+
+<script type="text/ng-template" id="autocompletePickTemplate.html">
+  <a tabindex="-1" class="pick-list-display">
+    <div class="pick pick{{match.model.position}} col-xs-12">
+      <div class="player-data col-xs-12">
+        <div class="player-name-sm" ng-bind-html="match .model.first_name + ' ' + match.model.last_name | typeaheadHighlight:query"></div>
+        <div class="sports-data">{{$parent.$parent.$parent.draft.positions[match.model.position]}}, {{$parent.$parent.$parent.draft.teams[match.model.team]}}</div>
+      </div>
+    </div>
+  </a>
+</script>
