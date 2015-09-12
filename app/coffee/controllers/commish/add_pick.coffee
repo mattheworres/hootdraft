@@ -4,10 +4,13 @@ class AddPickController extends BaseController
   '$rootScope',
   '$routeParams',
   '$q',
+  '$location',
   'subscriptionKeys',
   'workingModalService',
   'api',
   'messageService',
+  'authenticationService',
+  'pickService',
   'limitToFilter'
 
   initialize: ->
@@ -29,6 +32,20 @@ class AddPickController extends BaseController
     @$scope.$on @subscriptionKeys.scopeDestroy, (event, args) =>
       @deregister()
 
+    #If manual entry, we need to make sure to properly update "selected" on the current pick so the display acts accordingly
+    @$scope.$watch ( =>
+      @$scope.currentPick
+    ), =>
+      if @$scope.manualEntry
+        #If we have a first AND last name, go ahead and show this as a pick. May not have position coloring, but thats OK.
+        hasFirst = @$scope.currentPick.first_name? and @$scope.currentPick.first_name.length > 0
+        hasLast = @$scope.currentPick.last_name? and @$scope.currentPick.last_name.length > 0
+        hasTeam = @$scope.currentPick.team? and @$scope.currentPick.team.length > 0
+        hasPosition = @$scope.currentPick.position? and @$scope.currentPick.position.length > 0
+
+        @$scope.currentPick.selected = hasFirst or hasLast or hasTeam or hasPosition
+    , true
+
   _loadCurrentPick: ->
     @$scope.currentLoading = true
 
@@ -40,6 +57,7 @@ class AddPickController extends BaseController
       @$scope.positions = data.positions
       @$scope.next_5_picks = data.next_5_picks
       @$scope.last_5_picks = data.last_5_picks
+      @$scope.is_last_pick = data.next_5_picks.length == 0
 
     errorHandler = (response) =>
       @$scope.currentLoading = false
@@ -62,19 +80,18 @@ class AddPickController extends BaseController
     #If the user has chosen to perform manual entry, we just automatically run the check again.
     if @$scope.manualEntry
       duplicateCheckSuccess = (response) =>
-        #If there were no matches (99% of the time) or the user confirmed they were OK with it
-        if response.matchExists? == false or response.pickIsNotDuplicate? == true
-          @_savePick()
-        else
-          @_wipeOutPick()
+        if response.pickIsNotDuplicate == false
+          @wipePick()
           @addInProgress = false
           @messageService.showInfo "Pick was reset - go ahead and enter another player."
+        else
+          @_savePick()
 
       duplicateCheckFailure = (response) =>
         @addInProgress = false
         @messageService.showError "Unable to enter pick - error while checking for duplicates."
 
-      duplicateResult = @_checkForExistingPicks()
+      duplicateResult = @pickService.checkForExistingPicks(@$routeParams.draft_id, @$scope.currentPick)
 
       duplicateResult.promise.then duplicateCheckSuccess, duplicateCheckFailure
     else
@@ -90,87 +107,35 @@ class AddPickController extends BaseController
 
       @messageService.showSuccess "#{@$scope.currentPick.first_name} #{@$scope.currentPick.last_name} drafted"
       @$scope.manualEntry = false
-      @_loadCurrentPick();
+      
+      if not @$scope.is_last_pick
+        @_loadCurrentPick()
+      else
+        #Draft has been completed - ensure commish user *thinks* something big happened, even though this is all instant
+        setTimeout =>
+          @$location.path "/draft/#{@$routeParams.draft_id}"
+
+          @messageService.showSuccess "Congrats! Your draft has been completed.", "That's a Wrap!"
+        , 1500
 
     addFailureHandler = (response) =>
       @addInProgress = false
 
       if response?.status is 400
         addError = response.data?.errors?.join('\n')
+      else if response?.status is 401
+        @messageService.showError "Unauthorized: please log in."
+        @authenticationService.uncacheSession()
+        @$location.path '/login'
       else
         addError = "Whoops! We hit a snag - looks like it's on our end (#{response.data.status})"
 
-      @messageService.showError "#{registerError}", 'Unable to enter pick'
+      @messageService.showError "#{addError}", 'Unable to enter pick'
 
     @api.Pick.add(@$scope.currentPick, addSuccessHandler, addFailureHandler)
 
-  #TODO: Great candidate for draft service, or maybe new Pick service
-  _checkForExistingPicks: ->
-    deferral = @$q.defer()
-
-    alreadyDraftedSuccess = (data) =>
-      if data.possibleMatchExists == false
-        deferral.resolve(
-          matchExists: data.possibleMatchExists
-        )
-      else
-        duplicatePickModalResult = @_showDuplicatePickModal(@$scope.currentPick, data.matches)
-
-        duplicatePickSuccess = (response) =>
-          deferral.resolve(
-            matchExists: true,
-            pickIsNotDuplicate: response.pickIsNotDuplicate
-          )
-        duplicatePickError = =>
-          deferral.reject(
-            error: "Unable to confirm if duplicate player is intended"
-          )
-
-        duplicatePickModalResult.promise.then duplicatePickSuccess, duplicatePickError
-
-      deferral.resolve(
-        matchExists: data.possibleMatchExists
-        matches: data.matches
-      )
-
-    errorHandler = (response) =>
-      @messageService.showError "Unable to search for player already drafted"
-      deferral.reject(
-        data: response
-        status: response.status
-      )
-
-    @api.Pick.alreadyDrafted({draft_id: @$routeParams.draft_id, first_name: @$scope.currentPick.first_name, last_name: @$scope.currentPick.last_name}, alreadyDraftedSuccess, errorHandler)
-
-    return deferral
-    #write logic to check for existing when submit - "Yes I am sure" resolves promise to true, cancel wipes pick
-
-  _showDuplicatePickModal: (currentPick, matches) ->
-    deferral = @$q.defer()
-    #Write something that also uses a promise to show all listed duplicate picks
-    @modalInstance = @$modal.open
-      templateUrl: 'app/templates/modals/duplicate_pick.html',
-      controller: 'DuplicatePickModalController',
-      controllerAs: 'modalCtrl',
-      resolve:
-        duplicateMatches: =>
-          matches
-        currentPick: =>
-          currentPick
-
-    @modalInstance.result.then (clickedYes) =>
-      @modalInstance.dismiss('cancel')
-
-      deferral.resolve(
-        pickIsNotDuplicate: clickedYes
-      )
-
-    return deferral
-
-  closeModal: ->
-    @modalInstance?.close?()
-
-  _wipeOutPick: ->
+  wipePick: ->
+    @$scope.manualEntry = false
     @$scope.currentPick = @$scope.pristineCurrentPick
 
   proPlayerSearch: (searchTerm) ->
@@ -181,30 +146,28 @@ class AddPickController extends BaseController
       @messageService.closeToasts()
       @messageService.showError "Unable to search pro players"
 
-  proPlayerLabel: (player) ->
-    if player == undefined
-      return
-
-    "#{player.first_name} #{player.last_name} (#{player.position} - #{player.team})"
-
   selectPlayer: (item, model, label) ->
-    @$scope.currentPick = item
+    item.selected = true
+    #Want to keep data about pick (round, pick #) as well as add player name, position, team, so merge not assignment:
+    @$scope.currentPick = angular.merge({}, @$scope.currentPick, item)
+    delete @$scope.playerSearch
+    @$scope.playerSearch = ''
 
     #Perform an eager API call to ensure autocomplete player is not a duplicate
     duplicateCheckSuccess = (response) =>
       #If there were matches and the user wanted to wipe the pick, then do that. Otherwise, do nothing
-      if response.matchExists? == true and response.pickIsNotDuplicate? == false
-        @_wipeOutPick()
+      if response.pickIsNotDuplicate == false
+        @wipePick()
         @messageService.showInfo "Pick was reset - go ahead and enter another player."
       else
-        @$scope.playerSearch = ''
+        #@$scope.playerSearch = ''
 
     duplicateCheckFailure = (response) =>
       @addInProgress = false
       @messageService.showError "Unable to select pick - error while checking for duplicates."
-      @_wipeOutPick()
+      @wipePick()
 
-    duplicateResult = @_checkForExistingPicks()
+    duplicateResult = @pickService.checkForExistingPicks(@$routeParams.draft_id, @$scope.currentPick)
 
     duplicateResult.promise.then duplicateCheckSuccess, duplicateCheckFailure
 

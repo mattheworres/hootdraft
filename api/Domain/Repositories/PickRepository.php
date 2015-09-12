@@ -146,6 +146,9 @@ class PickRepository {
 
     $stmt->fetch();
 
+    $current_pick->selected = strlen($current_pick->pick_time) > 0 && $current_pick->pick_duration > 0;
+    $current_pick->on_the_clock = true;
+
     return $current_pick;
   }
 

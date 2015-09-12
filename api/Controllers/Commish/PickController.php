@@ -21,7 +21,7 @@ class PickController {
   public function Add(Application $app, Request $request) {
     $draft_id = $request->get('draft_id');
     $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
-    $pick_id = $request->get('pick_id');
+    $pick_id = $request->get('player_id');
 
     try {
       $pick = $app['phpdraft.PickRepository']->Load($pick_id);
@@ -45,13 +45,13 @@ class PickController {
 
     $response = $app['phpdraft.PickService']->AddPick($draft, $pick);
 
-    return $app->json($response, $response->responseType());
+    return $app->json($response, $response->responseType(Response::HTTP_CREATED));
   }
 
   public function Update(Application $app, Request $request) {
     $draft_id = $request->get('draft_id');
     $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
-    $pick_id = $request->get('pick_id');
+    $pick_id = $request->get('player_id');
 
     try {
       $pick = $app['phpdraft.PickRepository']->Load($pick_id);

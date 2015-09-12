@@ -77,7 +77,7 @@ angular.module('app').factory 'api', ($resource, ENV) ->
     'update':
       { method: 'PUT', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/manager/:manager_id" }
 
-  Pick: $resource "#{ENV.apiEndpoint}draft/:draft_id/pick/:pick_id", { draft_id: '@draft_id', pick_id: '@pick_id' },
+  Pick: $resource "#{ENV.apiEndpoint}draft/:draft_id/pick/:pick_id", { draft_id: '@draft_id', player_id: '@player_id' },
     'getLast':
       { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/picks/last", isArray: true }
     'getNext':
@@ -97,8 +97,10 @@ angular.module('app').factory 'api', ($resource, ENV) ->
       { method: 'GET', url: "#{ENV.apiEndpoint}commish/proplayers/search" }
     'alreadyDrafted':
       { method: 'GET', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/picks/alreadyDrafted" }
-    'add':
-      { method: 'POST', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/pick/:pick_id" }
+    'add':#Fun gotcha: table still references "player_id", so we must use that both here and on API side :)
+      { method: 'POST', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/pick/:player_id" }
+    'update':
+      { method: 'PUT', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/pick/:player_id" }
 
   Trade: $resource "#{ENV.apiEndpoint}draft/:draft_id/trades", { draft_id: '@draft_id' },
     
