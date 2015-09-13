@@ -21,101 +21,18 @@
             <h4 ng-show="isFirstPick">As managers make selections, enter them here using the handy search box below. Start typing their first or last name and we'll suggest
             a few players to make it easy. Hit enter to select a suggestion, then hit enter again to make the pick. Simple!</h4>
             
-            <form name="addPickCtrl.form" novalidate>
-              <div class="form-horizontal display-only-form">
-                <div class="form-group" ng-hide="manualEntry">
-                  <label class="col-xs-12 col-sm-3 control-label" for="playerSearch">
-                    Search Players
-                  </label>
-                  <div class="col-xs-12 col-sm-8">
-                    <input name="playerSearch" ng-model="playerSearch" id="playerSearch" class="form-control" maxlength="255" placeholder="Search for players, first or last name" autofocus
-                      typeahead="player as player for player in addPickCtrl.proPlayerSearch($viewValue)"
-                      typeahead-loading="playerSearchLoading"
-                      typeahead-on-select="addPickCtrl.selectPlayer($item, $model, $label)"
-                      typeahead-editable="false"
-                      typeahead-wait-ms="250"
-                      typeahead-focus-on-select="false"
-                      typeahead-template-url="autocompletePickTemplate.html" />
-                  </div>
-                  <div class="hidden-xs col-sm-1 text-center text-info">
-                    <i class="fa fa-info-circle" tooltip="Search for players by first or last name - we can suggest a few based on a couple letters!" tooltip-trigger="mouseenter"  tooltip-append-to-body="true"></i>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-xs-12 col-sm-3 control-label" for="manualEntry">
-                    Manual Entry
-                  </label>
-                  <div class="col-xs-12 col-sm-4">
-                    <toggle-switch name="manualEntry" id="manualEntry" ng-model="manualEntry"></toggle-switch>
-                  </div>
-                  <div class="hidden-xs col-sm-1 col-sm-offset-4 text-center text-info">
-                    <i class="fa fa-info-circle" tooltip="Flip into manual mode if you need to make a quick edit, or enter a player that isnt found in the search." tooltip-trigger="mouseenter"  tooltip-append-to-body="true"></i>
-                  </div>
-                </div>
-                <div class="form-group" ng-show="manualEntry">
-                  <label class="col-xs-12 col-sm-3 control-label" for="first_name">
-                    First Name
-                  </label>
-                  <div class="col-xs-12 col-sm-8">
-                    <input name="first_name" ng-model="currentPick.first_name" id="first_name" class="form-control" ng-required="true" maxlength="255" placeholder="First name" />
-                  </div>
-                </div>
-                <div class="form-group" ng-show="manualEntry">
-                  <label class="col-xs-12 col-sm-3 control-label" for="last_name">
-                    Last Name
-                  </label>
-                  <div class="col-xs-12 col-sm-8">
-                    <input name="last_name" ng-model="currentPick.last_name" id="last_name" class="form-control" maxlength="255" ng-required="true" placeholder="Last name" />
-                  </div>
-                </div>
-                <div class="form-group" ng-show="manualEntry">
-                  <label class="col-xs-12 col-sm-3 control-label" for="team">
-                    Team
-                  </label>
-                  <div class="col-xs-12 col-sm-8">
-                    <select class="form-control"
-                      ng-options="key as value for (key, value) in teams"
-                      ng-model="currentPick.team"
-                      id="team"
-                      ng-required="true">
-                    </select>
-                  </div>
-                </div>
-                <div class="form-group" ng-show="manualEntry">
-                  <label class="col-xs-12 col-sm-3 control-label" for="position">
-                    Position
-                  </label>
-                  <div class="col-xs-12 col-sm-8">
-                    <select class="form-control"
-                      ng-options="key as value for (key, value) in positions"
-                      ng-model="currentPick.position"
-                      id="position"
-                      ng-required="true">
-                    </select>
-                  </div>
-                </div>
-                <div class="form-group pick-list-display">
-                  <pick-display draft=draft pick=currentPick></pick-display>
-                </div>
-                <div class="row">
-                  <div class="col-xs-12 col-sm-12 text-center v-offset-2">
-                    <button type="submit" class="btn btn-success btn-lg btn-block" ng-click="addPickCtrl.addClicked()" ng-submit="addPickCtrl.addClicked()" ng-disabled="addPickCtrl.addFormIsInvalid()">
-                      <i class="fa fa-check-square-o"></i>&nbsp;&nbsp;
-                      Enter {{currentPick.manager_name}}'s Pick
-                    </button>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-xs-12 col-sm-10 col-sm-offset-1 text-center v-offset-2">
-                    <button type="submit" class="btn btn-default btn-block" ng-click="addPickCtrl.wipePick()">
-                      <i class="fa fa-undo"></i>&nbsp;&nbsp;
-                      Undo
-                    </button>
-                  </div>
-                </div>
-              </div>
-              
-            </form>
+            <commish-pick-edit
+              draft=draft
+              current-pick=currentPick
+              pristine-pick=pristineCurrentPick
+              positions=positions
+              teams=teams
+              manual-entry=manualEntry
+              edit-in-progress=addPickCtrl.addInProgress
+              pick-action="addPickCtrl._savePick()"
+              pick-action-text="Enter pick"
+              pick-icon="fa-check-square-o">
+            </commish-pick-edit>
           </div>
         </div>
       </div>
@@ -149,14 +66,3 @@
     </div>
   </div>
 </div>
-
-<script type="text/ng-template" id="autocompletePickTemplate.html">
-  <a tabindex="-1" class="pick-list-display">
-    <div class="pick pick{{match.model.position}} col-xs-12">
-      <div class="player-data col-xs-12">
-        <div class="player-name-sm" ng-bind-html="match .model.first_name + ' ' + match.model.last_name | typeaheadHighlight:query"></div>
-        <div class="sports-data">{{$parent.$parent.$parent.draft.positions[match.model.position]}}, {{$parent.$parent.$parent.draft.teams[match.model.team]}}</div>
-      </div>
-    </div>
-  </a>
-</script>
