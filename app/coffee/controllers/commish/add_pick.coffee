@@ -16,6 +16,7 @@ class AddPickController extends BaseController
   initialize: ->
     @_loadCurrentPick()
     @$scope.manualEntry = false
+    @$scope.playerSearchLoading = false
     @addInProgress = false
 
     @deregister = @$scope.$on @subscriptionKeys.loadDraftDependentData, (event, args) =>
@@ -36,6 +37,8 @@ class AddPickController extends BaseController
     @$scope.$watch ( =>
       @$scope.currentPick
     ), =>
+      @$scope.isFirstPick = @$scope.currentPick?.player_pick == '1'
+
       if @$scope.manualEntry
         #If we have a first AND last name, go ahead and show this as a pick. May not have position coloring, but thats OK.
         hasFirst = @$scope.currentPick.first_name? and @$scope.currentPick.first_name.length > 0
@@ -57,7 +60,7 @@ class AddPickController extends BaseController
       @$scope.positions = data.positions
       @$scope.next_5_picks = data.next_5_picks
       @$scope.last_5_picks = data.last_5_picks
-      @$scope.is_last_pick = data.next_5_picks.length == 0
+      @$scope.is_last_pick = data.next_5_picks.length == 1
 
     errorHandler = (response) =>
       @$scope.currentLoading = false
@@ -111,9 +114,13 @@ class AddPickController extends BaseController
       if not @$scope.is_last_pick
         @_loadCurrentPick()
       else
+        @deregister()
+        @workingModalService.openModal()
         #Draft has been completed - ensure commish user *thinks* something big happened, even though this is all instant
         setTimeout =>
           @$location.path "/draft/#{@$routeParams.draft_id}"
+
+          @workingModalService.closeModal()
 
           @messageService.showSuccess "Congrats! Your draft has been completed.", "That's a Wrap!"
         , 1500

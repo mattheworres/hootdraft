@@ -67,7 +67,9 @@ class PickService {
 
       $response->draft_is_complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);
 
-      if($response->draft_is_complete) {
+      $this->app['monolog']->addDebug("So, do we know if draft is complete? " . $response->draft_is_complete);
+      if($response->draft_is_complete == 1) {
+        $this->app['monolog']->addDebug("Gneratin stats");
         $response->draft_statistics = $this->app['phpdraft.DraftStatsRepository']->CalculateDraftStatistics($draft);
       }
 

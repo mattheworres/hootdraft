@@ -8,13 +8,14 @@ class DraftIndexController extends BaseController
   'messageService'
 
   initialize: ->
+    @$scope.selectedDraftRound = 1
+
     @deregister = @$scope.$on @subscriptionKeys.loadDraftDependentData, (event, args) =>
       if args.draft? and args.draft.setting_up == true
         @_loadSettingUpData(args.draft.draft_id, args)
       else if args.draft? and args.draft.in_progress == true
         @_loadInProgressData(args.draft.draft_id, args)
       else if args.draft? and args.draft.complete == true
-        @$scope.selectedDraftRound = 1
         @$scope.pagerItemTally = @$rootScope.draft.draft_rounds * 10
         @_loadCompletedData(args.draft.draft_id, args)
 

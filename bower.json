@@ -21,5 +21,8 @@
     "ng-caps-lock": "~1.0.2",
     "ng-lodash": "~0.2.3",
     "ngstorage": "~0.3.7"
+  },
+  "resolutions": {
+    "angular": "1.4.3"
   }
 }

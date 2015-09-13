@@ -55,6 +55,9 @@ class ProPlayerRepository {
       $search_sql .= sprintf(' AND %s = :%s', $key, $key);
     }
 
+    //Limit the amount of searches to just 15 to cut down on unnecessary network traffic
+    $search_sql .= ' LIMIT 15';
+
     $stmt = $this->app['db']->prepare($search_sql);
     $stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\ProPlayer');
     $stmt->bindValue(':league', $league);
@@ -76,11 +79,12 @@ class ProPlayerRepository {
       $found_players[] = $newPlayer;
     }
 
-    return $found_players;
+    return array_slice($found_players, 0, 15);
   }
 
   public function SearchPlayers($league, $searchTerm) {
-    $stmt = $this->app['db']->prepare("SELECT * FROM pro_players WHERE league = :league AND (first_name LIKE :search_term OR last_name LIKE :search_term)");
+    //Limit the amount of searches to just 15 to cut down on unnecessary network traffic
+    $stmt = $this->app['db']->prepare("SELECT * FROM pro_players WHERE league = :league AND (first_name LIKE :search_term OR last_name LIKE :search_term) LIMIT 15");
     $stmt->setFetchMode(\PDO::FETCH_CLASS, 'PhpDraft\Domain\Entities\ProPlayer');
     $stmt->bindValue(':league', $league);
     $stmt->bindValue(':search_term', "%" . $searchTerm . "%");

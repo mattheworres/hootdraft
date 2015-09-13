@@ -61,7 +61,7 @@ class DraftStatsRepository {
     $this->_LoadSlowestPick($draft->draft_id, $draft_stats);
     $this->_LoadFastestPick($draft->draft_id, $draft_stats);
     $this->_LoadAveragePickTime($draft->draft_id, $draft_stats);
-    $this->_LoadRoundTimes($draft->draft_id, $draft_stats);
+    $this->_LoadRoundTimes($draft, $draft_stats);
     $this->_LoadTeamSuperlatives($draft->draft_id, $draft_stats, $teams);
     $this->_LoadPositionSuperlatives($draft->draft_id, $draft_stats, $positions);
 

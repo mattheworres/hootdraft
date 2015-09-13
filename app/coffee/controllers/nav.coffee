@@ -1,6 +1,6 @@
 class NavController extends BaseController
   @register 'NavController'
-  @inject '$scope', '$routeParams', 'messageService', 'confirmActionService', 'api'
+  @inject '$rootScope', '$scope', '$routeParams', '$location', 'messageService', 'subscriptionKeys', 'confirmActionService', 'api'
 
   initialize: ->
     @draftNavHidden = true
@@ -33,6 +33,7 @@ class NavController extends BaseController
     startDraft = =>
       startSuccess = =>
         @messageService.showSuccess "Draft started"
+        @$rootScope.$broadcast @subscriptionKeys.loadDraftDependentData, { draft: @$rootScope.draft, onPageLoad: true }
 
       startError = =>
         @messageService.showError "Unable to start draft"
@@ -49,6 +50,8 @@ class NavController extends BaseController
     resetDraft = =>
       resetSuccess = =>
         @messageService.showSuccess "Draft reset"
+        @$rootScope.$broadcast @subscriptionKeys.loadDraftDependentData, { draft: @$rootScope.draft, onPageLoad: true }
+        @$location.path "/draft/#{@$routeParams.draft_id}"
 
       resetError = =>
         @messageService.showError "Unable to reset draft"

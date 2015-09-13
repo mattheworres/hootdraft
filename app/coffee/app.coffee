@@ -4,6 +4,7 @@ angular.module("app", [
   "datatables"
   "ngLodash"
   "ngSanitize"
+  "ngAnimate"
   "ui.bootstrap"
   "ngResource"
   "ngStorage"
