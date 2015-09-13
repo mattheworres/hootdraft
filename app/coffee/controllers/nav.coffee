@@ -1,6 +1,6 @@
 class NavController extends BaseController
   @register 'NavController'
-  @inject '$rootScope', '$scope', '$routeParams', '$location', 'messageService', 'subscriptionKeys', 'confirmActionService', 'api'
+  @inject '$rootScope', '$scope', '$routeParams', '$location', 'messageService', 'subscriptionKeys', 'confirmActionService', 'api', 'errorService'
 
   initialize: ->
     @draftNavHidden = true
@@ -33,10 +33,16 @@ class NavController extends BaseController
     startDraft = =>
       startSuccess = =>
         @messageService.showSuccess "Draft started"
+        @$rootScope.draft.setting_up = false
+        @$rootScope.draft.in_progress = true
         @$rootScope.$broadcast @subscriptionKeys.loadDraftDependentData, { draft: @$rootScope.draft, onPageLoad: true }
 
-      startError = =>
-        @messageService.showError "Unable to start draft"
+      startError = (response) =>
+        startErrors = ''
+        if response.data?.errors?
+          startErrors = @errorService.joinErrorsForToastDisplay(response.data.errors)
+
+        @messageService.showError "Unable to start draft    #{startErrors}"
 
       @api.Draft.updateStatus({draft_id: @$routeParams.draft_id, status: 'in_progress'}, startSuccess, startError)
 
@@ -50,11 +56,17 @@ class NavController extends BaseController
     resetDraft = =>
       resetSuccess = =>
         @messageService.showSuccess "Draft reset"
+        @$rootScope.draft.setting_up = true
+        @$rootScope.draft.in_progress = false
         @$rootScope.$broadcast @subscriptionKeys.loadDraftDependentData, { draft: @$rootScope.draft, onPageLoad: true }
         @$location.path "/draft/#{@$routeParams.draft_id}"
 
-      resetError = =>
-        @messageService.showError "Unable to reset draft"
+      resetError = (response) =>
+        restartErrors = ''
+        if response.data?.errors?
+          restartErrors = @errorService.joinErrorsForToastDisplay(response.data.errors)
+
+        @messageService.showError "Unable to reset draft    #{restartErrors}"
 
       @api.Draft.updateStatus({draft_id: @$routeParams.draft_id, status: 'undrafted'}, resetSuccess, resetError)
 
