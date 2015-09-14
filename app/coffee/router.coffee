@@ -98,3 +98,8 @@ angular.module('app').config ($routeProvider, $locationProvider) ->
     controller: 'AddPickController'
     controllerAs: 'addPickCtrl'
     templateUrl: 'app/templates/commish/add_pick.html'
+
+  $routeProvider.when '/commish/draft/:draft_id/picks/edit',
+    controller: 'EditPickController'
+    controllerAs: 'editPickCtrl'
+    templateUrl: 'app/templates/commish/edit_pick.html'

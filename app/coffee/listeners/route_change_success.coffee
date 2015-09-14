@@ -8,4 +8,5 @@ angular.module("app").run ($rootScope, $sessionStorage, $routeParams, $location,
         previousRoutes: []
       )
 
-      $sessionStorage.previousRoutes.push $location.$$path
+      if $sessionStorage.previousRoutes[$sessionStorage.previousRoutes.length - 1] != $location.$$path
+        $sessionStorage.previousRoutes.push $location.$$path

@@ -46,8 +46,9 @@ class CommishPickEditController extends AngularController
   _add: ->
     @$scope.editInProgress = true
 
-    #If the user has chosen to perform manual entry, we just automatically run the check again.
-    if @$scope.manualEntry
+    #If the user has chosen to perform manual entry, we just automatically run the check again,
+    #For edit contexts, if its the same player, just let it go thru.
+    if @$scope.manualEntry and not @_pickIsTheSame()
       duplicateCheckSuccess = (response) =>
         if response.pickIsNotDuplicate == false
           @wipePick()
@@ -81,24 +82,32 @@ class CommishPickEditController extends AngularController
     delete @$scope.playerSearch
     @$scope.playerSearch = ''
 
-    #Perform an eager API call to ensure autocomplete player is not a duplicate
-    duplicateCheckSuccess = (response) =>
-      #If there were matches and the user wanted to wipe the pick, then do that. Otherwise, do nothing
-      if response.pickIsNotDuplicate == false
+    #For edit contexts, if its the same player, just let it go thru.
+    if not @_pickIsTheSame()
+      #Perform an eager API call to ensure autocomplete player is not a duplicate
+      duplicateCheckSuccess = (response) =>
+        #If there were matches and the user wanted to wipe the pick, then do that. Otherwise, do nothing
+        if response.pickIsNotDuplicate == false
+          @wipePick()
+          @messageService.showInfo "Pick was reset - go ahead and enter another player."
+
+      duplicateCheckFailure = (response) =>
+        @addInProgress = false
+        @messageService.showError "Unable to select pick - error while checking for duplicates."
         @wipePick()
-        @messageService.showInfo "Pick was reset - go ahead and enter another player."
-      else
-        #@$scope.playerSearch = ''
 
-    duplicateCheckFailure = (response) =>
-      @addInProgress = false
-      @messageService.showError "Unable to select pick - error while checking for duplicates."
-      @wipePick()
+      duplicateResult = @pickService.checkForExistingPicks(@$routeParams.draft_id, @$scope.currentPick)
 
-    duplicateResult = @pickService.checkForExistingPicks(@$routeParams.draft_id, @$scope.currentPick)
-
-    duplicateResult.promise.then duplicateCheckSuccess, duplicateCheckFailure
+      duplicateResult.promise.then duplicateCheckSuccess, duplicateCheckFailure
 
   wipePick: ->
     @$scope.manualEntry = false
     @$scope.currentPick = @$scope.pristinePick
+
+  _pickIsTheSame: ->
+    firstIsSame = @$scope.currentPick.first_name == @$scope.pristinePick.first_name
+    lastIsSame = @$scope.currentPick.last_name == @$scope.pristinePick.last_name
+    teamIsSame = @$scope.currentPick.team == @$scope.pristinePick.team
+    positionIsSame = @$scope.currentPick.position == @$scope.pristinePick.position
+
+    firstIsSame and lastIsSame and teamIsSame and positionIsSame

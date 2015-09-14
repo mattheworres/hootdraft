@@ -36,7 +36,7 @@ class @BaseController extends AngularController
   sendToPreviousPath: ->
     storedPreviousRoute = @$sessionStorage.previousRoutes.splice(-2)[0]
     if @$sessionStorage.previousRoutes.length > 1 and not @_pathIsWhitelisted(storedPreviousRoute)
-      @$location.path @$sessionStorage.previousRoutes.splice(-2)[0]
+      @$location.path storedPreviousRoute
     else
       @$location.path '/home'
 
