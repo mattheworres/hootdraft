@@ -31,7 +31,7 @@ class TradeController {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
-    $assets = $app['phpdraft.TradeService']->GetManagerAssets($manager->manager_id);
+    $assets = $app['phpdraft.TradeService']->GetManagerAssets($draft, $manager->manager_id);
 
     return $app->json($assets, Response::HTTP_OK);
   }
@@ -44,7 +44,8 @@ class TradeController {
     $new_trade->draft_id = $draft_id;
     $new_trade->manager1_id = $request->get('manager1_id');
     $new_trade->manager2_id = $request->get('manager2_id');
-    $new_trade->trade_round = $request->get('trade_round');
+
+    $new_trade->trade_round = $draft->draft_current_round;
 
     $assets_json = $request->get('trade_assets');
 

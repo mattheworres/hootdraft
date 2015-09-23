@@ -102,5 +102,9 @@ angular.module('app').factory 'api', ($resource, ENV) ->
     'update':
       { method: 'PUT', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/pick/:player_id" }
 
-  Trade: $resource "#{ENV.apiEndpoint}draft/:draft_id/trades", { draft_id: '@draft_id' },
+  Trade: $resource "#{ENV.apiEndpoint}draft/:draft_id/trades", { draft_id: '@draft_id', manager_id: '@manager_id' },
+    'getAssets':
+      { method: 'GET', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/manager/:manager_id/assets" }
+    save:
+      { method: 'POST', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/trade" }
     

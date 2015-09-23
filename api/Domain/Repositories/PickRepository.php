@@ -99,17 +99,18 @@ class PickRepository {
   }
 
   public function UpdatePick(Pick $pick) {
-    $update_stmt = $this->app['db']->prepare("UPDATE players SET first_name = ?, last_name = ?, team = ?, position = ?,
+    $update_stmt = $this->app['db']->prepare("UPDATE players SET manager_id = ?, first_name = ?, last_name = ?, team = ?, position = ?,
       pick_time = ?, pick_duration = ?, player_counter = ? WHERE player_id = ?");
 
-    $update_stmt->bindParam(1, $pick->first_name);
-    $update_stmt->bindParam(2, $pick->last_name);
-    $update_stmt->bindParam(3, $pick->team);
-    $update_stmt->bindParam(4, $pick->position);
-    $update_stmt->bindParam(5, $pick->pick_time);
-    $update_stmt->bindParam(6, $pick->pick_duration);
-    $update_stmt->bindParam(7, $pick->player_counter);
-    $update_stmt->bindParam(8, $pick->player_id);
+    $update_stmt->bindParam(1, $pick->manager_id);
+    $update_stmt->bindParam(2, $pick->first_name);
+    $update_stmt->bindParam(3, $pick->last_name);
+    $update_stmt->bindParam(4, $pick->team);
+    $update_stmt->bindParam(5, $pick->position);
+    $update_stmt->bindParam(6, $pick->pick_time);
+    $update_stmt->bindParam(7, $pick->pick_duration);
+    $update_stmt->bindParam(8, $pick->player_counter);
+    $update_stmt->bindParam(9, $pick->player_id);
 
     if(!$update_stmt->execute()) {
       throw new \Exception("Unable to update pick #$pick->player_id");

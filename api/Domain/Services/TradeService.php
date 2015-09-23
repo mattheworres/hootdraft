@@ -15,11 +15,11 @@ class TradeService {
     $this->app = $app;
   }
   
-  public function GetManagerAssets($manager_id) {
+  public function GetManagerAssets(Draft $draft, $manager_id) {
     $response = new PhpDraftResponse();
 
     try {
-      $assets = $this->app['phpdraft.PickRepository']->LoadManagerPicks($manager_id, false);
+      $assets = $this->app['phpdraft.PickRepository']->LoadManagerPicks($manager_id, $draft, false);
 
       $response->success = true;
       $response->manager_id = $manager_id;
@@ -66,6 +66,7 @@ class TradeService {
     $new_counter_value = $draft->draft_counter + 1;
     
     foreach ($trade->trade_assets as $asset) {
+      $this->app['monolog']->addDebug("swapping from " . $asset->player->manager_id . " to " . $asset->newmanager->manager_id);
       $asset->player->manager_id = $asset->newmanager->manager_id;
       $asset->player->player_counter = $new_counter_value;
 
