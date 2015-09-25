@@ -164,7 +164,6 @@ class AddTradeController extends BaseController
       @messageService.showError "Unable to load assets for manager"
 
     @$scope.assetsLoading = true
-    console.log manager_id
     @api.Trade.getAssets({draft_id: @$routeParams.draft_id, manager_id: manager_id}, assetsSuccess, errorHandler)
 
 

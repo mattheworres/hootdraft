@@ -104,7 +104,7 @@ class DraftDataRepository {
       "x3B" => $this->position_colors['3B'],
     ));
     
-    $this->nhl_teams = Array(
+    $this->nhl_teams = array(
         "ANA" => "Anaheim Ducks",
         "BOS" => "Boston Bruins",
         "BUF" => "Buffalo Sabres",
@@ -145,7 +145,7 @@ class DraftDataRepository {
         "G" => "Goaltender"
     );
 
-    $this->nfl_teams = Array(
+    $this->nfl_teams = array(
         "ARI" => "Arizona Cardinals",
         "ATL" => "Atlanta Falcons",
         "BAL" => "Baltimore Ravens",
@@ -196,7 +196,7 @@ class DraftDataRepository {
       "OL" => "Offensive Lineman"
     ));
 
-    $this->mlb_teams = Array(
+    $this->mlb_teams = array(
         "ARI" => "Arizona Diamondbacks",
         "ATL" => "Atlanta Braves",
         "BAL" => "Baltimore Orioles",
