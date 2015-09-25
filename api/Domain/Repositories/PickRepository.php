@@ -54,20 +54,19 @@ class PickRepository {
     return $pick;
   }
 
-  public function LoadAll($draft_id) {
+  //Is used by public draft board, need to consider serpentine or standard ordering
+  public function LoadAll(Draft $draft) {
     $picks = array();
 
-    $picks_stmt = $this->app['db']->prepare("SELECT * FROM players WHERE draft_id = ? ORDER BY player_pick ASC");
-    $picks_stmt->bindParam(1, $draft_id);
-
-    $picks_stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Pick');
-
-    if (!$picks_stmt->execute()) {
-      throw new \Exception("Unable to load all picks for draft.");
+    $sort = true;
+    for ($i = 1; $i <= $draft->draft_rounds; ++$i) {
+      if ($draft->draft_style == "serpentine") {
+        $picks[] = $this->LoadRoundPicks($draft, $i, $sort, false);
+        $sort = $sort ? false : true;
+      } else {
+        $picks[] = $this->LoadRoundPicks($draft, $i, true, false);
+      }
     }
-
-    while ($pick = $picks_stmt->fetch())
-      $picks[] = $pick;
 
     return $picks;
   }

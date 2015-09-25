@@ -9,8 +9,11 @@ use PhpDraft\Domain\Models\PhpDraftResponse;
 class PickController {
   public function GetAll(Application $app, Request $request) {
     $draft_id = (int)$request->get('draft_id');
+    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
 
-    return $app->json($app['phpdraft.PickRepository']->LoadAll($draft_id));
+    $response = $app['phpdraft.PickService']->GetAll($draft);
+
+    return $app->json($response, $response->responseType());
   }
 
   public function GetUpdated(Application $app, Request $request) {

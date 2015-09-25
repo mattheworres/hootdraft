@@ -9,6 +9,7 @@ class BoardController extends BaseController
   initialize: ->
     @initialBoardLoaded = false
     @$scope.boardLoading = false
+    @calculatedBoardWidth = "100%";
 
     @deregister = @$scope.$on @subscriptionKeys.loadDraftDependentData, (event, args) =>
       if args.draft? and args.draft.setting_up == true
@@ -20,10 +21,10 @@ class BoardController extends BaseController
         #Rather than rely on draft query to update counter, we need to use it to gather updated pick data.
         #Set it once on load, then update it with the _loadUpdatedData method from then on
         if args.onPageLoad? and args.onPageLoad
-          @$scope.currentDraftCounter = args.draft.draft_current_round
+          @$scope.currentDraftCounter = args.draft.draft_counter
 
         if not @initialBoardLoaded
-          @_loadStatsData args.draft.draft_id, args
+          @_loadInitialBoard args.draft.draft_id
         else
           @_loadUpdatedData args.draft.draft_id
 
@@ -33,23 +34,22 @@ class BoardController extends BaseController
     @$scope.$on @subscriptionKeys.scopeDestroy, (event, args) =>
       @deregister()
 
+  _calculateBoardWidth: (numberOfManagers) ->
+    numberOfPixels = (numberOfManagers * 175) + 50
+
+    @calculatedBoardWidth = "#{numberOfPixels}px"
+
   _loadInitialBoard: (draft_id) ->
     @initialBoardLoaded = true
     @$scope.boardLoading = true
 
     initialSuccess = (data) =>
-      #First, setup an empty 2D array, one array per round:
-      @$scope.pickRounds = []
-      for i in [0...@$scope.draft.draft_rounds]
-        @$scope.pickRounds[i] = []
-
-      #@$scope.picks = data
-      #Then, go thru in order (assumption: server hands us picks in standard/serpentine order already)
-      #and add picks to their applicable round array
-      for pick in data
-        @$scope.pickRounds[pick.player_round-1].push(pick)
-
+      @$scope.pickRounds = data.allPicks
       @$scope.boardLoading = false
+      numberOfManagers = @$scope.pickRounds[0].length
+      console.log "So we have #{numberOfManagers}, or the raw allPicks:"
+      console.log data.allPicks
+      @_calculateBoardWidth(numberOfManagers)
 
     errorHandler = (data) =>
       @$scope.boardLoading = false
@@ -76,8 +76,14 @@ class BoardController extends BaseController
       @messageService.showError "Unable to get up to date draft picks"
       @$scope.boardError = true
 
-    @$scope.statsLoading = args.onPageLoad? and args.onPageLoad
     @$scope.boardError = false
 
+    #TODO: Add handlers and calls for current and last picks... Tie it to getUpdated or just on this call?
+
     if @$scope.draftValid and not @$scope.draftLocked
-      @api.Draft.getStats({ draft_id: draft_id }, statsSuccess, errorHandler)
+      @api.Pick.getUpdated({ draft_id: draft_id, pick_counter: @$scope.currentDraftCounter }, updatedSuccess, errorHandler)
+
+
+
+
+

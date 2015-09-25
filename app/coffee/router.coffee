@@ -55,7 +55,7 @@ angular.module('app').config ($routeProvider, $locationProvider) ->
     templateUrl: 'app/templates/draft/index.html'
 
   $routeProvider.when '/draft/:draft_id/board',
-    controller: 'DraftBoardController'
+    controller: 'BoardController'
     controllerAs: 'boardCtrl'
     templateUrl: 'app/templates/draft/board.html'
 

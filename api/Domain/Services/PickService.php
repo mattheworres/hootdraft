@@ -23,6 +23,21 @@ class PickService {
     return $selected ? 1 : 0;
   }
 
+  public function GetAll(Draft $draft) {
+    $response = new PhpDraftResponse();
+
+    try {
+      $response->allPicks = $this->app['phpdraft.PickRepository']->LoadAll($draft);
+      $response->success = true;
+    } catch(\Exception $e) {
+      $response->success = false;
+      $message = $e->getMessage();
+      $response->errors[] = "Unable to load picks: $message";
+    }
+
+    return $response;
+  }
+
   public function GetCurrentPick(Draft $draft, $include_data = true) {
     $response = new PhpDraftResponse();
 
@@ -134,7 +149,7 @@ class PickService {
     $response = new PhpDraftResponse();
 
     try {
-      $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
+      $draft = $this->app['phpdraft.DraftRepository']->Load($draft_id);
       $response->picks = $this->app['phpdraft.PickRepository']->LoadUpdatedPicks($draft_id, $pick_counter);
       $response->draft_counter = $draft->draft_counter;
       $response->success = true;

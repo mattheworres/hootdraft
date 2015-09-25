@@ -31,12 +31,12 @@
     draft-locked=draftLocked>
   </draft-state>
 
-  <div class="draft-board" ng-repeat="round in pickRounds">
-    <div class="round">
+  <div id="draft-board" ng-style="{width: boardCtrl.calculatedBoardWidth}">
+    <div class="round" ng-repeat="round in pickRounds">
       <div class="round-number">
         {{$index + 1}}
       </div>
-      <div class="pick-list-display" ng-repeat="pick in round">
+      <div class="round-display" ng-repeat="pick in round">
         <div class="pick {{pick.position}}" ng-show="pick.selected">
           <span class="pick-number">{{pick.player_pick}}</span>
           <span class="first-name">{{pick.first_name}}</span>
