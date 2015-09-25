@@ -37,7 +37,7 @@ class BoardController extends BaseController
   _calculateBoardWidth: (numberOfManagers) ->
     #See width in board.less for the magic numbers below
     #managers * pick width + round number width + left and right borders
-    numberOfPixels = (numberOfManagers * 190) + 50 + 4
+    numberOfPixels = (numberOfManagers * 175) + 50 + 4
 
     @calculatedBoardWidth = "#{numberOfPixels}px"
 
@@ -49,8 +49,6 @@ class BoardController extends BaseController
       @$scope.pickRounds = data.allPicks
       @$scope.boardLoading = false
       numberOfManagers = @$scope.pickRounds[0].length
-      console.log "So we have #{numberOfManagers}, or the raw allPicks:"
-      console.log data.allPicks
       @_calculateBoardWidth(numberOfManagers)
 
     errorHandler = (data) =>
@@ -61,18 +59,22 @@ class BoardController extends BaseController
     if @$scope.draftValid and not @$scope.draftLocked
       @$scope.boardError = false
       @api.Pick.getAll({ draft_id: draft_id }, initialSuccess, errorHandler)
+      @_loadCurrentAndNextPicks(draft_id)
 
-  _loadUpdatedData: (draft_id) =>
+  _loadUpdatedData: (draft_id) ->
     updatedSuccess = (data) =>
+      counterChanged = @$scope.currentDraftCounter != data.draft_counter
+
       @$scope.currentDraftCounter = data.draft_counter
 
       if data.picks.length == 0
         return
 
+      if counterChanged
+        @_loadCurrentAndNextPicks(draft_id)
+
       for updatedPick in data.picks
-        for roundXPick in @$scope.pickRounds[updatedPick.player_round-1]
-          if roundXPick.player_id == updatedPick.player_id
-            roundXPick = updatedPick
+        @_updateBoardPick(updatedPick)
 
     errorHandler = (data) =>
       @messageService.showError "Unable to get up to date draft picks"
@@ -80,11 +82,35 @@ class BoardController extends BaseController
 
     @$scope.boardError = false
 
-    #TODO: Add handlers and calls for current and last picks... Tie it to getUpdated or just on this call?
-
     if @$scope.draftValid and not @$scope.draftLocked
       @api.Pick.getUpdated({ draft_id: draft_id, pick_counter: @$scope.currentDraftCounter }, updatedSuccess, errorHandler)
 
+  _updateBoardPick: (updatedPick) ->
+    if @$scope.pickRounds is undefined
+      return
+
+    for roundXPick, index in @$scope.pickRounds[updatedPick.player_round-1]
+      if roundXPick.player_id == updatedPick.player_id
+        @$scope.pickRounds[updatedPick.player_round-1][index] = updatedPick
+
+  _loadCurrentAndNextPicks: (draft_id) ->
+    currentSuccess = (data) =>
+      @$scope.currentPick = data[0]
+      if @initialBoardLoaded
+        @_updateBoardPick(data[0])
+
+    lastSuccess = (data) =>
+      @$scope.previousPick = data[0]
+
+    errorHandler = (data) =>
+      @messageService.showError "Unable to get next and/or current picks"
+      @$scope.boardError = true
+
+    @$scope.boardError = false
+
+    if @$scope.draftValid and not @$scope.draftLocked
+      @api.Pick.getNext({ draft_id: draft_id, amount: 1 }, currentSuccess, errorHandler)
+      @api.Pick.getLast({ draft_id: draft_id, amount: 1 }, lastSuccess, errorHandler)
 
 
 
