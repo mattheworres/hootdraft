@@ -78,6 +78,10 @@ angular.module('app').factory 'api', ($resource, ENV) ->
       { method: 'PUT', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/manager/:manager_id" }
 
   Pick: $resource "#{ENV.apiEndpoint}draft/:draft_id/pick/:pick_id", { draft_id: '@draft_id', player_id: '@player_id' },
+    'getAll':
+      { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/picks", isArray: true }
+    'getUpdated':
+      { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/picks/updated" }
     'getLast':
       { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/picks/last", isArray: true }
     'getNext':

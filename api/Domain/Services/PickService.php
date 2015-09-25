@@ -130,6 +130,23 @@ class PickService {
     return $response;
   }
 
+  public function LoadUpdatedPicks($draft_id, $pick_counter) {
+    $response = new PhpDraftResponse();
+
+    try {
+      $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
+      $response->picks = $this->app['phpdraft.PickRepository']->LoadUpdatedPicks($draft_id, $pick_counter);
+      $response->draft_counter = $draft->draft_counter;
+      $response->success = true;
+    } catch(\Exception $e) {
+      $response->success = false;
+      $errorMessage = $e->getMessage();
+      $response->errors[] = "Unable to get updated picks: $errorMessage";
+    }
+
+    return $response;
+  }
+
   private function _CalculatePickTimeAndDuration(Draft $draft, Pick $pick) {
     //Get the previous pick
     $previous_pick = $this->app['phpdraft.PickRepository']->GetPreviousPick($draft);

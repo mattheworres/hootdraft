@@ -54,6 +54,11 @@ angular.module('app').config ($routeProvider, $locationProvider) ->
     controllerAs: 'draftCtrl'
     templateUrl: 'app/templates/draft/index.html'
 
+  $routeProvider.when '/draft/:draft_id/board',
+    controller: 'DraftBoardController'
+    controllerAs: 'boardCtrl'
+    templateUrl: 'app/templates/draft/board.html'
+
   $routeProvider.when '/draft/:draft_id/picks/manager',
     controller: 'ByManagerController'
     controllerAs: 'managerCtrl'
