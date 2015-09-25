@@ -22,16 +22,19 @@ class @BaseController extends AngularController
     super(arguments...)
     @initialize?()
 
-  isAuthenticated: =>
+  isAuthenticated: ->
     @$sessionStorage.authenticated
 
-  authenticatedName: =>
+  authenticatedName: ->
     @$sessionStorage.user_name
 
-  logOut: =>
+  logOut: ->
     @authenticationService.logout()
     @messageService.showInfo("Logged Out")
     @$location.path '/home'
+
+  hideFooter: ->
+    return @$location.$$path.indexOf('/board') != -1
 
   sendToPreviousPath: ->
     storedPreviousRoute = @$sessionStorage.previousRoutes.splice(-2)[0]

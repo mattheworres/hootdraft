@@ -1,32 +1,34 @@
 <div data-ng-cloak>
   <!-- TODO: Add affix code to this puppy -->
-  <nav class="navbar navbar-draft-board navbar-default hidden-xs" ng-show="draftValid && draft.in_progress">
-    <div class="container-fluid">
-      <div class="row pick-list-display">
-        <div class="col-sm-1 current-pick">
-          Current Pick
-        </div>
-        <div class="col-sm-3">
-          <pick-display draft=draft pick=currentPick></pick-display>
-        </div>
-        <div class="col-sm-4 enabled-pick-timer" ng-show="timerEnabled && !timesUp">
-          Timers enabled. To be coded.
-        </div>
-        <div class="col-sm-4 pick-timer-up" ng-show="timerEnabled && timesUp">
-          Time's up! Everyone boo {{currentPick.manager_name}}!
-        </div>
-        <div class="col-sm-4 disabled-pick-timer" ng-hide="timerEnabled">
-          Pick timers disabled
-        </div>
-        <div class="col-sm-1 previous-pick">
-          Last Pick
-        </div>
-        <div class="col-sm-3">
-          <pick-display draft=draft pick=previousPick></pick-display>
+  <div class="board-header-wrapper">
+    <div class="navbar-draft-board hidden-xs" ng-show="draftValid && draft.in_progress" affix="top">
+      <div class="container-fluid">
+        <div class="row pick-list-display">
+          <div class="col-sm-1 current-pick">
+            Current Pick
+          </div>
+          <div class="col-sm-3">
+            <pick-display draft=draft pick=currentPick></pick-display>
+          </div>
+          <div class="col-sm-4 enabled-pick-timer" ng-show="timerEnabled && !timesUp">
+            Timers enabled. To be coded.
+          </div>
+          <div class="col-sm-4 pick-timer-up" ng-show="timerEnabled && timesUp">
+            Time's up! Everyone boo {{currentPick.manager_name}}!
+          </div>
+          <div class="col-sm-4 disabled-pick-timer" ng-hide="timerEnabled">
+            Pick timers disabled
+          </div>
+          <div class="col-sm-1 previous-pick">
+            Last Pick
+          </div>
+          <div class="col-sm-3">
+            <pick-display draft=draft pick=previousPick></pick-display>
+          </div>
         </div>
       </div>
     </div>
-  </nav>
+  </div>
 
   <draft-state controller=boardCtrl
     commish-name=draft.commish_name

@@ -20,7 +20,8 @@
     "font-awesome": "~4.3.0",
     "ng-caps-lock": "~1.0.2",
     "ng-lodash": "~0.2.3",
-    "ngstorage": "~0.3.7"
+    "ngstorage": "~0.3.7",
+    "ngScrollSpy": "~1.0.9"
   },
   "resolutions": {
     "angular": "1.4.3"

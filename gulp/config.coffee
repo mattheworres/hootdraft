@@ -64,6 +64,7 @@ module.exports =
                 'bower_components/angularjs-ordinal-filter/ordinal-browser.js'
                 'bower_components/angular-mask/dist/ngMask.min.js'
                 'bower_components/angular-slip/angular-slip.js'
+                'bower_components/ngScrollSpy/dist/ngScrollSpy.min.js'
             ],
             css: [
                 'bower_components/angular-ui-bootstrap-bower/ui-bootstrap-csp.css'

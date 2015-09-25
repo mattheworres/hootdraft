@@ -17,4 +17,5 @@ angular.module("app", [
   "ordinal"
   "ngMask"
   "slip"
+  "ngScrollSpy"
 ])
