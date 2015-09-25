@@ -31,24 +31,25 @@
     draft-locked=draftLocked>
   </draft-state>
 
-  <div id="draft-board" ng-style="{width: boardCtrl.calculatedBoardWidth}">
-    <div class="round" ng-repeat="round in pickRounds">
-      <div class="round-number">
-        {{$index + 1}}
-      </div>
-      <div class="round-display" ng-repeat="pick in round">
-        <div class="pick {{pick.position}}" ng-show="pick.selected">
-          <span class="pick-number">{{pick.player_pick}}</span>
-          <span class="first-name">{{pick.first_name}}</span>
-          <span class="last-name">{{pick.last_name}}</span>
-          <span class="manager">{{pick.manager_name}}</span>
-          <span class="position">{{pick.position}}</span>
-          <span class="team">{{pick.team}}</span>
+  <div id="draft-board-container">
+    <div id="draft-board" ng-style="{width: boardCtrl.calculatedBoardWidth}">
+      <div class="round" ng-repeat="round in pickRounds">
+        <div class="round-number">
+          {{$index + 1}}
         </div>
-        <div class="pick unselected" ng-hide="pick.selected" ng-class="(pick.on_the_clock ? ' active' : '')">
-          <span class="pick-number">{{pick.player_pick | ordinal}}</span>
-          <span class="manager">{{pick.manager_name}}</span>
-          <div class="on-clock" ng-show="pick.on_the_clock"><i class="fa fa-clock-o"></i>&nbsp;On the clock</div>
+        <div class="round-display" ng-repeat="pick in round">
+          <div class="pick selected pick{{pick.position}}" ng-show="pick.selected">
+            <span class="pick-number">{{pick.player_pick}}</span>
+            <span class="first-name">{{pick.first_name}}</span>
+            <span class="last-name">{{pick.last_name}}</span>
+            <span class="manager">{{pick.manager_name}}</span>
+            <span class="position">{{draft.positions[pick.position]}} &ndash; {{pick.team}}</span>
+          </div>
+          <div class="pick unselected" ng-hide="pick.selected" ng-class="(pick.on_the_clock ? ' active' : '')">
+            <span class="pick-number">{{pick.player_pick | ordinal}}</span>
+            <span class="manager">{{pick.manager_name}}</span>
+            <div class="on-clock" ng-show="pick.on_the_clock"><i class="fa fa-clock-o"></i>&nbsp;On the clock</div>
+          </div>
         </div>
       </div>
     </div>

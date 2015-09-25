@@ -35,7 +35,9 @@ class BoardController extends BaseController
       @deregister()
 
   _calculateBoardWidth: (numberOfManagers) ->
-    numberOfPixels = (numberOfManagers * 175) + 50
+    #See width in board.less for the magic numbers below
+    #managers * pick width + round number width + left and right borders
+    numberOfPixels = (numberOfManagers * 190) + 50 + 4
 
     @calculatedBoardWidth = "#{numberOfPixels}px"
 
