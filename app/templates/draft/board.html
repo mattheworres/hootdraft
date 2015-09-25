@@ -1,28 +1,29 @@
 <div data-ng-cloak>
   <!-- TODO: Add affix code to this puppy -->
-  <div class="board-header-wrapper">
+  <div class="board-header-wrapper" ng-show="draftValid && draft.in_progress">
     <div class="navbar-draft-board hidden-xs" ng-show="draftValid && draft.in_progress" affix="top">
       <div class="container-fluid">
         <div class="row pick-list-display">
-          <div class="col-sm-1 current-pick">
+          <div class="col-sm-1 current-pick non-clock-content">
             Current Pick
           </div>
-          <div class="col-sm-3">
+          <div class="col-sm-3 non-clock-content">
             <pick-display draft=draft pick=currentPick></pick-display>
           </div>
-          <div class="col-sm-4 enabled-pick-timer" ng-show="timerEnabled && !timesUp">
-            Timers enabled. To be coded.
+          <div class="col-sm-4 active-pick-timer" ng-show="timerEnabled && !timerUp">
+            <flip-clock autostart="false" clock-face="MinuteCounter" countdown="true" stop="boardCtrl.timerClockStopHandler()"></flip-clock>
           </div>
-          <div class="col-sm-4 pick-timer-up" ng-show="timerEnabled && timesUp">
-            Time's up! Everyone boo {{currentPick.manager_name}}!
+          <div class="col-sm-4 pick-timer-up non-clock-content" ng-show="timerEnabled && timerUp">
+            Time's up!<br/>
+            <span class="white">Everyone boo <strong>{{currentPick.manager_name}}</strong>!</span>
           </div>
-          <div class="col-sm-4 disabled-pick-timer" ng-hide="timerEnabled">
+          <div class="col-sm-4 disabled-pick-timer non-clock-content" ng-hide="timerEnabled">
             Pick timers disabled
           </div>
-          <div class="col-sm-1 previous-pick">
+          <div class="col-sm-1 previous-pick non-clock-content" ng-show="hasPreviousPick">
             Last Pick
           </div>
-          <div class="col-sm-3">
+          <div class="col-sm-3 non-clock-content" ng-show="hasPreviousPick">
             <pick-display draft=draft pick=previousPick></pick-display>
           </div>
         </div>

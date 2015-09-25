@@ -18,4 +18,5 @@ angular.module("app", [
   "ngMask"
   "slip"
   "ngScrollSpy"
+  "angular-flipclock"
 ])

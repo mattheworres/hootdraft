@@ -45,6 +45,8 @@ angular.module('app').factory 'api', ($resource, ENV) ->
       { method: 'GET', url: "#{ENV.apiEndpoint}drafts/:commish_id", isArray: true}
     'getStats':
       { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/stats" }
+    'getTimeRemaining':#/draft/{draft_id}/timer/remaining
+      { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/timer/remaining" }
 
     'getCreate':
       { method: 'GET', url: "#{ENV.apiEndpoint}commish/draft/create" }
