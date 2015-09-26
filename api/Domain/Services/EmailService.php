@@ -15,7 +15,7 @@ class EmailService {
 
     $this->mailer = new \PHPMailer();
 
-    $this->mailer->SMTPDebug = 3;                               // Enable verbose debug output
+    //$this->mailer->SMTPDebug = 3;                               // Enable verbose debug output
 
     $this->mailer->isSMTP();
     $this->mailer->Host = MAIL_SERVER;

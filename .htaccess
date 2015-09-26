@@ -2,7 +2,7 @@
     Options -MultiViews
 
     RewriteEngine On
-    RewriteBase /phpdraft
+    RewriteBase /
 
     #H/T to anubhava http://stackoverflow.com/a/29874382/324527
     DirectoryIndex bootstrap.php index.html
