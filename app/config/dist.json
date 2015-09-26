@@ -1,7 +1,7 @@
 {
     "ENV":
     {
-        "apiEndpoint": "api/",
+        "apiEndpoint": "http://beta.phpdraft.com/api/",
         "recaptchaPublicKey": "6Ld-lgoTAAAAAFfFy18GqPYagb-asZ8p_ZpUbq3q"
     }
 }

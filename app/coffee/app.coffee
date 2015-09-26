@@ -1,6 +1,7 @@
 angular.module("app", [
   "config"
   "ngRoute"
+  "angular-flipclock"
   "datatables"
   "ngLodash"
   "ngSanitize"
@@ -18,5 +19,4 @@ angular.module("app", [
   "ngMask"
   "slip"
   "ngScrollSpy"
-  "angular-flipclock"
 ])

@@ -10,6 +10,8 @@ gulp.task 'html', ->
         'js/vendor-*.js'
         'js/app.js'
         'js/app-*.js'
+        'js/angular_base/*.js'
+        'js/base/application/*.js'
         'js/**/*.js'
     ], read: false
 

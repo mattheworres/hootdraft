@@ -2,6 +2,7 @@ gulp = require 'gulp'
 $ = require('gulp-load-plugins')()
 cfg = require '../config'
 streamqueue = require 'streamqueue'
+order = require 'gulp-order'
 
 write = (stream, manifestSuffix) ->
     stream
@@ -21,7 +22,7 @@ gulp.task 'js-vendor', ->
 
 gulp.task 'js-app', ->
     js = gulp.src cfg.paths.app.js
-        .pipe $.naturalSort()
+        .pipe order(cfg.paths.app.jsLoadOrder, { base: './' })
         .pipe $.if cfg.options.sourceMaps, $.sourcemaps.init()
         .pipe $.coffee()
         .pipe $.if cfg.options.minify, $.ngAnnotate()
