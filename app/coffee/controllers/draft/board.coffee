@@ -8,7 +8,7 @@ class BoardController extends BaseController
 
   initialize: ->
     @initialBoardLoaded = false
-    @$scope.boardLoading = false
+    @$scope.boardLoading = true
     @$scope.timerEnabled = false
     @$scope.timerUp = false
     @$scope.timerRunning = false

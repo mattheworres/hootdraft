@@ -1,5 +1,7 @@
 angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftService, messageService) ->
   $rootScope.$on subscriptionKeys.reloadDraft, (event, args) ->
+    $rootScope.draftLoadInProgress = false
+
     cancelInterval = =>
       $interval.cancel $rootScope.draftIntervalPromise
       $rootScope.draftIntervalPromise = undefined
@@ -43,7 +45,8 @@ angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftSe
       messageService.showError "Unable to load draft"
       return
 
-    if not $rootScope.draftLoading
+    if not $rootScope.draftLoading and not $rootScope.draftLoadInProgress
+      $rootScope.draftLoadInProgress = true
       $rootScope.draftLoading = args.onPageLoad? and args.onPageLoad
       $rootScope.draftError = false
       $rootScope.draftLocked = false
