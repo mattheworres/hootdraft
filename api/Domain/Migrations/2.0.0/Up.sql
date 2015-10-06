@@ -62,6 +62,31 @@ CREATE TABLE `draft_stats` (
   PRIMARY KEY  (`draft_stat_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
+ALTER TABLE `draft` ADD INDEX `commish_id` (`commish_id`);
+
+ALTER TABLE `managers` DROP INDEX `draft_idx`;
+ALTER TABLE `managers` ADD INDEX `draft_idx` (`draft_id`);
+
+ALTER TABLE `players` DROP INDEX `manager_idx`;
+ALTER TABLE `players` DROP INDEX `draft_idx`;
+ALTER TABLE `players` ADD INDEX `manager_idx` (`manager_id`);
+ALTER TABLE `players` ADD INDEX `draft_idx` (`draft_id`);
+ALTER TABLE `players` ADD INDEX `counter_idx` (`player_counter`);
+
+ALTER TABLE `trades` DROP INDEX `manager1_idx`;
+ALTER TABLE `trades` DROP INDEX `manager2_idx`;
+ALTER TABLE `trades` DROP INDEX `draft_idx`;
+ALTER TABLE `trades` ADD INDEX `manager1_idx` (`manager1_id`);
+ALTER TABLE `trades` ADD INDEX `manager2_idx` (`manager2_id`);
+ALTER TABLE `trades` ADD INDEX `draft_idx` (`draft_id`);
+
+ALTER TABLE `pro_players` ADD FULLTEXT KEY `lastname_idx` (`last_name`);
+
+ALTER TABLE `round_times` DROP INDEX `draft_idx`;
+ALTER TABLE `round_times` DROP INDEX `round_idx`;
+ALTER TABLE `round_times` ADD INDEX `draft_idx` (`draft_id`);
+ALTER TABLE `round_times` ADD INDEX `round_idx` (`draft_round`);
+
 # Convert timezones from locally-set via PHP (PHPDraft <v1.3.x), to UTC based times (v2.0):
 # NOTE: This should only be run once as it's relative: you will
 # mangle data if you run it multiple times, hence why it's block-commented out.

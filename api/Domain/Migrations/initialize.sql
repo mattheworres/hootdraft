@@ -31,7 +31,8 @@ CREATE TABLE IF NOT EXISTS `draft` (
   `draft_current_round` int(5) unsigned NOT NULL default '1',
   `draft_current_pick` int(5) unsigned NOT NULL default '1',
   `nfl_extended` TINYINT(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY  (`draft_id`)
+  PRIMARY KEY  (`draft_id`),
+  INDEX `commish_id` (`commish_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -46,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `managers` (
   `manager_name` text NOT NULL,
   `draft_order` tinyint(3) unsigned NOT NULL default '0',
   PRIMARY KEY  (`manager_id`),
-  KEY `draft_idx` (`draft_id`),
+  INDEX `draft_idx` (`draft_id`),
   FULLTEXT KEY `manager_idx` (`manager_name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
@@ -70,8 +71,9 @@ CREATE TABLE IF NOT EXISTS `players` (
   `player_round` int(11) NOT NULL default '0',
   `player_pick` int(11) NOT NULL default '0',
   PRIMARY KEY  (`player_id`),
-  KEY `manager_idx` (`manager_id`),
-  KEY `draft_idx` (`draft_id`),
+  INDEX `manager_idx` (`manager_id`),
+  INDEX `draft_idx` (`draft_id`),
+  INDEX `counter_idx` (`player_counter`),
   FULLTEXT KEY `player_idx` (`first_name`,`last_name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
@@ -107,9 +109,9 @@ CREATE TABLE IF NOT EXISTS `trades` (
   `trade_time` datetime DEFAULT NULL,
   `trade_round` INT(5) NOT NULL,
   PRIMARY KEY (`trade_id`),
-  KEY `manager1_idx` (`manager1_id`),
-  KEY `manager2_idx` (`manager2_id`),
-  KEY `draft_idx` (`draft_id`)
+  INDEX `manager1_idx` (`manager1_id`),
+  INDEX `manager2_idx` (`manager2_id`),
+  INDEX `draft_idx` (`draft_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -140,8 +142,9 @@ CREATE TABLE IF NOT EXISTS `pro_players` (
   `position` text NOT NULL,
   `team` text NOT NULL,
   PRIMARY KEY (`pro_player_id`),
-  KEY `league_idx` (`league`(4)),
-  FULLTEXT KEY `firstname_idx` (`first_name`)
+  INDEX `league_idx` (`league`(4)),
+  FULLTEXT KEY `firstname_idx` (`first_name`),
+  FULLTEXT KEY 'lastname_idx' (`last_name`),
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
@@ -154,8 +157,8 @@ CREATE TABLE IF NOT EXISTS `round_times` (
   `draft_round` int(2),
   `round_time_seconds` int(11),
   PRIMARY KEY  (`round_time_id`),
-  KEY `draft_idx` (`draft_id`),
-  KEY `round_idx` (`draft_round`)
+  INDEX `draft_idx` (`draft_id`),
+  INDEX `round_idx` (`draft_round`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --

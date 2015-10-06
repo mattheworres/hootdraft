@@ -30,8 +30,9 @@ class BoardController extends BaseController
 
         if not @initialBoardLoaded
           @_loadInitialBoard args.draft.draft_id
+          @_loadUpdatedData(args.draft.draft_id, true)
         else
-          @_loadUpdatedData args.draft.draft_id
+          @_loadUpdatedData(args.draft.draft_id, false)
 
         if args.draft.complete == true
           @deregister()
@@ -64,26 +65,47 @@ class BoardController extends BaseController
     if @$scope.draftValid and not @$scope.draftLocked
       @$scope.boardError = false
       @api.Pick.getAll({ draft_id: draft_id }, initialSuccess, errorHandler)
-      @_loadCurrentAndNextPicks(draft_id)
-      @_loadTimeRemaining(draft_id)
+      #@_loadCurrentAndNextPicks(draft_id)
+      #@_loadTimeRemaining(draft_id)
 
-  _loadUpdatedData: (draft_id) ->
+  _loadUpdatedData: (draft_id, is_on_load) ->
     updatedSuccess = (data) =>
-      counterChanged = @$scope.currentDraftCounter != data.draft_counter
+      draft_counter = parseInt(@$scope.currentDraftCounter, 10)
+      counterChanged = is_on_load or not @$scope.currentDraftCounter == data.draft_counter
       currentPickChanged = @$scope.currentPick
 
       @$scope.currentDraftCounter = data.draft_counter
 
-      if data.picks.length == 0
-        return
+      if counterChanged
+        console.log "So, the current pick is pick ##{data.current_pick.player_pick}, so lets update to such."
+        @$scope.currentPick = data.current_pick
+        @_updateBoardPick(data.current_pick)
+
+      if data.updated_picks?.length > 0
+        for updatedPick in data.updated_picks
+          @_updateBoardPick(updatedPick)
+
+          if not @$scope.previousPick?
+            @$scope.previousPick = updatedPick
+            @$scope.hasPreviousPick = true
+
+          updatedPickNumber = parseInt(updatedPick.player_pick, 10)
+          previousPickNumber = parseInt(@$scope.previousPick.player_pick)
+
+          console.log "Is #{updatedPick.player_pick} >= #{@$scope.previousPick.player_pick}? #{updatedPick.player_pick >= @$scope.previousPick.player_pick}"
+          if updatedPickNumber >= previousPickNumber
+            @$scope.previousPick = updatedPick
+            @$scope.hasPreviousPick = true
 
       if counterChanged
-        @_loadCurrentAndNextPicks(draft_id)
-
-      for updatedPick in data.picks
-        if updatedPick.player_pick >= @$scope.currentPick.player_pick
-          @_resetTimer()
-        @_updateBoardPick(updatedPick)
+        @$scope.timerEnabled = data.timer_enabled
+        if @$scope.timerEnabled
+          seconds = parseInt(data.seconds_remaining, 10)
+          @$scope.timerUp = seconds == 0
+          if not @$scope.timerRunning and seconds > 0
+            @$scope.timerRunning = true
+            @$scope.setTime(seconds)
+            @$scope.start()
 
     errorHandler = (data) =>
       @messageService.showError "Unable to get up to date draft picks"
@@ -92,8 +114,9 @@ class BoardController extends BaseController
     @$scope.boardError = false
 
     if @$scope.draftValid and not @$scope.draftLocked
-      @api.Pick.getUpdated({ draft_id: draft_id, pick_counter: @$scope.currentDraftCounter }, updatedSuccess, errorHandler)
-      @_loadTimeRemaining(draft_id)
+      counter = if is_on_load then 0 else @$scope.currentDraftCounter
+      console.log "Beacuse #{is_on_load} then #{counter}"
+      @api.Pick.getUpdated({ draft_id: draft_id, pick_counter: counter }, updatedSuccess, errorHandler)
 
   _updateBoardPick: (updatedPick) ->
     if @$scope.pickRounds is undefined
@@ -103,7 +126,7 @@ class BoardController extends BaseController
       if roundXPick.player_id == updatedPick.player_id
         @$scope.pickRounds[updatedPick.player_round-1][index] = updatedPick
 
-  _loadCurrentAndNextPicks: (draft_id) ->
+  ###_loadCurrentAndNextPicks: (draft_id) ->
     currentSuccess = (data) =>
       @$scope.currentPick = data[0]
       if @initialBoardLoaded
@@ -121,11 +144,7 @@ class BoardController extends BaseController
 
     if @$scope.draftValid and not @$scope.draftLocked
       @api.Pick.getNext({ draft_id: draft_id, amount: 1 }, currentSuccess, errorHandler)
-      @api.Pick.getLast({ draft_id: draft_id, amount: 1 }, lastSuccess, errorHandler)
-
-  _resetTimer: ->
-    @timerClockStopHandler()
-    @_loadTimeRemaining(@$routeParams.draft_id)
+      @api.Pick.getLast({ draft_id: draft_id, amount: 1 }, lastSuccess, errorHandler)###
 
   timerClockStopHandler: ->
     @$scope.timerUp = true
@@ -133,7 +152,7 @@ class BoardController extends BaseController
     #TODO: Wait 1s, then play sounds here
     #TODO For sound, ensure we're kicked off by clock and not by pick being made
 
-  _loadTimeRemaining: (draft_id) ->
+  ###_loadTimeRemaining: (draft_id) ->
     timersSuccess = (data) =>
       @$scope.timerLoading = false
       @$scope.timerEnabled = data.timer_enabled
@@ -156,7 +175,7 @@ class BoardController extends BaseController
       @$scope.timerLoading = true
       @api.Draft.getTimeRemaining({ draft_id: draft_id }, timersSuccess, errorHandler)
     else
-      @deregister()
+      @deregister()###
 
 
 

@@ -20,7 +20,7 @@ class PickController {
     $draft_id = (int)$request->get('draft_id');
     $pick_counter = (int)$request->get('pick_counter');
 
-    $response = $app['phpdraft.PickService']->LoadUpdatedPicks($draft_id, $pick_counter);
+    $response = $app['phpdraft.PickService']->LoadUpdatedData($draft_id, $pick_counter);
 
     return $app->json($response, $response->responseType());
   }

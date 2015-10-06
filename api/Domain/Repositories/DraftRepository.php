@@ -141,16 +141,25 @@ class DraftRepository {
   public function GetPublicDraft(Request $request, $id, $password = '') {
     $draft = new Draft();
 
-    $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
-      LEFT OUTER JOIN users u
-      ON d.commish_id = u.id
-      WHERE d.draft_id = ? LIMIT 1");
-    $draft_stmt->setFetchMode(\PDO::FETCH_INTO, $draft);
+    //$cachedDraft = $this->app['phpdraft.CachedDraft'];
+    $cachedDraft = $this->app['phpdraft.ObjectCache']->get("draft$id");
 
-    $draft_stmt->bindParam(1, $id, \PDO::PARAM_INT);
+    if($cachedDraft != null) {
+      $draft = $cachedDraft;
+    } else {
+      $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
+        LEFT OUTER JOIN users u
+        ON d.commish_id = u.id
+        WHERE d.draft_id = ? LIMIT 1");
+      $draft_stmt->setFetchMode(\PDO::FETCH_INTO, $draft);
 
-    if(!$draft_stmt->execute() || !$draft_stmt->fetch()) {
-      throw new \Exception("Unable to load draft");
+      $draft_stmt->bindParam(1, $id, \PDO::PARAM_INT);
+
+      if(!$draft_stmt->execute() || !$draft_stmt->fetch()) {
+        throw new \Exception("Unable to load draft");
+      }
+
+      $this->app['phpdraft.ObjectCache']->set("draft$id", $draft, 5);
     }
 
     $current_user = $this->app['phpdraft.LoginUserService']->GetUserFromHeaderToken($request);
@@ -160,15 +169,19 @@ class DraftRepository {
 
     $draft->draft_visible = empty($draft->draft_password);
     $draft->commish_editable = $currentUserOwnsIt || $currentUserIsAdmin;
+
     if(!empty($draft->draft_create_time)) {
       $draft->draft_create_time .= " UTC";
     }
+
     if(!empty($draft_start_time)) {
       $draft->draft_start_time .= " UTC";
     }
+
     if(!empty($draft->draft_end_time)) {
       $draft->draft_end_time .= " UTC";
     }
+
     $draft->setting_up = $this->app['phpdraft.DraftService']->DraftSettingUp($draft);
     $draft->in_progress = $this->app['phpdraft.DraftService']->DraftInProgress($draft);
     $draft->complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);
@@ -196,17 +209,25 @@ class DraftRepository {
   public function Load($id) {
     $draft = new Draft();
 
-    $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
-    LEFT OUTER JOIN users u
-    ON d.commish_id = u.id
-    WHERE draft_id = ? LIMIT 1");
+    $cachedDraft = $this->app['phpdraft.ObjectCache']->get("draft$id");
 
-    $draft_stmt->setFetchMode(\PDO::FETCH_INTO, $draft);
+    if($cachedDraft != null) {
+      $draft = $cachedDraft;
+    } else {
+      $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
+      LEFT OUTER JOIN users u
+      ON d.commish_id = u.id
+      WHERE draft_id = ? LIMIT 1");
 
-    $draft_stmt->bindParam(1, $id, \PDO::PARAM_INT);
+      $draft_stmt->setFetchMode(\PDO::FETCH_INTO, $draft);
 
-    if(!$draft_stmt->execute() || !$draft_stmt->fetch()) {
-      throw new \Exception("Unable to load draft");
+      $draft_stmt->bindParam(1, $id, \PDO::PARAM_INT);
+
+      if(!$draft_stmt->execute() || !$draft_stmt->fetch()) {
+        throw new \Exception("Unable to load draft");
+      }
+
+      $this->app['phpdraft.ObjectCache']->set("draft$id", $draft, 5);
     }
 
     $draft->draft_rounds = (int)$draft->draft_rounds;

@@ -145,12 +145,23 @@ class PickService {
     return $response;
   }
 
-  public function LoadUpdatedPicks($draft_id, $pick_counter) {
+  public function LoadUpdatedData($draft_id, $pick_counter) {
     $response = new PhpDraftResponse();
 
     try {
       $draft = $this->app['phpdraft.DraftRepository']->Load($draft_id);
-      $response->picks = $this->app['phpdraft.PickRepository']->LoadUpdatedPicks($draft_id, $pick_counter);
+
+      if($pick_counter < $draft->draft_counter) {
+        $response->updated_picks = $this->app['phpdraft.PickRepository']->LoadUpdatedPicks($draft_id, $pick_counter);
+        $response->current_pick = $this->app['phpdraft.PickRepository']->GetCurrentPick($draft);
+        $response->previous_pick = $this->app['phpdraft.PickRepository']->GetPreviousPick($draft);
+        
+        $timer_response = $this->app['phpdraft.RoundTimeService']->GetCurrentPickTimeRemaining($draft);
+        
+        $response->timer_enabled = $timer_response->timer_enabled;
+        $response->seconds_remaining = $timer_response->seconds_remaining;
+      }
+
       $response->draft_counter = $draft->draft_counter;
       $response->success = true;
     } catch(\Exception $e) {

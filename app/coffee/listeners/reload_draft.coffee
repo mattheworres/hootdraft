@@ -1,5 +1,7 @@
 angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftService, messageService) ->
+  $rootScope.draftRequestPending = false
   $rootScope.$on subscriptionKeys.reloadDraft, (event, args) ->
+
     cancelInterval = =>
       $interval.cancel $rootScope.draftIntervalPromise
       $rootScope.draftIntervalPromise = undefined
@@ -8,9 +10,10 @@ angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftSe
       $rootScope.draft = draft
       $rootScope.showDraftMenu = true
       $rootScope.draftLoading = false
+      $rootScope.draftRequestPending = false
 
       if args.hasResetPassword? and args.hasResetPassword and $rootScope.draftIntervalPromise == undefined
-        $rootScope.draftIntervalPromise = $interval $rootScope.draftIntervalHandler, 2750
+        $rootScope.draftIntervalPromise = $interval $rootScope.draftIntervalHandler, 3000
       
       if draft.is_locked
         $rootScope.draftLocked = true
@@ -33,6 +36,7 @@ angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftSe
       $rootScope.draftError = true
       $rootScope.draftValid = false
       $rootScope.showDraftMenu = false
+      $rootScope.draftRequestPending = false
       messageService.showError "Unable to load draft"
 
     if not args.draft_id?
@@ -43,8 +47,9 @@ angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftSe
       messageService.showError "Unable to load draft"
       return
 
-    if not $rootScope.draftLoading
+    if not $rootScope.draftRequestPending
       $rootScope.draftLoading = args.onPageLoad? and args.onPageLoad
+      $rootScope.draftRequestPending = true
       $rootScope.draftError = false
       $rootScope.draftLocked = false
       api.Draft.get({id: args.draft_id}, successHandler, errorHandler)

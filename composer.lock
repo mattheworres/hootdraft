@@ -1,10 +1,11 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e4d7d851cf149d3f89cb83cbf8a3eaf8",
+    "hash": "666d6254a34a106149021249b3121b12",
+    "content-hash": "b77f77258f8ef369df7bc1712c5f77e5",
     "packages": [
         {
             "name": "cnam/security-jwt-service-provider",
@@ -730,6 +731,62 @@
             "time": "2015-03-09 09:58:04"
         },
         {
+            "name": "phpfastcache/phpfastcache",
+            "version": "3.0.13",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/khoaofgod/phpfastcache.git",
+                "reference": "599cdc159878a36903ca56f850f79a6c490d07c4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/khoaofgod/phpfastcache/zipball/599cdc159878a36903ca56f850f79a6c490d07c4",
+                "reference": "599cdc159878a36903ca56f850f79a6c490d07c4",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "phpfastcache.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Khoa Bui",
+                    "email": "khoaofgod@gmail.com",
+                    "homepage": "http://www.phpfastcache.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP Cache Class - Supported Redis, Cookie, Predis, APC, MemCached, WinCache, Files, PDO, Reduce mySQL Call by Caching",
+            "homepage": "http://www.phpfastcache.com",
+            "keywords": [
+                "APC Cache",
+                "apc",
+                "cache",
+                "cache class",
+                "caching",
+                "cookie",
+                "files cache",
+                "memcache",
+                "memcached",
+                "mysql cache",
+                "pdo cache",
+                "php cache",
+                "predis",
+                "redis",
+                "wincache"
+            ],
+            "time": "2015-10-01 03:17:04"
+        },
+        {
             "name": "phpmailer/phpmailer",
             "version": "v5.2.10",
             "source": {
@@ -878,7 +935,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/silexphp/Silex/zipball/bdbf5b78181dbfd2cf41d100e0866d385b151638",
+                "url": "https://api.github.com/repos/silexphp/Silex/zipball/129cc1bd190e0018c8920c8d9150bfc9b4065946",
                 "reference": "bdbf5b78181dbfd2cf41d100e0866d385b151638",
                 "shasum": ""
             },
@@ -961,12 +1018,12 @@
             "target-dir": "Symfony/Component/Debug",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Debug.git",
+                "url": "https://github.com/symfony/debug.git",
                 "reference": "ad4511a8fddce7ec163b513ba39a30ea4f32c9e7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Debug/zipball/ad4511a8fddce7ec163b513ba39a30ea4f32c9e7",
+                "url": "https://api.github.com/repos/symfony/debug/zipball/ad4511a8fddce7ec163b513ba39a30ea4f32c9e7",
                 "reference": "ad4511a8fddce7ec163b513ba39a30ea4f32c9e7",
                 "shasum": ""
             },
@@ -1022,12 +1079,12 @@
             "target-dir": "Symfony/Component/EventDispatcher",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/EventDispatcher.git",
+                "url": "https://github.com/symfony/event-dispatcher.git",
                 "reference": "672593bc4b0043a0acf91903bb75a1c82d8f2e02"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/672593bc4b0043a0acf91903bb75a1c82d8f2e02",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/672593bc4b0043a0acf91903bb75a1c82d8f2e02",
                 "reference": "672593bc4b0043a0acf91903bb75a1c82d8f2e02",
                 "shasum": ""
             },
@@ -1081,12 +1138,12 @@
             "target-dir": "Symfony/Component/HttpFoundation",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/HttpFoundation.git",
+                "url": "https://github.com/symfony/http-foundation.git",
                 "reference": "8a0d00980ef9f6b47ddbf24bdfbf70fead760816"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/8a0d00980ef9f6b47ddbf24bdfbf70fead760816",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/8a0d00980ef9f6b47ddbf24bdfbf70fead760816",
                 "reference": "8a0d00980ef9f6b47ddbf24bdfbf70fead760816",
                 "shasum": ""
             },
@@ -1135,12 +1192,12 @@
             "target-dir": "Symfony/Component/HttpKernel",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/HttpKernel.git",
+                "url": "https://github.com/symfony/http-kernel.git",
                 "reference": "2010194de0a57731af9404c7f97fd300db98b7a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/HttpKernel/zipball/2010194de0a57731af9404c7f97fd300db98b7a3",
+                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/2010194de0a57731af9404c7f97fd300db98b7a3",
                 "reference": "2010194de0a57731af9404c7f97fd300db98b7a3",
                 "shasum": ""
             },

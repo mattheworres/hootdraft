@@ -112,3 +112,7 @@ $app['phpdraft.PickValidator'] = function () use ($app) {
 $app['phpdraft.ProPlayerValidator'] = function () use ($app) {
   return new \PhpDraft\Domain\Validators\ProPlayerValidator($app);
 };
+
+$app['phpdraft.ObjectCache'] = function () use ($app) {
+  return new \phpFastCache();
+};
