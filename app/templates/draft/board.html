@@ -1,6 +1,6 @@
 <div data-ng-cloak>
-  <div class="board-header-wrapper hidden-xs hidden-sm" ng-show="draftValid && draft.in_progress">
-    <div class="navbar-draft-board hidden-xs hidden-sm" ng-show="draftValid && draft.in_progress" affix="top">
+  <div class="board-header-wrapper hidden-xs" ng-show="draftValid && draft.in_progress && !boardLoading">
+    <div class="navbar-draft-board hidden-xs" ng-show="draftValid && draft.in_progress && !boardLoading" affix="top">
       <div class="container-fluid">
         <div class="row pick-list-display">
           <div class="col-sm-1 current-pick non-clock-content">
@@ -37,7 +37,9 @@
     draft-locked=draftLocked>
   </draft-state>
 
-  <div id="draft-board-container">
+  <section-loading show-loading=boardLoading></section-loading>
+
+  <div id="draft-board-container" ng-hide="boardLoading">
     <div id="draft-board" ng-style="{width: boardCtrl.calculatedBoardWidth}">
       <div class="round" ng-repeat="round in pickRounds">
         <div class="round-number">

@@ -54,9 +54,11 @@ class AddPickController extends BaseController
 
   _savePick: ->
     @messageService.closeToasts()
+    @workingModalService.openModal()
 
     addSuccessHandler = (response) =>
       @addInProgress = false
+      @workingModalService.closeModal()
 
       @messageService.showSuccess "#{@$scope.currentPick.first_name} #{@$scope.currentPick.last_name} drafted"
       @$scope.manualEntry = false
@@ -65,6 +67,7 @@ class AddPickController extends BaseController
         @_loadCurrentPick()
       else
         @deregister()
+        @workingModalService.closeModal()
         @workingModalService.openModal()
         #Draft has been completed - ensure commish user *thinks* something big happened, even though this is all instant
         setTimeout =>
