@@ -9,12 +9,16 @@ VIEW README.MD FOR DETAILS ON WHERE TO PLACE THIS FILE
 $configuration_variables = array(
   //Provide the DBAL driver name for the database (see http://silex.sensiolabs.org/doc/providers/doctrine.html)
   'DB_DRIVER' => 'pdo_mysql',
-  'DB_HOST' => 'localhost',
+  'DB_HOST' => 'localhost', //on some *nix systems, it may be helpful to use '127.0.0.1' instead of 'localhost'
   //Name of your database
   'DB_NAME' => 'phpdraft',
   'DB_PORT' => 3306,
-  'DB_USER' => 'user',
-  'DB_PASS' => 'pass',
+  'DB_USER' => 'database_username',
+  'DB_PASS' => 'database_password',
+
+  //Provide the number of seconds to cache certain objects (like drafts) in memory to save on database calls
+  //Higher numbers make requests faster, but data can become stale more often as a result
+  'CACHE_SECONDS' => 5,
 
   //Provide a secret key to generate all JWT authentication tokens. Make sure it's long, and keep it a secret!
   'AUTH_KEY' => 'auth',

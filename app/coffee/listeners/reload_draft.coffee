@@ -1,4 +1,7 @@
 angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftService, messageService) ->
+  #Set the cache flag for the first request
+  $rootScope.loadDraftData = true
+
   $rootScope.$on subscriptionKeys.reloadDraft, (event, args) ->
     $rootScope.draftLoadInProgress = false
 
@@ -8,6 +11,22 @@ angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftSe
 
     successHandler = (draft) =>
       $rootScope.draft = draft
+
+      #Either store the cached data (first request on page load) or grab cache instead (every request afterward)
+      if $rootScope.loadDraftData
+        $rootScope.loadDraftData = false
+        $rootScope.sports = draft.sports
+        $rootScope.styles = draft.styles
+        $rootScope.statuses = draft.statuses
+        $rootScope.teams = draft.teams
+        $rootScope.positions = draft.positions
+      else
+        $rootScope.draft.sports = $rootScope.sports
+        $rootScope.draft.styles = $rootScope.styles
+        $rootScope.draft.statuses = $rootScope.statuses
+        $rootScope.draft.teams = $rootScope.teams
+        $rootScope.draft.positions = $rootScope.positions
+
       $rootScope.showDraftMenu = true
       $rootScope.draftLoading = false
 
@@ -50,4 +69,4 @@ angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftSe
       $rootScope.draftLoading = args.onPageLoad? and args.onPageLoad
       $rootScope.draftError = false
       $rootScope.draftLocked = false
-      api.Draft.get({id: args.draft_id}, successHandler, errorHandler)
+      api.Draft.get({id: args.draft_id, get_draft_data: $rootScope.loadDraftData}, successHandler, errorHandler)

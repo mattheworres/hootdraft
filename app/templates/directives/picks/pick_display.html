@@ -9,7 +9,8 @@
     <div class="visible-xs hidden-sm hidden-md hidden-lg first-name-xs">{{pick.first_name}}</div>
     <div class="visible-xs hidden-sm hidden-md hidden-lg last-name-xs">{{pick.last_name}}</div>
     <div class="hidden-xs visible-sm visible-md visible-lg player-name-sm">{{pick.first_name}} {{pick.last_name}}</div>
-    <div class="sports-data">{{draft.positions[pick.position]}} &ndash; {{draft.teams[pick.team]}}</div>
+    <div class="sports-data visible-xs visible-sm visible-md hidden-lg">{{pick.position}} &ndash; {{pick.team}}</div>
+    <div class="sports-data hidden-xs hidden-sm hidden-md visible-lg">{{draft.positions[pick.position]}} &ndash; {{draft.teams[pick.team]}}</div>
     <div class="manager">{{pick.manager_name}}</div>
   </div>
 </div>

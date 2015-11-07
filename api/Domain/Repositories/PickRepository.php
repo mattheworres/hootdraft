@@ -182,6 +182,9 @@ class PickRepository {
 
     $stmt->fetch();
 
+    $previous_pick->selected = strlen($previous_pick->pick_time) > 0 && $previous_pick->pick_duration > 0;
+    $previous_pick->on_the_clock = false;
+
     return $previous_pick;
   }
 

@@ -1,6 +1,6 @@
 class ConfirmActionService extends AngularService
   @register 'confirmActionService'
-  @inject '$modal', '$sessionStorage'
+  @inject '$modal'
 
   showConfirmationModal: (message, confirmationCallback, title, iconClass, confirmButtonText) ->
     @modalInstance = @$modal.open

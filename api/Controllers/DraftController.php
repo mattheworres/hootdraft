@@ -9,6 +9,7 @@ use \PhpDraft\Domain\Entities\Pick;
 class DraftController {
   public function Get(Application $app, Request $request) {
     $draft_id = (int)$request->get('id');
+    $getDraftData = $request->get('get_draft_data') == 'true';
 
     if(empty($draft_id) || $draft_id == 0) {
       throw new \Exception("Unable to load draft.");
@@ -17,7 +18,7 @@ class DraftController {
     //Need to put it in headers so the client can easily add it to all requests (similar to token)
     $password = $request->headers->get(DRAFT_PASSWORD_HEADER, '');
 
-    $draft = $app['phpdraft.DraftRepository']->GetPublicDraft($request, $draft_id, $password);
+    $draft = $app['phpdraft.DraftRepository']->GetPublicDraft($request, $draft_id, $getDraftData, $password);
 
     return $app->json($draft);
   }

@@ -1,6 +1,6 @@
 <div data-ng-cloak>
-  <div class="board-header-wrapper hidden-xs" ng-show="draftValid && draft.in_progress && !boardLoading">
-    <div class="navbar-draft-board hidden-xs" ng-show="draftValid && draft.in_progress && !boardLoading" affix="top">
+  <div class="board-header-wrapper hidden-xs hidden-sm" ng-show="draftValid && draft.in_progress && !boardLoading">
+    <div class="navbar-draft-board hidden-xs hidden-sm" ng-show="draftValid && draft.in_progress && !boardLoading" affix="top">
       <div class="container-fluid">
         <div class="row pick-list-display">
           <div class="col-sm-1 current-pick non-clock-content">
@@ -9,7 +9,7 @@
           <div class="col-sm-3 non-clock-content">
             <pick-display draft=draft pick=currentPick></pick-display>
           </div>
-          <div class="col-sm-4 active-pick-timer" ng-show="timerEnabled && !timerUp">
+          <div class="col-sm-4 active-pick-timer text-center" ng-show="timerEnabled && !timerUp">
             <flip-clock autostart="false" clock-face="MinuteCounter" countdown="true" stop="boardCtrl.timerClockStopHandler()"></flip-clock>
           </div>
           <div class="col-sm-4 pick-timer-up non-clock-content" ng-show="timerEnabled && timerUp">

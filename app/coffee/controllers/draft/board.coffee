@@ -12,7 +12,7 @@ class BoardController extends BaseController
     @$scope.timerEnabled = false
     @$scope.timerUp = false
     @$scope.timerRunning = false
-    @calculatedBoardWidth = "100%";
+    @calculatedBoardWidth = "100%"
 
     @hideFooter()
 
@@ -74,13 +74,22 @@ class BoardController extends BaseController
 
       @$scope.currentDraftCounter = data.draft_counter
 
-      if data.picks.length == 0
+      if not counterChanged
         return
 
-      if counterChanged
-        @_loadCurrentAndNextPicks(draft_id)
+      #Rather than hitting these separately, we've been handed them already, so update them.
+      #@_loadCurrentAndNextPicks(draft_id)
+      @$scope.currentPick = data.current_pick
+      @$scope.previousPick = data.previous_pick
+      @$scope.hasPreviousPick = @$scope.previousPick? and @$scope.previousPick != undefined
 
-      for updatedPick in data.picks
+      @_updateBoardPick(data.current_pick)
+      @_updateBoardPick(data.previous_pick)
+
+      if not data.updated_picks? or data.updated_picks.length == 0
+        return
+
+      for updatedPick in data.updated_picks
         if updatedPick.player_pick >= @$scope.currentPick.player_pick
           @_resetTimer()
         @_updateBoardPick(updatedPick)

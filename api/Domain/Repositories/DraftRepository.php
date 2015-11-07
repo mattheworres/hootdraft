@@ -138,10 +138,9 @@ class DraftRepository {
     return $drafts;
   }
 
-  public function GetPublicDraft(Request $request, $id, $password = '') {
+  public function GetPublicDraft(Request $request, $id, $getDraftData = false, $password = '') {
     $draft = new Draft();
 
-    //$cachedDraft = $this->app['phpdraft.CachedDraft'];
     $cachedDraft = $this->app['phpdraft.ObjectCache']->get("draft$id");
 
     if($cachedDraft != null) {
@@ -159,7 +158,7 @@ class DraftRepository {
         throw new \Exception("Unable to load draft");
       }
 
-      $this->app['phpdraft.ObjectCache']->set("draft$id", $draft, 5);
+      $this->app['phpdraft.ObjectCache']->set("draft$id", $draft, CACHE_SECONDS);
     }
 
     $current_user = $this->app['phpdraft.LoginUserService']->GetUserFromHeaderToken($request);
@@ -185,11 +184,15 @@ class DraftRepository {
     $draft->setting_up = $this->app['phpdraft.DraftService']->DraftSettingUp($draft);
     $draft->in_progress = $this->app['phpdraft.DraftService']->DraftInProgress($draft);
     $draft->complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);
-    $draft->sports = $this->app['phpdraft.DraftDataRepository']->GetSports();
-    $draft->styles = $this->app['phpdraft.DraftDataRepository']->GetStyles();
-    $draft->statuses = $this->app['phpdraft.DraftDataRepository']->GetStatuses();
-    $draft->teams = $this->app['phpdraft.DraftDataRepository']->GetTeams($draft->draft_sport);
-    $draft->positions = $this->app['phpdraft.DraftDataRepository']->GetPositions($draft->draft_sport);
+
+    if($getDraftData) {
+      $draft->sports = $this->app['phpdraft.DraftDataRepository']->GetSports();
+      $draft->styles = $this->app['phpdraft.DraftDataRepository']->GetStyles();
+      $draft->statuses = $this->app['phpdraft.DraftDataRepository']->GetStatuses();
+      $draft->teams = $this->app['phpdraft.DraftDataRepository']->GetTeams($draft->draft_sport);
+      $draft->positions = $this->app['phpdraft.DraftDataRepository']->GetPositions($draft->draft_sport);
+    }
+
     $draft->is_locked = false;
 
     if(!$currentUserOwnsIt && !$draft->draft_visible && $password != $draft->draft_password) {
@@ -206,14 +209,12 @@ class DraftRepository {
   * This method is only to be used internally or when the user has been verified as owner of the draft (or is admin)
   * (in other words, don't call this then return the result as JSON!)
   */
-  public function Load($id) {
+  public function Load($id, $bustCache = false) {
     $draft = new Draft();
 
     $cachedDraft = $this->app['phpdraft.ObjectCache']->get("draft$id");
 
-    if($cachedDraft != null) {
-      $draft = $cachedDraft;
-    } else {
+    if($bustCache || $cachedDraft == null) {
       $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
       LEFT OUTER JOIN users u
       ON d.commish_id = u.id
@@ -227,7 +228,9 @@ class DraftRepository {
         throw new \Exception("Unable to load draft");
       }
 
-      $this->app['phpdraft.ObjectCache']->set("draft$id", $draft, 5);
+      $this->app['phpdraft.ObjectCache']->set("draft$id", $draft, CACHE_SECONDS);
+    } else {
+      $draft = $cachedDraft;
     }
 
     $draft->draft_rounds = (int)$draft->draft_rounds;
