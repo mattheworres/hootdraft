@@ -16,9 +16,9 @@ $configuration_variables = array(
   'DB_USER' => 'database_username',
   'DB_PASS' => 'database_password',
 
-  //Provide the number of seconds to cache certain objects (like drafts) in memory to save on database calls
-  //Higher numbers make requests faster, but data can become stale more often as a result
-  'CACHE_SECONDS' => 5,
+  //Provide the number of seconds to cache drafts in PHP memory to save on database calls. Cache is automatically updated when
+  //changes are made to the draft, so the higher the number the better.
+  'CACHE_SECONDS' => 3600,
 
   //Provide a secret key to generate all JWT authentication tokens. Make sure it's long, and keep it a secret!
   'AUTH_KEY' => 'auth',

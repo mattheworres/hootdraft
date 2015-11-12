@@ -167,8 +167,6 @@ class PickRepository {
 
     $previous_pick_number = ($draft->draft_current_pick - 1);
 
-    $this->app['monolog']->addDebug("Getting prev pick for draft $draft->draft_id of pick $previous_pick_number");
-
     $previous_pick = new Pick();
     $stmt->setFetchMode(\PDO::FETCH_INTO, $previous_pick);
 

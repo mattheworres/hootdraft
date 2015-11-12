@@ -141,7 +141,7 @@ class DraftRepository {
   public function GetPublicDraft(Request $request, $id, $getDraftData = false, $password = '') {
     $draft = new Draft();
 
-    $cachedDraft = $this->app['phpdraft.ObjectCache']->get("draft$id");
+    $cachedDraft = $this->GetCachedDraft($id);
 
     if($cachedDraft != null) {
       $draft = $cachedDraft;
@@ -158,7 +158,7 @@ class DraftRepository {
         throw new \Exception("Unable to load draft");
       }
 
-      $this->app['phpdraft.ObjectCache']->set("draft$id", $draft, CACHE_SECONDS);
+      $this->SetCachedDraft($draft);
     }
 
     $current_user = $this->app['phpdraft.LoginUserService']->GetUserFromHeaderToken($request);
@@ -212,7 +212,7 @@ class DraftRepository {
   public function Load($id, $bustCache = false) {
     $draft = new Draft();
 
-    $cachedDraft = $this->app['phpdraft.ObjectCache']->get("draft$id");
+    $cachedDraft = $this->GetCachedDraft($id);
 
     if($bustCache || $cachedDraft == null) {
       $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
@@ -228,7 +228,7 @@ class DraftRepository {
         throw new \Exception("Unable to load draft");
       }
 
-      $this->app['phpdraft.ObjectCache']->set("draft$id", $draft, CACHE_SECONDS);
+      $this->SetCachedDraft($draft);
     } else {
       $draft = $cachedDraft;
     }
@@ -258,6 +258,8 @@ class DraftRepository {
 
     $draft->draft_id = (int)$this->app['db']->lastInsertId();
 
+    $this->SetCachedDraft($draft);
+
     return $draft;
   }
 
@@ -284,6 +286,8 @@ class DraftRepository {
       throw new \Exception("Unable to update draft.");
     }
 
+    $this->ResetDraftCache();
+
     return $draft;
   }
 
@@ -297,6 +301,8 @@ class DraftRepository {
     if(!$status_stmt->execute()) {
       throw new \Exception("Unable to update draft status.");
     }
+
+    $this->ResetDraftCache();
 
     return $draft;
   }
@@ -313,6 +319,8 @@ class DraftRepository {
     if(!$increment_stmt->execute()) {
       throw new \Exception("Unable to increment draft counter.");
     }
+
+    $this->ResetDraftCache();
 
     return $incrementedCounter;
   }
@@ -342,6 +350,8 @@ class DraftRepository {
       }
     }
 
+    $this->ResetDraftCache();
+
     return $draft;
   }
 
@@ -360,6 +370,8 @@ class DraftRepository {
     if(!$reset_stmt->execute()) {
       throw new \Exception("Unable to set draft to in progress.");
     }
+
+    $this->ResetDraftCache();
 
     return 0;
   }
@@ -389,7 +401,25 @@ class DraftRepository {
       throw new \Exception("Unable to delete draft $draft_id.");
     }
 
+    $this->UnsetCachedDraft($draft_id);
+
     return;
+  }
+
+  private function ResetDraftCache($draft_id) {
+    $draft = $this->Load($draft_id, true);
+  }
+
+  private function SetCachedDraft(Draft $draft) {
+    $this->app['phpdraft.ObjectCache']->set("draft$draft->draft_id", $draft, CACHE_SECONDS);
+  }
+
+  private function GetCachedDraft($draft_id) {
+    return $this->app['phpdraft.ObjectCache']->get("draft$draft_id");
+  }
+
+  private function UnsetCachedDraft($draft_id) {
+    $this->app['phpdraft.ObjectCache']->delete("draft$draft_id");
   }
 
   private function ProtectPrivateDraft(Draft $draft) {
