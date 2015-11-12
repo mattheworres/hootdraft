@@ -286,7 +286,7 @@ class DraftRepository {
       throw new \Exception("Unable to update draft.");
     }
 
-    $this->ResetDraftCache();
+    $this->ResetDraftCache($draft->draft_id);
 
     return $draft;
   }
@@ -302,7 +302,7 @@ class DraftRepository {
       throw new \Exception("Unable to update draft status.");
     }
 
-    $this->ResetDraftCache();
+    $this->ResetDraftCache($draft->draft_id);
 
     return $draft;
   }
@@ -320,7 +320,7 @@ class DraftRepository {
       throw new \Exception("Unable to increment draft counter.");
     }
 
-    $this->ResetDraftCache();
+    $this->ResetDraftCache($draft->draft_id);
 
     return $incrementedCounter;
   }
@@ -350,7 +350,7 @@ class DraftRepository {
       }
     }
 
-    $this->ResetDraftCache();
+    $this->ResetDraftCache($draft->draft_id);
 
     return $draft;
   }
@@ -371,7 +371,7 @@ class DraftRepository {
       throw new \Exception("Unable to set draft to in progress.");
     }
 
-    $this->ResetDraftCache();
+    $this->ResetDraftCache($draft->draft_id);
 
     return 0;
   }
