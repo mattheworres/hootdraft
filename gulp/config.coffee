@@ -71,8 +71,10 @@ module.exports =
                 'bower_components/angularjs-ordinal-filter/ordinal-browser.js'
                 'bower_components/angular-mask/dist/ngMask.min.js'
                 'bower_components/angular-slip/angular-slip.js'
-                'vendor_packages/angular-flipclock/angular-flipclock.min.js'
-                'bower_components/ngScrollSpy/dist/ngScrollSpy.min.js'
+                'bower_components/angular-flipclock/angular-flipclock.js'
+                'bower_components/angular-strap/dist/modules/dimensions.min.js'
+                'bower_components/angular-strap/dist/modules/debounce.min.js'
+                'bower_components/angular-strap/dist/modules/affix.js'
             ],
             css: [
                 'bower_components/angular-ui-bootstrap-bower/ui-bootstrap-csp.css'

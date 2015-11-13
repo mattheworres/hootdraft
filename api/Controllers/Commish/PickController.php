@@ -11,7 +11,7 @@ use PhpDraft\Domain\Models\PhpDraftResponse;
 class PickController {
   public function GetCurrent(Application $app, Request $request) {
     $draft_id = $request->get('draft_id');
-    $draft = $app['phpdraft.DraftRepository']->Load($draft_id, true);
+    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
     
     $response = $app['phpdraft.PickService']->GetCurrentPick($draft);
 
@@ -20,7 +20,7 @@ class PickController {
 
   public function Add(Application $app, Request $request) {
     $draft_id = $request->get('draft_id');
-    $draft = $app['phpdraft.DraftRepository']->Load($draft_id, true);
+    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
     $pick_id = $request->get('player_id');
 
     try {
@@ -50,7 +50,7 @@ class PickController {
 
   public function Update(Application $app, Request $request) {
     $draft_id = $request->get('draft_id');
-    $draft = $app['phpdraft.DraftRepository']->Load($draft_id, true);
+    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
     $pick_id = $request->get('player_id');
 
     try {
@@ -94,7 +94,7 @@ class PickController {
     $response = new PhpDraftResponse();
 
     try {
-      $draft = $app['phpdraft.DraftRepository']->Load($draft_id, true);
+      $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
 
       $response->draft_rounds = $draft->draft_rounds;
       $response->last_5_picks = $app['phpdraft.PickRepository']->LoadLastPicks($draft_id, 5);

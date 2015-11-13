@@ -18,5 +18,7 @@ angular.module("app", [
   "ordinal"
   "ngMask"
   "slip"
-  "ngScrollSpy"
+  "mgcrea.ngStrap.helpers.dimensions"
+  "mgcrea.ngStrap.helpers.debounce"
+  "mgcrea.ngStrap.affix"
 ])
