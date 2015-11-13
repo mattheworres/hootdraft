@@ -35,6 +35,7 @@ class AuthenticationController
 
         $response->success = true;
         $response->name = $user->getName();
+        $response->is_admin = $user->isAdmin();
         $response->token = $app['security.jwt.encoder']->encode(['name' => $user->getUsername()]);
         $response->auth_timeout = $auth_timeout->format('Y-m-d H:i:s');
 

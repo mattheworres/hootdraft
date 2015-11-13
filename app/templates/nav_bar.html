@@ -11,7 +11,7 @@
   <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
     <ul class="nav navbar-nav">
       <li dropdown>
-        <a href="#" id="draftDropdown" class="dropdown-toggle" dropdown-toggle role="button" aria-expended="false" ng-click="navCtrl.changeDraftNav">
+        <a href="#" id="draftDropdown" class="dropdown-toggle" dropdown-toggle role="button" aria-expanded="false">
           <i class="fa fa-sitemap"></i>&nbsp;&nbsp;
           Leagues
           <span class="caret"></span>
@@ -44,6 +44,35 @@
         </a>
       </li>
     </ul>
+    <ul class="nav navbar-nav" ng-show="navCtrl.isAdmin()">
+      <li dropdown>
+        <a href id="adminDropdown" class="dropdown-toggle" dropdown-toggle role="button" aria-expanded="false">
+          <i class="fa fa-unlock"></i>&nbsp;&nbsp;
+            Admin Stuff
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+          <li>
+            <a href="#">
+            <i class="fa fa-users"></i>
+            &nbsp;Users
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <i class="fa fa-cog"></i>
+              &nbsp;Player Data
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <i class="fa fa-bar-chart"></i>
+              &nbsp;Draft Stats
+            </a>
+          </li>
+        </ul>
+    </ul>
+
     <ul class="nav navbar-nav navbar-right navbar-form">
       <li ng-hide="navCtrl.isAuthenticated()">
         <a class="btn btn-primary" role="button" href="login">
@@ -58,7 +87,7 @@
         </a>
       </li>
     </ul>
-    <p ng-show="navCtrl.isAuthenticated()" class="navbar-text navbar-right"><strong><a href="profile">{{navCtrl.authenticatedName()}}</a></strong> logged in</p>
+    <p ng-show="navCtrl.isAuthenticated()" class="navbar-text navbar-right hidden-sm"><strong><a href="profile">{{navCtrl.authenticatedName()}}</a></strong> logged in</p>
   </div>
 </nav>
 

@@ -62,6 +62,10 @@ class PhpDraftSecurityUser implements UserInterface, EquatableInterface
         return $this->enabled;
     }
 
+    public function isAdmin() {
+        return in_array('ROLE_ADMIN', $this->roles);
+    }
+
     public function hasVerificationKey() {
         return !empty($this->verificationKey);
     }

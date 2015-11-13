@@ -7,6 +7,7 @@ class AuthenticationService extends AngularService
     @$sessionStorage.auth_token = userData.token
     @$sessionStorage.user_name = userData.name
     @$sessionStorage.auth_time = userData.auth_timeout
+    @$sessionStorage.user_admin = userData.is_admin
 
   cacheName: (userName) ->
     delete @$sessionStorage.user_name
@@ -23,6 +24,9 @@ class AuthenticationService extends AngularService
 
   isAuthenticated: ->
     @$sessionStorage.authenticated && @$sessionStorage.user_name? && @$sessionStorage.auth_token?
+
+  isAdmin: ->
+    @$sessionStorage.user_admin
 
   login: (model) ->
     result = @$q.defer()

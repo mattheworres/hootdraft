@@ -23,7 +23,11 @@ class @BaseController extends AngularController
     @initialize?()
 
   isAuthenticated: ->
-    @$sessionStorage.authenticated
+    #@$sessionStorage.authenticated
+    @authenticationService.isAuthenticated()
+
+  isAdmin: ->
+    @isAuthenticated() and @authenticationService.isAdmin()
 
   authenticatedName: ->
     @$sessionStorage.user_name
