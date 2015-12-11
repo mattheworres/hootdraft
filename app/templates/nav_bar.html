@@ -43,9 +43,7 @@
           New League
         </a>
       </li>
-    </ul>
-    <ul class="nav navbar-nav" ng-show="navCtrl.isAdmin()">
-      <li dropdown>
+      <li ng-show="navCtrl.isAdmin()" dropdown>
         <a href id="adminDropdown" class="dropdown-toggle" dropdown-toggle role="button" aria-expanded="false">
           <i class="fa fa-unlock"></i>&nbsp;&nbsp;
             Admin Stuff
@@ -53,7 +51,7 @@
         </a>
         <ul class="dropdown-menu" aria-labelledby="adminDropdown">
           <li>
-            <a href="#">
+            <a href="admin/users">
             <i class="fa fa-users"></i>
             &nbsp;Users
             </a>
@@ -71,6 +69,7 @@
             </a>
           </li>
         </ul>
+      </li>
     </ul>
 
     <ul class="nav navbar-nav navbar-right navbar-form">

@@ -115,11 +115,7 @@ angular.module('app').config ($routeProvider, $locationProvider) ->
     templateUrl: 'app/templates/commish/add_trade.html'
 
   $routeProvider.when '/admin/users',
-    #To test the adminOnly flag:
-    controller: 'HomeController'
-    controllerAs: 'homeCtrl'
-    templateUrl: 'app/templates/home/home.html'
-    #controller: 'AdminUsersController'
-    #controllerAs: 'adminUserCtrl'
-    #templateUrl: 'app/templates/admin/users.html'
+    controller: 'UsersController'
+    controllerAs: 'usersCtrl'
+    templateUrl: 'app/templates/admin/users.html'
     adminOnly: true

@@ -113,4 +113,11 @@ angular.module('app').factory 'api', ($resource, ENV) ->
       { method: 'GET', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/manager/:manager_id/assets" }
     save:
       { method: 'POST', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/trade" }
-    
+
+  User: $resource "#{ENV.apiEndpoint}admin/user/:id", { id: '@id' },
+    'getAll': 
+      { method: 'GET', url: "#{ENV.apiEndpoint}admin/users" }
+    'update':
+      { method: 'PUT', url: "#{ENV.apiEndpoint}admin/user/:id" }
+    delete:
+      { method: 'DELETE' }

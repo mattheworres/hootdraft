@@ -74,7 +74,7 @@ module.exports =
                 'bower_components/angular-flipclock/angular-flipclock.js'
                 'bower_components/angular-strap/dist/modules/dimensions.min.js'
                 'bower_components/angular-strap/dist/modules/debounce.min.js'
-                'bower_components/angular-strap/dist/modules/affix.js'
+                'bower_components/angular-strap/dist/modules/affix.min.js'
             ],
             css: [
                 'bower_components/angular-ui-bootstrap-bower/ui-bootstrap-csp.css'

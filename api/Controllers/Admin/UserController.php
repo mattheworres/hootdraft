@@ -21,11 +21,13 @@ class UserController
     $user = $app['phpdraft.LoginUserRepository']->LoadById($user_id);
     $user->email = $request->get('email');
     $user->name = $request->get('name');
-    $user->enabled = $request->get('enabled');
+    $user->roles = $request->get('roles');
 
-    $rolesJson = $request->get('roles');
-
-    $user->roles = implode(',', $rolesJson);
+    //Coerce down to a 1 or 0 type
+    $enabVal = $request->get('enabled');
+    $enabled = $request->get('enabled') == true;
+    $user->enabled = $enabled ? 1 : 0;
+    $app['monolog']->addDebug("So we have $enabVal ; $enabled and we set $user->enabled for $user->name.");
 
     $validity = $app['phpdraft.LoginUserValidator']->IsAdminUserUpdateValid($user);
 
