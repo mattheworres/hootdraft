@@ -75,6 +75,7 @@ module.exports =
                 'bower_components/angular-strap/dist/modules/dimensions.min.js'
                 'bower_components/angular-strap/dist/modules/debounce.min.js'
                 'bower_components/angular-strap/dist/modules/affix.min.js'
+                'bower_components/ng-file-upload/ng-file-upload.min.js'
             ],
             css: [
                 'bower_components/angular-ui-bootstrap-bower/ui-bootstrap-csp.css'

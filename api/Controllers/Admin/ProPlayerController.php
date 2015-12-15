@@ -10,9 +10,15 @@ use PhpDraft\Domain\Entities\Draft;
 
 class ProPlayerController
 {
+  public function GetSports(Application $app, Request $request) {
+    $sports = $app['phpdraft.DraftDataRepository']->GetSports();
+
+    return $app->json($sports, Response::HTTP_OK);
+  }
+
   public function Upload(Application $app, Request $request) {
     $sport = $request->get('sport');
-    $file = $request->files->get('csv_file');
+    $file = $request->files->get('file');
 
     $validity = $app['phpdraft.ProPlayerValidator']->IsUploadSportValid($sport, $file);
 

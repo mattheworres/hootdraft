@@ -119,3 +119,9 @@ angular.module('app').config ($routeProvider, $locationProvider) ->
     controllerAs: 'usersCtrl'
     templateUrl: 'app/templates/admin/users.html'
     adminOnly: true
+
+  $routeProvider.when '/admin/proplayers',
+    controller: 'ProPlayerManagementController'
+    controllerAs: 'proPlayerCtrl'
+    templateUrl: 'app/templates/admin/pro_player_management.html'
+    adminOnly: true

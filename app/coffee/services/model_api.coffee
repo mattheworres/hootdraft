@@ -36,13 +36,17 @@ angular.module('app').factory 'api', ($resource, ENV) ->
     'search':
       { method: 'GET', url: "#{ENV.apiEndpoint}commissioners/search" }
 
+  Admin: $resource "#{ENV.apiEndpoint}admin", {},
+    'getSports':
+      { method: 'GET', url: "#{ENV.apiEndpoint}admin/sports" }
+
   Draft: $resource "#{ENV.apiEndpoint}draft/:id", { draft_id: '@draft_id' },
     'getDraftList':
       { method: 'GET', url: "#{ENV.apiEndpoint}drafts", isArray: true }
     'searchCommissioners':
       { method: 'GET', url: "#{ENV.apiEndpoint}drafts/commissioners/search" }
     'getDraftsByCommish':
-      { method: 'GET', url: "#{ENV.apiEndpoint}drafts/:commish_id", isArray: true}
+      { method: 'GET', url: "#{ENV.apiEndpoint}drafts/:commish_id", isArray: true }
     'getStats':
       { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/stats" }
     'getTimeRemaining':#/draft/{draft_id}/timer/remaining

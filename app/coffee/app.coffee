@@ -21,4 +21,5 @@ angular.module("app", [
   "mgcrea.ngStrap.helpers.dimensions"
   "mgcrea.ngStrap.helpers.debounce"
   "mgcrea.ngStrap.affix"
+  "ngFileUpload"
 ])
