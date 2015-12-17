@@ -40,4 +40,5 @@ WHERE `trade_time` IS NOT NULL;
 ALTER TABLE `managers` ADD COLUMN `manager_email` TEXT;
 
 ALTER TABLE `draft` DROP COLUMN `commish_id`;
+ALTER TABLE `draft` DROP COLUMN `draft_stats_generated`;
 ALTER TABLE `trades` DROP COLUMN `trade_round`;

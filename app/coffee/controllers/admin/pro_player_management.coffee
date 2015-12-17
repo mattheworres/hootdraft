@@ -15,7 +15,7 @@ class ProPlayerManagementController extends BaseController
       @sports = response
 
     sportsError = (error) =>
-      @messageService.showError("Unable to load sports data, check dev tools.")
+      @messageService.showError("Unable to load sports data, check dev tools and report findings to the open source project (please!)")
 
     @api.Admin.getSports({}, sportsSuccess, sportsError)
     @csvFile = {}

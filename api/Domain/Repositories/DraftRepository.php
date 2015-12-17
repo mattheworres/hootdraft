@@ -138,6 +138,29 @@ class DraftRepository {
     return $drafts;
   }
 
+  //Note: this method is to be used by admin section only
+  public function GetAllCompletedDrafts() {
+    $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
+      LEFT OUTER JOIN users u
+      ON d.commish_id = u.id
+      WHERE d.draft_status = 'complete'
+      ORDER BY draft_create_time DESC");
+
+    $draft_stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Draft');
+
+    if(!$draft_stmt->execute()) {
+      throw new \Exception("Unable to load drafts.");
+    }
+
+    $drafts = array();
+
+    while($draft = $draft_stmt->fetch()) {
+      $drafts[] = $draft;
+    }
+
+    return $drafts;
+  }
+
   public function GetPublicDraft(Request $request, $id, $getDraftData = false, $password = '') {
     $draft = new Draft();
 
@@ -307,6 +330,21 @@ class DraftRepository {
     return $draft;
   }
 
+  public function UpdateStatsTimestamp(Draft $draft) {
+    $status_stmt = $this->app['db']->prepare("UPDATE draft
+      SET draft_stats_generated = UTC_TIMESTAMP() WHERE draft_id = ?");
+
+    $status_stmt->bindParam(1, $draft->draft_id);
+
+    if(!$status_stmt->execute()) {
+      throw new \Exception("Unable to update draft's stats timestamp.");
+    }
+
+    $this->ResetDraftCache($draft->draft_id);
+
+    return $draft;
+  }
+
   public function IncrementDraftCounter(Draft $draft) {
     $incrementedCounter = (int)$draft->draft_counter + 1;
 
@@ -436,6 +474,7 @@ class DraftRepository {
     $draft->draft_current_pick = '';
     $draft->draft_current_round = '';
     $draft->draft_create_time = '';
+    $draft->draft_stats_generated = '';
     $draft->nfl_extended = null;
     $draft->sports = null;
     $draft->styles = null;

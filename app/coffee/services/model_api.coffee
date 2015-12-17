@@ -36,9 +36,13 @@ angular.module('app').factory 'api', ($resource, ENV) ->
     'search':
       { method: 'GET', url: "#{ENV.apiEndpoint}commissioners/search" }
 
-  Admin: $resource "#{ENV.apiEndpoint}admin", {},
+  Admin: $resource "#{ENV.apiEndpoint}admin", { draft_id: '@draft_id' },
     'getSports':
       { method: 'GET', url: "#{ENV.apiEndpoint}admin/sports" }
+    'getAllDrafts':
+      { method: 'GET', url: "#{ENV.apiEndpoint}admin/drafts", isArray: true }
+    'regenerateDraftStats':
+      { method: 'POST', url: "#{ENV.apiEndpoint}admin/draft/:draft_id/stats" }
 
   Draft: $resource "#{ENV.apiEndpoint}draft/:id", { draft_id: '@draft_id' },
     'getDraftList':

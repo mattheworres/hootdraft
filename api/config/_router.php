@@ -115,6 +115,7 @@ $app->get('/draft/{draft_id}/timer/remaining', 'roundtime.controller:GetTimeRema
 
 $app->get('/style', "index.controller:Style");
 
+$app->get('/admin/drafts', "admin.draftstats.controller:GetDrafts");
 $app->post('/admin/draft/{draft_id}/stats', "admin.draftstats.controller:Create");
 $app->get('/admin/sports', "admin.proplayers.controller:GetSports");
 $app->post('/admin/proplayers', "admin.proplayers.controller:Upload");

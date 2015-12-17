@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS `draft` (
   `draft_password` text,
   `draft_start_time` datetime default NULL,
   `draft_end_time` datetime default NULL ,
+  `draft_stats_generated` datetime default NULL ,
   `draft_current_round` int(5) unsigned NOT NULL default '1',
   `draft_current_pick` int(5) unsigned NOT NULL default '1',
   `nfl_extended` TINYINT(1) NOT NULL DEFAULT '0',

@@ -109,6 +109,8 @@ class DraftStatsRepository {
 
     $draft_stats->draft_stat_id = $this->app['db']->lastInsertId();
 
+    $this->app['phpdraft.DraftRepository']->UpdateStatsTimestamp($draft);
+
     return $draft_stats;
   }
 

@@ -9,7 +9,9 @@ angular.module("app").run ($rootScope, $sessionStorage, $routeParams, $interval,
       $interval.cancel $rootScope.draftIntervalPromise
       $rootScope.draftIntervalPromise = undefined
       $rootScope.showDraftMenu = false
+      $rootScope.loadDraftData = false
     else
+      $rootScope.loadDraftData = true
       $rootScope.$broadcast subscriptionKeys.reloadDraft, { draft_id: $routeParams.draft_id, onPageLoad: true }
       if $rootScope.draftIntervalPromise == undefined
         $rootScope.draftIntervalPromise = $interval $rootScope.draftIntervalHandler, 3000

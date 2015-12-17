@@ -55,6 +55,9 @@ class Draft {
   /** @var string $draft_end_time datetime of when the draft was put into "complete" status */
   public $draft_end_time;
 
+  /** @var string $draft_stats_generated datetime of when the statistics for the draft were generated */
+  public $draft_stats_generated;
+
   /** @var int $draft_current_round */
   public $draft_current_round;
 

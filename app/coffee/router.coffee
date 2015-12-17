@@ -125,3 +125,9 @@ angular.module('app').config ($routeProvider, $locationProvider) ->
     controllerAs: 'proPlayerCtrl'
     templateUrl: 'app/templates/admin/pro_player_management.html'
     adminOnly: true
+
+  $routeProvider.when '/admin/stats',
+    controller: 'RegenerateStatsController'
+    controllerAs: 'regenerateCtrl'
+    templateUrl: 'app/templates/admin/regenerate_stats.html'
+    adminOnly: true

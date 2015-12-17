@@ -23,6 +23,7 @@ CREATE TABLE `users` (
 ALTER TABLE `managers` DROP COLUMN `manager_email`;
 
 ALTER TABLE `draft` ADD `commish_id` INT(11) NOT NULL AFTER `draft_id`;
+ALTER TABLE `draft` ADD `draft_stats_generated` datetime default NULL AFTER `draft_end_time`;
 
 #NOTE: To migrate PHPDraft <1.3.x NFL drafts that use extended rosters, you will have to manually update their
 #draft_sport to "NFLE".
