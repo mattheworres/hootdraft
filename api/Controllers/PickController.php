@@ -5,6 +5,7 @@ namespace PhpDraft\Controllers;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use PhpDraft\Domain\Models\PhpDraftResponse;
+use PhpDraft\Domain\Models\PickSearchModel;
 
 class PickController {
   public function GetAll(Application $app, Request $request) {
@@ -94,10 +95,19 @@ class PickController {
     $position = isset($position) ? $position : null;
     $sort = isset($sort) ? $sort : 'DESC';
 
-    $pickSearchModel = new \PhpDraft\Domain\Models\PickSearchModel($draft_id, $keywords, $team, $position, $sort);
+    $pickSearchModel = new PickSearchModel($draft_id, $keywords, $team, $position, $sort);
 
     $pickSearchModel = $app['phpdraft.PickRepository']->SearchStrict($pickSearchModel);
     $pickSearchModel = $app['phpdraft.PickRepository']->SearchLoose($pickSearchModel);
+
+    #If there's a space and no matches so far, create another searches where we manually split them firstname/lastname by sace automatically
+    $split_name_automatically = count($pickSearchModel->player_results) == 0 && strpos($keywords, " ") != false;
+
+    if($split_name_automatically) {
+      $pickSearchModel = new PickSearchModel($draft_id, $keywords, $team, $position, $sort);
+      $names = explode(" ", $keywords, 2);
+      $pickSearchModel = $app['phpdraft.PickRepository']->SearchSplit($pickSearchModel, $names[0], $names[1]);
+    }
 
     return $app->json($pickSearchModel);
   }

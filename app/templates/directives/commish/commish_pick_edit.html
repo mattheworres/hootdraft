@@ -15,7 +15,8 @@
           typeahead-template-url="autocompletePickTemplate.html" />
       </div>
       <div class="hidden-xs col-sm-1 text-center text-info">
-        <i class="fa fa-info-circle" tooltip="Search for players by first or last name - we can suggest a few based on a couple letters!" tooltip-trigger="mouseenter"  tooltip-append-to-body="true"></i>
+        <i class="fa fa-info-circle" tooltip="Search for players by first or last name - we can suggest a few based on a couple letters!" tooltip-trigger="mouseenter"  tooltip-append-to-body="true" ng-hide="playerSearchLoading"></i>
+        <i class="fa fa-circle-o-notch fa-spin fa-2x" ng-show="playerSearchLoading"></i>
       </div>
     </div>
     <div class="form-group">

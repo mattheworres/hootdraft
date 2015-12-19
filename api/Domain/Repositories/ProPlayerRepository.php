@@ -100,6 +100,24 @@ class ProPlayerRepository {
     return $found_players;
   }
 
+  public function SearchPlayersByAssumedName($league, $first_name, $last_name) {
+    $stmt = $this->app['db']->prepare("SELECT * FROM pro_players WHERE league = :league AND (first_name LIKE :first_name AND last_name LIKE :last_name) LIMIT 15");
+    $stmt->setFetchMode(\PDO::FETCH_CLASS, 'PhpDraft\Domain\Entities\ProPlayer');
+    $stmt->bindValue(':league', $league);
+    $stmt->bindValue(':first_name', "%" . $first_name . "%");
+    $stmt->bindValue(':last_name', "%" . $last_name . "%");
+
+    $stmt->execute();
+
+    $found_players = array();
+
+    while ($newPlayer = $stmt->fetch()) {
+      $found_players[] = $newPlayer;
+    }
+
+    return $found_players;
+  }
+
   /**
    * Delete existing players for a given league, upload new players
    * @param array $players Array of pro_player_object's

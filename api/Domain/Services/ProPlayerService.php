@@ -36,6 +36,14 @@ class ProPlayerService {
     try {
       $players = $this->app['phpdraft.ProPlayerRepository']->SearchPlayers($league, $searchTerm);
 
+      #If there's a space and no matches so far, create another searches where we manually split them firstname/lastname by sace automatically
+      $split_name_automatically = count($players) == 0 && strpos($searchTerm, " ") != false;
+
+      if($split_name_automatically) {
+        $names = explode(" ", $searchTerm, 2);
+        $players = $this->app['phpdraft.ProPlayerRepository']->SearchPlayersByAssumedName($league, $names[0], $names[1]);
+      }
+
       $response->success = true;
       $response->players = $players;
     } catch (\Exception $e) {

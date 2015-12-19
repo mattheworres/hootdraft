@@ -18,7 +18,7 @@ class CommishPickEditController extends AngularController
   initialize: ->
     #Passed in
     #@$scope.manualEntry = false
-    @$scope.playerSearchLoading = false
+    #@$scope.playerSearchLoading = false
 
     #If manual entry, we need to make sure to properly update "selected" on the current pick so the display acts accordingly
     @$scope.$watch ( =>
@@ -67,9 +67,14 @@ class CommishPickEditController extends AngularController
     else
       @$scope.pickAction?()
 
+  autocompleteFocus: ->
+    @$scope.playerSearchLoading = true
+
+  autocompleteBlur: ->
+    @$scope.playerSearchLoading = false
+
   proPlayerSearch: (searchTerm) ->
-    @api.Pick.searchProPlayers({league: @$scope.draft.draft_sport, searchTerm: searchTerm}
-    ).$promise.then (data) =>
+    @api.Pick.searchProPlayers({league: @$scope.draft.draft_sport, searchTerm: searchTerm}).$promise.then (data) =>
       return @limitToFilter(data.players, 10)
     .catch =>
       @messageService.closeToasts()
