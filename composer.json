@@ -4,7 +4,7 @@
         "silex/silex": "2.0.*@dev",
         "monolog/monolog": "~1.13",
         "symfony/security": "~2.6",
-        "cnam/security-jwt-service-provider":"0.0.6",
+        "cnam/security-jwt-service-provider":"0.1.1",
         "doctrine/dbal": "~2.5",
         "egulias/email-validator": "~1.2",
         "phpmailer/phpmailer": "~5.2",
