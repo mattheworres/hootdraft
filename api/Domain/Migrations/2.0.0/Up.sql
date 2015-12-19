@@ -18,7 +18,15 @@ CREATE TABLE `users` (
     `creationTime` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     UNIQUE `UNIQUE_ID` (`id`)
-) ENGINE=MyISAM;
+) ENGINE=InnoDB;
+
+# Switch MySQL engine from MyISAM to InnoDB for most tables (except pro_players)
+ALTER TABLE `trade_assets` ENGINE=InnoDB;
+ALTER TABLE `trades` ENGINE=InnoDB;
+ALTER TABLE `round_times` ENGINE=InnoDB;
+ALTER TABLE `players` ENGINE=InnoDB;
+ALTER TABLE `managers` ENGINE=InnoDB;
+ALTER TABLE `draft` ENGINE=InnoDB;
 
 ALTER TABLE `managers` DROP COLUMN `manager_email`;
 
@@ -61,7 +69,7 @@ CREATE TABLE `draft_stats` (
   `least_drafted_position` text NOT NULL,
   `least_drafted_position_count` int(11) NOT NULL,
   PRIMARY KEY  (`draft_stat_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 ALTER TABLE `draft` ADD INDEX `commish_id` (`commish_id`);
 

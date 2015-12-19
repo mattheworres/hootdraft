@@ -42,3 +42,10 @@ ALTER TABLE `managers` ADD COLUMN `manager_email` TEXT;
 ALTER TABLE `draft` DROP COLUMN `commish_id`;
 ALTER TABLE `draft` DROP COLUMN `draft_stats_generated`;
 ALTER TABLE `trades` DROP COLUMN `trade_round`;
+
+ALTER TABLE `trade_assets` ENGINE=MyISAM;
+ALTER TABLE `trades` ENGINE=MyISAM;
+ALTER TABLE `round_times` ENGINE=MyISAM;
+ALTER TABLE `players` ENGINE=MyISAM;
+ALTER TABLE `managers` ENGINE=MyISAM;
+ALTER TABLE `draft` ENGINE=MyISAM;
