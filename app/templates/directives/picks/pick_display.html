@@ -1,4 +1,4 @@
-<div class="pick pick{{pick.position}} col-xs-12" ng-show="pick.selected" ng-class="pick.chosenAsset ? ' chosenAsset' : ''">
+<div ng-class="'pick col-xs-12 pick' + pick.position" ng-show="pick.selected" ng-class="pick.chosenAsset ? ' chosenAsset' : ''">
   <div class="pick-data col-xs-2 col-sm-2 col-md-3 col-lg-3">
     <div class="hidden-md hidden-lg pick-number"><small>#</small>{{pick.player_pick}}</div>
     <div class="hidden-md hidden-lg round-number">Rd {{pick.player_round}}</div>
