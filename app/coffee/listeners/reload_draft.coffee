@@ -1,9 +1,9 @@
 angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftService, messageService) ->
   #Set the cache flag for the first request
   $rootScope.loadDraftData = true
+  $rootScope.draftLoadInProgress = false
 
   $rootScope.$on subscriptionKeys.reloadDraft, (event, args) ->
-    $rootScope.draftLoadInProgress = false
 
     cancelInterval = =>
       $interval.cancel $rootScope.draftIntervalPromise
@@ -11,6 +11,7 @@ angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftSe
 
     successHandler = (draft) =>
       $rootScope.draft = draft
+      $rootScope.draftLoadInProgress = false
 
       #Either store the cached data (first request on page load) or grab cache instead (every request afterward)
       if $rootScope.loadDraftData
@@ -54,6 +55,7 @@ angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftSe
       $rootScope.draftError = true
       $rootScope.draftValid = false
       $rootScope.showDraftMenu = false
+      $rootScope.draftLoadInProgress = false
       messageService.showError "Unable to load draft"
 
     if not args.draft_id?
