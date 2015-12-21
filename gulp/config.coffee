@@ -76,6 +76,8 @@ module.exports =
                 'bower_components/angular-strap/dist/modules/debounce.min.js'
                 'bower_components/angular-strap/dist/modules/affix.min.js'
                 'bower_components/ng-file-upload/ng-file-upload.min.js'
+                'bower_components/spin.js/spin.js'
+                'bower_components/angular-loading/angular-loading.min.js'
             ],
             css: [
                 'bower_components/angular-ui-bootstrap-bower/ui-bootstrap-csp.css'
@@ -85,4 +87,5 @@ module.exports =
                 'bower_components/angular-toggle-switch/angular-toggle-switch.css'
                 'bower_components/angular-toggle-switch/angular-toggle-switch-bootstrap.css'
                 'bower_components/FlipClock/compiled/flipclock.css'
+                'bower_components/angular-loading/angular-loading.css'
             ]

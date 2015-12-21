@@ -67,12 +67,6 @@ class CommishPickEditController extends AngularController
     else
       @$scope.pickAction?()
 
-  autocompleteFocus: ->
-    @$scope.playerSearchLoading = true
-
-  autocompleteBlur: ->
-    @$scope.playerSearchLoading = false
-
   proPlayerSearch: (searchTerm) ->
     @api.Pick.searchProPlayers({league: @$scope.draft.draft_sport, searchTerm: searchTerm}).$promise.then (data) =>
       return @limitToFilter(data.players, 10)

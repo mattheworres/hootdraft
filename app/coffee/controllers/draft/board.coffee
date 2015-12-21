@@ -23,14 +23,15 @@ class BoardController extends BaseController
         @messageService.showWarning "Draft is still setting up"
         @deregister()
       else if args.draft? and (args.draft.in_progress == true || args.draft.complete == true)
-        #Rather than rely on draft query to update counter, we need to use it to gather updated pick data.
-        #Set it once on load, then update it with the _loadUpdatedData method from then on
         if args.onPageLoad? and args.onPageLoad
           @$scope.currentDraftCounter = args.draft.draft_counter
 
+        #Save extra updated queries by only querying when the counter changes
+        @counterChanged = @$scope.currentDraftCounter != args.draft.draft_counter
+
         if not @initialBoardLoaded
           @_loadInitialBoard args.draft.draft_id
-        else
+        else if @counterChanged
           @_loadUpdatedData args.draft.draft_id
 
         if args.draft.complete == true

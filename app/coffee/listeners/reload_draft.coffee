@@ -2,6 +2,7 @@ angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftSe
   #Set the cache flag for the first request
   $rootScope.loadDraftData = true
   $rootScope.draftLoadInProgress = false
+  $rootScope.draftErrors = 0
 
   $rootScope.$on subscriptionKeys.reloadDraft, (event, args) ->
 
@@ -10,6 +11,7 @@ angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftSe
       $rootScope.draftIntervalPromise = undefined
 
     successHandler = (draft) =>
+      $rootScope.draftErrors = 0
       $rootScope.draft = draft
       $rootScope.draftLoadInProgress = false
 
@@ -50,13 +52,21 @@ angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftSe
         cancelInterval()
 
     errorHandler = =>
-      cancelInterval()
-      $rootScope.draftLoading = false
-      $rootScope.draftError = true
-      $rootScope.draftValid = false
-      $rootScope.showDraftMenu = false
+      $rootScope.draftErrors++
       $rootScope.draftLoadInProgress = false
-      messageService.showError "Unable to load draft"
+      $rootScope.showDraftMenu = false
+      $rootScope.draftLoading = false
+
+      if $rootScope.draftErrors == 2
+        cancelInterval()
+        $rootScope.draftError = true
+        $rootScope.draftValid = false
+
+        messageService.closeToasts()
+        messageService.showError "Unable to load draft"
+      else
+        messageService.closeToasts()
+        messageService.showWarning "We seem to be having trouble loading this draft, possibly due to network connectivity issues"
 
     if not args.draft_id?
       $rootScope.draftLoading = false

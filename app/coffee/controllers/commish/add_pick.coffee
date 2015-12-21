@@ -5,6 +5,7 @@ class AddPickController extends BaseController
   '$routeParams',
   '$q',
   '$location',
+  '$loading',
   'subscriptionKeys',
   'workingModalService',
   'api',
@@ -32,9 +33,11 @@ class AddPickController extends BaseController
       @deregister()
 
   _loadCurrentPick: ->
+    @$loading.start('load_current')
     @$scope.currentLoading = true
 
     currentPickSuccess = (data) =>
+      @$loading.finish('load_current')
       @$scope.currentLoading = false
       @$scope.currentPick = data.pick
       @$scope.pristineCurrentPick = data.pick
@@ -45,6 +48,7 @@ class AddPickController extends BaseController
       @$scope.is_last_pick = data.next_5_picks.length == 1
 
     errorHandler = (response) =>
+      @$loading.finish('load_current')
       @$scope.currentLoading = false
       @$scope.currentError = true
       @messageService.showError "Unable to get current pick"

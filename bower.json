@@ -23,7 +23,8 @@
     "ngstorage": "~0.3.10",
     "angular-flipclock": "0.3.0",
     "angular-strap": "~2.3.6",
-    "ng-file-upload": "~10.1.11"
+    "ng-file-upload": "~10.1.11",
+    "angular-loading": "e30ad76"
   },
   "resolutions": {
     "angular": "1.4.8"

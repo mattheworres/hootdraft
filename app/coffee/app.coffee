@@ -22,4 +22,5 @@ angular.module("app", [
   "mgcrea.ngStrap.helpers.debounce"
   "mgcrea.ngStrap.affix"
   "ngFileUpload"
+  "darthwade.loading"
 ])

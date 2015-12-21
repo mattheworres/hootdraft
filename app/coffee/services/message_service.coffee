@@ -15,4 +15,7 @@ class MessageService extends AngularService
     @toastr.warning message, title
 
   closeToasts: (toast) ->
-    @toastr.clear(toast)
+    if typeof toast == 'undefined'
+      @toastr.clear()
+    else
+      @toastr.clear(toast)
