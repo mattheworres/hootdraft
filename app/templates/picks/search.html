@@ -95,8 +95,8 @@
               Matching Picks
             </h3>
           </div>
-          <div class="panel-body">
-            <section-loading show-loading=searchLoading></section-loading>
+          <div class="panel-body" dw-loading="load_search_picks" dw-loading-options="{text: 'Loading matching picks...'}">
+            <!-- <section-loading show-loading=searchLoading></section-loading> -->
             <section-error show-error=searchError section-name="search picks"></section-error>
             <div class="row pick-list-display" ng-repeat="pick in searchResults">
               <pick-display draft=draft pick=pick></pick-display>

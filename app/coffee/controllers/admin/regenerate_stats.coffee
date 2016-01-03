@@ -29,7 +29,6 @@ class RegenerateStatsController extends BaseController
       @messageService.showSuccess "Stats regenerated!"
 
     regenerateError = (response) =>
-      console.log response
       @workingModalService.closeModal()
       @regenerateInProgress = false
       errors = response.data.error

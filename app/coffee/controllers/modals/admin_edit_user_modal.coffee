@@ -45,8 +45,6 @@ class AdminEditUserController extends BaseController
     saveError = =>
       @messageService.showError "Unable to update user"
 
-    console.log "Attempting to update user:"
-    console.log @user
     @api.User.update(@user, saveSuccess, saveError)
 
   cancel: ->

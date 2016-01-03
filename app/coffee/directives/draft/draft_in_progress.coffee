@@ -6,3 +6,5 @@ angular.module("app").directive 'draftInProgress', ->
         draftValid: "="
         lastFivePicks: "="
         nextFivePicks: "="
+        lastFiveLoading: "="
+        nextFiveLoading: "="

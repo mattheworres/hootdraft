@@ -6,3 +6,4 @@ angular.module("app").directive 'picksByRound', ->
       selectedDraftRound: "="
       picks: "="
       pagerItemTally: "="
+      picksLoading: "="

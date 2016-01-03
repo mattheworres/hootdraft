@@ -18,12 +18,13 @@
             </h3>
           </div>
           <div class="panel-body pick-list-display">
-            <section-loading show-loading=roundPicksLoading></section-loading>
+            <!-- Moved loading to inside picks-by-round directive -->
             <section-error show-error=lastError section-name="round {{selectedDraftRound}} picks"></section-error>
             <picks-by-round draft=draft
               selected-draft-round=selectedDraftRound
               picks=roundPicks
-              pager-item-tally=pagerItemTally>
+              pager-item-tally=pagerItemTally
+              picks-loading=roundPicksLoading>
             </picks-by-round>
           </div>
         </div>

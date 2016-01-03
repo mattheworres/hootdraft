@@ -2,6 +2,7 @@ class SearchController extends BaseController
   @register 'SearchController'
   @inject '$scope',
   '$routeParams',
+  '$loading',
   'subscriptionKeys',
   'messageService',
   'api'
@@ -11,15 +12,20 @@ class SearchController extends BaseController
     @$scope.team = ''
     @$scope.position = ''
     @$scope.sort = 'DESC'
+    @currentDraftCounter = 0
 
     @deregister = @$scope.$on @subscriptionKeys.loadDraftDependentData, (event, args) =>
+      @draftCounterChanged = if args.onPageLoad? and args.onPageLoad then true else @currentDraftCounter != args.draft.draft_counter
+      @currentDraftCounter = if args.draft? then args.draft.draft_counter else 0
+
       if args.draft? and args.draft.setting_up == true
         @$scope.pageError = true
         @sendToPreviousPath()
         @messageService.showWarning "Draft is still setting up"
         @deregister()
       else if args.draft? and (args.draft.in_progress == true || args.draft.complete == true)
-        @_loadSearchData(args.draft.draft_id)
+        if @draftCounterChanged
+          @_loadSearchData(args.draft.draft_id)
 
     @$scope.$on @subscriptionKeys.scopeDestroy, (event, args) =>
       @deregister()
@@ -50,15 +56,18 @@ class SearchController extends BaseController
     searchSuccess = (data) =>
       @$scope.searchResults = data.player_results
       @$scope.searchLoading = false
+      @$loading.finish('load_search_picks')
 
     errorHandler = (data) =>
       @$scope.searchError = true
       @$scope.searchLoading = false
       @messageService.showError "Unable to search picks"
+      @$loading.finish('load_search_picks')
 
     if @$scope.draftValid and not @$scope.draftLocked and @hasSearchItems()
       @$scope.searchError = false
       @$scope.searchLoading = args? and args.onPageLoad? and args.onPageLoad
+      @$loading.start('load_search_picks')
       @api.Pick.search({ draft_id: draft_id, keywords: @$scope.keywords, team: @$scope.team, position: @$scope.position, sort: @$scope.sort }, searchSuccess, errorHandler)
     else if not @hasSearchItems()
       if @$scope.searchResults? and @$scope.searchResults.length > 0

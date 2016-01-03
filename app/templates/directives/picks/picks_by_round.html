@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row" ng-hide="picksLoading">
   <div class="col-xs-12">
     <pager 
       total-items="pagerItemTally"
@@ -9,6 +9,7 @@
     </pager>
   </div>
 </div>
-<div class="row" ng-repeat="pick in picks">
+<section-loading show-loading=picksLoading></section-loading>
+<div class="row" ng-repeat="pick in picks" ng-hide="picksLoading">
   <pick-display draft=draft pick=pick></pick-display>
 </div>

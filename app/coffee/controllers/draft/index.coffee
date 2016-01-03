@@ -3,18 +3,24 @@ class DraftIndexController extends BaseController
   @inject '$scope',
   '$rootScope',
   '$routeParams',
+  '$loading',
   'subscriptionKeys',
   'api',
   'messageService'
 
   initialize: ->
     @$scope.selectedDraftRound = 1
+    @currentDraftCounter = 0
 
     @deregister = @$scope.$on @subscriptionKeys.loadDraftDependentData, (event, args) =>
+      @draftCounterChanged = if args.onPageLoad? and args.onPageLoad then true else @currentDraftCounter != args.draft.draft_counter
+      @currentDraftCounter = if args.draft? then args.draft.draft_counter else 0
+
       if args.draft? and args.draft.setting_up == true
         @_loadSettingUpData(args.draft.draft_id, args)
       else if args.draft? and args.draft.in_progress == true
-        @_loadInProgressData(args.draft.draft_id, args)
+        if @draftCounterChanged
+          @_loadInProgressData(args.draft.draft_id, args)
       else if args.draft? and args.draft.complete == true
         @$scope.pagerItemTally = @$rootScope.draft.draft_rounds * 10
         @_loadCompletedData(args.draft.draft_id, args)
@@ -53,23 +59,32 @@ class DraftIndexController extends BaseController
 
   _loadInProgressData: (draft_id, args) =>
     lastSuccess = (data) =>
+      @$loading.finish('load_last_picks')
       @$scope.lastLoading = false
       @$scope.lastFivePicks = data
 
     nextSuccess = (data) =>
+      @$loading.finish('load_next_picks')
       @$scope.nextLoading = false
       @$scope.nextFivePicks = data
 
     lastErrorHandler = (data) =>
+      @$loading.finish('load_last_picks')
       @$scope.lastLoading = false
       @$scope.lastError = true
 
     nextErrorHandler = (data) =>
+      @$loading.finish('load_next_picks')
       @$scope.nextLoading = false
       @$scope.nextError = true
 
     @$scope.lastLoading = args.onPageLoad? and args.onPageLoad
     @$scope.nextLoading = args.onPageLoad? and args.onPageLoad
+
+    if not args.onPageLoad? or not args.onPageLoad
+      @$loading.start('load_last_picks')
+      @$loading.start('load_next_picks')
+
     @$scope.lastError = false
     @$scope.nextError = false
 

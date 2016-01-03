@@ -8,14 +8,20 @@ class TradesController extends BaseController
   'messageService'
 
   initialize: ->
+    @currentDraftCounter = 0
+
     @deregister = @$scope.$on @subscriptionKeys.loadDraftDependentData, (event, args) =>
+      @draftCounterChanged = if args.onPageLoad? and args.onPageLoad then true else @currentDraftCounter != args.draft.draft_counter
+      @currentDraftCounter = if args.draft? then args.draft.draft_counter else 0
+
       if args.draft? and args.draft.setting_up == true
         @$scope.pageError = true
         @sendToPreviousPath()
         @messageService.showWarning "Draft is still setting up"
         @deregister()
       else if args.draft? and (args.draft.in_progress == true || args.draft.complete == true)
-        @_loadTradeData(args.draft.draft_id, args)
+        if @draftCounterChanged
+          @_loadTradeData(args.draft.draft_id, args)
 
     @$scope.$on @subscriptionKeys.scopeDestroy, (event, args) =>
       @deregister()
