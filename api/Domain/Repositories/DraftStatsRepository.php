@@ -269,6 +269,7 @@ class DraftStatsRepository {
     WHERE p.draft_id = ?
     AND p.pick_duration IS NOT NULL
     GROUP BY player_round
+    ORDER BY avg_round_time DESC
     LIMIT 1");
 
     $stmt->bindParam(1, $draft->draft_rounds);
