@@ -14,7 +14,7 @@ class PickTimersController extends BaseController
 
     @deregister = @$scope.$on @subscriptionKeys.loadDraftDependentData, (event, args) =>
       if args.draft? and (args.draft.setting_up == true || args.draft.in_progress == true)
-        if args.draft.draft_id == parseInt(@$routeParams.draft_id, 10)
+        if parseInt(args.draft.draft_id, 10) == parseInt(@$routeParams.draft_id, 10)
           @_loadPickTimerData(args.draft.draft_id, args)
           @deregister()
       else if args.draft? and args.draft.complete == true
