@@ -11,14 +11,10 @@ class PickTimersController extends BaseController
 
   initialize: ->
     @$scope.pickTimerDataLoading = true
-    @currentDraftCounter = 0
 
     @deregister = @$scope.$on @subscriptionKeys.loadDraftDependentData, (event, args) =>
-      @draftCounterChanged = if args.onPageLoad? and args.onPageLoad then true else @currentDraftCounter != args.draft.draft_counter
-      @currentDraftCounter = if args.draft? then args.draft.draft_counter else 0
-
       if args.draft? and (args.draft.setting_up == true || args.draft.in_progress == true)
-        if args.draft.draft_id == @$routeParams.draft_id and @draftCounterChanged
+        if args.draft.draft_id == parseInt(@$routeParams.draft_id, 10)
           @_loadPickTimerData(args.draft.draft_id, args)
           @deregister()
       else if args.draft? and args.draft.complete == true

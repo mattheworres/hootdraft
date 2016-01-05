@@ -3,30 +3,28 @@
 </div>
 <div class="modal-body form-horizontal">
   <div class="row">
-    <div class="col-xs-12">
-      <h4>Add up to 20 (total) managers for your league's draft.</h4>
+    <div class="col-xs-10">
+      <h4>Add up to 20 managers (teams) for your league's draft.</h4>
+    </div>
+    <div class="col-xs-2">
+      <button class="btn btn-block btn-success" ng-click="addManagersCtrl.addEmptyManager()">
+        <i class="fa fa-plus"></i>&nbsp;&nbsp;Add
+      </button>
     </div>
   </div>
-  <form novalidate>
+  <form class="v-offset-2" novalidate>
     <div class="form-group" ng-repeat="manager in addManagersCtrl.editableManagers">
       <div class="col-xs-3 control-label">
         <strong>Manager Name:</strong>
       </div>
       <div class="col-xs-8">
-        <input ng-model="addManagersCtrl.editableManagers[$index].manager_name" class="form-control" maxlength="255" placeholder="Manager {{$index+1}}'s Name" />
+        <input ng-model="addManagersCtrl.editableManagers[$index].manager_name" class="form-control" maxlength="255" placeholder="New manager/team name" />
       </div>
       <div class="col-xs-1">
         <span class="clickable fa-stack" ng-click="addManagersCtrl.removeManager($index)">
           <i class="fa fa-circle fa-stack-2x"></i>
           <i class="fa fa-minus fa-stack-1x fa-inverse"></i>
         </span>
-      </div>
-    </div>
-    <div class="form-group">
-      <div class="col-xs-2 col-xs-offset-3">
-        <button class="btn btn-block btn-success" ng-click="addManagersCtrl.addEmptyManager()">
-          <i class="fa fa-plus"></i>&nbsp;&nbsp;Add
-        </button>
       </div>
     </div>
   </form>

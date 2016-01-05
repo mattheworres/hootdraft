@@ -6,7 +6,7 @@
           <div class="col-sm-1 current-pick non-clock-content">
             Current Pick
           </div>
-          <div class="col-sm-3 non-clock-content">
+          <div class="col-sm-3 non-clock-content" dw-loading="load_current_display" dw-loading-options="{text: 'Update current pick...'}">
             <pick-display draft=draft pick=currentPick></pick-display>
           </div>
           <div class="col-sm-4 active-pick-timer text-center" ng-show="timerEnabled && !timerUp">
@@ -22,7 +22,7 @@
           <div class="col-sm-1 previous-pick non-clock-content" ng-show="hasPreviousPick">
             Last Pick
           </div>
-          <div class="col-sm-3 non-clock-content" ng-show="hasPreviousPick">
+          <div class="col-sm-3 non-clock-content" ng-show="hasPreviousPick" dw-loading="load_previous_display" dw-loading-options="{text: 'Update current pick...'}">
             <pick-display draft=draft pick=previousPick></pick-display>
           </div>
         </div>

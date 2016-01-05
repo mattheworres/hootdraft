@@ -2,6 +2,7 @@ class BoardController extends BaseController
   @register 'BoardController'
   @inject '$scope',
   '$routeParams',
+  '$loading',
   'subscriptionKeys',
   'api',
   'messageService'
@@ -95,13 +96,20 @@ class BoardController extends BaseController
           @_resetTimer()
         @_updateBoardPick(updatedPick)
 
+      @$loading.finish('load_current_display')
+      @$loading.finish('load_previous_display')
+
     errorHandler = (data) =>
+      @$loading.finish('load_current_display')
+      @$loading.finish('load_previous_display')
       @messageService.showError "Unable to get up to date draft picks"
       @$scope.boardError = true
 
     @$scope.boardError = false
 
     if @$scope.draftValid and not @$scope.draftLocked
+      @$loading.start('load_current_display')
+      @$loading.start('load_previous_display')
       @api.Pick.getUpdated({ draft_id: draft_id, pick_counter: @$scope.currentDraftCounter }, updatedSuccess, errorHandler)
       @_loadTimeRemaining(draft_id)
 
@@ -115,21 +123,29 @@ class BoardController extends BaseController
 
   _loadCurrentAndNextPicks: (draft_id) ->
     currentSuccess = (data) =>
+      @$loading.finish('load_current_display')
       @$scope.currentPick = data[0]
       if @initialBoardLoaded
         @_updateBoardPick(data[0])
 
+
     lastSuccess = (data) =>
+      @$loading.finish('load_previous_display')
       @$scope.previousPick = data[0]
       @$scope.hasPreviousPick = @$scope.previousPick? and @$scope.previousPick != undefined
 
     errorHandler = (data) =>
+      @$loading.finish('load_current_display')
+      @$loading.finish('load_previous_display')
       @messageService.showError "Unable to get next and/or current picks"
       @$scope.boardError = true
 
     @$scope.boardError = false
 
     if @$scope.draftValid and not @$scope.draftLocked
+      @$loading.start('load_current_display')
+      @$loading.start('load_previous_display')
+
       @api.Pick.getNext({ draft_id: draft_id, amount: 1 }, currentSuccess, errorHandler)
       @api.Pick.getLast({ draft_id: draft_id, amount: 1 }, lastSuccess, errorHandler)
 
