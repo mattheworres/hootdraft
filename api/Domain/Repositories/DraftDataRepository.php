@@ -24,6 +24,7 @@ class DraftDataRepository {
   private $nfl_positions;
   private $nhl_positions;
   private $extended_nfl_positions;
+  private $super_rugby_positions;
 
   public function __construct(Application $app) {
     $this->app = $app;
@@ -76,6 +77,14 @@ class DraftDataRepository {
         "SF" => $this->colors['light_yellow'], //LT YELLOW
         "PF" => $this->colors['light_red'], //LT RED
         //CENTER ALREADY DONE: LT BLUE
+        //Rugby/Super Rugby
+        "FR" => $this->colors['light_orange'],
+        "HB" => $this->colors['light_yellow'],
+        "LF" => $this->colors['light_red'],
+        "OB" => $this->colors['dark_green'],
+        "M" => $this->colors['light_green'],
+        "L" => $this->colors['light_pink'],
+        "FH" => $this->colors['light_purple']
     );
 
     $this->sports = array(
@@ -83,7 +92,8 @@ class DraftDataRepository {
       "NFLE" => "Football - Extended Rosters (NFL)",
       "MLB" => "Baseball (MLB)",
       "NBA" => "Basketball (NBA)",
-      "NHL" => "Hockey (NHL)"
+      "NHL" => "Hockey (NHL)",
+      "S15" => "Rugby (Super 15)"
     );
 
     $this->styles = array(
@@ -281,6 +291,37 @@ class DraftDataRepository {
         "PF" => "Power Forward",
         "C" => "Center"
     );
+
+    $this->super_rugby_positions = array(
+        "FH" => "Fly Half",
+        "OB" => "Outside Back",
+        "M"  => "Midfielder",
+        "LF" => "Loose Forward",
+        "HB" => "Half Back",
+        "L"  => "Lock",
+        "FR" => "Front Row"
+    );
+
+    $this->super_rugby_teams = array(
+        "BLU" => "Blues",
+        "BRU" => "Brumbies",
+        "BUL" => "Bulls",
+        "CHE" => "Cheetahs",
+        "CHI" => "Chiefs",
+        "CRU" => "Crusaders",
+        "FOR" => "Force",
+        "HIG" => "Highlanders",
+        "HUR" => "Hurricanes",
+        "JAG" => "Jaguars",
+        "KIN" => "Kings",
+        "LIO" => "Lions",
+        "REB" => "Rebels",
+        "RED" => "Reds",
+        "SHA" => "Sharks",
+        "STO" => "Stormers",
+        "SUN" => "Sunwolves",
+        "WAR" => "Waratahs"
+    );
   }
 
   public function GetPositionColors() {
@@ -317,6 +358,9 @@ class DraftDataRepository {
       case 'basketball':
         return $this->nba_teams;
         break;
+      case 's15':
+        return $this->super_rugby_teams;
+        break;
     }
   }
 
@@ -340,6 +384,9 @@ class DraftDataRepository {
       case 'nba':
       case 'basketball':
         return $this->nba_positions;
+        break;
+      case 's15':
+        return $this->super_rugby_positions;
         break;
     }
   }
