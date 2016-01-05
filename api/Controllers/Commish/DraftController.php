@@ -131,7 +131,7 @@ class DraftController
       foreach($roundTimesJson as $roundTimeRequest) {
         $newRoundTime = new \PhpDraft\Domain\Entities\RoundTime();
         $newRoundTime->draft_id = $draft_id;
-        $newRoundTime->is_static_time = $roundTimeRequest['is_static_time'] == "true";
+        $newRoundTime->is_static_time = $roundTimeRequest['is_static_time'] == "true" ? 1 : 0;
         $newRoundTime->draft_round = $newRoundTime->is_static_time ? null : (int)$roundTimeRequest['draft_round'];
         $newRoundTime->round_time_seconds = (int)$roundTimeRequest['round_time_seconds'];
 

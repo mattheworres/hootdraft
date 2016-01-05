@@ -27,17 +27,23 @@ gulp.task 'js-app', ->
         .pipe $.coffee()
         .pipe $.if cfg.options.minify, $.ngAnnotate()
 
-    config = gulp.src cfg.paths.app.config
-        .pipe $.ngConstant
-            name: 'config'
-            wrap: true
- 
-    stream = streamqueue objectMode: true, js, config
+    stream = streamqueue objectMode: true, js
         .pipe $.if cfg.options.concat, $.concat 'app.js', newLine: '\n'
         .pipe $.if cfg.options.minify, $.uglify()
         .pipe $.if cfg.options.sourceMaps, $.sourcemaps.write()
 
     write stream, 'app'
+
+gulp.task 'js-config', ->
+    config = gulp.src cfg.paths.app.config
+        .pipe $.ngConstant
+            name: 'config'
+            wrap: true
+
+    stream = streamqueue objectMode: true, config
+        .pipe $.if cfg.options.concat, $.concat 'config.js', newLine: '\n'
+
+    write stream, 'config'
 
 gulp.task 'js-templates', (cb) ->
     return cb() unless cfg.options.templates
@@ -60,4 +66,4 @@ gulp.task 'js-templates', (cb) ->
 
     write stream, 'templates'
 
-gulp.task 'js', ['js-vendor', 'js-app', 'js-templates']
+gulp.task 'js', ['js-vendor', 'js-app', 'js-config', 'js-templates']
