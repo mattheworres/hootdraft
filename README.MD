@@ -7,24 +7,19 @@ Your managers will notify you once they make a selection, and you enter the draf
 
 ####REQUIREMENTS for PHP Draft 2.0.0:
 
-  - Web server with the ability to edit `php.ini` file for your installation
-
-  - If server is Apache, need ability to use `.htaccess` to enable/use `mod_rewrite`
-
   - PHP 5.4+ installed
 
-  - SQL database compatible with Doctrine DBAL (Silex)
+  - MySQL 5+ database
 
-  - PHPMyAdmin or some other MySQL utility that allows import of large SQL dump files
+  - Ability to use `.htaccess` to enable/use `mod_rewrite` (Apache) or `web.config` (IIS)
 
-  - Helpful: install mailcatcher locally to run a "fake" SMTP server:
+  - Ability to create and edit a file one directory above your PHP Draft install directory
 
-  `sudo gem install mailcatcher`
-  `mailcatcher`
+  - SMTP server (for user registration/password resets)
 
-  - Then, view http://localhost:1080 (server hit in PHP via smtp://localhost:1025)
+  - Google reCAPTCHA 2 site key (public and private - used to verify legit user registration)
 
-  - TODO - finish
+  - OPTIONAL (but recommended): SSL certificate installed for your domain (for enhanced user privacy/security)
 
 ##To install, follow these steps:
 

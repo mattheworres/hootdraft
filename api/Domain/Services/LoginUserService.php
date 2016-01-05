@@ -123,10 +123,10 @@ class LoginUserService {
         
         Visit this address in your web browser to activate the user:<br/><br/>\n\n
 
-        <a href=\"%s\">%s</a><br/>\n
+        <a href=\"%s\">%s</a><br/>\n\n
         (For non-HTML enabled email:)<br/>\n
         %s
-      ", $user->email, $user->email, $verificationLink, $verificationLink, $verificationLink);
+      ", $user->email, $verificationLink, $verificationLink, $verificationLink);
 
       //TODO: Remove once registration is tested end to end
       $this->app['monolog']->addDebug("Verification link: $verificationLink");
