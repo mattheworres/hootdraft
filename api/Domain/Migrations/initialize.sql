@@ -193,3 +193,4 @@ CREATE TABLE IF NOT EXISTS `draft_stats` (
   `least_drafted_position_count` int(11) NOT NULL,
   PRIMARY KEY  (`draft_stat_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+

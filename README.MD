@@ -1,11 +1,22 @@
-#Thank you for downloading PHP Draft!
+# PHP Draft 2.0.0
 PHP Draft allows commissioners to setup web-based real-time drafts for their fantasy sports leagues. If your leagues do **offline drafts** (instead of using your fantasy provider's online drafting tools), PHP Draft is just for you! 
 
-You log in to PHP Draft, add managers, select the number of rounds, style of draft (standard or serpentine) and then you're ready to begin drafting!
+The league commissioner creates an account, and then adds your fantasy league. Pick the draft sport and style, specify the number of rounds the draft will last. Add the league managers (teams), and specify pick timers to make sure *that one guy* (you know who) doesn't hold the entire league hostage for an afternoon while he agonizes over whether to choose **Joique Bell** or **Bishop Sankey** in the twelfth round. Hit the start button. 
 
-Your managers will notify you once they make a selection, and you enter the draft pick. As you enter picks, your managers will see the picks being made in real-time, on the large color-coded draft board.
+#### **BOOM**. Your fantasy draft is underway.
 
-####REQUIREMENTS for PHP Draft 2.0.0:
+Leave a laptop running on a podium and make each team enter their selections as their pick comes up, or be a gatekeeper commissioner and make every pick go through you - it's your choice!
+
+The large color-coded draft board is perfect for displaying on large screen televisions (compatible with Google Chromecast screen casting!) and will display all pertinent info on-screen as it automatically updates.
+
+NFL, NBA, MLB, NHL and even Rugby are supported, along with trades. Watch your draft unfold or run the whole thing from your smartphone with a **Bootstrap**-powered responsive web app!
+
+Don't know how to install a web app or run a web server? No problem:
+
+##### Sign up for a free account on https://www.phpdraft.com and get drafting today!
+
+
+### Minimum Requirements
 
   - PHP 5.4+ installed
 
@@ -15,130 +26,111 @@ Your managers will notify you once they make a selection, and you enter the draf
 
   - Ability to create and edit a file one directory above your PHP Draft install directory
 
-  - SMTP server (for user registration/password resets)
+  - SMTP mail account (for user registration/password resets)
 
-  - Google reCAPTCHA 2 site key (public and private - used to verify legit user registration)
+  - Google reCAPTCHA 2 site key (public and private - used to verify new user registration)
 
   - OPTIONAL (but recommended): SSL certificate installed for your domain (for enhanced user privacy/security)
 
-##To install, follow these steps:
+##### If you currently use PHP Draft v1.3.0, please see UPGRADE.md for instructions on how to perform an upgrade instead of a new installation
 
- 1. Set the following variables in your PHP.ini:
+## Installing PHP Draft 2.0.0
 
-	phpdraft.cfg.DB_USER = ‘your_database_username’
-	phpdraft.cfg.DB_PASS = ‘your_database_password’
-  phpdraft.cfg.AUTH_KEY = 'a_random_but_secure_key_used_for_authenticating_users'
-  phpdraft.cfg.MAIL_USER = ‘your.mail@user.com’
-  phpdraft.cfg.MAIL_PASS = ‘your_mail_password’
+ 1. After downloading the latest release, extract the project to a temporary local directory.
 
+ 1. Create an empty MySQL database (as well as a corresponding MySQL user that has full access to the database) named `phpdraft`. 
+     - If your hosting prepends your account name to the database name that's OK, just be sure to edit `initialize.sql` to match (Step 3) and `appsettings.php` (Step 5) with the correct name.
 
- 1. Unzip entire PHP Draft project to your local machine, and browse to that folder in your file explorer. 
+ 1. Execute `/api/Domain/Migrations/2.0.0/initialize.sql` on the `phpdraft` database.
+     - If your database name is not precisely `phpdraft`, you must edit **Line 4** of this script to reflect this *before* executing the script.
 
- 1. Open the /includes/ folder up, and open global_setup.php for editing. Here you will find all of the key settings in order to make PHP Draft run. The variables you'll need to change will 99% of the time be above the line that reads "DO NOT EDIT BELOW THIS LINE". Ensure the database username/password are updated, then save the file and exit your text editor.
+ 1. Copy `[temp local directory]/api/config/EXAMPLE_appsettings.php` to the your temporary local directory, renaming it to `appsettings.php`.
 
- 1. Upload the entire PHP Draft project to a web server (will most likely be easiest through an FTP client, such as Filezilla).
+ 1. Open `appsettings.php` in a text editor, and edit all applicable settings:
 
- 1. In PHPmyAdmin, create a database called phpdraft (you can rename later). Click on that new database name on the left, and then click the Import tab. Click Browse, and select the database_initialize.sql file from within PHPDraft's /sql/ directory. Click Go.
+    - `DB_HOST`, `DB_PORT`, `DB_USER` and `DB_PASS` will need to be updated to allow PHP Draft to connect to the MySQL database
+    - `DB_NAME` corresponds to the database name. In most cases, this can be `phpdraft`
+    - `AUTH_KEY` is a secret key that will be used to generate login tokens. Keep it safe (do NOT share it!). If you're not sure what this is, use a "CodeIgniter Encryption Key" generated by www.randomkeygen.com
+    - `RECAPTCHA_SECRET` is the private key for your Google reCAPTCHA 2 account. Without it new user registration will fail.
+    - `MAIL_SERVER`, `MAIL_USER`, `MAIL_PASS` and `MAIL_PORT` allow PHP Draft to send emails for both new user email verification and password reset emails.
+    - `APP_BASE_URL` is the home URL for your PHP Draft installation - for example `http://www.yoursite.com/phpdraft` (whatever you type in to the browser to load PHP Draft). *No trailing slashes!*
+    - `API_BASE_URL` is the base url for your PHP Draft API - which should be the same as `APP_BASE_URL` except with `/api` appended to it, like: `http://yoursite.com/phpdraft/api`
+    - The rest you can read up and configure as you like, but the above settings will be the bare minimum. 
 
-   1. Please note that if you're using shared hosting, most likely your host has you sharing the same MySQL server with several other users, so they enforce separation of accounts by prepending database names with a certain account-identifier. So, your actual database name could be "johnny_phpdraft" if your account name is "johnny", for instance. Check local listings.
+ 1. If your PHP Draft install will be at the base of the domain or subdomain (as in `your.site.com` or `yoursite.com`), **you may skip this step**. If your base URL looks like yoursite.com/phpdraft, **do the following**:
 
- 1. If you have encountered no errors, goto the base directory of your PHP Draft install: http://www.yoursite.com/phpdraft/ (If you have errors, please go to http://sourceforge.net/projects/phpdraft/forums/forum/1198073 and create a new thread to get help!)
+    - Open `index.html` and find this HTML: `<base href="/">` and change it to match the directory path after the base domain. So if your base URL is `yoursite.com/phpdraft`, then you must edit the HTML like this: `<base href="/phpdraft/">`
 
- 1. To login as PHPDraft admin, use these default credentials:
-Username: admin_commish
-Password: password
+ 1. In your FTP client, navigate to **one directory level ABOVE where PHP Draft will exist** and upload the `appsettings.php` you edited in Step 5.
 
- 1. Once logged in, BE SURE TO update the default commisioner login by going to the Control Panel tab, and click "Update Your User Profile". From there you can change the password.
+    - For example, if my site's absolute server path is `/home/hosting_account/www/`, I need to upload `appsettings.php` to `/home/hosting_account/`. Ideally this file should not be served by the web server, but *must* be readable by PHP scripts in directories below it.
 
- 1. Enjoy! Any bugs, feature requests, comments or questions please send them to me at http://sourceforge.net/projects/phpdraft/
+ 1. With your FTP client upload all contents of your temporary local directory into the directory that PHP Draft will exist.
+
+ 1. Go to the base URL of your PHP Draft install and register a new user account with your email address.
+
+ 1. In the `phpdraft` database, find the row in the `users` table that corresponds to your newly created account. Make three edits:
+
+    - Change the value in the `enabled` column to `1` (which will enable your account)
+    - Change the value in the `roles` column to `ROLE_ADMIN,ROLE_COMMISH` (which will make your account both a site administrator and a commissioner)
+    - Change the value in the `verificationKey` to `NULL` (this deletes the key contained in the new user email sent to your email address - you don't need to validate your own email :) )
+
+ 1. Log in with your email address and password.
+
+ 1. In the top header bar, click on **Admin Stuff** then select **Player Data**. Using the CSV files contained in the `/resources/` directory, update each sport with the matching CSV file:
+  Sport                  | CSV File
+  -------------              | -------------
+  Football (NFL)             | ProPlayers_NFLStandard_20xx.csv
+  Football - Extended Rosters (NFL)    | ProPlayers_NFLExtended_20xx.csv
+    Baseball (MLB)             | ProPlayers_MLB_20xx.csv
+    Basketball (NBA)             | ProPlayers_NBA_20xx.csv
+    Hockey (NHL)               | ProPlayers_NHL_20xx.csv
+    Rugby (Super15)            | ProPlayers_Super15_20xx.csv
+    
+
+##### Congratulations! You have installed PHP Draft. Enjoy!
+
+## Bugs and feature requests
+
+Submit an issue on the repository (tab at the top) and clearly mark what you're submitting is a **Bug**, **new feature** or something else.
  
-###Notes
+## Notes
 
- 1. Version 1.1 adds a new autocomplete feature to suggest players when you type 2 or more characters on the Add Pick screen. If you wish, you can disable this feature by editing changing $PHPD->setUseAutocomplete to false. You'll more than likely want this great feature on, though.
+ 1. Version 2 adds full-blown user management and secure access, such that PHP Draft is no longer a *PHP site*, it's now a first class **web application** that can run in a **Software as a Service (SaaS)** model. What does that mean? You don't actually need to install PHP Draft yourself - you can use my site at https://www.phpdraft.com instead :)
 
- 1. Version 1.1 also adds a new feature to help keep your PHP Draft autocomplete up-to-date with the latest NFL, NHL, MLB and NBA rosters so you have the most up-to-date player information being suggested to you. I will make a best effort to provide new updated CSVs for each season, but if for whatever reason I cannot or you have a better one, there is an option to update your database in the commissioner control panel by uploading a CSV file. Following the instructions on that page will delete the stock player data and replace it with what you provide. Depending on the size of your CSV, your connection speed, et. al., if you encounter errors uploading you may need to disable the default timeout PHP provides for operations. Unfortunately, this function call requires relatively high permissions, so it may not work for you. Good luck.
+    - **I pay out of pocket for my own hosting**. If you use it, please consider making a Paypal donation to **matthew.orres@gmail.com** to help cover the costs. Thanks!
 
- 1. There are two separate NFL CSV files in the /resources to update the autocomplete database - one is "standard", the other "extended", which includes just about all NFL players (except punters, because theyre never tracked in fantasy football). If you are drafting for a league that drafts defensive players, offensive linemen, you'll want to first Enable Extended NFL positions in global_setup.php, and THEN go to Control Panel - Update Pro Players Database and upload ProPlayers_NFLExtended_xxxx.csv (where xxxx is the current year).
+ 1. This was a complete project rewrite with 110% feature parity from version 1.3.0 (I added a few nice features/smoothed other things out from 1.3). The only missing "feature" was the MP3 sounds autoplaying when pick timers ran out. I plan on bringing it back soon, but felt it was both A) a superfluous feature at best and B) would risk jeopardizing the 2.0 codebase hardening in time for real life MLB 2016 usage.
 
-#Changelog
-###v1.2.0
-**Official Release**
+    - If you loved this feature, let me know! (Twitter: `@mattheworres` ) I may prioritize it a little higher if I hear from enough folks and add it back in a future version.
 
-**FIXED**: REWROTE PUBLIC DRAFT BOARD. Finally, a solution I am happy with. I also re-did the styling of the board and am fairly happy with how it looks. While the board still does polling (checks every X seconds to see if there's been another pick), it only downloads data from the server that it needs. Using a counter, it's able to grab any updated picks and new ones. Before, if you edited a pick you'd have to wait until you added a new one before it showed up, but now it will show up on everyone's draft board as soon as possible.
+ 1. This also marks the first time that PHP Draft has been available on Git/Github as opposed to Mercurial/Sourceforge/Bitbucket.
 
-**FIXED**: There was an issue with MLB drafts in particular where certain player positions didn't have colors. It was a CSS issue - the position was the class name, and "1B" or "2B" are invalid CSS classes by default. Added a work-around for these instances.
+    - Can I just say how awesome Atlassian Bitbucket is?! It kills me to switch from Bitbucket to Github, but the main reason for the switch was...
+    - **Sourceforge**. When I started the project in 2010, Sourceforge was an *OK* place for open source projects to live. It's a different story nowadays, unfortunately. SF has turned into a shell of its former self, and never seemed to find a sustainable revenue model. From its issues with "junkware" to the severely declined OS traffic, it makes it less and less advantageous for PHP Draft to live there.
+    - **Github** is synonymous with open source, and I hope to switch to both it as well as **Git** over Mercurial will help drive more code contribution. Plus, their platform is just better - it's a one stop shop of a code repository as well as a project homepage where I can easily push new releases.
+    - For now, issue tracking will remain in **Atlassian's JIRA** - and I am still incredibly grateful for their lifetime license of the JIRA software for this project. If I end up getting more contributors in the future, I can envision needing to leverage the power that JIRA provides. Stay tuned.
 
-**UPDATED**: Add jQuery CDN lookup, but fall back to load local copy. Also updated jQuery/jQuery UI to latest versions
+## Contributing & custom development
 
-**UPDATED**: Updated a few portions of the site that do simple data updates to just use AJAX, like Manager edits and the "status change button"
+See DEVELOPMENT.md if you are interested in developing or making custom changes to your PHP Draft.
 
-**UPDATED**: Refactored code to use a "service" pattern. Models were pretty hefty so moving them into a separate service layer should help. Also tried to do some better error handling in the code rather than relying on return values.
+PHP Draft is now a PHP API with an Angular (Javascript) front end, and has a complicated build toolchain that includes NPM, Bower, Gulp, and Coffeescript (to name a few) - take a gander at that readme for better instructions on how the project is now built.
 
+If you come up with something that others may find worthwhile - please fork this repository and submit a pull request. I provide this code (and the hundreds of hours of my personal time I've poured into the project) free of charge under an open source license without any expectation of payment or even gratitude. I do it to help a few folks out, and to return the favor I ask that you help pass it on :)
 
-###v1.1.1
-**Critical Fixes Release**
+## Changelog
 
-**FIXED**: Autocomplete issue - did not properly use ! (PHP Not operator) when checking the UseComplete flag
+See CHANGELOG.md :)
 
-**UPDATED**: NFL 2012 CSV rosters. Control Panel - Update Pro Players and upload the new 2012 CSV files (found inside /Resources folder)
+## Creators
 
-**ADDED**: Flag to use extended NFL rosters (that includes defensive players). By default its false (most fantasy leagues only track offensive players), but you can enable it. If using defensive players, it's suggest to also upload the "extended" pro players CSV file for the NFL, as this includes all defensive players as well (and offensive linemen, etc.)
+**Matthew Orres**
 
-###v1.1.0 
-**Official Release**
+  - https://twitter.com/mattheworres
+  - https://github.com/mattheworres
+  - http://www.mattheworres.com
 
-**ADDED**: Trades feature
+## Copyright and license
 
-**ADDED**: Autocomplete pick entry feature
-
-**ADDED**: Customizable autocomplete tables
-
-**FIXED**: "Undefined index" errors on high error level reporting settings
-
-**FIXED**: Updated jQuery from 1.6.2 to 1.7.1
-
-**FIXED**: NBA position marked as "SH" instead of "SG"
-
-**REQUIRED**: DB Migration from previous versions (new tables, updated values): use /sql/1.0_to_1.1_migration.sql if coming from 1.0.0 - 1.0.4
-
-###v1.0.4 
-
-**Critical Fixes Release**
-
-**FIXED**: Minor defects related to commissioner pick entry
-
-**FIXED**: Move several (not all) class includes to includes/global_setup.php
-
-###v1.0.3
-
-**Critical Fixes Release**
-
-**FIXED**: Several minor to severe fixes.
-
-###v1.0.2
-
-**Critical Fixes Release**
-
-**ADDED**: PDO replaces MySQL driver
-
-**FIXED**: Several critical fixes
-
-###v1.0.1
-
-**Critical Fixes Release**
-
-**FIXED**: Includes a few minor to severe fixes.
-
-###v1.0.0
-**Official Release**
-
-**ADDED**: New Javascript-driven add managers UI
-
-**ADDED**: New streamlined pick entry screen
-
-**FIXED**: Re-write of entire codebase into MVP code pattern, OOP
-
-###v0.9.0
-**Beta Release**
-
-**ADDED**: Everything (initial public release!)
+Code and documentation copyright 2010-2016 Matthew Orres. Code released under the GNU v3 license.
