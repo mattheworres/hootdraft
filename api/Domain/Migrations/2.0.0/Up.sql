@@ -96,7 +96,7 @@ ALTER TABLE `round_times` DROP INDEX `round_idx`;
 ALTER TABLE `round_times` ADD INDEX `draft_idx` (`draft_id`);
 ALTER TABLE `round_times` ADD INDEX `round_idx` (`draft_round`);
 
-# Convert timezones from locally-set via PHP (PHPDraft <v1.3.x), to UTC based times (v2.0):
+# Convert timezones from locally-set via PHP (PHPDraft <v1.3.x), to UTC based times (v2.0+):
 # NOTE: This should only be run once as it's relative: you will
 # mangle data if you run it multiple times, hence why it's block-commented out.
 # Change 'EST' to whatever timezone you set for PHPDraft <1.3.x

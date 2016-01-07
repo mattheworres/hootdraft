@@ -17,20 +17,13 @@ Don't know how to install a web app or run a web server? No problem:
 
 
 ### Minimum Requirements
-
-  - PHP 5.4+ installed
-
-  - MySQL 5+ database
-
-  - Ability to use `.htaccess` to enable/use `mod_rewrite` (Apache) or `web.config` (IIS)
-
-  - Ability to create and edit a file one directory above your PHP Draft install directory
-
-  - SMTP mail account (for user registration/password resets)
-
-  - Google reCAPTCHA 2 site key (public and private - used to verify new user registration)
-
-  - OPTIONAL (but recommended): SSL certificate installed for your domain (for enhanced user privacy/security)
+- PHP 5.4+ installed
+- MySQL 5+ database
+- Ability to use `.htaccess` to enable/use `mod_rewrite` (Apache) or `web.config` (IIS)
+- Ability to create and edit a file one directory above your PHP Draft install directory
+- SMTP mail account (for user registration/password resets)
+- Google reCAPTCHA 2 site key (public and private - used to verify new user registration)
+- OPTIONAL (but recommended): SSL certificate installed for your domain (for enhanced user privacy/security)
 
 ##### If you currently use PHP Draft v1.3.0, please see UPGRADE.md for instructions on how to perform an upgrade instead of a new installation
 
@@ -44,7 +37,7 @@ Don't know how to install a web app or run a web server? No problem:
  1. Execute `/api/Domain/Migrations/2.0.0/initialize.sql` on the `phpdraft` database.
      - If your database name is not precisely `phpdraft`, you must edit **Line 4** of this script to reflect this *before* executing the script.
 
- 1. Copy `[temp local directory]/api/config/EXAMPLE_appsettings.php` to the your temporary local directory, renaming it to `appsettings.php`.
+ 1. Copy `[temp local directory]/api/config/EXAMPLE_appsettings.php` to one directory above your temporary local directory (so in the folder above `index.html`), renaming it to `appsettings.php`.
 
  1. Open `appsettings.php` in a text editor, and edit all applicable settings:
 
@@ -55,11 +48,16 @@ Don't know how to install a web app or run a web server? No problem:
     - `MAIL_SERVER`, `MAIL_USER`, `MAIL_PASS` and `MAIL_PORT` allow PHP Draft to send emails for both new user email verification and password reset emails.
     - `APP_BASE_URL` is the home URL for your PHP Draft installation - for example `http://www.yoursite.com/phpdraft` (whatever you type in to the browser to load PHP Draft). *No trailing slashes!*
     - `API_BASE_URL` is the base url for your PHP Draft API - which should be the same as `APP_BASE_URL` except with `/api` appended to it, like: `http://yoursite.com/phpdraft/api`
-    - The rest you can read up and configure as you like, but the above settings will be the bare minimum. 
+    - The rest you can read up and configure as you like, but the above settings are the bare minimum.
 
  1. If your PHP Draft install will be at the base of the domain or subdomain (as in `your.site.com` or `yoursite.com`), **you may skip this step**. If your base URL looks like yoursite.com/phpdraft, **do the following**:
 
     - Open `index.html` and find this HTML: `<base href="/">` and change it to match the directory path after the base domain. So if your base URL is `yoursite.com/phpdraft`, then you must edit the HTML like this: `<base href="/phpdraft/">`
+
+ 1. Open `js/config.js` and update two values to match your installation:
+
+    - **apiEndpoint** should be a fully qualified URL that points to your PHP Draft API (so `http://www.yoursite.com/phpdraft/api/` is valid - note the trailing slash)
+    - **recaptchaPublicKey** should contain the *public key* portion of your Google reCAPTCHA 2 key
 
  1. In your FTP client, navigate to **one directory level ABOVE where PHP Draft will exist** and upload the `appsettings.php` you edited in Step 5.
 
@@ -78,14 +76,15 @@ Don't know how to install a web app or run a web server? No problem:
  1. Log in with your email address and password.
 
  1. In the top header bar, click on **Admin Stuff** then select **Player Data**. Using the CSV files contained in the `/resources/` directory, update each sport with the matching CSV file:
-  Sport                  | CSV File
+
+  Sport                      | CSV File
   -------------              | -------------
   Football (NFL)             | ProPlayers_NFLStandard_20xx.csv
   Football - Extended Rosters (NFL)    | ProPlayers_NFLExtended_20xx.csv
-    Baseball (MLB)             | ProPlayers_MLB_20xx.csv
-    Basketball (NBA)             | ProPlayers_NBA_20xx.csv
-    Hockey (NHL)               | ProPlayers_NHL_20xx.csv
-    Rugby (Super15)            | ProPlayers_Super15_20xx.csv
+  Baseball (MLB)             | ProPlayers_MLB_20xx.csv
+  Basketball (NBA)             | ProPlayers_NBA_20xx.csv
+  Hockey (NHL)               | ProPlayers_NHL_20xx.csv
+  Rugby (Super15)            | ProPlayers_Super15_20xx.csv
     
 
 ##### Congratulations! You have installed PHP Draft. Enjoy!
