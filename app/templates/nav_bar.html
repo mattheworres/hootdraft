@@ -129,7 +129,7 @@
                   &nbsp;by Manager
                 </a>
               </li>
-              <li ng-show="draft.in_progress">
+              <li>
                 <a href="draft/{{draft.draft_id}}/picks/round">
                   <i class="fa fa-list-ol"></i>
                   &nbsp;by Round
@@ -186,7 +186,7 @@
                   &nbsp;Setup Timers
                 </a>
               </li>
-              <li ng-show="!draft.complete">
+              <li ng-show="draft.setting_up">
                 <a href="commish/draft/{{draft.draft_id}}/edit">
                   <i class="fa fa-pencil-square-o"></i>
                   &nbsp;Edit Draft
