@@ -189,6 +189,8 @@ class DraftRepository {
     $currentUserOwnsIt = !empty($current_user) && $draft->commish_id == $current_user->id;
     $currentUserIsAdmin = !empty($current_user) && $this->app['phpdraft.LoginUserService']->CurrentUserIsAdmin($current_user);
 
+    $this->app['monolog']->addDebug("So, does usr own it? $currentUserOwnsIt What about admin? $currentUserIsAdmin (for usr $current_user->name");
+
     $draft->draft_visible = empty($draft->draft_password);
     $draft->commish_editable = $currentUserOwnsIt || $currentUserIsAdmin;
 
@@ -218,7 +220,7 @@ class DraftRepository {
 
     $draft->is_locked = false;
 
-    if(!$currentUserOwnsIt && !$draft->draft_visible && $password != $draft->draft_password) {
+    if(!$currentUserOwnsIt && !$currentUserIsAdmin && !$draft->draft_visible && $password != $draft->draft_password) {
       $draft->is_locked = true;
       $draft = $this->ProtectPrivateDraft($draft);
     }
