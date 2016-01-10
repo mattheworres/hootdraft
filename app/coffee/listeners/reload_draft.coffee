@@ -18,6 +18,7 @@ angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftSe
       #Either store the cached data (first request on page load) or grab cache instead (every request afterward)
       if $rootScope.loadDraftData
         $rootScope.loadDraftData = false
+        $rootScope.cachedDraftId = draft.draft_id
         $rootScope.sports = draft.sports
         $rootScope.styles = draft.styles
         $rootScope.statuses = draft.statuses
@@ -83,7 +84,7 @@ angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftSe
       $rootScope.draftLocked = false
 
       #Ensure that we have teams and positions even if we don't intend to (due to latency issues)
-      if not $rootScope.loadDraftData
-        $rootScope.loadDraftData = if not $rootScope.teams? or not $rootScope.positions? then true else false
+      $rootScope.loadDraftData = args.draft_id != $rootScope.cachedDraftId 
+
       api.Draft.get({id: args.draft_id, get_draft_data: $rootScope.loadDraftData}, successHandler, errorHandler)
 
