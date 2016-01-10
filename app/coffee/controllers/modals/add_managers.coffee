@@ -2,6 +2,7 @@ class AddManagersController extends BaseController
   @register 'AddManagersController'
   @inject '$modalInstance', 'messageService', 'subscriptionKeys',
   '$rootScope',
+  '$scope',
   'draft_id'
 
   initialize: =>
@@ -27,7 +28,7 @@ class AddManagersController extends BaseController
     addManagerSuccess = (data) =>
       @messageService.showSuccess "Managers added"
       #Need to tell index controller to reload the managers since we added them. Can also call this when deleting managers
-      @$rootScope.$broadcast @subscriptionKeys.updateCommishManagers, { draft_id: @draft_id }
+      @$rootScope.$broadcast @subscriptionKeys.updateCommishManagers, { draft: @$rootScope.draft }
       @$modalInstance.dismiss 'closed'
 
     addManagerError = (response) =>

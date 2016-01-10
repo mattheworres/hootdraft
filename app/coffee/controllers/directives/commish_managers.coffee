@@ -21,7 +21,7 @@ class CommishManagersController extends AngularController
     @editableManagers = []
 
     @deregister_commish_managers = @$rootScope.$on @subscriptionKeys.updateCommishManagers, (event, args) =>
-      @_reloadEditableManagers()
+      @_reloadEditableManagers(args.draft.draft_id, args.draft.commish_editable)
 
     @$scope.$on @subscriptionKeys.scopeDestroy, (event, args) =>
       @deregister_commish_managers()
@@ -29,7 +29,7 @@ class CommishManagersController extends AngularController
     
     @_reloadEditableManagers()
 
-  _reloadEditableManagers: =>
+  _reloadEditableManagers: (draft_id, draft_commish_editable) =>
     commishManagersSuccess = (data) =>
       @commishManagersLoading = false
       @editableManagers = data
@@ -40,8 +40,8 @@ class CommishManagersController extends AngularController
       @managersError = true
       @messageService.showError "Unable to load managers"
 
-    if @$routeParams.draft_id? and @$scope.draft? and @$scope.draft.commish_editable
-      @api.Manager.commishGet({ draft_id: @$routeParams.draft_id }, commishManagersSuccess, managersError)
+    if @$routeParams.draft_id? and draft_commish_editable
+      @api.Manager.commishGet({ draft_id: draft_id }, commishManagersSuccess, managersError)
 
   reorderManagers: (event, spliceIndex, originalIndex) =>
     manager = @editableManagers[originalIndex]

@@ -4,6 +4,7 @@ class DraftIndexController extends BaseController
   '$rootScope',
   '$routeParams',
   '$loading',
+  '$timeout',
   'subscriptionKeys',
   'api',
   'messageService'
@@ -17,6 +18,7 @@ class DraftIndexController extends BaseController
       @currentDraftCounter = if args.draft? then args.draft.draft_counter else 0
 
       if args.draft? and args.draft.setting_up == true
+
         @_loadSettingUpData(args.draft.draft_id, args)
       else if args.draft? and args.draft.in_progress == true
         if @draftCounterChanged
@@ -39,11 +41,6 @@ class DraftIndexController extends BaseController
       @$scope.managersLoading = false
       @$scope.managers = data
 
-    commishManagersSuccess = (data) =>
-      @$scope.commishManagersLoading = false
-      @$scope.editableManagers = data
-      @_resetManagerEdits()
-
     managersError = (response) =>
       @$scope.managersLoading = false
       @$scope.managersError = true
@@ -54,8 +51,12 @@ class DraftIndexController extends BaseController
     @$scope.managersError = false
 
     if @$scope.draftValid and not @$scope.draftLocked
-      if not args.draft.commish_editable
+      if args.draft.commish_editable? and args.draft.commish_editable == false
         @api.Manager.getManagers({ draft_id: draft_id }, managersSuccess, managersError)
+      
+      if args.onPageLoad? and args.onPageLoad and args.draft.commish_editable
+        @$timeout (=> @$rootScope.$broadcast @subscriptionKeys.updateCommishManagers, { draft: args.draft }), 250
+        
 
   _loadInProgressData: (draft_id, args) =>
     lastSuccess = (data) =>
