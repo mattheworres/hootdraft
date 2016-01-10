@@ -5,7 +5,6 @@ angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftSe
   $rootScope.draftErrors = 0
 
   $rootScope.$on subscriptionKeys.reloadDraft, (event, args) ->
-
     cancelInterval = =>
       $interval.cancel $rootScope.draftIntervalPromise
       $rootScope.draftIntervalPromise = undefined
@@ -15,8 +14,11 @@ angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftSe
       $rootScope.draft = draft
       $rootScope.draftLoadInProgress = false
 
-      #Either store the cached data (first request on page load) or grab cache instead (every request afterward)
       if $rootScope.loadDraftData
+        $rootScope.loadDraftData = if draft.teams? and draft.positions? then true else false
+
+      #Either store the cached data (first request on page load) or grab cache instead (every request afterward)
+      if draft.teams? and draft.positions? and $rootScope.loadDraftData
         $rootScope.loadDraftData = false
         $rootScope.cachedDraftId = draft.draft_id
         $rootScope.sports = draft.sports
