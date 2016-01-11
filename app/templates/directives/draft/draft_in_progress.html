@@ -1,0 +1,39 @@
+<div class="row" ng-show="draftValid && draft.in_progress">
+  <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+  <div class="col-xs-12 col-sm-6 col-md-5">
+    <draft-information draft=draft></draft-information>
+  </div>
+  <div class="col-xs-12 col-sm-6 col-md-5">
+    <upcoming-picks
+      draft=draft
+      next-picks=nextFivePicks
+      next-loading=nextFiveLoading
+      next-error=nextError>
+    </upcoming-picks>
+  </div>
+  <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+</div>
+<div class="row" ng-show="draftValid && draft.in_progress">
+  <div class="col-xs-12 col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3">
+    <div class="panel panel-primary panel-no-border">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          <i class="fa fa-backward"></i>&nbsp;&nbsp;
+          Last 5 Picks
+        </h3>
+      </div>
+      <div class="panel-body pick-list-display" dw-loading="load_last_picks" dw-loading-options="{text: 'Loading last five picks...'}">
+        <section-loading show-loading=lastFiveLoading></section-loading>
+        <section-error show-error=lastError section-name="last 5 picks"></section-error>
+        <div class="row" ng-repeat="pick in lastFivePicks" ng-hide="lastError">
+          <pick-display draft=draft pick=pick></pick-display>
+        </div>
+        <div class="row text-center" ng-show="lastFivePicks.length == 0">
+          <div class="col-xs-12">
+            <h3>No picks have been made yet...</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

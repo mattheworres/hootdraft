@@ -1,0 +1,21 @@
+<div class="panel panel-primary panel-no-border">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      <i class="fa fa-forward"></i>&nbsp;&nbsp;
+      Upcoming Picks
+    </h3>
+  </div>
+  <div class="panel-body pick-list-display future-picks" dw-loading="load_next_picks" dw-loading-options="{text: 'Loading next picks...'}">
+    <section-loading show-loading=nextLoading></section-loading>
+    <section-error show-error=nextError section-name="upcoming picks"></section-error>
+    <div class="row" ng-repeat="pick in nextPicks" ng-hide="nextError">
+      <pick-display draft=draft pick=pick first=$first></pick-display>
+    </div>
+    <div class="row text-center" ng-show="nextPicks.length == 0">
+      <div class="col-xs-12">
+        <h3>No more picks to make - is this real life?</h3>
+        <h5>This is weird. Maybe try refreshing your browser? You shouldn't see this, partner.</h5>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,68 @@
+<div data-ng-cloak>
+  <div class="container-fluid v-offset-3">
+    <draft-state controller=addPickCtrl
+      commish-name=draft.commish_name
+      draft-error=draftError
+      draft-loading=draftLoading
+      draft-locked=draftLocked>
+    </draft-state>
+
+    <div class="row" ng-show="draftValid && draft.in_progress" dw-loading="load_current" dw-loading-options="{text: 'Loading current pick...'}">
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+      <div class="col-xs-12 col-sm-9 col-sm-offset-2 col-md-7 col-md-offset-2">
+        <div class="panel panel-primary panel-no-border">
+          <div class="panel-heading">
+            <h3 class="panel-title">
+              <i class="fa fa-check-square-o"></i>&nbsp;&nbsp;
+              Enter Picks
+            </h3>
+          </div>
+          <div class="panel-body">
+            <h4 ng-if="isFirstPick">As managers make selections, enter them here using the handy search box below. Start typing their first or last name and we'll suggest
+            a few players to make it easy. Hit enter to select a suggestion, then hit enter again to make the pick. Simple!</h4>
+            
+            <commish-pick-edit
+              draft=draft
+              current-pick=currentPick
+              pristine-pick=pristineCurrentPick
+              positions=positions
+              teams=teams
+              manual-entry=manualEntry
+              edit-in-progress=addPickCtrl.addInProgress
+              pick-action="addPickCtrl._savePick()"
+              pick-action-text="Enter pick"
+              pick-icon="fa-check-square-o">
+            </commish-pick-edit>
+          </div>
+        </div>
+      </div>
+      
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+    </div>
+
+    <div class="row" ng-show="draftValid && draft.in_progress">
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+      <div class="col-xs-12 col-sm-6 col-md-5">
+        <div class="panel panel-primary panel-no-border" dw-loading="load_current" dw-loading-options="{text: 'Loading next picks...'}">
+          <upcoming-picks
+            draft=draft
+            next-picks=next_5_picks
+            
+            next-error=currentError>
+          </upcoming-picks>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-5">
+        <div class="panel panel-primary panel-no-border" dw-loading="load_current" dw-loading-options="{text: 'Loading previous picks...'}">
+          <previous-picks
+            draft=draft
+            previous-picks=last_5_picks
+            
+            previous-error=currentError>
+          </previous-picks>
+        </div>
+      </div>
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,28 @@
+{
+    "require": {
+        "php": ">=5.5.0",
+        "silex/silex": "2.0.*@dev",
+        "monolog/monolog": "~1.13",
+        "symfony/security": "~2.6",
+        "cnam/security-jwt-service-provider":"0.1.1",
+        "doctrine/dbal": "~2.5",
+        "egulias/email-validator": "~1.2",
+        "phpmailer/phpmailer": "~5.2",
+        "google/recaptcha": "~1.1",
+        "phpfastcache/phpfastcache": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "PhpDraft\\": "api",
+            "PhpDraft\\Config\\": "api/config",
+            "PhpDraft\\Config\\Security\\": "api/config/Security",
+            "PhpDraft\\Controllers\\": "api/Controllers",
+            "PhpDraft\\Controllers\\Admin\\": "api/Controllers/Admin",
+            "PhpDraft\\Controllers\\Commish\\": "api/Controllers/Commish",
+            "PhpDraft\\Domain\\Entities\\": "api/Domain/Entities",
+            "PhpDraft\\Domain\\Repositories\\": "api/Domain/Repositories",
+            "PhpDraft\\Domain\\Services\\": "api/Domain/Services",
+            "PhpDraft\\Domain\\Validators\\": "api/Domain/Validators"
+        }
+    }
+}

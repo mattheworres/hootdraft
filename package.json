@@ -1,0 +1,36 @@
+{
+  "repository": {
+    "type": "hg",
+    "url": "https://bitbucket.org/mattheworres/phpdraft"
+  },
+  "dependencies": {
+    "browser-sync": "*",
+    "coffee-script": "*",
+    "del": "*",
+    "gulp": "*",
+    "gulp-angular-templatecache": "*",
+    "gulp-coffee": "*",
+    "gulp-concat": "*",
+    "gulp-filter": "*",
+    "gulp-html-minifier": "*",
+    "gulp-if": "*",
+    "gulp-inject": "*",
+    "gulp-less": "*",
+    "gulp-load-plugins": "*",
+    "gulp-minify-css": "*",
+    "gulp-natural-sort": "*",
+    "gulp-ng-annotate": "*",
+    "gulp-ng-constant": "*",
+    "gulp-order": "*",
+    "gulp-rename": "*",
+    "gulp-rev": "*",
+    "gulp-rev-replace": "*",
+    "gulp-sourcemaps": "*",
+    "gulp-uglify": "*",
+    "open": "*",
+    "run-sequence": "*",
+    "streamqueue": "*",
+    "wrench": "*",
+    "yargs": "*"
+  }
+}

@@ -1,0 +1,13 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div class="form-group manager-form-group">
+      <select class="form-control"
+        ng-options="manager as manager.manager_name for manager in managers"
+        ng-model="selectedManager"
+      ></select>
+    </div>
+  </div>
+</div>
+<div class="row pick-list-display" ng-repeat="pick in managerPicks">
+  <pick-display draft=draft pick=pick></pick-display>
+</div>

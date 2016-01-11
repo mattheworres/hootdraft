@@ -1,0 +1,142 @@
+ul.dropdown-menu {
+  li.ng-scope {
+    @media (min-width: 1200px) {
+      min-width: 425px;
+    }
+
+    @media (min-width: 992px) and (max-width: 1199px) {
+      min-width: 425px;
+    }
+
+    @media (min-width: 768px) and (max-width: 991px) {
+      min-width: 350px;
+    }
+
+    &.active {
+      a.pick-list-display{
+        background-color: transparent;
+
+        .pick {
+          color: #000;
+          border: 3px solid #333;
+          box-shadow: 4px 6px 15px rgba(50,50,50, 0.75);
+        }
+      }
+    }
+  }
+}
+
+div.pick-list-display, div.asset-display, a.pick-list-display {
+  div.pick, div.trade.pick {
+    box-shadow: 2px 2px 1px rgba(50, 50, 50, 0.25);
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    margin: 3px 0;
+    padding: 5px 0;
+    display: block;
+    min-height: 76px;
+
+    .pick-data {
+      padding-left: 0;
+      padding-right: 5px;
+      .text-center;
+
+      .pick-number {
+        .h3;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      .round-number {
+        .h4;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+    }
+
+    .player-data {
+      padding-left: 5px;
+      padding-right: 0;
+
+      .first-name-xs {
+        .h4;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      .last-name-xs {
+        .h2;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      .player-name-sm {
+        .h3;
+        display: inline-block;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      .asset-name {
+        .h3;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      .asset-player {
+        .h4;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      .sport-data {
+        .h4;
+        margin-top: 0px;
+        margin-bottom: 3px;
+      }
+
+      .manager {
+        .h4;
+        font-weight: bold;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      .on-clock {
+        .h4;
+        font-weight: bold;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+    }
+  }
+  
+  small {
+    color: #000 !important;
+  }
+
+  div.pick.unselected {
+    background-color: #CCC;
+
+    &.active {
+      .bg-secondary;
+    }
+
+    .manager-sm {
+      .h2;
+      margin-top: 5px;
+      margin-bottom: 0;
+    }
+
+    .manager-xs {
+      .h3;
+      margin-top: 5px;
+      margin-bottom: 0;
+    }
+  }
+
+  div.pick.chosenAsset {
+    border: 3px solid #333;
+    box-shadow: 4px 6px 15px rgba(50,50,50, 0.75);
+  }
+}

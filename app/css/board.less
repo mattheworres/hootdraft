@@ -1,0 +1,245 @@
+div.board-header-wrapper {
+  /* To stop the jump when the draft board header is affixed, ensure we have a min height */
+  min-height: 125px;
+
+  .navbar-draft-board {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    min-height: 125px;
+    background: rgba(0,0,0,0.60);
+
+    &.affix {
+      position: fixed;
+      top: 0;
+    }
+
+    div.container-fluid {
+      div.row {
+        min-height: 80px;
+
+        div.non-clock-content {
+          padding-top: 20px;
+        }
+
+        div.current-pick {
+          .h4;
+          .text-right;
+          margin-top: 30px;
+          color: #FFF;
+          padding-right: 0;
+        }
+
+        div.disabled-pick-timer {
+          .h4;
+          .text-center;
+          margin-top: 30px;
+          color: #888;
+        }
+
+        div.pick-timer-up {
+          .h3;
+          .text-center;
+          margin-top: 20px;
+          color: @brand-primary;
+
+          span.white {
+            color: #FFF;
+          }
+        }
+
+        div.active-pick-timer{
+          margin-top: 8px;
+
+          div.flip-clock-wrapper {
+            margin-bottom: 0;
+            width: auto;
+            display: inline-block;
+          }
+        }
+
+        div.previous-pick {
+          .h4;
+          .text-right;
+          margin-top: 30px;
+          color: #FFF;
+          padding-right: 0;
+        }
+
+        &.affix {
+          position: fixed;
+          top: 0;
+        }
+      }
+    }
+  }
+}
+
+#draft-board-container {
+  width: 100%;
+  overflow-x: scroll;
+  #draft-board {
+    width: 100%;
+    margin: 0 auto;
+    margin-top: 15px;
+    margin-bottom: 150px;
+
+    div.round {
+      clear: left;
+
+      div.round-number {
+        width: 50px;
+        height: 99px;
+        float: left;
+        font-size: 40px;
+        line-height: 100px;
+        color: #000;
+        filter: alpha(opacity=25);
+        opacity: 0.25;
+        padding-right: 15px;
+        text-align: right;
+      }
+
+      div.round-display {
+        &:last-child {
+          div.pick {
+            border-right: 2px solid #000 !important;
+          }
+        }
+
+        div.pick {
+          width: 175px;
+          height: 99px;
+          border-left: 2px solid #000;
+          border-top: 2px solid #000;
+          padding-left: 5px;
+          padding-right: 5px;
+          float: left;
+          position: relative;
+          font-size: 12px;
+          z-index: 0;
+          box-sizing: border-box;
+
+          &.unselected {
+            background-color: #CCC;
+
+            &.active {
+              .bg-secondary;
+
+              span.pick-number {
+                filter: alpha(opacity=100);
+                opacity: 1;
+              }
+
+              span.manager {
+                .h3;
+                margin-top: 30px;
+              }
+            }
+
+            .on-clock {
+              .h4;
+              .text-center;
+              font-weight: bold;
+              margin-top: 15px;
+              margin-bottom: 0;
+            }
+
+            span.manager {
+              .h4;
+              .text-center;
+              font-weight: bold;
+              margin-top: 40px;
+            }
+          }
+
+          span.pick-number {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 154px;
+            padding-right: 5px;
+            text-align: right;
+            font-size: 30px;
+            font-weight: bold;
+            color: #333;
+            filter: alpha(opacity=25);
+            opacity: 0.25;
+            line-height: 32px;
+            z-index: 1;
+          }
+
+          span.last-name {
+            display: block;
+            font-size: 21px;
+            font-weight: bold;
+            color: #000;
+            overflow: hidden;
+            white-space: nowrap;
+          }
+
+          span.first-name {
+            display: block;
+            font-size: 16px;
+            margin-top: 3px;
+            color: #000;
+            overflow: hidden;
+            white-space: nowrap;
+          }
+
+          span.manager {
+            font-weight: bold;
+            display: block;
+            color: #000;
+            margin-top: 2px;
+            font-size: 15px;
+            filter: alpha(opacity=60);
+            opacity: 0.60;
+            overflow: hidden;
+            white-space: nowrap;
+          }
+
+          span.position {
+            display: block;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            margin: 0 0 2px 5px;
+            text-align: left;
+            color: #000;
+            font-size: 15px;
+            filter: alpha(opacity=60);
+            opacity: 0.60;
+            overflow: hidden;
+            white-space: nowrap;
+          }
+
+          span.team {
+            display: block;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 45%;
+            margin: 0 3px 2px 0;
+            text-align: right;
+            color: #000;
+            font-size: 15px;
+            filter: alpha(opacity=60);
+            opacity: 0.60;
+            overflow: hidden;
+            white-space: nowrap;
+          }
+
+          &:last-child {
+            //border-right: 2px solid #000 !important;
+          }
+        }
+      }
+
+      &:last-child div.pick {
+        border-bottom: 2px solid #000;
+      }
+    }
+  }
+}

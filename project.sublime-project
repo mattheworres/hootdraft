@@ -1,0 +1,16 @@
+{
+  "folders":
+  [
+    {
+      "path": ".",
+      "folder_exclude_patterns": ["node_modules", "bower_components", "js", "css", "fonts", "vendor"]
+    }
+  ],
+  "settings":
+  {
+    "tab_size": 2,
+    "translate_tabs_to_spaces": true
+  }
+
+}
+

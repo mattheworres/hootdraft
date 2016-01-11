@@ -1,0 +1,50 @@
+<div data-ng-cloak>
+  <div class="container-fluid v-offset-3">
+    <draft-state controller=managerCtrl
+      commish-name=draft.commish_name
+      draft-error=draftError
+      draft-loading=draftLoading
+      draft-locked=draftLocked>
+    </draft-state>
+
+    <div class="row" ng-show="draftValid && !draft.setting_up && !draftLoading">
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+      <div class="col-xs-12 col-sm-6 col-md-5">
+        <div class="panel panel-primary panel-no-border">
+          <div class="panel-heading">
+            <h3 class="panel-title">
+              <i class="fa fa-list"></i>&nbsp;&nbsp;
+              {{selectedManager.manager_name}}'s Picks
+            </h3>
+          </div>
+          <div class="panel-body pick-list-display">
+            <section-loading show-loading=picksLoading></section-loading>
+            <section-error show-error=picksError section-name="{{selectedManager.manager_name}}'s picks"></section-error>
+            <manager-picks-display
+              draft=draft
+              managers=managers
+              selected-manager=selectedManager
+              manager-picks=managerPicks
+              ng-hide="picksLoading">
+            </manager-picks-display>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-5" ng-show="draft.in_progress">
+        <div class="panel panel-primary panel-no-border">
+          <upcoming-picks
+            draft=draft
+            next-picks=nextFivePicks
+            next-loading=nextLoading
+            next-error=nextError>
+          </upcoming-picks>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-5" ng-show="!draft.in_progress">
+        <draft-information draft=draft></draft-information>
+      </div>
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+    </div>
+  </div>
+</div>
+

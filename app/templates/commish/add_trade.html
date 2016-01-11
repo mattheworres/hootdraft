@@ -1,0 +1,87 @@
+<div data-ng-cloak>
+  <div class="container-fluid v-offset-3">
+    <draft-state controller=addTradeCtrl
+      commish-name=draft.commish_name
+      draft-error=draftError
+      draft-loading=draftLoading
+      draft-locked=draftLocked>
+    </draft-state>
+
+    <div class="row" ng-show="draftValid && draft.in_progress">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-10 col-lg-offset-1">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title">
+              <i class="fa fa-exchange"></i>&nbsp;&nbsp;
+              Enter a new Trade
+            </h3>
+          </div>
+          <div class="panel-body trades-panel">
+            <div class="row">
+              <div class="col-xs-12">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 ng-hide="addTradeCtrl.twoManagersSelected()">Choose two managers to enter a trade for:</h3>
+                    <h3 ng-show="addTradeCtrl.twoManagersSelected()">Choose at least one asset for each manager to trade:</h3>
+                  </div>
+                  <div class="panel-body">
+                    <div class="row">
+                      <div class="col-xs-12 col-sm-6">
+                        <select class="form-control" ng-model="manager1_id">
+                          <option value="" disabled="disabled" selected>Choose one manager</option>
+                          <option ng-repeat="manager in firstManagers" value="{{manager.manager_id}}" ng-disabled="manager.disabled">{{manager.manager_name}}</option>
+                        </select>
+                      </div>
+                      <div class="col-xs-12 col-sm-6">
+                        <select class="form-control" ng-model="manager2_id">
+                          <option value="" disabled="disabled" selected>Choose another manager</option>
+                          <option ng-repeat="manager in secondManagers" value="{{manager.manager_id}}" ng-disabled="manager.disabled">{{manager.manager_name}}</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-12 col-sm-6">
+                        <div class="row pick-list-display no-padding" ng-repeat="pick in firstManagerAssets">
+                          <div class="col-xs-10">
+                            <pick-display draft=draft pick=pick></pick-display>
+                          </div>
+                          <div class="col-xs-2">
+                            <div class="btn btn-block btn-lg" ng-attr-class="{{pick.chosenAsset && 'btn-primary' || 'btn-default'" ng-click="addTradeCtrl.toggleAsset(pick)">
+                              <i class="fa fa-check-circle fa-2x has-success" ng-show="pick.chosenAsset"></i>
+                              <i class="fa fa-circle-thin fa-2x" ng-hide="pick.chosenAsset"></i>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-xs-12 col-sm-6">
+                        <div class="row pick-list-display no-padding" ng-repeat="pick in secondManagerAssets">
+                          <div class="col-xs-2">
+                            <div class="btn btn-block btn-lg" ng-attr-class="{{pick.chosenAsset && 'btn-primary' || 'btn-default'" ng-click="addTradeCtrl.toggleAsset(pick)">
+                              <i class="fa fa-check-circle fa-2x has-success" ng-show="pick.chosenAsset"></i>
+                              <i class="fa fa-circle-thin fa-2x" ng-hide="pick.chosenAsset"></i>
+                            </div>
+                          </div>
+                          <div class="col-xs-10">
+                            <pick-display draft=draft pick=pick></pick-display>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-12 v-offset-2">
+                        <button type="submit" class="btn btn-success btn-large btn-block" ng-click="addTradeCtrl.submitClicked()" ng-submit="addTradeCtrl.submitClicked()" ng-disabled="addTradeCtrl.tradeFormIsInvalid()">
+                          <i class="fa fa-user-plus"></i>&nbsp;&nbsp;Enter New Trade
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
