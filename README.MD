@@ -1,6 +1,5 @@
 ![PHP Draft](/images/logo_xlarge.png?raw=true "PHP Draft")
 
-# PHP Draft 2.0.0
 PHP Draft allows commissioners to setup web-based real-time drafts for their fantasy sports leagues. If your leagues do **offline drafts** (instead of using your fantasy provider's online drafting tools), PHP Draft is just for you! 
 
 The league commissioner creates an account, and then adds your fantasy league. Pick the draft sport and style, specify the number of rounds the draft will last. Add the league managers (teams), and specify pick timers to make sure *that one guy* (you know who) doesn't hold the entire league hostage for an afternoon while he agonizes over whether to choose **Joique Bell** or **Bishop Sankey** in the twelfth round. Hit the start button. 
