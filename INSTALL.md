@@ -18,12 +18,12 @@
     - `RECAPTCHA_SECRET` is the private key for your Google reCAPTCHA 2 account. Without it new user registration will fail.
     - `MAIL_SERVER`, `MAIL_USER`, `MAIL_PASS` and `MAIL_PORT` allow PHP Draft to send emails for both new user email verification and password reset emails.
     - `APP_BASE_URL` is the home URL for your PHP Draft installation - for example `http://www.example.com/phpdraft` (whatever you type in to the browser to load PHP Draft). *No trailing slashes!*
-    - `API_BASE_URL` is the base url for your PHP Draft API - which should be the same as `APP_BASE_URL` except with `/api` appended to it, like: `http://example.com/phpdraft/api`
+    - `API_BASE_URL` is the base url for your PHP Draft API - which should be the same as `APP_BASE_URL` except with `/api` appended to it, like: `http://www.example.com/phpdraft/api`
     - The rest you can read up and configure as you like, but the above settings are the bare minimum.
 
- 1. If your PHP Draft install will be at the base of the domain or subdomain (as in `sub.example.com` or `example.com`), **you may skip this step**. If your base URL looks like example.com/phpdraft, **do the following**:
+ 1. If your PHP Draft install will be at the base of the domain or subdomain (as in `sub.example.com` or `www.example.com`), **you may skip this step**. If your base URL looks like www.example.com/phpdraft, **do the following**:
 
-    - Open `index.html` and find this HTML: `<base href="/">` and change it to match the directory path after the base domain. So if your base URL is `example.com/phpdraft`, then you must edit the HTML like this: `<base href="/phpdraft/">`
+    - Open `index.html` and find this HTML: `<base href="/">` and change it to match the directory path after the base domain. So if your base URL is `www.example.com/phpdraft`, then you must edit the HTML like this: `<base href="/phpdraft/">`
     - If running on a Unix server, you will additionally need to edit line 5 of `.htaccess` like so: `RewriteBase /phpdraft`
 
  1. Open `js/config.js` and update two values to match your installation:

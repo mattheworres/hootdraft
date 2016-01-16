@@ -1,7 +1,7 @@
 {
     "ENV":
     {
-        "apiEndpoint": "https://example.com/api/",
-        "recaptchaPublicKey": "Your_Recaptcha_PUBLIC_Key_Here"
+        "apiEndpoint": "https://www.example.com/api/",
+        "recaptchaPublicKey": "Your Public Google Recaptcha 2 Key Goes Here"
     }
 }
