@@ -213,7 +213,7 @@ class LoginUserRepository {
   public function SearchCommissioners($searchTerm) {
     $searchTerm = "%$searchTerm%";
     $search_stmt = $this->app['db']->prepare("SELECT id, name FROM users WHERE name LIKE ?");
-    $this->app['monolog']->addDebug("Search term is $searchTerm");
+
     $search_stmt->setFetchMode(\PDO::FETCH_CLASS, 'PhpDraft\Domain\Entities\LoginUser');
     $search_stmt->bindParam(1, $searchTerm);
 

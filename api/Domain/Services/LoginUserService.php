@@ -128,9 +128,6 @@ class LoginUserService {
         %s
       ", $user->email, $verificationLink, $verificationLink, $verificationLink);
 
-      //TODO: Remove once registration is tested end to end
-      $this->app['monolog']->addDebug("Verification link: $verificationLink");
-
       $this->app['phpdraft.EmailService']->SendMail($message);
 
       $response->success = true;

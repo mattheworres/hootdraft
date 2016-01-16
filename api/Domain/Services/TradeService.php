@@ -66,7 +66,6 @@ class TradeService {
     $new_counter_value = $draft->draft_counter + 1;
     
     foreach ($trade->trade_assets as $asset) {
-      $this->app['monolog']->addDebug("swapping from " . $asset->player->manager_id . " to " . $asset->newmanager->manager_id);
       $asset->player->manager_id = $asset->newmanager->manager_id;
       $asset->player->player_counter = $new_counter_value;
 

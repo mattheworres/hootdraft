@@ -27,7 +27,6 @@ class UserController
     $enabVal = $request->get('enabled');
     $enabled = $request->get('enabled') == true;
     $user->enabled = $enabled ? 1 : 0;
-    $app['monolog']->addDebug("So we have $enabVal ; $enabled and we set $user->enabled for $user->name.");
 
     $validity = $app['phpdraft.LoginUserValidator']->IsAdminUserUpdateValid($user);
 

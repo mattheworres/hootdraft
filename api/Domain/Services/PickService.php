@@ -82,9 +82,7 @@ class PickService {
 
       $response->draft_is_complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);
 
-      $this->app['monolog']->addDebug("So, do we know if draft is complete? " . $response->draft_is_complete);
       if($response->draft_is_complete == 1) {
-        $this->app['monolog']->addDebug("Gneratin stats");
         $response->draft_statistics = $this->app['phpdraft.DraftStatsRepository']->CalculateDraftStatistics($draft);
       }
 
@@ -181,8 +179,6 @@ class PickService {
     $now_utc = new \DateTime(null, new \DateTimeZone("UTC"));
     $now_utc_timestamp = $now_utc->getTimestamp();
     $pick->pick_time = $now_utc->format('Y-m-d H:i:s');
-
-    $this->app['monolog']->addDebug("Pick time now: $pick->pick_time");
 
     //Calculate the pick duration
     if ($pick->player_pick == 1 || $previous_pick == null)

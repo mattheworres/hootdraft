@@ -13,9 +13,6 @@ class DraftStatsController
   public function GetDrafts(Application $app, Request $request) {
     $drafts = $app['phpdraft.DraftRepository']->GetAllCompletedDrafts();
 
-    $app['monolog']->addDebug("Drafts, yo: ");
-    $app['monolog']->addDebug($app->json($drafts));
-
     return $app->json($drafts);
   }
 

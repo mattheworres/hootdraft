@@ -87,8 +87,6 @@ class LoginUserValidator {
     $email = $request->get('_email');
     $verificationToken = $this->app['phpdraft.SaltService']->UrlDecodeSalt($request->get('_verificationToken'));
 
-    $this->app['monolog']->addDebug("Checking validation for email $email and token of $verificationToken");
-
     if(strlen($verificationToken) != 16) {
       $errors[] = "Verification token invalid.";
       $valid = false;
@@ -263,8 +261,6 @@ class LoginUserValidator {
     $newConfirmedPassword = $request->get('_newConfirmedPassword');
 
     $currentUser = $this->app['phpdraft.LoginUserService']->GetCurrentUser();
-
-    $this->app['monolog']->addDebug("Current user pwd: " . $currentUser->password);
 
     if(empty($currentUser) || $currentUser == null) {
       $valid = false;
