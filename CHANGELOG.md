@@ -10,9 +10,9 @@ SaaS-friendly user registration/authentication/management.
 Angular front end utilizing Twitter Bootstrap 3 for responsive layouts (read: works great on smartphones!)
 Streamlined clean user interface designed from the bottom up to be a quick and easy experience
 
-Project development is now considerably more complicated for beginners. Please see DEVELOPER.md for details.
+Project development is now considerably more complicated for beginners. Please see [DEVELOPER.md](DEVELOPER.md) for details.
 
-Also, thanks to @JustinPyvis for the Super Rugby sports player data.
+Also, thanks to @JustinPyvis for the Super Rugby sports player data, and @YamieSquirrel for additional QA help!
 
 ## v1.3.0
 **Official Release**

@@ -4,12 +4,17 @@
     RewriteEngine On
     RewriteBase /
 
+    # Comment next line to disable forcing of HTTPS for all pages:
+    # (it is strongly recommended you *keep* this setting enabled!)
+    RewriteCond %{HTTPS} off
+    RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
     #H/T to anubhava http://stackoverflow.com/a/29874382/324527
     DirectoryIndex bootstrap.php index.html
     Options +FollowSymLinks
     RewriteEngine on
 
-    # redirect all api calls to /api/index.php
+    # redirect all api calls to /api/bootstrap.php
     RewriteRule ^api/((?!bootstrap\.php$).+)$ api/bootstrap.php [L,NC]
 
     # If the request is a file, folder or symlink that exists, or is for the mail server, serve it up
