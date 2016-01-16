@@ -6,6 +6,8 @@ The league commissioner creates an account, and then adds your fantasy league. P
 
 #### **BOOM**. Your fantasy draft is underway.
 
+[![Join the chat at https://gitter.im/mattheworres/phpdraft](https://badges.gitter.im/mattheworres/phpdraft.svg)](https://gitter.im/mattheworres/phpdraft?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Leave a laptop running on a podium and make each team enter their selections as their pick comes up, or be a gatekeeper commissioner and make every pick go through you - it's your choice!
 
 The large color-coded draft board is perfect for displaying on large screen televisions (compatible with Google Chromecast screen casting!) and will display all pertinent info on-screen as it automatically updates.
