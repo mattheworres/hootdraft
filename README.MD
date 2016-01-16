@@ -94,8 +94,11 @@ See [CHANGELOG.md](CHANGELOG.md) for the most up to date version info.
 ## Contributors
 
 **Jamie Orres**
+
 **Ryan Scarbery**
+
 **Jeff Machusko**
+
 **Justin Pyvis**
 
 ## Copyright and license
