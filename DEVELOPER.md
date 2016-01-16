@@ -13,7 +13,7 @@ Want to work on your own custom version of PHP Draft, or have an idea for a grea
 + A working MySQL server locally that has an empty `phpdraft` database as well as a user account that can access it (again, setup is beyond the scope of this document)
 
 #### Optional (but helpful) Tools
-A working (or stubbed out) local SMTP server to simulate sending mail. User registration may seem broken on the front end (because the API will not get a response from an SMTP server), but you can manually enable and make the user account an admin as you do in the README.md instructions. A Ruby gem called **Mailcatcher** was useful to me while developing, and you can install it with these steps:
+A working (or stubbed out) local SMTP server to simulate sending mail. User registration may seem broken on the front end (because the API will not get a response from an SMTP server), but you can manually enable and make the user account an admin as you do in the README.md instructions. A Ruby gem called **Mailcatcher** was useful to me while developing ([Papercut](https://github.com/jaben/papercut) is a nice Windows-only helper, too), and you can install it with these steps:
 + Install **Ruby** : [Linux/Mac OSX](https://www.ruby-lang.org/en/documentation/installation/) or [Windows](http://rubyinstaller.org/)
 + Install [**RubyGems**](https://rubygems.org/pages/download)
 + Install **Mailcatcher**:

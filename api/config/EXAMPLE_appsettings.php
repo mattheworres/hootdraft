@@ -28,21 +28,30 @@ $configuration_variables = array(
   'RECAPTCHA_SECRET' => 'recaptcha',
 
   //Mail configuration
+  //If you are developing or running the app on localhost and using a helper app like Mailcatcher or Papercut, switch to true:
+  'MAIL_DEVELOPMENT' => false,
   'MAIL_SERVER' => 'localhost',
   'MAIL_USER' => 'mail_usr',
   'MAIL_PASS' => 'mail_pass',
   'MAIL_PORT' => '1025',
+  'MAIL_USE_ENCRYPTION' => true, //STRONGLY suggested to use this (otherwise sensitive data can be intercepted!)
+  'MAIL_ENCRYPTION' => 'ssl', //May also use 'tls'
+
+  //See /api/Domain/Services/EmailService.php for further help if debugging your mail server settings.
 
   //Provide the base URL for the Angular app (no trailing slash):
-  'APP_BASE_URL' => 'http://www.yoursite.com',
+  'APP_BASE_URL' => 'https://www.example.com',
   //Provide the base URL for the API (no trailing slash):
-  'API_BASE_URL' => 'http://www.yoursite.com/api',
+  'API_BASE_URL' => 'https://www.example.com/api',
   //Provide the name of the header to store the authorization token in. (Default: "X-Access-Token")
   'AUTH_KEY_HEADER' => 'X-Access-Token',
   //Provide the name of the header to store the draft password in (Default: "X-PhpDraft-DraftPassword")
   'DRAFT_PASSWORD_HEADER' => 'X-PhpDraft-DraftPassword',
+
+  //Run the app in debug mode? If so, LOGFILE_NAME (below) will be populated with log information.
+  'DEBUG_MODE' => false,
   //Name of the file you have created in /api/config/logs folder to contain Silex logging information
-  'LOGFILE_NAME' => 'development.log',
+  'LOGFILE_NAME' => 'phpdraft.log',
 
   'SET_CSV_TIMEOUT' => false
 

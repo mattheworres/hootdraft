@@ -4,11 +4,11 @@ require_once __DIR__.'/../../vendor/autoload.php';
 
 $app = new Silex\Application();
 
-$app['debug'] = false;
-
 //Handles settings users can define
-//Please see README for instructions on how to setup
+//Please see README.md for instructions on how to setup
 require_once __DIR__.'/../../../appsettings.php';
+
+$app['debug'] = DEBUG_MODE;
 
 require_once __DIR__.'/_database.php';      //Sets up database connections
 require_once __DIR__.'/_log.php';           //Sets up logging

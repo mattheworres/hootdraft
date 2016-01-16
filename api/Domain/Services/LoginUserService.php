@@ -164,7 +164,7 @@ class LoginUserService {
     $response = new PhpDraftResponse();
 
     try {
-      $this->app['db']->beginTransaction();  
+      $this->app['db']->beginTransaction();
 
       $user = $this->app['phpdraft.LoginUserRepository']->Update($user);
 
@@ -187,9 +187,6 @@ class LoginUserService {
 
         If you remember your old password, no longer want to change it, or didn't request a password reset - you can ignore this email.
       ", $user->email, $verificationLink, $verificationLink, $verificationLink);
-
-      //TODO: Remove once registration is tested end to end
-      $this->app['monolog']->addDebug("Verification link: $verificationLink");
 
       $this->app['phpdraft.EmailService']->SendMail($message);
 

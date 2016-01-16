@@ -1,28 +1,30 @@
 <div data-ng-cloak>
-  <div class="board-header-wrapper hidden-xs hidden-sm" ng-show="draftValid && draft.in_progress && !boardLoading">
-    <div class="navbar-draft-board hidden-xs hidden-sm" ng-show="draftValid && draft.in_progress && !boardLoading" bs-affix data-offset-top="107">
+  <div class="board-header-wrapper hidden-xs" ng-show="draftValid && draft.in_progress && !boardLoading">
+    <div class="navbar-draft-board hidden-xs" ng-show="draftValid && draft.in_progress && !boardLoading" bs-affix data-offset-top="107">
       <div class="container-fluid">
         <div class="row pick-list-display">
-          <div class="col-sm-1 current-pick non-clock-content">
+          <div class="hidden-sm hidden-md col-lg-1 current-pick non-clock-content">
             Current Pick
           </div>
-          <div class="col-sm-3 non-clock-content" dw-loading="load_current_display" dw-loading-options="{text: 'Update current pick...'}">
+          <div class="hidden-sm col-md-6 col-lg-3 non-clock-content" dw-loading="load_current_display" dw-loading-options="{text: 'Update current pick...'}">
             <pick-display draft=draft pick=currentPick></pick-display>
           </div>
-          <div class="col-sm-4 active-pick-timer text-center" ng-show="timerEnabled && !timerUp">
+
+          <div class="col-sm-12 col-md-6 col-lg-4 active-pick-timer text-center" ng-show="timerEnabled && !timerUp">
             <flip-clock autostart="false" clock-face="MinuteCounter" countdown="true" stop="boardCtrl.timerClockStopHandler()"></flip-clock>
           </div>
-          <div class="col-sm-4 pick-timer-up non-clock-content" ng-show="timerEnabled && timerUp">
+          <div class="col-sm-12 col-md-6 col-lg-4 pick-timer-up non-clock-content" ng-if="timerEnabled && timerUp">
             Time's up!<br/>
             <span class="white">Everyone boo <strong>{{currentPick.manager_name}}</strong>!</span>
           </div>
-          <div class="col-sm-4 disabled-pick-timer non-clock-content" ng-hide="timerEnabled">
+          <div class="col-sm-12 col-md-6 col-lg-4 disabled-pick-timer non-clock-content" ng-if="!timerEnabled">
             Pick timers disabled
           </div>
-          <div class="col-sm-1 previous-pick non-clock-content" ng-show="hasPreviousPick">
+
+          <div class="hidden-sm hidden-md col-lg-1 previous-pick non-clock-content" ng-if="hasPreviousPick">
             Last Pick
           </div>
-          <div class="col-sm-3 non-clock-content" ng-show="hasPreviousPick" dw-loading="load_previous_display" dw-loading-options="{text: 'Update current pick...'}">
+          <div class="hidden-sm hidden-md col-lg-3 non-clock-content" ng-if="hasPreviousPick" dw-loading="load_previous_display" dw-loading-options="{text: 'Update current pick...'}">
             <pick-display draft=draft pick=previousPick></pick-display>
           </div>
         </div>
@@ -39,24 +41,24 @@
 
   <section-loading show-loading=boardLoading></section-loading>
 
-  <div id="draft-board-container" ng-hide="boardLoading">
+  <div id="draft-board-container" ng-if="!boardLoading">
     <div id="draft-board" ng-style="{width: boardCtrl.calculatedBoardWidth}">
       <div class="round" ng-repeat="round in pickRounds">
         <div class="round-number">
           {{$index + 1}}
         </div>
         <div class="round-display" ng-repeat="pick in round">
-          <div class="pick selected pick{{pick.position}}" ng-show="pick.selected">
+          <div class="pick selected pick{{pick.position}}" ng-if="pick.selected">
             <span class="pick-number">{{pick.player_pick}}</span>
             <span class="first-name">{{pick.first_name}}</span>
             <span class="last-name">{{pick.last_name}}</span>
             <span class="manager">{{pick.manager_name}}</span>
             <span class="position">{{draft.positions[pick.position]}} &ndash; {{pick.team}}</span>
           </div>
-          <div class="pick unselected" ng-hide="pick.selected" ng-class="(pick.on_the_clock ? ' active' : '')">
+          <div class="pick unselected" ng-if="!pick.selected" ng-class="(pick.on_the_clock ? ' active' : '')">
             <span class="pick-number">{{pick.player_pick | ordinal}}</span>
             <span class="manager">{{pick.manager_name}}</span>
-            <div class="on-clock" ng-show="pick.on_the_clock"><i class="fa fa-clock-o"></i>&nbsp;On the clock</div>
+            <div class="on-clock" ng-if="pick.on_the_clock"><i class="fa fa-clock-o"></i>&nbsp;On the clock</div>
           </div>
         </div>
       </div>

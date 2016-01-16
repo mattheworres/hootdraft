@@ -167,7 +167,7 @@ class BoardController extends BaseController
       if @$scope.timerEnabled
         seconds = parseInt(data.seconds_remaining, 10)
         @$scope.timerUp = seconds == 0
-        if not @$scope.timerRunning and seconds > 0
+        if seconds > 0
           @$scope.timerRunning = true
           @$scope.setTime(seconds)
           @$scope.start()

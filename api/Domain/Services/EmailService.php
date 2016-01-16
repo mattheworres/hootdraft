@@ -22,11 +22,16 @@ class EmailService {
     $this->mailer->isSMTP();
     $this->mailer->Host = MAIL_SERVER;
     $this->mailer->Port = MAIL_PORT;
-    //Comment next 4 lines if testing locally with Mailcatcher
-    $this->mailer->SMTPAuth = true;
-    $this->mailer->Username = MAIL_USER;
-    $this->mailer->Password = MAIL_PASS;
-    $this->mailer->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
+
+    if(MAIL_DEVELOPMENT != true) {
+      $this->mailer->SMTPAuth = true;
+      $this->mailer->Username = MAIL_USER;
+      $this->mailer->Password = MAIL_PASS;
+
+      if(MAIL_USE_ENCRYPTION == true) {
+        $this->mailer->SMTPSecure = MAIL_ENCRYPTION;
+      }
+    }
 
     $this->mailer->From = MAIL_USER;
     $this->mailer->FromName = 'PHPDraft System';
