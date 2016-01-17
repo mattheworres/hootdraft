@@ -100,18 +100,52 @@ ALTER TABLE `round_times` ADD INDEX `round_idx` (`draft_round`);
 # NOTE: This should only be run once as it's relative: you will
 # mangle data if you run it multiple times, hence why it's block-commented out.
 # Change 'EST' to whatever timezone you set for PHPDraft <1.3.x
+# First, use the query below to ensure the conversion will work *VERY IMPORTANT*:
 
 /*
+SET @localTimezone = 'EST';
+SET @utcTimezone = 'GMT';
+
+SELECT 
+  draft_id,
+  CONVERT_TZ(`draft_start_time`, @localTimezone, @utcTimezone) AS 'NEW_DRAFT_START_TIME',
+  CONVERT_TZ(`draft_end_time` , @localTimezone, @utcTimezone) AS 'NEW_DRAFT_END_TIME'
+FROM `draft`
+WHERE `draft_start_time` IS NOT NULL
+OR `draft_end_time` IS NOT NULL;
+
+
+# If you need to check trades, here's the corresponding query:
+
+SET @localTimezone = 'EST';
+SET @utcTimezone = 'GMT';
+
+SELECT
+  `trade_id`,
+  CONVERT_TZ(`trade_time`, @localTimezone, @utcTimezone) AS 'NEW_TRADE_TIME'
+FROM `trades`
+WHERE `trade_time` IS NOT NULL;
+*/
+
+# If you get all NULL values back, the MySQL installation does not have timezone data loaded,
+# and you will have to run the query below by replacing the named timezones with their offsets.
+# So for instance, 'EST' becomes '-05:00' and GMT becomes '+00:00'
+# Use the query above to figure out what works so you don't bork your data with the queries below!
+
+/*
+SET @localTimezone = 'EST';
+SET @utcTimezone = 'GMT';
+
 UPDATE `draft`
-SET `draft_start_time` = CONVERT_TZ(`draft_start_time`, 'EST', 'GMT')
+SET `draft_start_time` = CONVERT_TZ(`draft_start_time`, @localTimezone, @utcTimezone)
 WHERE `draft_start_time` IS NOT NULL;
 
 UPDATE `draft`
-SET `draft_end_time` = CONVERT_TZ(`draft_end_time`, 'EST', 'GMT')
+SET `draft_end_time` = CONVERT_TZ(`draft_end_time`, @localTimezone, @utcTimezone)
 WHERE `draft_end_time` IS NOT NULL;
 
 UPDATE `trades`
-SET `trade_time` = CONVERT_TZ(`trade_time`, 'EST', 'GMT')
+SET `trade_time` = CONVERT_TZ(`trade_time`, @localTimezone, @utcTimezone)
 WHERE `trade_time` IS NOT NULL;
 */
 
