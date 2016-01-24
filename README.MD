@@ -42,9 +42,9 @@ Currently there are no plans to support upgrading from versions previous to 1.3.
 
 ## Feature Requests
 
-Check out our [FeatHub](http://feathub.com/mattheworres/phpdraft) page for a list of popular features, and sign in with your **Github** account to vote and submit more!
+Check out our [FeatHub](http://feathub.com/mattheworres/phpdraft) page some possible future features, or sign in with your **Github** to add your own:
 
-You can also enter the project's [Gitter](https://gitter.im/mattheworres/phpdraft) chat room for help from me or other PHP Draft users!
+[![Feature Requests](http://feathub.com/mattheworres/phpdraft?format=svg)](http://feathub.com/mattheworres/phpdraft)
 
 Or, just hit me up on [Twitter](https://twitter.com/mattheworres) and let me know what you have in mind!
 
