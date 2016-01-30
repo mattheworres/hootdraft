@@ -75,7 +75,7 @@ You can also hit me up on [Twitter](https://twitter.com/mattheworres) if you're 
 
 ## Contributing & custom development
 
-See [DEVELOPMENT.md](DEVELOPMENT.md) if you are interested in developing or making custom changes to your PHP Draft.
+See [DEVELOPER.md](DEVELOPER.md) if you are interested in developing or making custom changes to your PHP Draft.
 
 PHP Draft is now a PHP API with an Angular (Javascript) front end, and has a complicated build toolchain that includes NPM, Bower, Gulp, and Coffeescript (to name a few) - take a gander at that readme for better instructions on how the project is now built.
 
