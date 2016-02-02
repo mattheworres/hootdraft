@@ -18,7 +18,7 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 CREATE TABLE IF NOT EXISTS `draft` (
   `draft_id` int(11) NOT NULL auto_increment,
   `commish_id` INT(11) NOT NULL,
-  `draft_create_time` datetime NOT NULL,
+  `draft_create_time` DATETIME NOT NULL,
   `draft_name` text NOT NULL,
   `draft_sport` text NOT NULL,
   `draft_status` text NOT NULL,
@@ -48,8 +48,7 @@ CREATE TABLE IF NOT EXISTS `managers` (
   `manager_name` text NOT NULL,
   `draft_order` tinyint(3) unsigned NOT NULL default '0',
   PRIMARY KEY  (`manager_id`),
-  INDEX `draft_idx` (`draft_id`),
-  FULLTEXT KEY `manager_idx` (`manager_name`)
+  INDEX `draft_idx` (`draft_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -74,8 +73,7 @@ CREATE TABLE IF NOT EXISTS `players` (
   PRIMARY KEY  (`player_id`),
   INDEX `manager_idx` (`manager_id`),
   INDEX `draft_idx` (`draft_id`),
-  INDEX `counter_idx` (`player_counter`),
-  FULLTEXT KEY `player_idx` (`first_name`,`last_name`)
+  INDEX `counter_idx` (`player_counter`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -92,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `users` (
     `name` VARCHAR(100) NOT NULL,
     `roles` VARCHAR(255) NOT NULL,
     `verificationKey` VARCHAR(16) NULL,
-    `creationTime` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `creationTime` DATETIME NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE `UNIQUE_ID` (`id`)
 ) ENGINE=InnoDB;

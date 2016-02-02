@@ -94,9 +94,9 @@ class LoginUserRepository {
 
   public function Create(LoginUser $user) {
     $insert_stmt = $this->app['db']->prepare("INSERT INTO users 
-        (id, email, password, salt, name, roles, verificationKey) 
+        (id, email, password, salt, name, roles, verificationKey, creationTime) 
         VALUES 
-        (NULL, ?, ?, ?, ?, ?, ?)");
+        (NULL, ?, ?, ?, ?, ?, ?, UTC_TIMESTAMP())");
 
     $insert_stmt->bindParam(1, strtolower($user->email));
     $insert_stmt->bindParam(2, $user->password);

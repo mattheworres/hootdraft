@@ -25,7 +25,7 @@ Don't know how to install a web app or run a web server? No problem:
 
 ### Minimum Server Requirements
 - PHP 5.4+ installed
-- MySQL 5+ database
+- MySQL 5.5+ database
 - Ability to use `.htaccess` to enable/use `mod_rewrite` (Apache) or `web.config` (IIS)
 - Ability to create and edit a file one directory above your PHP Draft install directory
 - SMTP mail account (for user registration/password resets)
@@ -34,7 +34,7 @@ Don't know how to install a web app or run a web server? No problem:
 
 ## Installing PHP Draft
 
-See [INSTALL.md](INSTALL.md) for detailed installation instructions.
+See [INSTALL.md](INSTALL.md) for detailed installation instructions, and [OPENSHIFT_DEPLOYMENT.md](OPENSHIFT_DEPLOYMENT.md) if you are interested in installing PHPDraft in the cloud (free!).
 
 **If you currently use PHP Draft v1.3.0**, please see [UPGRADE.md](UPGRADE.md) for instructions on how to perform an upgrade instead of a new installation.
 
