@@ -33,9 +33,9 @@ $configuration_variables = array(
   'MAIL_SERVER' => 'localhost',
   'MAIL_USER' => 'mail_usr',
   'MAIL_PASS' => 'mail_pass',
-  'MAIL_PORT' => '1025',
+  'MAIL_PORT' => 25,
   'MAIL_USE_ENCRYPTION' => true, //STRONGLY suggested to use this (otherwise sensitive data can be intercepted!)
-  'MAIL_ENCRYPTION' => 'ssl', //May also use 'tls'
+  'MAIL_ENCRYPTION' => 'tls', //May also use 'ssl', but there are security issues with SSL: https://en.wikipedia.org/wiki/POODLE
 
   //See /api/Domain/Services/EmailService.php for further help if debugging your mail server settings.
 

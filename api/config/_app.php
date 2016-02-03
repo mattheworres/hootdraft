@@ -6,7 +6,7 @@ $app = new Silex\Application();
 
 //Handles settings users can define
 //Please see README.md for instructions on how to setup
-require_once __DIR__.'/../../../appsettings.php';
+require_once __DIR__.'/../../appsettings.php';
 
 $app['debug'] = DEBUG_MODE;
 

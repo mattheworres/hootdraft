@@ -5,10 +5,10 @@
  1. Create an empty MySQL database (as well as a corresponding MySQL user that has full access to the database) named `phpdraft`. 
      - If your hosting prepends your account name to the database name that's OK, just be sure to edit `initialize.sql` to match (Step 3) and `appsettings.php` (Step 5) with the correct name.
 
- 1. Execute `/api/Domain/Migrations/2.0.0/initialize.sql` on the `phpdraft` database.
+ 1. Execute `/api/Domain/Migrations/initialize.sql` on the `phpdraft` database.
      - If your database name is not precisely `phpdraft`, you must edit **Line 4** of this script to reflect this *before* executing the script.
 
- 1. Copy `[temp local directory]/api/config/EXAMPLE_appsettings.php` to one directory above your temporary local directory (so in the folder above `index.html`), renaming it to `appsettings.php`.
+ 1. Copy `[temp local directory]/api/config/EXAMPLE_appsettings.php` to your temporary local directory (so in the same folder as `index.html`), renaming it to `appsettings.php`.
 
  1. Open `appsettings.php` in a text editor, and edit all applicable settings:
 
@@ -30,10 +30,6 @@
 
     - **apiEndpoint** should be a fully qualified URL that points to your PHP Draft API (so `http://www.example.com/phpdraft/api/` is valid - note the trailing slash)
     - **recaptchaPublicKey** should contain the *public key* portion of your Google reCAPTCHA 2 key
-
- 1. In your FTP client, navigate to **one directory level ABOVE where PHP Draft will exist** and upload the `appsettings.php` you edited in Step 5.
-
-    - For example, if my site's absolute server path is `/home/hosting_account/www/`, I need to upload `appsettings.php` to `/home/hosting_account/`. Ideally this file should not be served by the web server, but *must* be readable by PHP scripts in directories below it.
 
  1. **If you do not have HTTPS enabled**, you must disable the default URL rewrites that PHP Draft ships with.
     - This is not recommended. For your users' security, use HTTPS! *All those who enter abandon hope here*

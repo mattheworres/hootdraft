@@ -27,7 +27,6 @@ Don't know how to install a web app or run a web server? No problem:
 - PHP 5.4+ installed
 - MySQL 5.5+ database
 - Ability to use `.htaccess` to enable/use `mod_rewrite` (Apache) or `web.config` (IIS)
-- Ability to create and edit a file one directory above your PHP Draft install directory
 - SMTP mail account (for user registration/password resets)
 - Google reCAPTCHA 2 site key (public and private - used to verify new user registration)
 - OPTIONAL (but recommended): SSL certificate installed for your domain (for enhanced user privacy/security)
@@ -96,13 +95,15 @@ See [CHANGELOG.md](CHANGELOG.md) for the most up to date version info.
 
 ## Contributors
 
+**Ross Larson**
+
 **Jamie Orres**
+
+**Justin Pyvis**
 
 **Ryan Scarbery**
 
 **Jeff Machusko**
-
-**Justin Pyvis**
 
 ## Copyright and license
 
