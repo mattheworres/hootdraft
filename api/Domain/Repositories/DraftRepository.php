@@ -53,6 +53,9 @@ class DraftRepository {
       $draft->complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);
       $draft->is_locked = false;
 
+      $draft->draft_create_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_create_time);
+      $draft->draft_start_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_start_time);
+      $draft->draft_end_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_end_time);
 
       if(!$currentUserOwnsIt && !$currentUserIsAdmin && !$draft->draft_visible && $password != $draft->draft_password) {
         $draft->is_locked = true;
@@ -98,6 +101,9 @@ class DraftRepository {
       $draft->complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);
       $draft->is_locked = false;
 
+      $draft->draft_create_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_create_time);
+      $draft->draft_start_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_start_time);
+      $draft->draft_end_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_end_time);
 
       if(!$currentUserOwnsIt && !$currentUserIsAdmin && !$draft->draft_visible && $password != $draft->draft_password) {
         $draft->is_locked = true;
@@ -132,6 +138,10 @@ class DraftRepository {
     $drafts = array();
 
     while($draft = $draft_stmt->fetch()) {
+      $draft->draft_create_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_create_time);
+      $draft->draft_start_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_start_time);
+      $draft->draft_end_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_end_time);
+
       $drafts[] = $draft;
     }
 
@@ -155,6 +165,10 @@ class DraftRepository {
     $drafts = array();
 
     while($draft = $draft_stmt->fetch()) {
+      $draft->draft_create_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_create_time);
+      $draft->draft_start_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_start_time);
+      $draft->draft_end_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_end_time);
+
       $drafts[] = $draft;
     }
 
@@ -192,17 +206,9 @@ class DraftRepository {
     $draft->draft_visible = empty($draft->draft_password);
     $draft->commish_editable = $currentUserOwnsIt || $currentUserIsAdmin;
 
-    if(!empty($draft->draft_create_time)) {
-      $draft->draft_create_time .= " UTC";
-    }
-
-    if(!empty($draft_start_time)) {
-      $draft->draft_start_time .= " UTC";
-    }
-
-    if(!empty($draft->draft_end_time)) {
-      $draft->draft_end_time .= " UTC";
-    }
+    $draft->draft_create_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_create_time);
+    $draft->draft_start_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_start_time);
+    $draft->draft_end_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_end_time);
 
     $draft->setting_up = $this->app['phpdraft.DraftService']->DraftSettingUp($draft);
     $draft->in_progress = $this->app['phpdraft.DraftService']->DraftInProgress($draft);

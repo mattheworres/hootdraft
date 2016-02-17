@@ -132,7 +132,7 @@ class LoginUserService {
 
       $response->success = true;
     }catch(\Exception $e) {
-      $this->app['db']->rollback();
+      //$this->app['db']->rollback();
 
       $response->success = false;
       $response->errors = array("Unable to create new user or send verification email.");

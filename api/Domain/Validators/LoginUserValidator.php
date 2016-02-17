@@ -16,7 +16,7 @@ class LoginUserValidator {
     $this->app = $app;
   }
 
-  public function IsRegistrationUserValid(Request $request) {
+  public function isRegistrationUserValid(Request $request) {
     $valid = true;
     $errors = array();
 
@@ -40,25 +40,14 @@ class LoginUserValidator {
       $valid = false;
     }
 
-    if(strlen($password) < 8) {
-      $errors[] = "Password is below minimum length.";
-      $valid = false;
-    }
-
-    if(strlen($password) > 255) {
-      $errors[] = "Password is above maximum length.";
-      $valid = false;
-    }
+    $this->validatePasswordLength($password, $errors, $valid);
 
     if(strlen($email) > 255) {
       $errors[] = "Email is above maximum length.";
       $valid = false;
     }
 
-    if(strlen($name) > 100) {
-      $errors[] = "Name is above maximum length";
-      $valid = false;
-    }
+    $this->validateNameLength($name, $errors, $valid);
 
     $emailValidator = new EmailValidator;
 
@@ -72,12 +61,9 @@ class LoginUserValidator {
       $valid = false;
     }
 
-    if(!$this->app['phpdraft.LoginUserRepository']->EmailIsUnique($email)) {
-      $errors[] = "Email already registered.";
-      $valid = false;
-    }
+    $this->validateUniqueEmail($email, $errors, $valid);
 
-    return new PhpDraftResponse($valid, $errors);
+    return $this->app['phpdraft.ResponseFactory']($valid, $errors);
   }
 
   public function IsVerificationValid(Request $request) {
@@ -123,15 +109,7 @@ class LoginUserValidator {
       $valid = false;
     }
 
-    if(strlen($password) < 8) {
-      $errors[] = "Password is below minimum length.";
-      $valid = false;
-    }
-
-    if(strlen($password) > 255) {
-      $errors[] = "Password is above maximum length.";
-      $valid = false;
-    }
+    $this->validatePasswordLength($password, $errors, $valid);
   }
 
   public function IsForgottenPasswordUserValid(Request $request) {
@@ -140,10 +118,7 @@ class LoginUserValidator {
 
     $email = $request->get('_email');
 
-    if(!$this->app['phpdraft.LoginUserRepository']->EmailExists($email)) {
-      $errors[] = "Email invalid.";
-      $valid = false;
-    }
+    $this->validateEmailExists($email, $errors, $valid);
 
     return new PhpDraftResponse($valid, $errors);
   }
@@ -180,10 +155,7 @@ class LoginUserValidator {
       $valid = false;
     }
 
-    if(!$this->app['phpdraft.LoginUserRepository']->EmailExists($email)) {
-      $errors[] = "Invalid email.";
-      $valid = false;
-    }
+    $this->validateEmailExists($email, $errors, $valid);
 
     return new PhpDraftResponse($valid, $errors);
   }
@@ -232,20 +204,9 @@ class LoginUserValidator {
       $valid = false;
     }
 
-    if(strlen($password) < 8) {
-      $errors[] = "Password is below minimum length.";
-      $valid = false;
-    }
+    $this->validatePasswordLength($password, $errors, $valid);
 
-    if(strlen($password) > 255) {
-      $errors[] = "Password is above maximum length.";
-      $valid = false;
-    }
-
-    if(!$this->app['phpdraft.LoginUserRepository']->EmailExists($email)) {
-      $errors[] = "Invalid email.";
-      $valid = false;
-    }
+    $this->validateEmailExists($email, $errors, $valid);
 
     return new PhpDraftResponse($valid, $errors);
   }
@@ -290,33 +251,17 @@ class LoginUserValidator {
         $valid = false;
       }
 
-      if(!$this->app['phpdraft.LoginUserRepository']->EmailIsUnique($email)) {
-        $errors[] = "Email already registered.";
-        $valid = false;
-      }
+      $this->validateUniqueEmail($email, $errors, $valid);
     }
 
     //Need to verify new password, ensure old password is correct
     if(!empty($newPassword)) {
-      if(strlen($newPassword) < 8) {
-        $errors[] = "New password is below minimum length.";
-        $valid = false;
-      }
-
-      if(strlen($newPassword) > 255) {
-        $errors[] = "New password is above maximum length.";
-        $valid = false;
-      }
+      $this->validatePasswordLength($newPassword, $errors, $valid);
 
       if(!StringUtils::equals($newPassword, $newConfirmedPassword)) {
         $errors[] = "New password values do not match.";
         $valid = false;
       }
-    }
-
-    if(strlen($name) > 100) {
-      $errors[] = "Name is above maximum length";
-      $valid = false;
     }
 
     //If the name has changed, ensure the new one is valid and unique
@@ -326,10 +271,7 @@ class LoginUserValidator {
         $valid = false;
       }
 
-      if(strlen($name) > 100) {
-        $errors[] = "Name is above maximum length";
-        $valid = false;
-      }
+      $this->validateNameLength($name, $errors, $valid);
 
       if(!$this->app['phpdraft.LoginUserRepository']->NameIsUnique($name)) {
         $errors[] = "Name already taken.";
@@ -368,10 +310,7 @@ class LoginUserValidator {
         $valid = false;
       }
 
-      if(!$this->app['phpdraft.LoginUserRepository']->EmailIsUnique($user->email)) {
-        $errors[] = "Email already registered.";
-        $valid = false;
-      }
+      $this->validateUniqueEmail($email, $errors, $valid);
     }
 
     if(strlen($user->name) > 100) {
@@ -385,5 +324,38 @@ class LoginUserValidator {
     }
 
     return new PhpDraftResponse($valid, $errors);
+  }
+
+  private function validateUniqueEmail($email, &$errors, &$valid) {
+    if(!$this->app['phpdraft.LoginUserRepository']->EmailIsUnique($email)) {
+      $errors[] = "Email already registered.";
+      $valid = false;
+    }
+  }
+
+  private function validateEmailExists($email, &$errors, &$valid) {
+    if(!$this->app['phpdraft.LoginUserRepository']->EmailExists($email)) {
+      $errors[] = "Email invalid.";
+      $valid = false;
+    }
+  }
+
+  private function validatePasswordLength($password, &$errors, &$valid) {
+    if(strlen($password) < 8) {
+      $errors[] = "Password is below minimum length.";
+      $valid = false;
+    }
+
+    if(strlen($password) > 255) {
+      $errors[] = "Password is above maximum length.";
+      $valid = false;
+    }
+  }
+
+  private function validateNameLength($name, &$errors, &$valid) {
+    if(strlen($name) > 100) {
+      $errors[] = "Name is above maximum length";
+      $valid = false;
+    }
   }
 }

@@ -36,7 +36,7 @@ class TradeRepository {
       }
 
       //To help display of UTC times on client, append UTC to the end of the string
-      $trade->trade_time .= " UTC";
+      $trade->trade_time .= $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($trade->trade_time);
 
       $trades[] = $trade;
     }
