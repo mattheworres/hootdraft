@@ -10,21 +10,21 @@ use PhpDraft\Domain\Models\PhpDraftResponse;
 
 class ManagerController {
   public function Get(Application $app, Request $request) {
-    $draft_id = (int)$request->get('draft_id');
+    $draftId = (int)$request->get('draft_id');
 
-    $managers = $app['phpdraft.ManagerRepository']->GetManagersByDraftOrder($draft_id);
+    $managers = $app['phpdraft.ManagerRepository']->GetManagersByDraftOrder($draftId);
 
     return $app->json($managers, Response::HTTP_OK);
   }
 
   public function Create(Application $app, Request $request) {
-    $draft_id = (int)$request->get('draft_id');
+    $draftId = (int)$request->get('draft_id');
 
     $manager = new Manager();
-    $manager->draft_id = $draft_id;
+    $manager->draft_id = $draftId;
     $manager->manager_name = $request->get('manager_name');
 
-    $validity = $app['phpdraft.ManagerValidator']->IsManagerValidForCreate($draft_id, $manager);
+    $validity = $app['phpdraft.ManagerValidator']->IsManagerValidForCreate($draftId, $manager);
 
     if(!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
@@ -36,61 +36,61 @@ class ManagerController {
   }
 
   public function CreateMany(Application $app, Request $request) {
-    $draft_id = (int)$request->get('draft_id');
+    $draftId = (int)$request->get('draft_id');
 
     $managersJson = $request->get('managers');
     $newManagers = array();
 
     foreach($managersJson as $managerRequest) {
       $newManager = new Manager();
-      $newManager->draft_id = $draft_id;
+      $newManager->draft_id = $draftId;
       $newManager->manager_name = $managerRequest['manager_name'];
 
       $newManagers[] = $newManager;
     }
 
-    $validity = $app['phpdraft.ManagerValidator']->AreManagersValidForCreate($draft_id, $newManagers);
+    $validity = $app['phpdraft.ManagerValidator']->AreManagersValidForCreate($draftId, $newManagers);
 
     if(!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
-    $response = $app['phpdraft.ManagerService']->CreateManyManagers($draft_id, $newManagers);
+    $response = $app['phpdraft.ManagerService']->CreateManyManagers($draftId, $newManagers);
 
     return $app->json($response, $response->responseType(Response::HTTP_CREATED));
   }
 
   public function Reorder(Application $app, Request $request) {
-    $draft_id = (int)$request->get('draft_id');
+    $draftId = (int)$request->get('draft_id');
 
     $managersIdJson = $request->get('ordered_manager_ids');
-    $manager_ids = array();
+    $managerIds = array();
 
-    foreach($managersIdJson as $manager_id) {
-      $manager_ids[] = (int)$manager_id;
+    foreach($managersIdJson as $managerId) {
+      $managerIds[] = (int)$managerId;
     }
 
-    $validity = $app['phpdraft.ManagerValidator']->AreManagerIdsValidForOrdering($draft_id, $manager_ids);
+    $validity = $app['phpdraft.ManagerValidator']->AreManagerIdsValidForOrdering($draftId, $managerIds);
 
     if(!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
-    $response = $app['phpdraft.ManagerService']->ReorderManagers($manager_ids);
+    $response = $app['phpdraft.ManagerService']->ReorderManagers($managerIds);
 
     return $app->json($response, $response->responseType());
   }
 
   public function Update(Application $app, Request $request) {
-    $draft_id = (int)$request->get('draft_id');
-    $manager_id = $request->get('manager_id');
+    $draftId = (int)$request->get('draft_id');
+    $managerId = $request->get('manager_id');
 
     try {
-      $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
-      $manager = $app['phpdraft.ManagerRepository']->Load($manager_id);
+      $draft = $app['phpdraft.DraftRepository']->Load($draftId);
+      $manager = $app['phpdraft.ManagerRepository']->Load($managerId);
     } catch(\Exception $e) {
       $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "Unable to load manager #$manager_id";
+      $response->errors[] = "Unable to load manager #$managerId";
 
       return $app->json($response, Response::HTTP_BAD_REQUEST);
     }
@@ -109,21 +109,21 @@ class ManagerController {
   }
 
   public function Delete(Application $app, Request $request) {
-    $draft_id = (int)$request->get('draft_id');
-    $manager_id = $request->get('manager_id');
+    $draftId = (int)$request->get('draft_id');
+    $managerId = $request->get('manager_id');
 
     try {
-      $manager = $app['phpdraft.ManagerRepository']->Load($manager_id);
+      $manager = $app['phpdraft.ManagerRepository']->Load($managerId);
     } catch(\Exception $e) {
       $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "Unable to delete manager #$manager_id";
+      $response->errors[] = "Unable to delete manager #$managerId";
 
       return $app->json($response, Response::HTTP_BAD_REQUEST);
     }
 
-    if($manager->draft_id != $draft_id) {
+    if($manager->draft_id != $draftId) {
       $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "Unable to delete manager #$manager_id";
+      $response->errors[] = "Unable to delete manager #$managerId";
 
       return $app->json($response, Response::HTTP_BAD_REQUEST); 
     }

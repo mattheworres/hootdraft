@@ -14,47 +14,47 @@ class RoundTimeRepository {
     $this->app = $app;
   }
 
-  public function GetPublicTimers($draft_id) {
+  /*public function GetPublicTimers($draftId) {
     //TODO: Implement
-  }
+  }*/
 
   public function GetDraftTimers(Draft $draft) {
-    $draft_id = (int)$draft->draft_id;
+    $draftId = (int)$draft->draft_id;
 
-    $timer_stmt = $this->app['db']->prepare("SELECT * FROM round_times
+    $timerStmt = $this->app['db']->prepare("SELECT * FROM round_times
     WHERE draft_id = ? ORDER BY draft_round ASC");
 
-    $timer_stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\RoundTime');
-    $timer_stmt->bindParam(1, $draft_id);
+    $timerStmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\RoundTime');
+    $timerStmt->bindParam(1, $draftId);
 
-    if(!$timer_stmt->execute()) {
+    if(!$timerStmt->execute()) {
       throw new \Exception("Unable to load round times.");
     }
 
     $timers = array();
 
-    while($timer = $timer_stmt->fetch()) {
+    while($timer = $timerStmt->fetch()) {
       $timers[] = $timer;
     }
 
-    $is_static_time = false;
+    $isStaticTime = false;
 
     if(count($timers) == 1 && $timers[0]->is_static_time) {
-      $is_static_time = true;
+      $isStaticTime = true;
     }
 
     if(empty($timers) || count($timers) != $draft->draft_rounds) {
-      $timers = $this->_CoalesceDraftTimers($draft, $timers, $is_static_time);
+      $timers = $this->_CoalesceDraftTimers($draft, $timers, $isStaticTime);
     }
 
     return $timers;
   }
 
-  private function _CoalesceDraftTimers(Draft $draft, $existing_timers, $is_static_time) {
+  private function _CoalesceDraftTimers(Draft $draft, $existing_timers, $isStaticTime) {
     $coalescedTimers = array();
 
     for($i = 0; $i < $draft->draft_rounds; $i++) {
-      if($is_static_time && $i == 0) {
+      if($isStaticTime && $i == 0) {
         $timer = $existing_timers[$i];
         $timer->draft_round = $i + 1;
         $coalescedTimers[] = $timer;
@@ -64,12 +64,12 @@ class RoundTimeRepository {
       if(array_key_exists($i, $existing_timers)) {
         $coalescedTimers[] = $existing_timers[$i];
       } else {
-        $new_timer = new RoundTime();
-        $new_timer->draft_id = $draft->draft_id;
-        $new_timer->is_static_time = false;
-        $new_timer->draft_round = $i + 1;
-        $new_timer->round_time_seconds = 0;
-        $coalescedTimers[] = $new_timer;
+        $newTimer = new RoundTime();
+        $newTimer->draft_id = $draft->draft_id;
+        $newTimer->is_static_time = false;
+        $newTimer->draft_round = $i + 1;
+        $newTimer->round_time_seconds = 0;
+        $coalescedTimers[] = $newTimer;
       }
     }
 
@@ -77,7 +77,7 @@ class RoundTimeRepository {
   }
 
   public function Save(RoundTimeCreateModel $roundTimeCreateModel) {
-    $insert_time_stmt = $this->app['db']->prepare("INSERT INTO round_times 
+    $insertTimeStmt = $this->app['db']->prepare("INSERT INTO round_times 
       (draft_id, is_static_time, draft_round, round_time_seconds)
       VALUES
       (:draft_id, :is_static_time, :draft_round, :round_time_seconds)");
@@ -85,12 +85,12 @@ class RoundTimeRepository {
     $newRoundTimes = array();
 
     foreach ($roundTimeCreateModel->roundTimes as $roundTime) {
-      $insert_time_stmt->bindValue(":draft_id", $roundTime->draft_id);
-      $insert_time_stmt->bindValue(":is_static_time", $roundTime->is_static_time);
-      $insert_time_stmt->bindValue(":draft_round", $roundTime->draft_round);
-      $insert_time_stmt->bindValue(":round_time_seconds", $roundTime->round_time_seconds);
+      $insertTimeStmt->bindValue(":draft_id", $roundTime->draft_id);
+      $insertTimeStmt->bindValue(":is_static_time", $roundTime->is_static_time);
+      $insertTimeStmt->bindValue(":draft_round", $roundTime->draft_round);
+      $insertTimeStmt->bindValue(":round_time_seconds", $roundTime->round_time_seconds);
 
-      if (!$insert_time_stmt->execute()) {
+      if (!$insertTimeStmt->execute()) {
         throw new \Exception("Unable to save round times for $roundTime->draft_id");
       }
 
@@ -101,11 +101,11 @@ class RoundTimeRepository {
     return $newRoundTimes;
   }
 
-  public function DeleteAll($draft_id) {
-    $delete_round_times_stmt = $this->app['db']->prepare("DELETE FROM round_times WHERE draft_id = ?");
-    $delete_round_times_stmt->bindParam(1, $draft_id);
+  public function DeleteAll($draftId) {
+    $deleteRoundTime = $this->app['db']->prepare("DELETE FROM round_times WHERE draft_id = ?");
+    $deleteRoundTime->bindParam(1, $draftId);
 
-    if(!$delete_round_times_stmt->execute()) {
+    if(!$deleteRoundTime->execute()) {
       throw new \Exception("Unable to delete round times: " . $this->app['db']->errorInfo());
     }
 
@@ -113,39 +113,39 @@ class RoundTimeRepository {
   }
 
   public function LoadByRound(Draft $draft) {
-    $round_time = new RoundTime();
+    $roundTime = new RoundTime();
 
-    $static_round_time_stmt = $this->app['db']->prepare("SELECT * FROM round_times WHERE draft_id = ? AND is_static_time = 1 LIMIT 1");
-    $static_round_time_stmt->setFetchMode(\PDO::FETCH_INTO, $round_time);
-    $static_round_time_stmt->bindParam(1, $draft->draft_id);
+    $staticRoundTimeStmt = $this->app['db']->prepare("SELECT * FROM round_times WHERE draft_id = ? AND is_static_time = 1 LIMIT 1");
+    $staticRoundTimeStmt->setFetchMode(\PDO::FETCH_INTO, $roundTime);
+    $staticRoundTimeStmt->bindParam(1, $draft->draft_id);
 
-    if(!$static_round_time_stmt->execute()) {
+    if(!$staticRoundTimeStmt->execute()) {
       throw new \Exception("Unable to get static round time.");
     }
 
-    if($static_round_time_stmt->rowCount() == 1) {
-      $static_round_time_stmt->fetch();
+    if($staticRoundTimeStmt->rowCount() == 1) {
+      $staticRoundTimeStmt->fetch();
 
-      return $round_time;
+      return $roundTime;
     }
 
-    $round_time_stmt = $this->app['db']->prepare("SELECT * FROM round_times WHERE draft_id = ? AND draft_round = ? LIMIT 1");
-    $round_time_stmt->setFetchMode(\PDO::FETCH_INTO, $round_time);
-    $round_time_stmt->bindParam(1, $draft->draft_id);
-    $round_time_stmt->bindParam(2, $draft->draft_current_round);
+    $roundTimeStmt = $this->app['db']->prepare("SELECT * FROM round_times WHERE draft_id = ? AND draft_round = ? LIMIT 1");
+    $roundTimeStmt->setFetchMode(\PDO::FETCH_INTO, $roundTime);
+    $roundTimeStmt->bindParam(1, $draft->draft_id);
+    $roundTimeStmt->bindParam(2, $draft->draft_current_round);
 
-    if (!$round_time_stmt->execute()) {
+    if (!$roundTimeStmt->execute()) {
       throw new \Exception("Unable to load round time:" . $this->app['db']->errorInfo());
     }
 
-    if($round_time_stmt->rowCount() == 0) {
+    if($roundTimeStmt->rowCount() == 0) {
       return null;
     }
 
-    if (!$round_time_stmt->fetch()) {
+    if (!$roundTimeStmt->fetch()) {
       throw new \Exception("Unable to load round time:" . $this->app['db']->errorInfo());
     }
 
-    return $round_time;
+    return $roundTime;
   }
 }

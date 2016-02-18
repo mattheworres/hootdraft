@@ -12,16 +12,16 @@ use PhpDraft\Domain\Models\PhpDraftResponse;
 
 class TradeController {
   public function GetAssets(Application $app, Request $request) {
-    $draft_id = (int)$request->get('draft_id');
-    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
+    $draftId = (int)$request->get('draft_id');
+    $draft = $app['phpdraft.DraftRepository']->Load($draftId);
 
-    $manager_id = (int)$request->get('manager_id');
+    $managerId = (int)$request->get('manager_id');
 
     try {
-      $manager = $app['phpdraft.ManagerRepository']->Load($manager_id);
+      $manager = $app['phpdraft.ManagerRepository']->Load($managerId);
     } catch(\Exception $e) {
       $response = new PhpDraftResponse(false, array());
-      $response->errors[] = "Unable to load manager #$manager_id";
+      $response->errors[] = "Unable to load manager #$managerId";
       return $app->json($response, Response::HTTP_BAD_REQUEST);
     }
 
@@ -37,42 +37,42 @@ class TradeController {
   }
 
   public function Create(Application $app, Request $request) {
-    $draft_id = (int)$request->get('draft_id');
-    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
+    $draftId = (int)$request->get('draft_id');
+    $draft = $app['phpdraft.DraftRepository']->Load($draftId);
 
-    $new_trade = new Trade();
-    $new_trade->draft_id = $draft_id;
-    $new_trade->manager1_id = $request->get('manager1_id');
-    $new_trade->manager2_id = $request->get('manager2_id');
+    $newTrade = new Trade();
+    $newTrade->draft_id = $draftId;
+    $newTrade->manager1_id = $request->get('manager1_id');
+    $newTrade->manager2_id = $request->get('manager2_id');
 
-    $new_trade->trade_round = $draft->draft_current_round;
+    $newTrade->trade_round = $draft->draft_current_round;
 
     $assets_json = $request->get('trade_assets');
 
     try {
-      $new_trade->manager1 = $app['phpdraft.ManagerRepository']->Load($new_trade->manager1_id);
-      $new_trade->manager2 = $app['phpdraft.ManagerRepository']->Load($new_trade->manager2_id);
+      $newTrade->manager1 = $app['phpdraft.ManagerRepository']->Load($newTrade->manager1_id);
+      $newTrade->manager2 = $app['phpdraft.ManagerRepository']->Load($newTrade->manager2_id);
 
       foreach($assets_json as $asset_id) {
-        $new_trade_asset = new TradeAsset();
-        $new_trade_asset->player = $app['phpdraft.PickRepository']->Load($asset_id);
-        $new_trade_asset->was_drafted = $app['phpdraft.PickService']->PickHasBeenSelected($new_trade_asset->player);
+        $newTradeAsset = new TradeAsset();
+        $newTradeAsset->player = $app['phpdraft.PickRepository']->Load($asset_id);
+        $newTradeAsset->was_drafted = $app['phpdraft.PickService']->PickHasBeenSelected($newTradeAsset->player);
 
-        if($new_trade_asset->player->manager_id == $new_trade->manager1_id) {
-          $new_trade_asset->oldmanager_id = $new_trade->manager1_id;
-          $new_trade_asset->newmanager_id = $new_trade->manager2_id;
-          $new_trade_asset->oldmanager = $new_trade->manager1;
-          $new_trade_asset->newmanager = $new_trade->manager2;
-        } else if($new_trade_asset->player->manager_id == $new_trade->manager2_id) {
-          $new_trade_asset->oldmanager_id = $new_trade->manager2_id;
-          $new_trade_asset->newmanager_id = $new_trade->manager1_id;
-          $new_trade_asset->oldmanager = $new_trade->manager2;
-          $new_trade_asset->newmanager = $new_trade->manager1;
+        if($newTradeAsset->player->manager_id == $newTrade->manager1_id) {
+          $newTradeAsset->oldmanager_id = $newTrade->manager1_id;
+          $newTradeAsset->newmanager_id = $newTrade->manager2_id;
+          $newTradeAsset->oldmanager = $newTrade->manager1;
+          $newTradeAsset->newmanager = $newTrade->manager2;
+        } else if($newTradeAsset->player->manager_id == $newTrade->manager2_id) {
+          $newTradeAsset->oldmanager_id = $newTrade->manager2_id;
+          $newTradeAsset->newmanager_id = $newTrade->manager1_id;
+          $newTradeAsset->oldmanager = $newTrade->manager2;
+          $newTradeAsset->newmanager = $newTrade->manager1;
         } else {
           throw new \Exception("Invalid trade data.");
         }
 
-        $new_trade->trade_assets[] = $new_trade_asset;
+        $newTrade->trade_assets[] = $newTradeAsset;
       }
     } catch(\Exception $e) {
       $response = new PhpDraftResponse(false, array());
@@ -82,7 +82,7 @@ class TradeController {
       return $app->json($response, Response::HTTP_BAD_REQUEST);
     }
 
-    $validity = $app['phpdraft.TradeValidator']->IsTradeValid($draft, $new_trade);
+    $validity = $app['phpdraft.TradeValidator']->IsTradeValid($draft, $newTrade);
 
     if(!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);

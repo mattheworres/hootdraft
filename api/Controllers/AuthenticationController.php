@@ -20,7 +20,9 @@ class AuthenticationController
     $response = new PhpDraftResponse();
 
     try {
-      if($app['phpdraft.LoginUserValidator']->IsLoginUserValid($email, $password)) {
+      $credentialValidity = $app['phpdraft.LoginUserValidator']->areLoginCredentialsValid($email, $password);
+
+      if($credentialValidity->success == false) {
         throw new UsernameNotFoundException(sprintf('Email %s does not exist', $email));
       }
 
@@ -31,13 +33,13 @@ class AuthenticationController
       } else {
         $now = new \DateTime("now", new \DateTimeZone('GMT'));
         $interval = new \DateInterval('P0Y0M0DT0H0M' . AUTH_SECONDS . 'S');
-        $auth_timeout = $now->add($interval);
+        $authTimeout = $now->add($interval);
 
         $response->success = true;
         $response->name = $user->getName();
         $response->is_admin = $user->isAdmin();
         $response->token = $app['security.jwt.encoder']->encode(['name' => $user->getUsername()]);
-        $response->auth_timeout = $auth_timeout->format('Y-m-d H:i:s');
+        $response->auth_timeout = $authTimeout->format('Y-m-d H:i:s');
 
         //If user is enabled, provided valid password and has a verification (pwd reset) key, wipe it (no longer needed)
         if($user->hasVerificationKey()) {
@@ -66,16 +68,16 @@ class AuthenticationController
     );
 
     $captcha = $request->get('_recaptcha');
-    $user_ip = $request->getClientIp();
+    $userIp = $request->getClientIp();
 
-    if(!in_array($user_ip, $whitelist)){
+    if(!in_array($userIp, $whitelist)){
 
       $recaptcha = new \ReCaptcha\ReCaptcha(RECAPTCHA_SECRET);
-      $recaptcha_response = $recaptcha->verify($captcha, $user_ip);
+      $recaptchaResponse = $recaptcha->verify($captcha, $userIp);
 
-      if(!$recaptcha_response->isSuccess()) {
+      if(!$recaptchaResponse->isSuccess()) {
         $response = new PhpDraftResponse(false, array());
-        $response->errors = $recaptcha_response->getErrorCodes();
+        $response->errors = $recaptchaResponse->getErrorCodes();
         return $app->json($response, $response->responseType());
       }
     }
@@ -123,16 +125,16 @@ class AuthenticationController
     );
 
     $captcha = $request->get('_recaptcha');
-    $user_ip = $request->getClientIp();
+    $userIp = $request->getClientIp();
 
-    if(!in_array($user_ip, $whitelist)){
+    if(!in_array($userIp, $whitelist)){
 
       $recaptcha = new \ReCaptcha\ReCaptcha(RECAPTCHA_SECRET);
-      $recaptcha_response = $recaptcha->verify($captcha, $user_ip);
+      $recaptchaResponse = $recaptcha->verify($captcha, $userIp);
 
-      if(!$recaptcha_response->isSuccess()) {
+      if(!$recaptchaResponse->isSuccess()) {
         $response = new PhpDraftResponse(false, array());
-        $response->errors = $recaptcha_response->getErrorCodes();
+        $response->errors = $recaptchaResponse->getErrorCodes();
         return $app->json($response, $response->responseType());
       }
     }

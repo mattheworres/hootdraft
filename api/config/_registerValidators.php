@@ -1,7 +1,5 @@
 <?php
 
-use Egulias\EmailValidator\EmailValidator;
-
 if (!$app instanceof Silex\Application) {
   throw new Exception('Invalid application setup.');
 }
@@ -39,8 +37,4 @@ $app['phpdraft.ProPlayerValidator'] = function () use ($app) {
 
 $app['phpdraft.ObjectCache'] = function () use ($app) {
   return new \phpFastCache();
-};
-
-$app['phpdraft.EmailAddressValidator'] = function () use ($app) {
-  return new EmailValidator();
 };

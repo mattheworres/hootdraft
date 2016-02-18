@@ -25,61 +25,61 @@ class ProPlayerRepository {
   public function SearchPlayersManual($league, $first = "NA", $last = "NA", $team = "NA", $position = "NA") {
     //Approach taken from: http://stackoverflow.com/a/4540085/324527
 
-    $search_sql = "SELECT * FROM pro_players WHERE league = :league";
+    $searchSql = "SELECT * FROM pro_players WHERE league = :league";
 
-    $search_params = array();
-    $regular_params = array();
+    $searchParams = array();
+    $regularParams = array();
 
     if ($first != "NA") {
-      $search_params['first_name'] = $first;
+      $searchParams['first_name'] = $first;
     }
 
     if ($last != "NA") {
-      $search_params['last_name'] = $last;
+      $searchParams['last_name'] = $last;
     }
 
     if ($team != "NA") {
-      $regular_params['team'] = $team;
+      $regularParams['team'] = $team;
     }
 
     if ($position != "NA") {
-      $regular_params['position'] = $position;
+      $regularParams['position'] = $position;
     }
 
     //Finish building PDO SQL with dynamic values:
-    foreach ($search_params as $key => $value) {
-      $search_sql .= sprintf(' AND %s LIKE :%s', $key, $key);
+    foreach ($searchParams as $key => $value) {
+      $searchSql .= sprintf(' AND %s LIKE :%s', $key, $key);
     }
 
-    foreach ($regular_params as $key => $value) {
-      $search_sql .= sprintf(' AND %s = :%s', $key, $key);
+    foreach ($regularParams as $key => $value) {
+      $searchSql .= sprintf(' AND %s = :%s', $key, $key);
     }
 
     //Limit the amount of searches to just 15 to cut down on unnecessary network traffic
-    $search_sql .= ' LIMIT 15';
+    $searchSql .= ' LIMIT 15';
 
-    $stmt = $this->app['db']->prepare($search_sql);
+    $stmt = $this->app['db']->prepare($searchSql);
     $stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\ProPlayer');
     $stmt->bindValue(':league', $league);
 
     //Assign values to those parameters:
-    foreach ($search_params as $key => $value) {
+    foreach ($searchParams as $key => $value) {
       $stmt->bindValue(':' . $key, "%" . $value . "%");
     }
 
-    foreach ($regular_params as $key => $value) {
+    foreach ($regularParams as $key => $value) {
       $stmt->bindValue(':' . $key, $value);
     }
 
     $stmt->execute();
 
-    $found_players = array();
+    $foundPlayers = array();
 
     while ($newPlayer = $stmt->fetch()) {
-      $found_players[] = $newPlayer;
+      $foundPlayers[] = $newPlayer;
     }
 
-    return array_slice($found_players, 0, 15);
+    return array_slice($foundPlayers, 0, 15);
   }
 
   public function SearchPlayers($league, $searchTerm) {
@@ -91,38 +91,38 @@ class ProPlayerRepository {
 
     $stmt->execute();
 
-    $found_players = array();
+    $foundPlayers = array();
 
     while ($newPlayer = $stmt->fetch()) {
-      $found_players[] = $newPlayer;
+      $foundPlayers[] = $newPlayer;
     }
 
-    return $found_players;
+    return $foundPlayers;
   }
 
-  public function SearchPlayersByAssumedName($league, $first_name, $last_name) {
+  public function SearchPlayersByAssumedName($league, $firstName, $lastName) {
     $stmt = $this->app['db']->prepare("SELECT * FROM pro_players WHERE league = :league AND (first_name LIKE :first_name AND last_name LIKE :last_name) LIMIT 15");
     $stmt->setFetchMode(\PDO::FETCH_CLASS, 'PhpDraft\Domain\Entities\ProPlayer');
     $stmt->bindValue(':league', $league);
-    $stmt->bindValue(':first_name', "%" . $first_name . "%");
-    $stmt->bindValue(':last_name', "%" . $last_name . "%");
+    $stmt->bindValue(':first_name', "%" . $firstName . "%");
+    $stmt->bindValue(':last_name', "%" . $lastName . "%");
 
     $stmt->execute();
 
-    $found_players = array();
+    $foundPlayers = array();
 
     while ($newPlayer = $stmt->fetch()) {
-      $found_players[] = $newPlayer;
+      $foundPlayers[] = $newPlayer;
     }
 
-    return $found_players;
+    return $foundPlayers;
   }
 
   /**
    * Delete existing players for a given league, upload new players
    * @param array $players Array of pro_player_object's
    */
-  public function SaveProPlayers($league, $pro_players) {
+  public function SaveProPlayers($league, $proPlayers) {
     $delete_sql = "DELETE FROM pro_players WHERE league = '" . $league . "'";
 
     $delete_success = $this->app['db']->exec($delete_sql);
@@ -131,8 +131,8 @@ class ProPlayerRepository {
       throw new \Exception("Unable to empty existing pro players first.");
     }
 
-    foreach ($pro_players as $pro_player) {
-      $this->_saveProPlayer($pro_player);
+    foreach ($proPlayers as $proPlayer) {
+      $this->_saveProPlayer($proPlayer);
     }
 
     return;
@@ -142,28 +142,28 @@ class ProPlayerRepository {
    * Adds a new pro player to the DB
    * @return boolean success whether or not the database operation succeeded.
    */
-  private function _saveProPlayer(ProPlayer $pro_player) {
-    if ($pro_player->pro_player_id > 0) {
+  private function _saveProPlayer(ProPlayer $proPlayer) {
+    if ($proPlayer->pro_player_id > 0) {
       throw new \Exception("Unable to save pro player: invalid ID.");
     } else {
-      $insert_stmt = $this->app['db']->prepare("INSERT INTO pro_players 
+      $insertStmt = $this->app['db']->prepare("INSERT INTO pro_players 
         (pro_player_id, league, first_name, last_name, position, team) 
         VALUES 
         (NULL, ?, ?, ?, ?, ?)");
 
-      $insert_stmt->bindParam(1, $pro_player->league);
-      $insert_stmt->bindParam(2, $pro_player->first_name);
-      $insert_stmt->bindParam(3, $pro_player->last_name);
-      $insert_stmt->bindParam(4, $pro_player->position);
-      $insert_stmt->bindParam(5, $pro_player->team);
+      $insertStmt->bindParam(1, $proPlayer->league);
+      $insertStmt->bindParam(2, $proPlayer->first_name);
+      $insertStmt->bindParam(3, $proPlayer->last_name);
+      $insertStmt->bindParam(4, $proPlayer->position);
+      $insertStmt->bindParam(5, $proPlayer->team);
 
-      if (!$insert_stmt->execute()) {
+      if (!$insertStmt->execute()) {
         throw new \Exception("Unable to save pro player.");
       }
 
-      $pro_player->draft_id = (int) $this->app['db']->lastInsertId();
+      $proPlayer->draft_id = (int) $this->app['db']->lastInsertId();
 
-      return $pro_player;
+      return $proPlayer;
     }
   }
 }

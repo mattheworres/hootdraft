@@ -6,8 +6,6 @@ use \Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use PhpDraft\Domain\Entities\LoginUser;
 use PhpDraft\Domain\Models\PhpDraftResponse;
-use Symfony\Component\Security\Core\Util\StringUtils;
-use Egulias\EmailValidator\EmailValidator;
 
 class LoginUserValidator {
   private $app;
@@ -22,46 +20,33 @@ class LoginUserValidator {
 
     $password = $request->get('_password');
     $confirmPassword = $request->get('_confirmPassword');
-    $email = $request->get('_email');
+    $emailAddress = $request->get('_email');
     $name = $request->get('_name');
     $recaptcha = $request->get('_recaptcha');
 
     if(empty($password)
       || empty($confirmPassword)
-      || empty($email)
+      || empty($emailAddress)
       || empty($name)
       || empty($recaptcha)) {
       $errors[] = "One or more missing fields.";
       $valid = false;
     }
 
-    if(!StringUtils::equals($password, $confirmPassword)) {
-      $errors[] = "Password values do not match.";
-      $valid = false;
-    }
+    $this->validatePasswordsMatch($password, $confirmPassword, $errors, $valid);
 
     $this->validatePasswordLength($password, $errors, $valid);
 
-    if(strlen($email) > 255) {
-      $errors[] = "Email is above maximum length.";
-      $valid = false;
-    }
-
     $this->validateNameLength($name, $errors, $valid);
 
-    $emailValidator = new EmailValidator;
-
-    if (!$emailValidator->isValid($email)) {
-      $errors[] = "Email is invalid.";
-      $valid = false;
-    }
+    $this->validateEmailAddress($emailAddress, $errors, $valid);
 
     if(!$this->app['phpdraft.LoginUserRepository']->NameIsUnique($name)) {
       $errors[] = "Name already taken.";
       $valid = false;
     }
 
-    $this->validateUniqueEmail($email, $errors, $valid);
+    $this->validateUniqueEmail($emailAddress, $errors, $valid);
 
     return $this->app['phpdraft.ResponseFactory']($valid, $errors);
   }
@@ -70,7 +55,7 @@ class LoginUserValidator {
     $valid = true;
     $errors = array();
 
-    $email = $request->get('_email');
+    $emailAddress = $request->get('_email');
     $verificationToken = $this->app['phpdraft.SaltService']->UrlDecodeSalt($request->get('_verificationToken'));
 
     if(strlen($verificationToken) != 16) {
@@ -78,56 +63,43 @@ class LoginUserValidator {
       $valid = false;
     }
 
-    $emailValidator = new EmailValidator;
+    $this->validateEmailAddress($emailAddress, $errors, $valid);
 
-    if(!$emailValidator->isValid($email) || strlen($email) > 255) {
-      $errors[] = "Email invalid.";
-      $valid = false;
-    }
-
-    if(!$this->app['phpdraft.LoginUserRepository']->VerificationMatches($email, $verificationToken)) {
+    if(!$this->app['phpdraft.LoginUserRepository']->VerificationMatches($emailAddress, $verificationToken)) {
       $errors[] = "Verification token invalid.";
       $valid = false;
     }
 
-    return new PhpDraftResponse($valid, $errors);
+    return new $this->app['phpdraft.ResponseFactory']($valid, $errors);
   }
 
-  public function IsLoginUserValid($email, $password) {
+  public function areLoginCredentialsValid($emailAddress, $password) {
     $valid = true;
     $errors = array();
 
-    $emailValidator = new EmailValidator;
-
-    if (!$emailValidator->isValid($email)) {
-      $errors[] = "Email is invalid.";
-      $valid = false;
-    }
-
-    if(strlen($email) > 255) {
-      $errors[] = "Email is above maximum length.";
-      $valid = false;
-    }
+    $this->validateEmailAddress($emailAddress, $errors, $valid);
 
     $this->validatePasswordLength($password, $errors, $valid);
+
+    return $this->app['phpdraft.ResponseFactory']($valid, $errors);
   }
 
   public function IsForgottenPasswordUserValid(Request $request) {
     $valid = true;
     $errors = array();
 
-    $email = $request->get('_email');
+    $emailAddress = $request->get('_email');
 
-    $this->validateEmailExists($email, $errors, $valid);
+    $this->validateEmailExists($emailAddress, $errors, $valid);
 
-    return new PhpDraftResponse($valid, $errors);
+    return $this->app['phpdraft.ResponseFactory']($valid, $errors);
   }
 
-  public function IsResetPasswordTokenValid($email, $verificationToken) {
+  public function IsResetPasswordTokenValid($emailAddress, $verificationToken) {
     $valid = true;
     $errors = array();
 
-    if(empty($email)
+    if(empty($emailAddress)
       || empty($verificationToken)) {
       $errors[] = "One or more missing fields";
       $valid = false;
@@ -138,38 +110,28 @@ class LoginUserValidator {
       $valid = false;
     }
 
-    if(!$this->app['phpdraft.LoginUserRepository']->VerificationMatches($email, $verificationToken)) {
+    if(!$this->app['phpdraft.LoginUserRepository']->VerificationMatches($emailAddress, $verificationToken)) {
       $errors[] = "Verification token invalid.";
       $valid = false;
     }
 
-    $emailValidator = new EmailValidator;
+    $this->validateEmailAddress($emailAddress, $errors, $valid);
 
-    if (!$emailValidator->isValid($email)) {
-      $errors[] = "Email is invalid.";
-      $valid = false;
-    }
+    $this->validateEmailExists($emailAddress, $errors, $valid);
 
-    if(strlen($email) > 255) {
-      $errors[] = "Email is above maximum length.";
-      $valid = false;
-    }
-
-    $this->validateEmailExists($email, $errors, $valid);
-
-    return new PhpDraftResponse($valid, $errors);
+    return $this->app['phpdraft.ResponseFactory']($valid, $errors);
   }
 
   public function IsResetPasswordRequestValid(Request $request) {
     $valid = true;
     $errors = array();
 
-    $email = $request->get('_email');
+    $emailAddress = $request->get('_email');
     $password = $request->get('_password');
     $confirmPassword = $request->get('_confirmPassword');
     $verificationToken = $this->app['phpdraft.SaltService']->UrlDecodeSalt($request->get('_verificationToken'));
 
-    if(empty($email)
+    if(empty($emailAddress)
       || empty($password)
       || empty($confirmPassword)
       || empty($verificationToken)) {
@@ -182,40 +144,27 @@ class LoginUserValidator {
       $valid = false;
     }
 
-    if(!$this->app['phpdraft.LoginUserRepository']->VerificationMatches($email, $verificationToken)) {
+    if(!$this->app['phpdraft.LoginUserRepository']->VerificationMatches($emailAddress, $verificationToken)) {
       $errors[] = "Verification token invalid.";
       $valid = false;
     }
 
-    $emailValidator = new EmailValidator;
+    $this->validateEmailAddress($emailAddress, $errors, $valid);
 
-    if (!$emailValidator->isValid($email)) {
-      $errors[] = "Email is invalid.";
-      $valid = false;
-    }
-
-    if(!StringUtils::equals($password, $confirmPassword)) {
-      $errors[] = "Password values do not match.";
-      $valid = false;
-    }
-
-    if(strlen($email) > 255) {
-      $errors[] = "Email is above maximum length.";
-      $valid = false;
-    }
+    $this->validatePasswordsMatch($password, $confirmPassword, $errors, $valid);
 
     $this->validatePasswordLength($password, $errors, $valid);
 
-    $this->validateEmailExists($email, $errors, $valid);
+    $this->validateEmailExists($emailAddress, $errors, $valid);
 
-    return new PhpDraftResponse($valid, $errors);
+    return $this->app['phpdraft.ResponseFactory']($valid, $errors);
   }
 
   public function IsUserProfileUpdateValid(Request $request) {
     $valid = true;
     $errors = array();
 
-    $email = strtolower($request->get('_email'));
+    $emailAddress = strtolower($request->get('_email'));
     $name = $request->get('_name');
     $password = $request->get('_password');
     $newPassword = $request->get('_newPassword');
@@ -238,30 +187,17 @@ class LoginUserValidator {
     }
 
     //Need to verify new email
-    if(!empty($email) && !StringUtils::equals($email, $currentUser->email)) {
-      if(strlen($email) > 255) {
-        $errors[] = "Email is above maximum length.";
-        $valid = false;
-      }
+    if(!empty($emailAddress) && $this->app['phpdraft.StringsEqual']($emailAddress, $currentUser->email)) {
+      $this->validateEmailAddress($emailAddress, $errors, $valid);
 
-      $emailValidator = new EmailValidator;
-
-      if (!$emailValidator->isValid($email)) {
-        $errors[] = "Email is invalid.";
-        $valid = false;
-      }
-
-      $this->validateUniqueEmail($email, $errors, $valid);
+      $this->validateUniqueEmail($emailAddress, $errors, $valid);
     }
 
     //Need to verify new password, ensure old password is correct
     if(!empty($newPassword)) {
       $this->validatePasswordLength($newPassword, $errors, $valid);
 
-      if(!StringUtils::equals($newPassword, $newConfirmedPassword)) {
-        $errors[] = "New password values do not match.";
-        $valid = false;
-      }
+      $this->validatePasswordsMatch($newPassword, $newConfirmPassword, $errors, $valid);
     }
 
     //If the name has changed, ensure the new one is valid and unique
@@ -279,7 +215,7 @@ class LoginUserValidator {
       }
     }
 
-    return new PhpDraftResponse($valid, $errors);
+    return $this->app['phpdraft.ResponseFactory']($valid, $errors);
   }
 
   public function IsAdminUserUpdateValid(LoginUser $user) {
@@ -297,20 +233,11 @@ class LoginUserValidator {
     }
 
     //Need to verify new email
+
     if(!empty($user->email) && !StringUtils::equals($user->email, $loadedUser->email)) {
-      if(strlen($user->email) > 255) {
-        $errors[] = "Email is above maximum length.";
-        $valid = false;
-      }
+      $this->validateEmailAddress($user->email, $errors, $valid);
 
-      $emailValidator = new EmailValidator;
-
-      if (!$emailValidator->isValid($user->email)) {
-        $errors[] = "Email is invalid.";
-        $valid = false;
-      }
-
-      $this->validateUniqueEmail($email, $errors, $valid);
+      $this->validateUniqueEmail($emailAddress, $errors, $valid);
     }
 
     if(strlen($user->name) > 100) {
@@ -323,18 +250,32 @@ class LoginUserValidator {
       $valid = false;
     }
 
-    return new PhpDraftResponse($valid, $errors);
+    return $this->app['phpdraft.ResponseFactory']($valid, $errors);
   }
 
-  private function validateUniqueEmail($email, &$errors, &$valid) {
-    if(!$this->app['phpdraft.LoginUserRepository']->EmailIsUnique($email)) {
+  private function validatePasswordsMatch($password1, $password2, &$errors, &$valid) {
+    if(!$this->app['phpdraft.StringsEqual']($password1, $password2)) {
+      $errors[] = "Password values do not match.";
+      $valid = false;
+    }
+  }
+
+  private function validateUniqueEmail($emailAddress, &$errors, &$valid) {
+    if(!$this->app['phpdraft.LoginUserRepository']->EmailIsUnique($emailAddress)) {
       $errors[] = "Email already registered.";
       $valid = false;
     }
   }
 
-  private function validateEmailExists($email, &$errors, &$valid) {
-    if(!$this->app['phpdraft.LoginUserRepository']->EmailExists($email)) {
+  private function validateEmailExists($emailAddress, &$errors, &$valid) {
+    if(!$this->app['phpdraft.LoginUserRepository']->EmailExists($emailAddress)) {
+      $errors[] = "Email invalid.";
+      $valid = false;
+    }
+  }
+
+  private function validateEmailAddress($emailAddress, &$errors, &$valid) {
+    if(!$this->app['phpdraft.EmailValidator']->isValid($emailAddress) || strlen($emailAddress) > 255) {
       $errors[] = "Email invalid.";
       $valid = false;
     }

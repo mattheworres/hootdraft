@@ -11,12 +11,12 @@ use PhpDraft\Domain\Entities\Draft;
 class DraftController
 {
   public function GetCreate(Application $app, Request $request) {
-    $current_user = $app['phpdraft.LoginUserService']->GetCurrentUser();
+    $currentUser = $app['phpdraft.LoginUserService']->GetCurrentUser();
 
     $draft = new Draft();
 
-    $draft->commish_id = $current_user->id;
-    $draft->commish_name = $current_user->name;
+    $draft->commish_id = $currentUser->id;
+    $draft->commish_name = $currentUser->name;
 
     $draft->sports = $app['phpdraft.DraftDataRepository']->GetSports();
     $draft->styles = $app['phpdraft.DraftDataRepository']->GetStyles();
@@ -25,11 +25,11 @@ class DraftController
   }
 
   public function Create(Application $app, Request $request) {
-    $current_user = $app['phpdraft.LoginUserService']->GetCurrentUser();
+    $currentUser = $app['phpdraft.LoginUserService']->GetCurrentUser();
     $draft = new Draft();
 
-    $draft->commish_id = $current_user->id;
-    $draft->commish_name = $current_user->name;
+    $draft->commish_id = $currentUser->id;
+    $draft->commish_name = $currentUser->name;
 
     $draft->draft_name = $request->get('name');
     $draft->draft_sport = $request->get('sport');
@@ -50,8 +50,8 @@ class DraftController
   }
 
   public function Get(Application $app, Request $request) {
-    $draft_id = (int)$request->get('draft_id');
-    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
+    $draftId = (int)$request->get('draft_id');
+    $draft = $app['phpdraft.DraftRepository']->Load($draftId);
 
     $draft->sports = $app['phpdraft.DraftDataRepository']->GetSports();
     $draft->styles = $app['phpdraft.DraftDataRepository']->GetStyles();
@@ -61,8 +61,8 @@ class DraftController
   }
 
   public function Update(Application $app, Request $request) {
-    $draft_id = (int)$request->get('draft_id');
-    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
+    $draftId = (int)$request->get('draft_id');
+    $draft = $app['phpdraft.DraftRepository']->Load($draftId);
 
     $draft->draft_name = $request->get('name');
     $draft->draft_sport = $request->get('sport');
@@ -83,26 +83,26 @@ class DraftController
   }
 
   public function UpdateStatus(Application $app, Request $request) {
-    $draft_id = (int)$request->get('draft_id');
-    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
+    $draftId = (int)$request->get('draft_id');
+    $draft = $app['phpdraft.DraftRepository']->Load($draftId);
 
-    $old_status = $draft->draft_status;
+    $oldStatus = $draft->draft_status;
     $draft->draft_status = $request->get('status');
 
-    $validity = $app['phpdraft.DraftValidator']->IsDraftStatusValid($draft, $old_status);
+    $validity = $app['phpdraft.DraftValidator']->IsDraftStatusValid($draft, $oldStatus);
 
     if(!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
-    $response = $app['phpdraft.DraftService']->UpdateDraftStatus($draft, $old_status);
+    $response = $app['phpdraft.DraftService']->UpdateDraftStatus($draft, $oldStatus);
 
     return $app->json($response, $response->responseType());
   }
 
   public function Delete(Application $app, Request $request) {
-    $draft_id = (int)$request->get('draft_id');
-    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
+    $draftId = (int)$request->get('draft_id');
+    $draft = $app['phpdraft.DraftRepository']->Load($draftId);
 
     $response = $app['phpdraft.DraftService']->DeleteDraft($draft);
 
@@ -110,8 +110,8 @@ class DraftController
   }
 
   public function GetTimers(Application $app, Request $request) {
-    $draft_id = (int)$request->get('draft_id');
-    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
+    $draftId = (int)$request->get('draft_id');
+    $draft = $app['phpdraft.DraftRepository']->Load($draftId);
 
     $timers = $app['phpdraft.RoundTimeRepository']->GetDraftTimers($draft);
 
@@ -119,8 +119,8 @@ class DraftController
   }
 
   public function SetTimers(Application $app, Request $request) {
-    $draft_id = (int)$request->get('draft_id');
-    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
+    $draftId = (int)$request->get('draft_id');
+    $draft = $app['phpdraft.DraftRepository']->Load($draftId);
 
     $createModel = new \PhpDraft\Domain\Models\RoundTimeCreateModel();
     $createModel->isRoundTimesEnabled = (bool)$request->get('isRoundTimesEnabled');
@@ -130,7 +130,7 @@ class DraftController
 
       foreach($roundTimesJson as $roundTimeRequest) {
         $newRoundTime = new \PhpDraft\Domain\Entities\RoundTime();
-        $newRoundTime->draft_id = $draft_id;
+        $newRoundTime->draft_id = $draftId;
         $newRoundTime->is_static_time = $roundTimeRequest['is_static_time'] == "true" ? 1 : 0;
         $newRoundTime->draft_round = $newRoundTime->is_static_time ? null : (int)$roundTimeRequest['draft_round'];
         $newRoundTime->round_time_seconds = (int)$roundTimeRequest['round_time_seconds'];
