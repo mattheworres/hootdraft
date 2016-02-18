@@ -177,7 +177,7 @@ class LoginUserValidator {
       $errors[] = "Invalid user.";
 
       //Because we need to compare new & old values, we need a valid user record to proceed with validation.
-      return new PhpDraftResponse($valid, $errors);
+      return $this->app['phpdraft.ResponseFactory']($valid, $errors);
     }
 
     //Password required to make any changes
@@ -197,7 +197,7 @@ class LoginUserValidator {
     if(!empty($newPassword)) {
       $this->validatePasswordLength($newPassword, $errors, $valid);
 
-      $this->validatePasswordsMatch($newPassword, $newConfirmPassword, $errors, $valid);
+      $this->validatePasswordsMatch($newPassword, $newConfirmedPassword, $errors, $valid);
     }
 
     //If the name has changed, ensure the new one is valid and unique
@@ -229,15 +229,14 @@ class LoginUserValidator {
       $errors[] = "Invalid user.";
 
       //Because we need to compare new & old values, we need a valid user record to proceed with vaidation.
-      return new PhpDraftResponse($valid, $errors);
+      return $this->app['phpdraft.ResponseFactory']($valid, $errors);
     }
 
     //Need to verify new email
-
-    if(!empty($user->email) && !StringUtils::equals($user->email, $loadedUser->email)) {
+    if(!empty($user->email) && $this->app['phpdraft.StringsEqual']($user->email, $loadedUser->email)) {
       $this->validateEmailAddress($user->email, $errors, $valid);
 
-      $this->validateUniqueEmail($emailAddress, $errors, $valid);
+      $this->validateUniqueEmail($user->email, $errors, $valid);
     }
 
     if(strlen($user->name) > 100) {
