@@ -129,3 +129,147 @@ This doesn't mean I think you're a *bad person* or a *not very good programmer*.
 If you're unsure of where to start, or are not familiar with the tools, languages and patterns I use - **please reach out**! I am happy to help if you're interested in learning, and I am even more compelled to do so if you mean to leverage your new knowledge to help other humans! :)
 
 If you can't or won't contribute code, but have a great idea - I want that too! Submit an issue on the project and I'll mark it as a feature request. I continually maintain a **backlog** of features and improvements, and will re-prioritize constantly in order to develop the "next best thing".
+
+### Defining and adding your own leagues and players
+The main file to pay attantion to when creating your own leagues is `DraftDataRepository.php`, located in `/api/Domain/Repositories`.
+
+Assumptions: You are doing a league that picks PLAYERS who have POSITIONS and play on TEAMS.  The LEAGUE is sorted by multiple coaches, each drafting a certain number of PLAYERS to fill the required POSITIONS on their roster. 
+
++ First, declare your league teams and positions as private array variables.  I'm going to use Curling as an example.
+`private $curling_teams;`
+`private $alma_mater_positions;`
+
++ OK.  You've declared your variables that will contain arrays of your teams and positions.  Let's fill those in now.
+
+Let's start by making an array of curling positions.  Make sure your position abbreviation is three letters or less, or else the angular frontend might get a liitle wonky.
+```
+    $this->curling_positions = array(
+        "LED" => "Lead",
+        "2ND" => "Second",
+        "3RD" => "Third",
+        "SKP" => "Skip"
+    );
+```
+
++ Excellent.  Now let's make some curling teams.  I'm going to use the teams for the 2016 Scotties Tournament of Hearts as an example.  Make sure your team abbreviation is three letters or less, or else the angular frontend might get a liitle wonky.
+```
+    $this->curling_teams = array(
+        "AB" => "Alberta",
+        "BC" => "British Columbia",
+        "CA" => "Canada",
+        "MB" => "Manitoba",
+        "NB" => "New Brunswick",
+        "NL" => "Newfoundland and Labrador",
+        "NON" => "Northern Ontario",
+        "NWT" => "Northwest Territories",
+        "HUR" => "Hurricanes",
+        "NS" => "Nova Scotia",
+        "NV" => "Nunavut",
+        "ON" => "Ontario",
+        "PEI" => "Prince Edward Island",
+        "QC" => "Quebec",
+        "SK" => "Saskatchewan",
+        "YK" => "Yukon"
+    );
+```
++ Good.  Now, let's assign colors to the positions, to make the draft easier to follow, and to make the draft board look pretty.
+Note:  All of the position colors are kept in the same array (`$this->position_colors`), selecting from the array of possible colors in `$this->colors`.  Add your position colors to the end of the `position_colors` array.
+```
+    $this->position_colors = array(
+      //Lots of other positions here.  Make sure to add a comma to the last position before adding yours.
+        "FH" => $this->colors['light_purple'],  //This is the last position from the previous league.  Add the comma.
+        //Curling League
+        "LED" => $this->colors['light_blue'], //LT BLUE
+        "2ND" => $this->colors['light_orange'], //LT ORANGE
+        "3RD" => $this->colors['light_yellow'], //LT YELLOW
+        "SKP" => $this->colors['light_red'] //LT RED
+    );
+```
+Note that if another league has the same position abbreviation, that's OK, just don't try reassign that position abbreviation to another color.  It's probably best to mention that you're re-using the position in an inline comment.
+
++ Now, your league exists, but you need to add it to the list of leagues.  Find the array constructor for `$this->sports` and add a three letter abbreviation to inclcate your league, as such:
+```
+    $this->sports = array(
+      "NFL" => "Football (NFL)",
+      "NFLE" => "Football - Extended Rosters (NFL)",
+      "MLB" => "Baseball (MLB)",
+      "NBA" => "Basketball (NBA)",
+      "NHL" => "Hockey (NHL)",
+      "S15" => "Rugby (Super 15)",  // Add the comma at the end of the previous array
+      "CUR" => "Curling League (Scotties Tournament of Hearts)"  //Here's the new league.
+    );
+```
+
++ Excellent.  Now link your teams to your league.  This happens in `public function GetTeams($pro_league)`.  Add your league to the end of the case statement in the function:
+```
+  public function GetTeams($pro_league) {
+    switch (strtolower($pro_league)) {
+      case 'nhl':
+      case'hockey':
+        return $this->nhl_teams;
+        break;
+      case 'nfl':
+      case 'football':
+        return $this->nfl_teams;
+        break;
+      case 'mlb':
+      case 'baseball':
+        return $this->mlb_teams;
+        break;
+      case 'nba':
+      case 'basketball':
+        return $this->nba_teams;
+        break;
+      case 's15':
+        return $this->super_rugby_teams;
+        break;
+      case 'cur':
+        return $this->curling_teams;
+        break;
+    }
+  }
+```
+ 
++ OK.  Let's link your positions to your league.  This happens in `public function GetPositions($pro_league)`.  Add your league to the end of the case statement in the function:
+```
+  public function GetPositions($pro_league) {
+    switch (strtolower($pro_league)) {
+      case 'nhl':
+      case 'hockey':
+        return $this->nhl_positions;
+        break;
+      case 'nfl':
+      case 'football':
+        return $this->nfl_positions;
+        break;
+      case 'nfle':
+        return $this->extended_nfl_positions;
+        break;
+      case 'mlb':
+      case 'baseball':
+        return $this->mlb_positions;
+        break;
+      case 'nba':
+      case 'basketball':
+        return $this->nba_positions;
+        break;
+      case 's15':
+        return $this->super_rugby_positions;
+        break;
+      case 'cur':
+        return $this->curling_positions;
+        break;
+    }
+  }
+```
+
++ Great!  You have a team.  Now you can add players by uploading a correctly formed CSV file.  Here's a description of the format.  Each field is encased by double quotes, separated by one semicolon, with a header row at the top.  The format of the player data is as follows:
+```
+"Player";"Position";"Team"
+"PlayerLastName,PlayerFirstName";"POS";"TEM"
+```
+Make sure that your player has both a first and last name, or the front-end validation logic will prevent your player from being drafted.  Use the abbreviation for the position and the team, not the full name.  Save your results when you are done.
+
++ Once your CSV has been created, you may add the players within PHPDraft by deploying your new code, logging in as an admin, and selecting "Admin Stuff->Player Data".  Select the appropriate league, upload the CSV, and watch PHPDraft take care of the draft.  I'd suggest doing a test draft with a couple teams, and seeing if everything is appropriately selected, and everything shows up correctly on the draft board.
+
++ Bask in the splendor of your new league.  Create a league that uses the new sport, hold a draft, and enjoy!
