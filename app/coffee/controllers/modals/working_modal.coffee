@@ -1,6 +1,6 @@
 class WorkingModalController extends BaseController
   @register 'WorkingModalController'
-  @inject '$modalInstance', '$interval',
+  @inject '$interval',
   'typicalLoadingTimeMs',
   'loadingBarMax',
   'loadingBarIncrement'

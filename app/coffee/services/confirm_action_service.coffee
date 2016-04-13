@@ -1,9 +1,9 @@
 class ConfirmActionService extends AngularService
   @register 'confirmActionService'
-  @inject '$modal'
+  @inject '$uibModal'
 
   showConfirmationModal: (message, confirmationCallback, title, iconClass, confirmButtonText) ->
-    @modalInstance = @$modal.open
+    @modalInstance = @$uibModal.open
       templateUrl: 'app/templates/modals/confirm_action_modal.html',
       controller: 'ConfirmActionModalController',
       controllerAs: 'modalCtrl',

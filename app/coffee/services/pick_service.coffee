@@ -1,6 +1,6 @@
 class PickService extends AngularService
   @register 'pickService'
-  @inject '$modal', '$q', 'api'
+  @inject '$uibModal', '$q', 'api'
 
   checkForExistingPicks: (draft_id, currentPick) ->
     existingPickDeferral = @$q.defer()
@@ -38,7 +38,7 @@ class PickService extends AngularService
   showDuplicatePickModal: (currentPick, matches) ->
     duplicatePicKModalDeferral = @$q.defer()
 
-    @modalInstance = @$modal.open
+    @modalInstance = @$uibModal.open
       templateUrl: 'app/templates/modals/duplicate_pick.html',
       controller: 'DuplicatePickModalController',
       controllerAs: 'modalCtrl',

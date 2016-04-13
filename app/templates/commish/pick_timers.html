@@ -29,7 +29,7 @@
                 <toggle-switch name="roundTimesEnabled" id="roundTimesEnabled" ng-model="roundTimesEnabled"></toggle-switch>
               </div>
               <div class="hidden-xs col-sm-1 col-sm-offset-3 text-center text-info">
-                <i class="fa fa-info-circle" tooltip="Enabling this feature will put a countdown timer on the draft board for all to see. Tell us how long each pick should take below." tooltip-trigger="mouseenter"  tooltip-append-to-body="true"></i>
+                <i class="fa fa-info-circle" uib-tooltip="Enabling this feature will put a countdown timer on the draft board for all to see. Tell us how long each pick should take below." tooltip-trigger="mouseenter"  tooltip-append-to-body="true"></i>
               </div>
             </div>
             <div class="form-group" ng-show="roundTimesEnabled">
@@ -40,7 +40,7 @@
                 <toggle-switch name="useStaticTime" id="useStaticTime" ng-model="useStaticTime"></toggle-switch>
               </div>
               <div class="hidden-xs col-sm-1 col-sm-offset-3 text-center text-info">
-                <i class="fa fa-info-circle" tooltip="One time to rule them all? Use this to define one time that gets used for every round." tooltip-trigger="mouseenter"  tooltip-append-to-body="true"></i>
+                <i class="fa fa-info-circle" uib-tooltip="One time to rule them all? Use this to define one time that gets used for every round." tooltip-trigger="mouseenter"  tooltip-append-to-body="true"></i>
               </div>
             </div>
             <div class="form-group" ng-show="roundTimesEnabled">
@@ -51,7 +51,7 @@
                 <strong>{{ totalDraftingTime | preciseHumanizedSeconds }}</strong>
               </div>
               <div class="hidden-xs col-sm-1 col-sm-offset-3 text-center text-info">
-                <i class="fa fa-info-circle" tooltip="How much time is that? This is if each and every pick took the full pick time allotment - usage obviously varies." tooltip-trigger="mouseenter"  tooltip-append-to-body="true"></i>
+                <i class="fa fa-info-circle" uib-tooltip="How much time is that? This is if each and every pick took the full pick time allotment - usage obviously varies." tooltip-trigger="mouseenter" tooltip-append-to-body="true"></i>
               </div>
             </div>
             <div class="form-group" ng-show="roundTimesEnabled">

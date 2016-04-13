@@ -45,7 +45,7 @@
                     </span>
                   </div>
                   <div class="col-xs-9">
-                    <input name="password" tooltip="Capslock is on" tooltip-trigger="focus" tooltip-enable="isCapsLockOn" ng-model="user.password" class="form-control" minlength="8" maxlength="255" type="{{loginCtrl.passwordInputType()}}" ng-required="true" placeholder="Password" />
+                    <input name="password" uib-tooltip="Capslock is on" tooltip-trigger="focus" tooltip-enable="isCapsLockOn" ng-model="user.password" class="form-control" minlength="8" maxlength="255" type="{{loginCtrl.passwordInputType()}}" ng-required="true" placeholder="Password" />
                     <div ng-show="loginCtrl.form.$submitted || loginCtrl.form.password.$touched">
                       <span ng-show="loginCtrl.form.password.$error.required" class="help-block">Password is missing</span>
                       <span ng-show="!loginCtrl.form.password.$error.required && loginCtrl.form.password.$error.minlength" class="help-block">Password is too short - 8 characters minimum</span>

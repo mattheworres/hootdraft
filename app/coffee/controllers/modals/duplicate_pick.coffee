@@ -1,15 +1,15 @@
 class DuplicatePickModalController extends AngularController
   @register 'DuplicatePickModalController'
-  @inject '$modalInstance', 'currentPick', 'duplicateMatches'
+  @inject '$uibModalInstance', 'currentPick', 'duplicateMatches'
 
   initialize: ->
     super()
 
   yesClicked: ->
-    @$modalInstance.close(true)
+    @$uibModalInstance.close(true)
 
   noClicked: ->
-    @$modalInstance.close(false)
+    @$uibModalInstance.close(false)
 
   cancel: =>
-    @$modalInstance.dismiss('closed')
+    @$uibModalInstance.dismiss('closed')

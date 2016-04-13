@@ -1,15 +1,15 @@
 class ConfirmActionModalController extends AngularController
   @register 'ConfirmActionModalController'
-  @inject '$modalInstance', 'title', 'message', 'iconClass', 'confirmButtonText'
+  @inject '$uibModalInstance', 'title', 'message', 'iconClass', 'confirmButtonText'
 
   initialize: ->
     super()
 
   yesClicked: ->
-    @$modalInstance.close(true)
+    @$uibModalInstance.close(true)
 
   noClicked: ->
-    @$modalInstance.close(false)
+    @$uibModalInstance.close(false)
 
   cancel: =>
-    @$modalInstance.dismiss('closed')
+    @$uibModalInstance.dismiss('closed')

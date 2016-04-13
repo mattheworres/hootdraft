@@ -257,6 +257,10 @@ class DraftRepository {
         throw new \Exception("Unable to load draft");
       }
 
+      if($bustCache) {
+        $this->UnsetCachedDraft($draft->draft_id);
+      }
+
       $this->SetCachedDraft($draft);
     } else {
       $draft = $cachedDraft;
@@ -285,9 +289,7 @@ class DraftRepository {
       throw new \Exception("Unable to create draft.");
     }
 
-    $draft->draft_id = (int)$this->app['db']->lastInsertId();
-
-    $this->SetCachedDraft($draft);
+    $draft = $this->Load((int)$this->app['db']->lastInsertId(), true);
 
     return $draft;
   }

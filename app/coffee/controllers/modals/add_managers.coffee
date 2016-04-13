@@ -1,6 +1,6 @@
 class AddManagersController extends BaseController
   @register 'AddManagersController'
-  @inject '$modalInstance', 'messageService', 'subscriptionKeys',
+  @inject '$uibModalInstance', 'messageService', 'subscriptionKeys',
   '$rootScope',
   '$scope',
   'draft_id'
@@ -29,7 +29,7 @@ class AddManagersController extends BaseController
       @messageService.showSuccess "Managers added"
       #Need to tell index controller to reload the managers since we added them. Can also call this when deleting managers
       @$rootScope.$broadcast @subscriptionKeys.updateCommishManagers, { draft: @$rootScope.draft }
-      @$modalInstance.dismiss 'closed'
+      @$uibModalInstance.dismiss 'closed'
 
     addManagerError = (response) =>
       @messageService.showError "Unable to add managers"
@@ -40,4 +40,4 @@ class AddManagersController extends BaseController
       @cancel()
 
   cancel: ->
-    @$modalInstance.dismiss 'closed'
+    @$uibModalInstance.dismiss 'closed'

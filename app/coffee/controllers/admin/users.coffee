@@ -1,7 +1,7 @@
 class UsersController extends BaseController
   @register 'UsersController'
   @inject '$scope',
-  '$modal',
+  '$uibModal',
   'api',
   'messageService',
   'confirmActionService',
@@ -29,7 +29,7 @@ class UsersController extends BaseController
       @users[userIndex] = updatedUser
       @messageService.showSuccess "#{@editedUser.name} updated"
 
-    @$modal.open
+    @$uibModal.open
       templateUrl: 'app/templates/modals/admin_edit_user_modal.html',
       controller: 'AdminEditUserController',
       controllerAs: 'modalCtrl',

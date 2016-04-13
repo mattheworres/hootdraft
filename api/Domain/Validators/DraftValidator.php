@@ -68,12 +68,13 @@ class DraftValidator {
       $valid = false;
     }
 
-    if(strlen($draft->draft_sport) != 3 || strlen($draft_sports[$draft->draft_sport]) == 0) {
+    if(strlen($draft->draft_sport) < 3 || strlen($draft->draft_sport) > 4 || strlen($draft_sports[$draft->draft_sport]) == 0) {
       $errors[] = "Draft sport is an invalid value.";
       $valid = false;
     }
 
     if(!array_key_exists($draft->draft_style, $draft_styles)) {
+
       $errors[] = "Draft style is an invalid value.";
       $valid = false;
     }

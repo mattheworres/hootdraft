@@ -13,8 +13,8 @@
   </div>
   <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
     <ul class="nav navbar-nav">
-      <li dropdown>
-        <a href="#" id="draftDropdown" class="dropdown-toggle" dropdown-toggle role="button" aria-expanded="false">
+      <li uib-dropdown>
+        <a href="#" id="draftDropdown" class="dropdown-toggle" uib-dropdown-toggle role="button" aria-expanded="false">
           <i class="fa fa-sitemap"></i>&nbsp;&nbsp;
           Leagues
           <span class="caret"></span>
@@ -46,8 +46,8 @@
           New League
         </a>
       </li>
-      <li ng-show="navCtrl.isAdmin()" dropdown>
-        <a href id="adminDropdown" class="dropdown-toggle" dropdown-toggle role="button" aria-expanded="false">
+      <li ng-show="navCtrl.isAdmin()" uib-dropdown>
+        <a href id="adminDropdown" class="dropdown-toggle" uib-dropdown-toggle role="button" aria-expanded="false">
           <i class="fa fa-unlock"></i>&nbsp;&nbsp;
             Admin Stuff
           <span class="caret"></span>
@@ -119,8 +119,8 @@
             Stats
             </a>
           </li>
-          <li dropdown ng-hide="draftLocked || draft.setting_up">
-            <a href="#" id="pickDropdown" class="dropdown-toggle" dropdown-toggle role="button" aria-haspopup="true" aria-expanded="false">
+          <li uib-dropdown ng-hide="draftLocked || draft.setting_up">
+            <a href="#" id="pickDropdown" class="dropdown-toggle" uib-dropdown-toggle role="button" aria-haspopup="true" aria-expanded="false">
               <i class="fa fa-check-square"></i>&nbsp;&nbsp;
               Picks
               <span class="caret"></span>
@@ -152,8 +152,8 @@
               </li>
             </ul>
           </li>
-          <li dropdown>
-            <a href="#" id="commishDropdown" ng-show="draft.commish_editable" class="dropdown-toggle" dropdown-toggle role="button" aria-haspopup="true" aria-expanded="false">
+          <li uib-dropdown>
+            <a href="#" id="commishDropdown" ng-show="draft.commish_editable" class="dropdown-toggle" uib-dropdown-toggle role="button" aria-haspopup="true" aria-expanded="false">
               <i class="fa fa-cogs"></i>&nbsp;&nbsp;
               Commissioner Toolbox
               <span class="caret"></span>

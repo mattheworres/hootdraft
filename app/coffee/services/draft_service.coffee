@@ -1,11 +1,11 @@
 class DraftService extends AngularService
   @register 'draftService'
-  @inject '$modal', '$sessionStorage'
+  @inject '$uibModal', '$sessionStorage'
 
   showPasswordModal: (draft_name) =>
     cachedPassword = if @$sessionStorage.draft_password? then @$sessionStorage.draft_password else ""
 
-    @modalInstance = @$modal.open
+    @modalInstance = @$uibModal.open
       templateUrl: 'app/templates/modals/draft_password_modal.html',
       controller: 'DraftPasswordModalController',
       controllerAs: 'modalCtrl',
@@ -16,7 +16,7 @@ class DraftService extends AngularService
           cachedPassword
 
   showAddManagersModal: (draft_id) =>
-    @modalInstance = @$modal.open
+    @modalInstance = @$uibModal.open
       templateUrl: 'app/templates/modals/add_managers.html',
       controller: 'AddManagersController',
       controllerAs: 'addManagersCtrl',

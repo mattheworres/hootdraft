@@ -1,6 +1,6 @@
 class DraftPasswordModalController extends BaseController
   @register 'DraftPasswordModalController'
-  @inject '$modalInstance',
+  @inject '$uibModalInstance',
   '$rootScope',
   '$sessionStorage',
   '$routeParams',
@@ -26,4 +26,4 @@ class DraftPasswordModalController extends BaseController
 
   # Helpers #
   cancel: =>
-    @$modalInstance.dismiss('closed')
+    @$uibModalInstance.dismiss('closed')

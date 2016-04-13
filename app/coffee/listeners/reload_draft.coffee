@@ -15,10 +15,10 @@ angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftSe
       $rootScope.draftLoadInProgress = false
 
       if $rootScope.loadDraftData
-        $rootScope.loadDraftData = if draft.teams? and draft.positions? then true else false
+        $rootScope.loadDraftData = if draft.teams? or draft.positions? then true else false
 
       #Either store the cached data (first request on page load) or grab cache instead (every request afterward)
-      if draft.teams? and draft.positions? and $rootScope.loadDraftData
+      if (draft.teams? or draft.positions?) and $rootScope.loadDraftData
         $rootScope.loadDraftData = false
         $rootScope.cachedDraftId = draft.draft_id
         $rootScope.sports = draft.sports

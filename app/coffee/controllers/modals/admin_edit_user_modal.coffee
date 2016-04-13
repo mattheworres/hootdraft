@@ -1,6 +1,6 @@
 class AdminEditUserController extends BaseController
   @register 'AdminEditUserController'
-  @inject '$modalInstance', 'messageService', 'api', 'user', 'userUpdateCallback'
+  @inject '$uibModalInstance', 'messageService', 'api', 'user', 'userUpdateCallback'
 
   initialize: =>
     #Just making the roles static for now. Later, we should inject them and do this dynamically
@@ -40,7 +40,7 @@ class AdminEditUserController extends BaseController
 
     saveSuccess = =>
       @userUpdateCallback(@user)
-      @$modalInstance.dismiss 'closed'
+      @$uibModalInstance.dismiss 'closed'
 
     saveError = =>
       @messageService.showError "Unable to update user"
@@ -48,4 +48,4 @@ class AdminEditUserController extends BaseController
     @api.User.update(@user, saveSuccess, saveError)
 
   cancel: ->
-    @$modalInstance.dismiss 'closed'
+    @$uibModalInstance.dismiss 'closed'

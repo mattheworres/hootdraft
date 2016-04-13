@@ -17,7 +17,7 @@ class LoginUserService {
   }
 
   public function GetCurrentUser() {
-    $token = $this->app['security']->getToken();
+    $token = $this->app['security.token_storage']->getToken();
 
     if($token == null) {
       //In public actions, this isn't an exception - we're just not logged in.
@@ -33,7 +33,7 @@ class LoginUserService {
   //This is a hack to make accessing logged in user info from anonymous routes possible:
   public function GetUserFromHeaderToken(Request $request) {
     $request_token = $request->headers->get(AUTH_KEY_HEADER,'');
-    
+
     if(empty($request_token)) {
       return null;
     }
@@ -41,10 +41,7 @@ class LoginUserService {
     try {
       $decoded = $this->app['security.jwt.encoder']->decode($request_token);
 
-      $token = new \Silex\Component\Security\Http\Token\JWTToken();
-      $token->setTokenContext($decoded);
-
-      $email = $token->getTokenContext()->name;
+      $email = $decoded->name;
 
       return $this->app['phpdraft.LoginUserRepository']->Load($email);
     }catch(\Exception $ex) {

@@ -41,6 +41,7 @@ class CommishManagersController extends AngularController
       @messageService.showError "Unable to load managers"
 
     if @$routeParams.draft_id? and draft_commish_editable
+      @editableManagers = []
       @api.Manager.commishGet({ draft_id: draft_id }, commishManagersSuccess, managersError)
 
   reorderManagers: (event, spliceIndex, originalIndex) =>

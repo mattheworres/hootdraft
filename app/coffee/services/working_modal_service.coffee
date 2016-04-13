@@ -1,11 +1,11 @@
 class WorkingModalService extends AngularService
   @register 'workingModalService'
-  @inject '$modal', '$interval'
+  @inject '$uibModal', '$interval'
 
   openModal: (typicalLoadingTimeMs = 0, loadingBarIncrement = 250) =>
     @closeModal()
 
-    @modalInstance = @$modal.open
+    @modalInstance = @$uibModal.open
       templateUrl: 'app/templates/modals/working_modal.html'
       controller: 'WorkingModalController',
       controllerAs: 'modalCtrl',
