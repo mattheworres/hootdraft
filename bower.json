@@ -8,7 +8,7 @@
     "angular-sanitize": "1.5.3",
     "angular-datatables": "0.5.4",
     "angular-mask": "~3.0.12",
-    "angular-moment": "~0.10.2",
+    "angular-moment": "1.0.0-beta.5",
     "angular-recaptcha": "~3.0.2",
     "angular-slip": "~1.0.5",
     "angular-toastr": "1.7.0",

@@ -347,6 +347,7 @@ class DraftDataRepository {
         return $this->nhl_teams;
         break;
       case 'nfl':
+      case 'nfle':
       case 'football':
         return $this->nfl_teams;
         break;

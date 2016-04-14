@@ -29,7 +29,7 @@
               <td>{{draft.commish_name}}</td>
               <td>
                 <span ng-show="draft.draft_stats_generated != null">
-                  {{draft.draft_stats_generated | amDateFormat:'MMMM D, YYYY'}}
+                  {{draft.draft_stats_generated | amParse: 'YYYY-MM-DD HH:mm:ss UTC' | amDateFormat:'MMMM D, YYYY'}}
                   (<a href="draft/{{draft.draft_id}}/stats">view</a>)
                 </span>
                 <span ng-show="draft.draft_stats_generated == null">
