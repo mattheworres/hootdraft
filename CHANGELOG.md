@@ -1,4 +1,33 @@
 # Changelog
+## v2.0.3
+**Hotfix Release**
+
+Fixed issue with missing MLB player data (sorry Joey Votto, Anthony Rizzo, Josh Harrison et. al.)
+
+Fixed issues #12 and #13
+
+Fixed a few random issues related to Extended NFL leagues. Saved myself entering a Github issue :)
+
+Also updated frontend and backend dependencies, including the libraries to use JSON web tokens with Silex.
+
+## v2.0.2
+**Hotfix Release**
+
+Fixed issue #9 with UTC dates not displaying in local timezones properly.
+
+Updated 2016 MLB player CSV data for the soon-to-be-here season.
+
+## v2.0.1
+**Hotfix Release**
+
+Fixed a minor version where admins couldn't see completed password-protected drafts.
+
+Also reworked the project a little in order to allow for MySQL 5.5 to be used (in order to allow OpenShift deployments).
+
+Rather than including appsettings.php in the directory above, it now stays in the base directory.
+
+CSV data wasn't updated, but included in this release still. Will update MLB data in about a month (more free agent signings to go still)
+
 ## v2.0.0
 **Official Release**
 
