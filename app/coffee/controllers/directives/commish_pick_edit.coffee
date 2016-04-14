@@ -19,6 +19,7 @@ class CommishPickEditController extends AngularController
     #Passed in
     #@$scope.manualEntry = false
     #@$scope.playerSearchLoading = false
+    @$scope.currentLoading = false
 
     #If manual entry, we need to make sure to properly update "selected" on the current pick so the display acts accordingly
     @$scope.$watch ( =>
@@ -82,7 +83,10 @@ class CommishPickEditController extends AngularController
     @$scope.playerSearch = ''
 
     #For edit contexts, if its the same player, just let it go thru.
-    if not @_pickIsTheSame()
+    #Potentially fixes #12: https://github.com/mattheworres/phpdraft/issues/12
+    #Ensure that the current pick is not in the process of being loaded.
+    #Select player may be getting erroneously fired while the current pick is being reloaded.
+    if not @_pickIsTheSame() and not @$scope.currentLoading
       #Perform an eager API call to ensure autocomplete player is not a duplicate
       duplicateCheckSuccess = (response) =>
         #If there were matches and the user wanted to wipe the pick, then do that. Otherwise, do nothing
