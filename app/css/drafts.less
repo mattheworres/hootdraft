@@ -31,6 +31,7 @@ ul.draft_order {
     cursor: -moz-grab; cursor: -webkit-grab; cursor: grab;
     position: relative;
     border: 1px solid rgba(0,0,0,0.25);
+    background: rgba(255,255,255, 0.75);
     display: block;
     padding-bottom: 10px;
     padding-right: 0;
@@ -73,9 +74,24 @@ ul.draft_order {
       }
     }
 
+    i.fa {
+      cursor: pointer !important;
+    }
+
     &.slip-reordering {
-      box-shadow: 0 2px 10px rgba(0,0,0,0.45);
+      box-shadow: 4 4px 10px rgba(0,0,0,0.45);
+      background: fade(@navbar-inverse-brand-hover-color, 60%);
+      z-index: 1;
+    }
+
+    &.slip-reordering, &.slip-reordering * {
       cursor: -moz-grabbing; cursor: -webkit-grabbing; cursor: grabbing;
+    }
+  }
+
+  &.randomization {
+    .ng-hide-remove {
+      animation: 0.80s bounceInDown ease;
     }
   }
 }
