@@ -1,0 +1,38 @@
+<div class="form-group v-offset-5">
+  <label class="col-xs-12 col-sm-3 control-label" for="using_depth_charts">
+    Depth Charts
+  </label>
+  <div class="col-xs-12 col-sm-3">
+    <toggle-switch name="using_depth_charts" ng-model="directiveCtrl.usingDepthCharts" on-label="Use" off-label="Off"></toggle-switch>
+  </div>
+  <div class="hidden-xs col-sm-offset-5 col-sm-1 text-center text-info">
+    <i class="fa fa-info-circle" uib-tooltip="Use depth charts to help teams see what positions they need to draft for next. Tell us what positions make up a fantasy team's active roster, and this will help determine how many rounds your draft will be." tooltip-trigger="mouseenter" tooltip-append-to-body="true"></i>
+  </div>
+</div>
+<div class="form-group" ng-show="directiveCtrl.usingDepthCharts">
+  <label>Each team will need to draft:</label>
+</div>
+<ul class="depth_chart_positions col-sm-offset-3 col-sm-8 col-xs-12" ng-show="directiveCtrl.usingDepthCharts">
+  <li class="form-group" ng-repeat="position in directiveCtrl.depthChartPositions">
+    <input class="slots" ng-model="directiveCtrl.depthChartPositions[$index].slots" min="1" max="30" placeholder="Slots, 1-30" required />
+    &nbsp;&times;&nbsp;
+    <input class="position" ng-model="directiveCtrl.depthChartPositions[$index].position" placeholder="Position abbreviation" required />
+    <a href ng-click="directiveCtrl.deletePosition($index)">
+      <span class="fa-stack">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-trash-o fa-stack-1x" alt="Remove Position" title="Remove Position"></i>
+      </span>
+    </a>
+  </li>
+  <li ng-show="hasNonstandardPositions"><strong>*Note</strong>: IR, DL and NA positions generally don't count as active roster slots in most leagues, so you dont need to list them here.</li>
+  <li ng-hide="directiveCtrl.depthChartsUnique">
+    <span class="text-danger">One or more of the depth chart positions has a duplicate position.</span>
+  </li>
+</ul>
+<div class="form-group" ng-show="directiveCtrl.usingDepthCharts">
+  <div class="col-xs-12 col-sm-4 col-sm-offset-3">
+    <button class="btn btn-primary btn-block" ng-click="directiveCtrl.addDepthChartPosition()">
+      <i class="fa fa-plus"></i>&nbsp;&nbsp;Add Roster Spot
+    </button>
+  </div>
+</div>

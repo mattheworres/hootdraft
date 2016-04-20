@@ -73,6 +73,10 @@ angular.module('app').factory 'api', ($resource, ENV) ->
     'setTimers':
       { method: 'POST', url: "#{ENV.apiEndpoint}commish/draft/:draft_id/timers" }
 
+  DepthChartPosition: $resource "#{ENV.apiEndpoint}commish/draft/:id/depthchartposition/:position_id", { draft_id: '@draft_id', position_id: '@position_id', draft_sport: '@draft_sport' },
+    'getPositions':
+      { method: 'GET', url: "#{ENV.apiEndpoint}commish/depthchartposition/positions" }
+
   Manager: $resource "#{ENV.apiEndpoint}draft/:draft_id/manager/:manager_id", { draft_id: '@draft_id', manager_id: '@manager_id' },
     'getManagers':
       { method: 'GET', url: "#{ENV.apiEndpoint}draft/:draft_id/managers", isArray: true }

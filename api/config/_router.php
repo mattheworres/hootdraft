@@ -82,6 +82,10 @@ $app['commish.pick.controller'] = function() {
   return new PhpDraft\Controllers\Commish\PickController();
 };
 
+$app['commish.depthchartposition.controller'] = function() {
+  return new PhpDraft\Controllers\Commish\DepthChartPositionController();
+};
+
 $app->post('/login', 'authentication.controller:Login');
 $app->post('/register', 'authentication.controller:Register');
 $app->post('/verify', 'authentication.controller:VerifyAccount');
@@ -128,6 +132,7 @@ $app->get('/commish/profile', "commish.profile.controller:Get");
 $app->put('/commish/profile', "commish.profile.controller:Put");
 
 $app->get('/commish/draft/create', "commish.draft.controller:GetCreate"); //Only requires commish role, handled by firewall
+$app->get('/commish/depthchartposition/positions', "commish.depthchartposition.controller:GetPositions"); //Only requires commish role, handled by firewall
 $app->get('/commish/draft/{draft_id}', "commish.draft.controller:Get")->before($commishEditableDraft);
 $app->get('/commish/draft/{draft_id}/timers', "commish.draft.controller:GetTimers")->before($commishEditableDraft);
 $app->post('/commish/draft', "commish.draft.controller:Create"); //Only requires commish role, handled by firewall

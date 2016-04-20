@@ -1,14 +1,18 @@
 class DraftEditController extends BaseController
   @register 'DraftEditController'
   @inject '$scope',
-  '$rootScope',
-  '$routeParams',
+  '$loading',
   'subscriptionKeys',
   'workingModalService',
   'api',
-  'messageService'
+  'messageService',
+  'depthChartPositionService'
 
   initialize: ->
+    @draftEdit = 
+      using_depth_charts: false
+      depthChartPositions: []
+    @depthChartPositionIndex = -1
     @draftLoading = true
     @draftLoaded = false
     @draftError = false
@@ -28,11 +32,30 @@ class DraftEditController extends BaseController
     @$scope.$on @subscriptionKeys.scopeDestroy, (event, args) =>
       @deregister()
 
+    @$scope.$watch =>
+      @draftEdit.depthChartPositions
+    , =>
+      @hasNonstandardPositions = @depthChartPositionService.calculateRoundsFromPositions(@draftEdit)
+      @depthChartsUnique = @depthChartPositionService.getDepthChartPositionValidity(@draftEdit)
+    , true
+
+    @$scope.$watch =>
+      @draftEdit.using_depth_charts
+    , =>
+      @hasNonstandardPositions = @depthChartPositionService.calculateRoundsFromPositions(@draftEdit)
+      @depthChartsUnique = @depthChartPositionService.getDepthChartPositionValidity(@draftEdit)
+
+    @$scope.$watch 'draftEditCtrl.draftEdit.draft_sport', =>
+      @sportChanged()
+
+    @$scope.$watch 'draftEditCtrl.depthChartPositionIndex', =>
+      @deleteDepthChartPosition()
+
   _loadCommishDraft: (draft_id) =>
     @draftLoaded = true
 
     draftInitializeSuccess = (data) =>
-      @draftEdit = data
+      angular.merge(@draftEdit, data)
       @draftLoading = false
 
     draftInitializeErrorHandler = () =>
@@ -42,9 +65,35 @@ class DraftEditController extends BaseController
 
     @api.Draft.commishGet({ draft_id: draft_id }, draftInitializeSuccess, draftInitializeErrorHandler)
 
+  sportChanged: ->
+    positionsSuccess = (data) =>
+      positionResetCallback = =>
+        @$loading.finish('load_data')
+
+      @depthChartPositionService.createPositionsBySport(@draftEdit, data.positions, positionResetCallback)
+
+    positionsError = =>
+      @$loading.finish('load_data')
+      @messageService.showError "Unable to load positions for the given draft sport"
+
+    if @draftEdit?.draft_sport?.length > 0
+      @$loading.start('load_data')
+      @api.DepthChartPosition.getPositions {draft_sport: @draftEdit.draft_sport}, positionsSuccess, positionsError
+
   editClicked: =>
     if not @editFormIsInvalid()
       @_edit()
+
+  addDepthChartPosition: ->
+    @depthChartPositionService.addDepthChartPosition(@draftEdit)
+
+  deleteDepthChartPosition: ->
+    if @editInProgress or @depthChartPositionIndex is -1
+      return
+
+    @depthChartPositionService.deleteDepthChartPosition(@draft, @depthChartPositionIndex)
+    @hasNonstandardPositions = @depthChartPositionService.calculateRoundsFromPositions(@draft)
+    @depthChartsUnique = @depthChartPositionService.getDepthChartPositionValidity(@draft)
 
   editFormIsInvalid: =>
     return @editInProgress or not @form.$valid
@@ -59,6 +108,8 @@ class DraftEditController extends BaseController
       style: @draftEdit.draft_style
       rounds: @draftEdit.draft_rounds
       password: @draftEdit.draft_password
+      using_depth_charts: @draftEdit.using_depth_charts
+      depthChartPositions: @draftEdit.depthChartPositions
 
     @editInProgress = true
 

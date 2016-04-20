@@ -96,11 +96,13 @@ ul.draft_order {
   }
 }
 
-
-
 ul.round-pager {
   margin-top: 3px;
   margin-bottom: 5px;
+
+  a {
+    .btn-primary;
+  }
 }
 
 div.manager-form-group {
@@ -118,4 +120,27 @@ input.timer-minutes, input.timer-seconds {
   height: 34px;
   padding: 1px 12px;
   font-size: 18px;
+}
+
+ul.depth_chart_positions {
+  li {
+    list-style: none;
+    padding: 0 15px 0 0;
+
+    i {
+      cursor: pointer;
+    }
+
+    input.position {
+      .form-control;
+      width: 60%;
+      display: inline-block !important;
+    }
+
+    input.slots {
+      .form-control;
+      width: 25%;
+      display: inline-block !important;
+    }
+  }
 }

@@ -2,111 +2,124 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3">
-        <h2>Editing {{draft.draft_name}}</h2>
+        <h2>Editing {{draftEditCtrl.draftEdit.draft_name}}</h2>
         <p class="text-justify">Not get something right the first time? No bigs. Just change it here real quick. Once your draft starts however, you will no longer be able to edit this information.</p>
       </div>
     </div>
     <div class="row text-center">
       <section-loading show-loading=draftEditCtrl.draftLoading></section-loading>
       <section-error show-error=draftEditCtrl.draftError section-name="draft defaults"></section-error>
-      <div ng-hide="draftEditCtrl.draftLoading || draftEditCtrl.draftError"class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3">
-            <form name="draftEditCtrl.form" novalidate>
-              <div class="form-horizontal display-only-form">
-                <div class="form-group">
-                  <label class="col-xs-12 col-sm-3 control-label" for="name">
-                    <span class="text-danger">*</span>&nbsp;League Name
-                  </label>
-                  <div class="col-xs-12 col-sm-8">
-                    <input name="name" ng-model="draftEditCtrl.draftEdit.draft_name" id="name" class="form-control" maxlength="255" ng-required="true" placeholder="League name" autofocus />
-                    <div ng-show="draftEditCtrl.form.$submitted || draftEditCtrl.draftEdit.draft_name.$touched">
-                      <span ng-show="draftEditCtrl.draftEdit.draft_name.$error.required" class="help-block">League name is missing</span>
-                      <span ng-show="draftEditCtrl.draftEdit.draft_name.$error.maxlength" class="help-block">League name is too long</span>
-                    </div>
-                  </div>
-                  <div class="hidden-xs col-sm-1 text-center text-info">
-                    <i class="fa fa-info-circle" uib-tooltip="Enter the name of your league you want to draft for. You must choose a name that is unique on PHP Draft. So, get creative!" tooltip-trigger="mouseenter"  tooltip-append-to-body="true"></i>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-xs-12 col-sm-3 control-label" for="sport">
-                    <span class="text-danger">*</span>&nbsp;Sport
-                  </label>
-                  <div class="col-xs-12 col-sm-8">
-                    <select class="form-control"
-                      ng-options="key as value for (key, value) in draftEditCtrl.draftEdit.sports"
-                      ng-model="draftEditCtrl.draftEdit.draft_sport"
-                      id="sport"
-                      ng-required="true">
-                    </select>
-                    <div ng-show="draftEditCtrl.form.$submitted || draftEditCtrl.draftEdit.sport.$touched">
-                      <span ng-show="draftEditCtrl.draftEdit.sport.$error.required" class="help-block">Sport is missing</span>
-                    </div>
-                  </div>
-                  <div class="hidden-xs col-sm-1 text-center text-info">
-                    <i class="fa fa-info-circle" uib-tooltip="What sport is your fantasy league? NFL, NFLE (using extended roster spots such as defensive backs and offensive linemen), NHL, NBA and MLB are the only supported sports currently." tooltip-trigger="mouseenter"  tooltip-append-to-body="true"></i>
+      <div 
+        ng-hide="draftEditCtrl.draftLoading || draftEditCtrl.draftError"
+        class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3"
+        dw-loading="load_data" dw-loading-options="{text: 'Loading draft data...'}">
+          <form name="draftEditCtrl.form" novalidate>
+            <div class="form-horizontal display-only-form">
+              <div class="form-group">
+                <label class="col-xs-12 col-sm-3 control-label" for="name">
+                  <span class="text-danger">*</span>&nbsp;League Name
+                </label>
+                <div class="col-xs-12 col-sm-8">
+                  <input name="name" ng-model="draftEditCtrl.draftEdit.draft_name" id="name" class="form-control" maxlength="255" ng-required="true" placeholder="League name" autofocus />
+                  <div ng-show="draftEditCtrl.form.$submitted || draftEditCtrl.draftEdit.draft_name.$touched">
+                    <span ng-show="draftEditCtrl.draftEdit.draft_name.$error.required" class="help-block">League name is missing</span>
+                    <span ng-show="draftEditCtrl.draftEdit.draft_name.$error.maxlength" class="help-block">League name is too long</span>
                   </div>
                 </div>
-                <div class="form-group">
-                  <label class="col-xs-12 col-sm-3 control-label" for="style">
-                    <span class="text-danger">*</span>&nbsp;Style
-                  </label>
-                  <div class="col-xs-12 col-sm-8">
-                    <select class="form-control"
-                      ng-options="key as value for (key, value) in draftEditCtrl.draftEdit.styles"
-                      ng-model="draftEditCtrl.draftEdit.draft_style"
-                      id="style"
-                      ng-required="true">
-                    </select>
-                    <div ng-show="draftEditCtrl.form.$submitted || draftEditCtrl.draftEdit.style.$touched">
-                      <span ng-show="draftEditCtrl.draftEdit.style.$error.required" class="help-block">Style is missing</span>
-                    </div>
-                  </div>
-                  <div class="hidden-xs col-sm-1 text-center text-info">
-                    <i class="fa fa-info-circle" uib-tooltip="What type of draft does your league need? Snake (or 'Serpentine') is most common - this is where the first pick in each round is the last pick, so managers with the first and last picks in the draft order have back-to-back picks at the end of each round (draft board looks like a 'snake' pattern). Standard means first pick each round goes to the same manager." tooltip-trigger="mouseenter"  tooltip-append-to-body="true"></i>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-xs-12 col-sm-3 control-label" for="rounds">
-                    <span class="text-danger">*</span>&nbsp;# of Rounds
-                  </label>
-                  <div class="col-xs-12 col-sm-3">
-                    <input name="rounds" ng-model="draftEditCtrl.draftEdit.draft_rounds" id="rounds" class="form-control" type="number" min="1" max="30" ng-required="true" />
-                  </div>
-                  <div class="hidden-xs col-sm-1 col-sm-offset-5 text-center">
-                    <i class="fa fa-info-circle text-info" uib-tooltip="How many rounds will your draft be? This number needs to be how many starters plus bench spots each team needs to start the season. IR/DL spots generally don't count." tooltip-trigger="mouseenter" tooltip-append-to-body="true"></i>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <div class="col-xs-8 col-xs-offset-3" ng-show="draftEditCtrl.form.$submitted || draftEditCtrl.draftEdit.rounds.$touched">
-                    <span ng-show="draftEditCtrl.draftEdit.rounds.$error.required" class="help-block">Number of rounds is missing</span>
-                    <span ng-show="draftEditCtrl.draftEdit.rounds.$error.min" class="help-block">Your draft must have at least 1 round</span>
-                    <span ng-show="draftEditCtrl.draftEdit.rounds.$error.max" class="help-block">Too many rounds - max number of rounds is 30</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-xs-12 col-sm-3 control-label" for="password">
-                    Password
-                  </label>
-                  <div class="col-xs-12 col-sm-8">
-                    <input name="password" ng-model="draftEditCtrl.draftEdit.draft_password" id="password" class="form-control" maxlength="255" placeholder="Optional - password protect your draft" />
-                    <div ng-show="draftEditCtrl.form.$submitted || draftEditCtrl.form.password.$touched">
-                      <span ng-show="draftEditCtrl.form.password.$error.maxlength" class="help-block">Password is too long</span>
-                    </div>
-                  </div>
-                  <div class="hidden-xs col-sm-1 text-center text-info">
-                    <i class="fa fa-info-circle" uib-tooltip="Optional. Only provide a password if you want to prevent nebby neighbors from seeing your sensitive draft information. It's not encrypted so don't use anything too serious - instead pick a password that's easy to tell the managers of your league." tooltip-trigger="mouseenter"  tooltip-append-to-body="true"></i>
-                  </div>
+                <div class="hidden-xs col-sm-1 text-center text-info">
+                  <i class="fa fa-info-circle" uib-tooltip="Enter the name of your league you want to draft for. You must choose a name that is unique on PHP Draft. So, get creative!" tooltip-trigger="mouseenter"  tooltip-append-to-body="true"></i>
                 </div>
               </div>
-              <div class="row">
-                <div class="col-xs-12 col-sm-8 col-sm-offset-3 text-center v-offset-2">
-                  <button type="submit" class="btn btn-primary btn-large btn-block" ng-click="draftEditCtrl.editClicked()" ng-submit="draftEditCtrl.editClicked()" ng-disabled="draftEditCtrl.editFormIsInvalid()">
-                    <i class="fa fa-floppy-o"></i>&nbsp;&nbsp;Save League
-                  </button>
+              <div class="form-group">
+                <label class="col-xs-12 col-sm-3 control-label" for="style">
+                  <span class="text-danger">*</span>&nbsp;Style
+                </label>
+                <div class="col-xs-12 col-sm-8">
+                  <select class="form-control"
+                    ng-options="key as value for (key, value) in draftEditCtrl.draftEdit.styles"
+                    ng-model="draftEditCtrl.draftEdit.draft_style"
+                    id="style"
+                    ng-required="true">
+                  </select>
+                  <div ng-show="draftEditCtrl.form.$submitted || draftEditCtrl.draftEdit.style.$touched">
+                    <span ng-show="draftEditCtrl.draftEdit.style.$error.required" class="help-block">Style is missing</span>
+                  </div>
+                </div>
+                <div class="hidden-xs col-sm-1 text-center text-info">
+                  <i class="fa fa-info-circle" uib-tooltip="What type of draft does your league need? Snake (or 'Serpentine') is most common - this is where the first pick in each round is the last pick, so managers with the first and last picks in the draft order have back-to-back picks at the end of each round (draft board looks like a 'snake' pattern). Standard means first pick each round goes to the same manager." tooltip-trigger="mouseenter"  tooltip-append-to-body="true"></i>
                 </div>
               </div>
-            </form>
-          <!-- </div> -->
+              <div class="form-group">
+                <label class="col-xs-12 col-sm-3 control-label" for="sport">
+                  <span class="text-danger">*</span>&nbsp;Sport
+                </label>
+                <div class="col-xs-12 col-sm-8">
+                  <select class="form-control"
+                    ng-options="key as value for (key, value) in draftEditCtrl.draftEdit.sports"
+                    ng-model="draftEditCtrl.draftEdit.draft_sport"
+                    id="sport"
+                    ng-required="true">
+                  </select>
+                  <div ng-show="draftEditCtrl.form.$submitted || draftEditCtrl.draftEdit.sport.$touched">
+                    <span ng-show="draftEditCtrl.draftEdit.sport.$error.required" class="help-block">Sport is missing</span>
+                  </div>
+                </div>
+                <div class="hidden-xs col-sm-1 text-center text-info">
+                  <i class="fa fa-info-circle" uib-tooltip="What sport is your fantasy league? NFL, NFLE (using extended roster spots such as defensive backs and offensive linemen), NHL, NBA, MLB, and S15 (rugby) are the only supported sports currently." tooltip-trigger="mouseenter"  tooltip-append-to-body="true"></i>
+                </div>
+              </div>
+              <depth-chart-positions
+              using-depth-charts=draftEditCtrl.draftEdit.using_depth_charts
+              depth-chart-positions=draftEditCtrl.draftEdit.depthChartPositions
+              has-non-standard-positions=draftEditCtrl.hasNonStandardPositions
+              depth-charts-unique=draftEditCtrl.depthChartsUnique
+              position-index=draftEditCtrl.depthChartPositionIndex
+              add-depth-chart-position="draftEditCtrl.addDepthChartPosition()">
+            </depth-chart-positions>
+              <div class="form-group">
+                <label class="col-xs-12 col-sm-3 control-label" for="rounds">
+                  <span class="text-danger">*</span>&nbsp;# of Rounds
+                </label>
+                <div class="col-xs-12 col-sm-3">
+                  <input name="rounds" ng-model="draftEditCtrl.draftEdit.draft_rounds" id="rounds" class="form-control" type="number" min="1" max="30" ng-required="true" />
+                </div>
+                <div class="hidden-xs col-sm-1 col-sm-offset-5 text-center">
+                  <i class="fa fa-info-circle text-info" uib-tooltip="How many rounds will your draft be? This number needs to be how many starters plus bench spots each team needs to start the season. IR/DL spots generally don't count." tooltip-trigger="mouseenter" tooltip-append-to-body="true"></i>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-xs-8 col-xs-offset-3" ng-show="draftEditCtrl.form.$submitted || draftEditCtrl.draftEdit.rounds.$touched">
+                  <span ng-show="draftEditCtrl.draftEdit.rounds.$error.required" class="help-block">Number of rounds is missing</span>
+                  <span ng-show="draftEditCtrl.draftEdit.rounds.$error.min" class="help-block">Your draft must have at least 1 round</span>
+                  <span ng-show="draftEditCtrl.draftEdit.rounds.$error.max" class="help-block">Too many rounds - max number of rounds is 30</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-xs-12 col-sm-3 control-label" for="password">
+                  Password
+                </label>
+                <div class="col-xs-12 col-sm-8">
+                  <input name="password" ng-model="draftEditCtrl.draftEdit.draft_password" id="password" class="form-control" maxlength="255" placeholder="Optional - password protect your draft" />
+                  <div ng-show="draftEditCtrl.form.$submitted || draftEditCtrl.form.password.$touched">
+                    <span ng-show="draftEditCtrl.form.password.$error.maxlength" class="help-block">Password is too long</span>
+                  </div>
+                </div>
+                <div class="hidden-xs col-sm-1 text-center text-info">
+                  <i class="fa fa-info-circle" uib-tooltip="Optional. Only provide a password if you want to prevent nebby neighbors from seeing your sensitive draft information. It's not encrypted so don't use anything too serious - instead pick a password that's easy to tell the managers of your league." tooltip-trigger="mouseenter"  tooltip-append-to-body="true"></i>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12 col-sm-8 col-sm-offset-3 text-center v-offset-2">
+                <button type="submit" class="btn btn-primary btn-large btn-block" ng-click="draftEditCtrl.editClicked()" ng-submit="draftEditCtrl.editClicked()" ng-disabled="draftEditCtrl.editFormIsInvalid()">
+                  <i class="fa fa-floppy-o"></i>&nbsp;&nbsp;Save League
+                </button>
+              </div>
+            </div>
+          </form>
+          <div class="row v-offset-3">
+            &nbsp;
+          </div>
         </div>
       </div>
     </div>

@@ -41,3 +41,7 @@ $app['phpdraft.ProPlayerRepository'] = function () use ($app) {
 $app['phpdraft.DraftStatsRepository'] = function () use ($app) {
   return new \PhpDraft\Domain\Repositories\DraftStatsRepository($app);
 };
+
+$app['phpdraft.DepthChartPositionRepository'] = function () use ($app) {
+  return new \PhpDraft\Domain\Repositories\DepthChartPositionRepository($app);
+};

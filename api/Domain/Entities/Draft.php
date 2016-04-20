@@ -66,4 +66,7 @@ class Draft {
 
   /** @var bool $nfl_extended Whether or not this draft uses extended NFL positions */
   public $nfl_extended;
+
+    /** @var bool $using_depth_charts Whether or not this draft uses depth chart positions */
+  public $using_depth_charts;
 }
