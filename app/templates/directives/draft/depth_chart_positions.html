@@ -9,14 +9,14 @@
     <i class="fa fa-info-circle" uib-tooltip="Use depth charts to help teams see what positions they need to draft for next. Tell us what positions make up a fantasy team's active roster, and this will help determine how many rounds your draft will be." tooltip-trigger="mouseenter" tooltip-append-to-body="true"></i>
   </div>
 </div>
-<div class="form-group" ng-show="directiveCtrl.usingDepthCharts">
+<div class="form-group" ng-if="directiveCtrl.usingDepthCharts">
   <label>Each team will need to draft:</label>
 </div>
-<ul class="depth_chart_positions col-sm-offset-3 col-sm-8 col-xs-12" ng-show="directiveCtrl.usingDepthCharts">
+<ul class="depth_chart_positions col-sm-offset-3 col-sm-8 col-xs-12" ng-if="directiveCtrl.usingDepthCharts">
   <li class="form-group" ng-repeat="position in directiveCtrl.depthChartPositions">
-    <input class="slots" ng-model="directiveCtrl.depthChartPositions[$index].slots" min="1" max="30" placeholder="Slots, 1-30" required />
+    <input class="slots" name="slots" ng-model="directiveCtrl.depthChartPositions[$index].slots" min="1" max="30" placeholder="Slots, 1-30" ng-required="directiveCtrl.usingDepthCharts" />
     &nbsp;&times;&nbsp;
-    <input class="position" ng-model="directiveCtrl.depthChartPositions[$index].position" placeholder="Position abbreviation" required />
+    <input class="position" name="position" ng-model="directiveCtrl.depthChartPositions[$index].position" placeholder="Position abbreviation" ng-required="directiveCtrl.usingDepthCharts" />
     <a href ng-click="directiveCtrl.deletePosition($index)">
       <span class="fa-stack">
         <i class="fa fa-circle fa-stack-2x"></i>
@@ -29,7 +29,7 @@
     <span class="text-danger">One or more of the depth chart positions has a duplicate position.</span>
   </li>
 </ul>
-<div class="form-group" ng-show="directiveCtrl.usingDepthCharts">
+<div class="form-group" ng-if="directiveCtrl.usingDepthCharts">
   <div class="col-xs-12 col-sm-4 col-sm-offset-3">
     <button class="btn btn-primary btn-block" ng-click="directiveCtrl.addDepthChartPosition()">
       <i class="fa fa-plus"></i>&nbsp;&nbsp;Add Roster Spot

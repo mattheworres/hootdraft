@@ -17,11 +17,12 @@ class DepthChartPositionRepository {
   public function LoadAll($draft_id) {
     $positions = array();
     
-    $stmt = $this->app['db']->prepare("SELECT d* ".
+    $stmt = $this->app['db']->prepare("SELECT d.* ".
+            "FROM depth_chart_positions d " .
             "WHERE d.draft_id = ? " .
             "ORDER BY d.display_order");
     
-    $stmt->bindParam(1, $draft_id);
+    $stmt->bindParam(1, $draft_id, \PDO::PARAM_INT);
     
     $stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\DepthChartPosition');
     

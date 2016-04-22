@@ -3,8 +3,7 @@ class DepthChartPositionService extends AngularService
   @inject 'lodash'
 
   createPositionsBySport: (draft, sportPositions, callback) ->
-    if draft.draft_id is not null
-      draft.using_depth_charts = true
+    draft.using_depth_charts = true
 
     draft.depthChartPositions.length = 0
 

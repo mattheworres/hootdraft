@@ -8,7 +8,7 @@
     </div>
     <div class="row text-center">
       <section-loading show-loading=draftEditCtrl.draftLoading></section-loading>
-      <section-error show-error=draftEditCtrl.draftError section-name="draft defaults"></section-error>
+      <section-error show-error=draftEditCtrl.draftError section-name="draft for editing"></section-error>
       <div 
         ng-hide="draftEditCtrl.draftLoading || draftEditCtrl.draftError"
         class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3"
@@ -20,7 +20,7 @@
                   <span class="text-danger">*</span>&nbsp;League Name
                 </label>
                 <div class="col-xs-12 col-sm-8">
-                  <input name="name" ng-model="draftEditCtrl.draftEdit.draft_name" id="name" class="form-control" maxlength="255" ng-required="true" placeholder="League name" autofocus />
+                  <input name="name" ng-model="draftEditCtrl.draftEdit.draft_name" id="name" class="form-control input-lg" maxlength="255" ng-required="true" placeholder="League name" autofocus />
                   <div ng-show="draftEditCtrl.form.$submitted || draftEditCtrl.draftEdit.draft_name.$touched">
                     <span ng-show="draftEditCtrl.draftEdit.draft_name.$error.required" class="help-block">League name is missing</span>
                     <span ng-show="draftEditCtrl.draftEdit.draft_name.$error.maxlength" class="help-block">League name is too long</span>
@@ -35,7 +35,7 @@
                   <span class="text-danger">*</span>&nbsp;Style
                 </label>
                 <div class="col-xs-12 col-sm-8">
-                  <select class="form-control"
+                  <select class="form-control input-lg"
                     ng-options="key as value for (key, value) in draftEditCtrl.draftEdit.styles"
                     ng-model="draftEditCtrl.draftEdit.draft_style"
                     id="style"
@@ -54,7 +54,7 @@
                   <span class="text-danger">*</span>&nbsp;Sport
                 </label>
                 <div class="col-xs-12 col-sm-8">
-                  <select class="form-control"
+                  <select class="form-control input-lg"
                     ng-options="key as value for (key, value) in draftEditCtrl.draftEdit.sports"
                     ng-model="draftEditCtrl.draftEdit.draft_sport"
                     id="sport"
@@ -81,14 +81,15 @@
                   <span class="text-danger">*</span>&nbsp;# of Rounds
                 </label>
                 <div class="col-xs-12 col-sm-3">
-                  <input name="rounds" ng-model="draftEditCtrl.draftEdit.draft_rounds" id="rounds" class="form-control" type="number" min="1" max="30" ng-required="true" />
+                  <input name="rounds" ng-model="draftEditCtrl.draftEdit.draft_rounds" id="rounds" class="form-control" type="number" min="1" max="30" ng-required="true" ng-hide="draftEditCtrl.draftEdit.using_depth_charts" />
+                  <p class="form-control-static" ng-show="draftEditCtrl.draftEdit.using_depth_charts">{{draftEditCtrl.draftEdit.draft_rounds}}</p>
                 </div>
                 <div class="hidden-xs col-sm-1 col-sm-offset-5 text-center">
                   <i class="fa fa-info-circle text-info" uib-tooltip="How many rounds will your draft be? This number needs to be how many starters plus bench spots each team needs to start the season. IR/DL spots generally don't count." tooltip-trigger="mouseenter" tooltip-append-to-body="true"></i>
                 </div>
               </div>
               <div class="form-group">
-                <div class="col-xs-8 col-xs-offset-3" ng-show="draftEditCtrl.form.$submitted || draftEditCtrl.draftEdit.rounds.$touched">
+                <div class="col-xs-8 col-xs-offset-3" ng-show="draftEditCtrl.form.$submitted || draftEditCtrl.draftEdit.rounds.$touched || draftEditCtrl.draftEdit.using_depth_charts">
                   <span ng-show="draftEditCtrl.draftEdit.rounds.$error.required" class="help-block">Number of rounds is missing</span>
                   <span ng-show="draftEditCtrl.draftEdit.rounds.$error.min" class="help-block">Your draft must have at least 1 round</span>
                   <span ng-show="draftEditCtrl.draftEdit.rounds.$error.max" class="help-block">Too many rounds - max number of rounds is 30</span>

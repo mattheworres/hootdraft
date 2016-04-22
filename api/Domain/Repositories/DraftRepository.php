@@ -309,14 +309,16 @@ class DraftRepository {
       using_depth_charts = ?
       WHERE draft_id = ?");
 
+    $draft->using_depth_charts = $draft->using_depth_charts == 1;
+
     $update_stmt->bindParam(1, $draft->commish_id);
     $update_stmt->bindParam(2, $draft->draft_name);
     $update_stmt->bindParam(3, $draft->draft_sport);
     $update_stmt->bindParam(4, $draft->draft_style);
     $update_stmt->bindParam(5, $draft->draft_password);
     $update_stmt->bindParam(6, $draft->draft_rounds);
-    $update_stmt->bindParam(7, $draft->draft_id);
-    $update_stmt->bindParam(8, $draft->using_depth_charts);
+    $update_stmt->bindParam(7, $draft->using_depth_charts);
+    $update_stmt->bindParam(8, $draft->draft_id);
 
     if(!$update_stmt->execute()) {
       throw new \Exception("Unable to update draft.");
