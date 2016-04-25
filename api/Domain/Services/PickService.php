@@ -104,7 +104,7 @@ class PickService {
   }
 
   public function UpdatePick(Draft $draft, Pick $pick) {
-    $response = new PhpDraftResponse();
+    $response = $this->app['phpdraft.ResponseFactory'](true, array());
 
     try {
       //Increment the draft counter
@@ -122,6 +122,24 @@ class PickService {
       $errorMessage = $e->getMessage();
 
       $response->errors[] = "Unable to add pick: $errorMessage";
+    }
+
+    return $response;
+  }
+
+  public function UpdatePickDepthChart(Draft $draft, Pick $pick) {
+    $response = $this->app['phpdraft.ResponseFactory'](true, array());
+
+    try {
+      //Purposefully NOT updating the draft counter. This is tied to a public-ish action.
+      $pick = $this->app['phpdraft.PickRepository']->UpdatePickDepthChart($pick);
+
+      $response->pick = $pick;
+      $response->success = true;
+    } catch(\Exception $e) {
+      $response->success = false;
+      $errorMessage = $e->getMessage();
+      $response->errors[] = "Unable to update pick depth chart: $errorMessage";
     }
 
     return $response;

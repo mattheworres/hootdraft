@@ -1,10 +1,12 @@
 <?php
+use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use PhpDraft\Domain\Models\PhpDraftResponse;
 use Symfony\Component\Debug\ErrorHandler;
 use Symfony\Component\Debug\ExceptionHandler;
+use Symfony\Component\HttpFoundation\Request;
 
 if (!$app instanceof Silex\Application) {
   throw new Exception('Invalid application setup.');
@@ -23,7 +25,7 @@ $app->before(function (Request $request) {
 });
 
 //Ensure the user is allowed to see the draft
-$draftViewable = function(Symfony\Component\HttpFoundation\Request $request, Silex\Application $app) {
+$draftViewable = function(Request $request, Application $app) {
   $draft_id = (int)$request->get('draft_id');
 
   $viewable = $app['phpdraft.DraftValidator']->IsDraftViewableForUser($draft_id, $request);
@@ -36,7 +38,7 @@ $draftViewable = function(Symfony\Component\HttpFoundation\Request $request, Sil
   }
 };
 
-$draftSettingUp = function(Symfony\Component\HttpFoundation\Request $request, Silex\Application $app) {
+$draftSettingUp = function(Request $request, Application $app) {
   $draft_id = (int)$request->get('draft_id');
   $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
 
@@ -47,7 +49,7 @@ $draftSettingUp = function(Symfony\Component\HttpFoundation\Request $request, Si
   }
 };
 
-$draftInProgress = function(Symfony\Component\HttpFoundation\Request $request, Silex\Application $app) {
+$draftInProgress = function(Request $request, Application $app) {
   $draft_id = (int)$request->get('draft_id');
   $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
 
@@ -58,7 +60,7 @@ $draftInProgress = function(Symfony\Component\HttpFoundation\Request $request, S
   }
 };
 
-$draftInProgressOrCompleted = function(Symfony\Component\HttpFoundation\Request $request, Silex\Application $app) {
+$draftInProgressOrCompleted = function(Request $request, Application $app) {
   $draft_id = (int)$request->get('draft_id');
   $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
 
@@ -69,7 +71,19 @@ $draftInProgressOrCompleted = function(Symfony\Component\HttpFoundation\Request 
   }
 };
 
-$draftCompleted = function(Symfony\Component\HttpFoundation\Request $request, Silex\Application $app) {
+//To allow a ten minute grace period after completion of a draft
+$draftInProgressOrCompletedTenMinutes = function(Request $request, Application $app) {
+  $draft_id = (int)$request->get('draft_id');
+  $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
+
+  $grace_period = $app['phpdraft.DraftValidator']->IsDraftInProgressOrCompletedInLessThanTen($draft);
+
+  if(!$grace_period->success) {
+    return $app->json(array($grace_period), $grace_period->responseType());
+  }
+};
+
+$draftCompleted = function(Request $request, Application $app) {
   $draft_id = (int)$request->get('draft_id');
   $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
 
@@ -80,7 +94,7 @@ $draftCompleted = function(Symfony\Component\HttpFoundation\Request $request, Si
   }
 };
 
-$commishEditableDraft = function(Symfony\Component\HttpFoundation\Request $request, Silex\Application $app) {
+$commishEditableDraft = function(Request $request, Application $app) {
   $current_user = $app['phpdraft.LoginUserService']->GetCurrentUser();
 
   $draft_id = (int)$request->get('draft_id');

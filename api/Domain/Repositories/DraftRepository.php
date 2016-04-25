@@ -182,6 +182,9 @@ class DraftRepository {
 
     if($cachedDraft != null) {
       $draft = $cachedDraft;
+      $exporty = var_export($draft, true);
+      $this->app['monolog']->addDebug("SO, drafty. Hmm");
+      $this->app['monolog']->addDebug($exporty);
     } else {
       $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
         LEFT OUTER JOIN users u
@@ -194,6 +197,8 @@ class DraftRepository {
       if(!$draft_stmt->execute() || !$draft_stmt->fetch()) {
         throw new \Exception("Unable to load draft");
       }
+
+      $draft->using_depth_charts = $draft->using_depth_charts == 1;
 
       $this->SetCachedDraft($draft);
     }
@@ -220,6 +225,9 @@ class DraftRepository {
       $draft->statuses = $this->app['phpdraft.DraftDataRepository']->GetStatuses();
       $draft->teams = $this->app['phpdraft.DraftDataRepository']->GetTeams($draft->draft_sport);
       $draft->positions = $this->app['phpdraft.DraftDataRepository']->GetPositions($draft->draft_sport);
+      if($draft->using_depth_charts) {
+        $draft->depthChartPositions = $this->app['phpdraft.DepthChartPositionRepository']->LoadAll($draft->draft_id);
+      }
     }
 
     $draft->is_locked = false;
@@ -497,6 +505,7 @@ class DraftRepository {
     $draft->teams = null;
     $draft->positions = null;
     $draft->using_depth_charts = null;
+    $draft->depthChartPositions = null;
 
     return $draft;
   }

@@ -58,7 +58,7 @@ class PickValidator {
       $valid = false;
     }
 
-    return new PhpDraftResponse($valid, $errors);
+    return $this->app['phpdraft.ResponseFactory']($valid, $errors);
   }
 
   public function IsPickValidForUpdate(Draft $draft, Pick $pick) {
@@ -100,6 +100,18 @@ class PickValidator {
       $valid = false;
     }
 
-    return new PhpDraftResponse($valid, $errors);
+    return $this->app['phpdraft.ResponseFactory']($valid, $errors);
+  }
+
+  public function IsPickValidForDepthChartUpdate(Draft $draft, Pick $pick) {
+    $valid = true;
+    $errors = array();
+
+    if($pick->draft_id != $draft->draft_id) {
+      $errors[] = "Pick does not belong to draft #$draft->draft_id.";
+      $valid = false;
+    }
+
+    return $this->app['phpdraft.ResponseFactory']($valid, $errors);
   }
 }

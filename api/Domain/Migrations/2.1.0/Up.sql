@@ -20,7 +20,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 ALTER TABLE `draft` ADD `using_depth_charts` TINYINT(1) NOT NULL DEFAULT '0' AFTER `nfl_extended`;
 
 ALTER TABLE `players` ADD `depth_chart_position_id` INT(11) NULL AFTER `player_pick`;
-ALTER TABLE `players` ADD `position_eligibility` TEXT NULL AFTER `depth_chart_position_id`;
+ALTER TABLE `players` ADD `position_eligibility` VARCHAR(24) NULL AFTER `depth_chart_position_id`;
 ALTER TABLE `players` ADD INDEX `depth_chart_idx` (`depth_chart_position_id`);
 
 # This restores the fkey checks, after having unset them earlier

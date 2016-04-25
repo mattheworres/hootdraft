@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `players` (
   `player_round` int(11) NOT NULL default '0',
   `player_pick` int(11) NOT NULL default '0',
   `depth_chart_position_id` int(11) NULL,
-  `position_eligibility` TEXT NULL,
+  `position_eligibility` VARCHAR(24) NULL,
   PRIMARY KEY  (`player_id`),
   INDEX `manager_idx` (`manager_id`),
   INDEX `draft_idx` (`draft_id`),

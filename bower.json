@@ -25,7 +25,8 @@
     "angular-strap": "~2.3.8",
     "ng-file-upload": "12.0.4",
     "angular-loading": "e30ad76",
-    "animate.less": "*"
+    "animate.less": "*",
+    "angular-drag-and-drop-lists": "~1.4.0"
   },
   "resolutions": {
     "angular": "1.5.3"

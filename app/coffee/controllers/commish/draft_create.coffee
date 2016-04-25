@@ -2,7 +2,6 @@ class DraftCreateController extends BaseController
   @register 'DraftCreateController'
   @inject '$scope',
   '$loading',
-  '$timeout',
   'workingModalService',
   'api',
   'messageService',
@@ -69,14 +68,10 @@ class DraftCreateController extends BaseController
     if @createInProgress or not @form.$valid
       return true
     
-    draftValidity = false
-
     if @draft.using_depth_charts
       return not @depthChartsUnique
     else
-      draftValidity = true
-
-    return draftValidity
+      return false
 
   addDepthChartPosition: ->
     @depthChartPositionService.addDepthChartPosition(@draft)

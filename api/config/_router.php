@@ -102,9 +102,11 @@ $app->get('/commissioners/search', 'commish.controller:SearchPublicCommissioners
 $app->get('/commissioners/{commish_id}', 'commish.controller:GetPublicCommissioner');
 
 $app->get('/draft/{draft_id}/managers', 'manager.controller:GetAll')->before($draftViewable);
+$app->get('/draft/{draft_id}/manager/{manager_id}/depth_chart', 'manager.controller:GetManagerDepthChart')->before($draftViewable)->before($draftInProgressOrCompleted);
 
 $app->get('/draft/{draft_id}/picks', 'pick.controller:GetAll')->before($draftViewable)->before($draftInProgressOrCompleted);
 $app->get('/draft/{draft_id}/picks/updated', 'pick.controller:GetUpdated')->before($draftViewable)->before($draftInProgressOrCompleted);
+$app->put('/draft/{draft_id}/picks/{pick_id}/depth_chart', 'pick.controller:UpdateDepthChart')->before($draftViewable)->before($draftInProgressOrCompletedTenMinutes);#Give a ten minute grace period to allow edits right at the end
 $app->get('/draft/{draft_id}/picks/last', 'pick.controller:GetLast')->before($draftViewable)->before($draftInProgressOrCompleted);
 $app->get('/draft/{draft_id}/picks/next', 'pick.controller:GetNext')->before($draftViewable)->before($draftInProgressOrCompleted);
 $app->get('/draft/{draft_id}/manager/{manager_id}/picks/all', 'pick.controller:GetAllManagerPicks')->before($draftViewable)->before($draftInProgressOrCompleted);

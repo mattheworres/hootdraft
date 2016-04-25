@@ -78,6 +78,7 @@ module.exports =
                 'bower_components/ng-file-upload/ng-file-upload.min.js'
                 'bower_components/spin.js/spin.js'
                 'bower_components/angular-loading/angular-loading.min.js'
+                'bower_components/angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js'
             ],
             css: [
                 'bower_components/angular-ui-bootstrap-bower/ui-bootstrap-csp.css'
