@@ -62,7 +62,7 @@ angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftSe
       $rootScope.showDraftMenu = false
       $rootScope.draftLoading = false
 
-      if $rootScope.draftErrors == 2
+      if $rootScope.draftErrors == 5
         cancelInterval()
         $rootScope.draftError = true
         $rootScope.draftValid = false

@@ -21,19 +21,19 @@
         </a>
         <ul class="dropdown-menu" aria-labelledby="draftDropdown">
           <li>
-            <a href="home">
+            <a href="home" ng-click="navCollapsed = !navCollapsed">
               <i class="fa fa-table"></i>
               &nbsp;All Leagues
             </a>
           </li>
           <li>
-            <a href="by-commish">
+            <a href="by-commish" ng-click="navCollapsed = !navCollapsed">
               <i class="fa fa-users"></i>
               &nbsp;Leagues by Commissioner
             </a>
           </li>
           <li ng-show="navCtrl.isAuthenticated()">
-            <a href="#">
+            <a href="#" ng-click="navCollapsed = !navCollapsed">
               <i class="fa fa-plus"></i>
               &nbsp;Add New League
             </a>
@@ -41,7 +41,7 @@
         </ul>
       </li>
       <li ng-show="navCtrl.isAuthenticated()">
-        <a href="commish/draft/create">
+        <a href="commish/draft/create" ng-click="navCollapsed = !navCollapsed">
           <i class="fa fa-plus"></i>&nbsp;&nbsp;
           New League
         </a>
@@ -54,19 +54,19 @@
         </a>
         <ul class="dropdown-menu" aria-labelledby="adminDropdown">
           <li>
-            <a href="admin/users">
+            <a href="admin/users" ng-click="navCollapsed = !navCollapsed">
             <i class="fa fa-users"></i>
             &nbsp;Users
             </a>
           </li>
           <li>
-            <a href="admin/proplayers">
+            <a href="admin/proplayers" ng-click="navCollapsed = !navCollapsed">
               <i class="fa fa-cog"></i>
               &nbsp;Player Data
             </a>
           </li>
           <li>
-            <a href="admin/stats">
+            <a href="admin/stats" ng-click="navCollapsed = !navCollapsed">
               <i class="fa fa-bar-chart"></i>
               &nbsp;Draft Stats
             </a>
@@ -96,7 +96,7 @@
 <nav class="navbar navbar-inverse navbar-draft navbar-default" ng-show="showDraftMenu" role="navigation">
   <div class="container-fluid">
     <div class="row" ng-show="draftValid">
-      <div class="col-xs-12 col-sm-5 col-md-5 navbar-header-middle">
+      <div class="col-xs-12 col-sm-2 col-md-2 navbar-header-middle">
         <button type="button" class="navbar-toggle collapsed" ng-init="draftNavCollapsed = true" ng-click="draftNavCollapsed = !draftNavCollapsed" aria-expanded="false">
           <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
@@ -105,16 +105,22 @@
         </button>
         <a class="navbar-brand" href="draft/{{draft.draft_id}}">{{draft.draft_name}}</a>
       </div>
-      <div class="col-xs-12 col-sm-5 col-md-6 navbar-header-left collapse navbar-collapse" ng-class="!draftNavCollapsed && 'in'">
+      <div class="col-xs-12 col-sm-7 col-md-9 navbar-header-left collapse navbar-collapse" ng-class="!draftNavCollapsed && 'in'">
         <ul class="nav navbar-nav">
           <li ng-hide="draftLocked || draft.setting_up">
-            <a href="draft/{{draft.draft_id}}/board">
+            <a href="draft/{{draft.draft_id}}/board" ng-click="draftNavCollapsed = !draftNavCollapsed">
               <i class="fa fa-table"></i>&nbsp;&nbsp;
               Draft Board
             </a>
           </li>
+          <li ng-hide="draftLocked || draft.setting_up || !draft.using_depth_charts">
+            <a href="draft/{{draft.draft_id}}/depth_chart" ng-click="draftNavCollapsed = !draftNavCollapsed">
+              <i class="fa fa-th-list"></i>&nbsp;&nbsp;
+              Depth Charts
+            </a>
+          </li>
           <li ng-show="!draftLocked && draft.complete">
-            <a href="draft/{{draft.draft_id}}/stats">
+            <a href="draft/{{draft.draft_id}}/stats" ng-click="draftNavCollapsed = !draftNavCollapsed">
             <i class="fa fa-bar-chart"></i>&nbsp;&nbsp;
             Stats
             </a>
@@ -127,25 +133,25 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="pickDropdown">
               <li>
-                <a href="draft/{{draft.draft_id}}/picks/manager">
+                <a href="draft/{{draft.draft_id}}/picks/manager" ng-click="draftNavCollapsed = !draftNavCollapsed">
                   <i class="fa fa-users"></i>
                   &nbsp;by Manager
                 </a>
               </li>
               <li>
-                <a href="draft/{{draft.draft_id}}/picks/round">
+                <a href="draft/{{draft.draft_id}}/picks/round" ng-click="draftNavCollapsed = !draftNavCollapsed">
                   <i class="fa fa-list-ol"></i>
                   &nbsp;by Round
                 </a>
               </li>
               <li>
-                <a href="draft/{{draft.draft_id}}/trades">
+                <a href="draft/{{draft.draft_id}}/trades" ng-click="draftNavCollapsed = !draftNavCollapsed">
                   <i class="fa fa-exchange"></i>
                   &nbsp;Trades
                 </a>
               </li>
               <li>
-                <a href="draft/{{draft.draft_id}}/search">
+                <a href="draft/{{draft.draft_id}}/search" ng-click="draftNavCollapsed = !draftNavCollapsed">
                   <i class="fa fa-search"></i>
                   &nbsp;Search
                 </a>
@@ -160,49 +166,49 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="commishDropdown">
               <li ng-show="draft.setting_up">
-                <a href="#" ng-click="navCtrl.showStartDraftModal()">
+                <a href="#" ng-click="navCtrl.showStartDraftModal()" ng-click="draftNavCollapsed = !draftNavCollapsed">
                   <i class="fa fa-play"></i>
                   &nbsp;Start Draft!
                 </a>
               </li>
               <li ng-show="draft.in_progress">
-                <a href="commish/draft/{{draft.draft_id}}/picks/add">
+                <a href="commish/draft/{{draft.draft_id}}/picks/add" ng-click="draftNavCollapsed = !draftNavCollapsed">
                   <i class="fa fa-check-square-o"></i>
                   &nbsp;Enter Picks
                 </a>
               </li>
               <li ng-show="draft.in_progress">
-                <a href="commish/draft/{{draft.draft_id}}/picks/edit">
+                <a href="commish/draft/{{draft.draft_id}}/picks/edit" ng-click="draftNavCollapsed = !draftNavCollapsed">
                   <i class="fa fa-pencil"></i>
                   &nbsp;Edit a Pick
                 </a>
               </li>
               <li ng-show="draft.in_progress">
-                <a href="commish/draft/{{draft.draft_id}}/trades/add">
+                <a href="commish/draft/{{draft.draft_id}}/trades/add" ng-click="draftNavCollapsed = !draftNavCollapsed">
                   <i class="fa fa-exchange"></i>
                   &nbsp;Enter a Trade
                 </a>
               </li>
               <li ng-show="!draft.complete">
-                <a href="commish/draft/{{draft.draft_id}}/timers">
+                <a href="commish/draft/{{draft.draft_id}}/timers" ng-click="draftNavCollapsed = !draftNavCollapsed">
                   <i class="fa fa-clock-o"></i>
                   &nbsp;Setup Timers
                 </a>
               </li>
               <li ng-show="draft.setting_up">
-                <a href="commish/draft/{{draft.draft_id}}/edit">
+                <a href="commish/draft/{{draft.draft_id}}/edit" ng-click="draftNavCollapsed = !draftNavCollapsed">
                   <i class="fa fa-pencil-square-o"></i>
                   &nbsp;Edit Draft
                 </a>
               </li>
               <li ng-show="draft.in_progress">
-                <a href="#" ng-click="navCtrl.showResetDraftModal()">
+                <a href="#" ng-click="navCtrl.showResetDraftModal()" ng-click="draftNavCollapsed = !draftNavCollapsed">
                   <i class="fa fa-warning"></i>
                   &nbsp;Reset Draft
                 </a>
               </li>
               <li>
-                <a href="#" ng-click="navCtrl.showDeleteDraftModal()">
+                <a href="#" ng-click="navCtrl.showDeleteDraftModal()" ng-click="draftNavCollapsed = !draftNavCollapsed">
                   <i class="fa fa-trash"></i>
                   &nbsp;Delete Draft
                 </a>

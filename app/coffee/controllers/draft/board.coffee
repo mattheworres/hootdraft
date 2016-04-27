@@ -15,8 +15,6 @@ class BoardController extends BaseController
     @$scope.timerRunning = false
     @calculatedBoardWidth = "100%"
 
-    @hideFooter()
-
     @deregister = @$scope.$on @subscriptionKeys.loadDraftDependentData, (event, args) =>
       if args.draft? and args.draft.setting_up == true
         @$scope.pageError = true

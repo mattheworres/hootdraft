@@ -46,6 +46,7 @@ class AddPickController extends BaseController
       @$scope.next_5_picks = data.next_5_picks
       @$scope.last_5_picks = data.last_5_picks
       @$scope.is_last_pick = data.next_5_picks.length == 1
+      @$scope.$broadcast @subscriptionKeys.focusPlayerAutocomplete
 
     errorHandler = (response) =>
       @$loading.finish('load_current')

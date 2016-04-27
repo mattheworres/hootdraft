@@ -48,4 +48,7 @@ class Pick {
 
   /** @var int Pick the player was selected at */
   public $player_pick;
+
+  /** @var int Depth Chart Position Id FK to the depth chart position table */
+  public $depth_chart_position_id;
 }

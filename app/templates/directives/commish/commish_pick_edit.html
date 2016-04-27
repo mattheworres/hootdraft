@@ -10,9 +10,10 @@
           typeahead-loading="playerSearchLoading"
           typeahead-on-select="commishPickEditCtrl.selectPlayer($item, $model, $label)"
           typeahead-editable="false"
-          typeahead-wait-ms="250"
+          typeahead-wait-ms="500"
           typeahead-focus-on-select="false"
-          typeahead-template-url="autocompletePickTemplate.html" />
+          typeahead-template-url="autocompletePickTemplate.html"
+          focus-on="{{commishPickEditCtrl.subscriptionKeys.focusPlayerAutocomplete}}" />
       </div>
       <div class="hidden-xs col-sm-1 text-center text-info">
         <i class="fa fa-info-circle" uib-tooltip="Search for players by first or last name - we can suggest a few based on a couple letters!" tooltip-trigger="mouseenter"  tooltip-append-to-body="true" ng-hide="playerSearchLoading"></i>

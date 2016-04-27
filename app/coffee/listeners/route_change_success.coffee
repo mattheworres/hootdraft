@@ -15,3 +15,6 @@ angular.module("app").run ($rootScope, $sessionStorage, $routeParams, $location,
 
       if $sessionStorage.previousRoutes[$sessionStorage.previousRoutes.length - 1] != $location.$$path
         $sessionStorage.previousRoutes.push $location.$$path
+
+    #In the event we're on an XS screen size, tell the menus to auto collapse (see nav.coffee)
+    $rootScope.$broadcast subscriptionKeys.collapseMenus

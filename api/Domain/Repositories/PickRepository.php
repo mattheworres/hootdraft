@@ -314,6 +314,7 @@ class PickRepository {
     }
 
     while ($pick = $stmt->fetch()) {
+      $pick->player_pick = (int)$pick->player_pick;
       $pick->selected = strlen($pick->pick_time) > 0 && $pick->pick_duration > 0;
       $pick->on_the_clock = $draft != null && $pick->player_pick == $draft->draft_current_pick;
 
