@@ -188,7 +188,7 @@ class DraftController
     $display_order = 0;
 
     foreach($depthChartPositionJson as $depthChartPositionRequest) {
-      $depthChartPosition = new \PhpDraft\Domain\Entities\depthChartPosition();
+      $depthChartPosition = new \PhpDraft\Domain\Entities\DepthChartPosition();
       $depthChartPosition->draft_id = $draftId;
       $depthChartPosition->position = $depthChartPositionRequest['position'];
       $depthChartPosition->slots = (int)$depthChartPositionRequest['slots'];

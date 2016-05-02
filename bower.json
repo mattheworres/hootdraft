@@ -26,7 +26,8 @@
     "ng-file-upload": "12.0.4",
     "angular-loading": "e30ad76",
     "animate.less": "*",
-    "angular-drag-and-drop-lists": "~1.4.0"
+    "angular-drag-and-drop-lists": "~1.4.0",
+    "drag-drop-webkit-mobile": "^1.1.1"
   },
   "resolutions": {
     "angular": "1.5.3"

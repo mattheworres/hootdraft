@@ -182,9 +182,6 @@ class DraftRepository {
 
     if($cachedDraft != null) {
       $draft = $cachedDraft;
-      $exporty = var_export($draft, true);
-      $this->app['monolog']->addDebug("SO, drafty. Hmm");
-      $this->app['monolog']->addDebug($exporty);
     } else {
       $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
         LEFT OUTER JOIN users u

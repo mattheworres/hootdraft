@@ -168,7 +168,6 @@ class DepthChartController extends BaseController
       else if positionPercentage > 100
         className += ' position-over-full'
 
-    #console.log "So we have #{className} for #{position.picks.length} out of #{position.slots} slots (#{position.position})"
     return className
 
   #Rather than relying on the $index value from ng-repeat, we need to manually find the array index
