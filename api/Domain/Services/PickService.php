@@ -46,6 +46,7 @@ class PickService {
 
       if($include_data) {
         $response->teams = $this->app['phpdraft.DraftDataRepository']->GetTeams($draft->draft_sport);
+        $response->historical_teams = $this->app['phpdraft.DraftDataRepository']->GetHistoricalTeams($draft->draft_sport);
         $response->positions = $this->app['phpdraft.DraftDataRepository']->GetPositions($draft->draft_sport);
         $response->last_5_picks = $this->app['phpdraft.PickRepository']->LoadLastPicks($draft->draft_id, 5);
         $response->next_5_picks = $this->app['phpdraft.PickRepository']->LoadNextPicks($draft->draft_id, $draft->draft_current_pick, 5);

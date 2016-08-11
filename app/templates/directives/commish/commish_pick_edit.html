@@ -99,7 +99,7 @@
   <a tabindex="-1" class="pick-list-display">
     <div class="pick pick{{match.model.position}} col-xs-12">
       <div class="player-data col-xs-12">
-        <div class="player-name-sm" ng-bind-html="match .model.first_name + ' ' + match.model.last_name | uibTypeaheadHighlight:query"></div>
+        <div class="player-name-sm" ng-bind-html="match.model.first_name + ' ' + match.model.last_name | uibTypeaheadHighlight:query"></div>
         <div class="sports-data">{{$parent.$parent.$parent.draft.positions[match.model.position]}}, {{$parent.$parent.$parent.draft.teams[match.model.team]}}</div>
       </div>
     </div>

@@ -25,6 +25,7 @@ angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftSe
         $rootScope.styles = draft.styles
         $rootScope.statuses = draft.statuses
         $rootScope.teams = draft.teams
+        $rootScope.historical_teams = draft.historical_teams
         $rootScope.positions = draft.positions
         $rootScope.depthChartPositions = draft.depthChartPositions
       else
@@ -32,6 +33,7 @@ angular.module("app").run ($rootScope, $interval, api, subscriptionKeys, draftSe
         $rootScope.draft.styles = $rootScope.styles
         $rootScope.draft.statuses = $rootScope.statuses
         $rootScope.draft.teams = $rootScope.teams
+        $rootScope.draft.historical_teams = $rootScope.historical_teams
         $rootScope.draft.positions = $rootScope.positions
         $rootScope.draft.depthChartPositions = $rootScope.depthChartPositions
 

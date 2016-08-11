@@ -23,7 +23,7 @@ class CommishManagersController extends AngularController
   initialize: ->
     @editableManagers = []
     @showCountDown = false
-    @countDown = 3
+    @countDown = 5
 
     @deregister_commish_managers = @$rootScope.$on @subscriptionKeys.updateCommishManagers, (event, args) =>
       @_reloadEditableManagers(args.draft.draft_id, args.draft.commish_editable)
@@ -113,7 +113,7 @@ class CommishManagersController extends AngularController
 
   randomizeDraftOrder: =>
     title = "Randomize the draft order?"
-    message = "Want to use Javascript's built in random number generator to randomize your draft's selection order? Great! Make sure everyone's watching to see where they end up!"
+    message = "Want to automatically randomize your draft's selection order? Great! Make sure everyone's watching your screen to see where they end up!"
     iconClass = "fa-random"
     confirmButtonText = "Yes, Randomize this draft!"
 

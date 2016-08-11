@@ -121,8 +121,6 @@ class PickController {
       $pick = $app['phpdraft.PickRepository']->Load($pick_id);
 
       $pick->depth_chart_position_id = (int)$request->get('position_id');
-      //TODO: implement eligibility
-      //$pick->position_eligibility = $request->get('position_eligibility');
     } catch(\Exception $e) {
       $response = new PhpDraftResponse(false, array());
       $response->errors[] = "Unable to edit pick #$pick_id";

@@ -16,7 +16,6 @@ class AddManagersController extends BaseController
     )
 
   removeManager: (index) =>
-    #TODO: Does this actually remove the selected object from the array...?
     @editableManagers.splice(index, 1)
 
   addManagers: =>

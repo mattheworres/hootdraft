@@ -221,6 +221,7 @@ class DraftRepository {
       $draft->styles = $this->app['phpdraft.DraftDataRepository']->GetStyles();
       $draft->statuses = $this->app['phpdraft.DraftDataRepository']->GetStatuses();
       $draft->teams = $this->app['phpdraft.DraftDataRepository']->GetTeams($draft->draft_sport);
+      $draft->historical_teams = $this->app['phpdraft.DraftDataRepository']->GetHistoricalTeams($draft->draft_sport);
       $draft->positions = $this->app['phpdraft.DraftDataRepository']->GetPositions($draft->draft_sport);
       if($draft->using_depth_charts) {
         $draft->depthChartPositions = $this->app['phpdraft.DepthChartPositionRepository']->LoadAll($draft->draft_id);

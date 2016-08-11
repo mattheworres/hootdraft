@@ -187,7 +187,10 @@ class LoginUserValidator {
     }
 
     //Need to verify new email
-    if(!empty($emailAddress) && $this->app['phpdraft.StringsEqual']($emailAddress, $currentUser->email)) {
+    if(empty($emailAddress)) {
+      $errors[] = "Email address is missing.";
+      $valid = false;
+    } else if(!$this->app['phpdraft.StringsEqual']($emailAddress, $currentUser->email)) {
       $this->validateEmailAddress($emailAddress, $errors, $valid);
 
       $this->validateUniqueEmail($emailAddress, $errors, $valid);
@@ -233,7 +236,10 @@ class LoginUserValidator {
     }
 
     //Need to verify new email
-    if(!empty($user->email) && $this->app['phpdraft.StringsEqual']($user->email, $loadedUser->email)) {
+    if(empty($user->email)) {
+      $errors[] = "Email address is missing.";
+      $valid = false;
+    } else if(!$this->app['phpdraft.StringsEqual']($user->email, $loadedUser->email)) {
       $this->validateEmailAddress($user->email, $errors, $valid);
 
       $this->validateUniqueEmail($user->email, $errors, $valid);
