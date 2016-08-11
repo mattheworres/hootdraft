@@ -178,7 +178,7 @@ class DraftDataRepository {
         "IND" => "Indianapolis Colts",
         "JAC" => "Jacksonville Jaguars",
         "K.C" => "Kansas City Chiefs",
-        "LAM" => "Los Angeles Rams",
+        "LAR" => "Los Angeles Rams",
         "MIA" => "Miami Dolphins",
         "MIN" => "Minnesota Vikings",
         "NWE" => "New England Patriots",

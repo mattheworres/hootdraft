@@ -55,28 +55,9 @@ You can also enter the project's [Gitter](https://gitter.im/mattheworres/phpdraf
 
 You can also hit me up on [Twitter](https://twitter.com/mattheworres) if you're having trouble. No promises on the return time.
 
-## Notes
-
- 1. Version 2 adds full-blown user management and secure access, such that PHP Draft is no longer a *PHP site*, it's now a first class **web application** that can run in a **Software as a Service (SaaS)** model. What does that mean? You don't actually need to install PHP Draft yourself - you can use my site at [phpdraft.com](https://phpdraft.com) instead :)
-
-    - **I pay out of pocket for my own hosting**. If you use it, please consider making a Paypal donation to **[matthew.orres@gmail.com](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=U6AZ6QENWDWPE)** to help cover the costs. Thanks!
-
- 1. This was a complete project rewrite with 110% feature parity from version 1.3.0 (I added a few nice features/smoothed other things out from 1.3). The only missing "feature" was the MP3 sounds autoplaying when pick timers ran out. I plan on bringing it back soon, but felt it was both A) a superfluous feature at best and B) would risk jeopardizing the 2.0 codebase hardening in time for real life MLB 2016 usage.
-
-    - If you loved this feature, let me know! (Twitter: [@mattheworres](https://twitter.com/mattheworres) ) I may prioritize it a little higher if I hear from enough folks and add it back in a future version.
-
- 1. This also marks the first time that PHP Draft has been available on Git/Github as opposed to Mercurial/Sourceforge/Bitbucket.
-
-    - Can I just say how awesome Atlassian Bitbucket is?! I started using Bitbucket way back in 2010, and it's come leaps and bounds to where I *actually* prefer Bitbucket to Github, all other things being equal. Their pricing is particularly advantageous when compared to Github's, especially for private teams. So, if you're considering the two, I *would* vote for Atlassian's Bitbucket. But... It kills me to switch from Bitbucket to Github, but the main reason for the switch was...
-    - **Sourceforge**. When I started the project in 2010, Sourceforge was an *OK* place for open source projects to live. It's a different story nowadays, unfortunately. SF has turned into a shell of its former self, and never seemed to find a sustainable revenue model. From its issues with "junkware" to the severely declined OS traffic, it makes it less and less advantageous for PHP Draft to live there.
-    - **Github** is synonymous with open source, and I hope to switch to both it as well as **Git** over Mercurial will help drive more code contribution. The platform has a much better setup for an open source project (it handles source, exterior collaboration, issues, releases), and a huge bonus is that there are a ton of external services that are free for open source projects (FeatHub and Gitter are two that come to mind, but there are more).
-    - For now, issue tracking will remain in **Atlassian's JIRA** - and I am still incredibly grateful for their lifetime license of the JIRA software for this project. If I end up getting more contributors in the future, I can envision needing to leverage the power that JIRA provides. Stay tuned.
-
 ## Contributing & custom development
 
 See [DEVELOPER.md](DEVELOPER.md) if you are interested in developing or making custom changes to your PHP Draft.
-
-PHP Draft is now a PHP API with an Angular (Javascript) front end, and has a complicated build toolchain that includes NPM, Bower, Gulp, and Coffeescript (to name a few) - take a gander at that readme for better instructions on how the project is now built.
 
 If you come up with something that others may find worthwhile - please fork this repository and submit a pull request. I provide this code (and the hundreds of hours of my personal time I've poured into the project) free of charge under an open source license without any expectation of payment or even gratitude. I do it to help a few folks out, and to return the favor I ask that you help pass it on :)
 
