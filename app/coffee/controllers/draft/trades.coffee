@@ -31,6 +31,9 @@ class TradesController extends BaseController
       @$scope.tradesLoading = false
       @$scope.trades = data
 
+      for trade in @$scope.trades
+        trade.trade_time = new Date(trade.trade_time)
+
     errorHandler = (data) =>
       @$scope.tradesLoading = false
       @$scope.tradesError = true

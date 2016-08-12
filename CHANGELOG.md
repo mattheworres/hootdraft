@@ -10,6 +10,8 @@
 
 **FIXED** Issues #17 (user management was broken).
 
+**FIXED** Trade bugs were squashed, and I removed unnecessary validation that each manager needed to get an asset in return (balanced trades are a thing now, Jason from [@drinkfive](http://www.twitter.com/drinkfive)) !)
+
 **UPDATED** 2016 NFL player CSV data for the soon-to-be-here season.
 
 ## v2.0.3

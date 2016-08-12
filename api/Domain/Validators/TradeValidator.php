@@ -71,11 +71,6 @@ class TradeValidator {
       $valid = false;
     }
 
-    if($manager1_asset_count == 0 || $manager2_asset_count == 0) {
-      $errors[] = "Both managers must be receiving at least 1 asset in this trade.";
-      $valid = false;
-    }
-
     return new PhpDraftResponse($valid, $errors);
   }
 }
