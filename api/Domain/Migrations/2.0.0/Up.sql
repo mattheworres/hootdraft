@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS `user_login`;
 
 CREATE TABLE `users` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-    `enabled` BIT(1) NOT NULL DEFAULT b'0',
+    `enabled` TINYINT(1) NOT NULL DEFAULT b'0',
     `email` VARCHAR(255) NOT NULL,
     `password` VARCHAR(255) NOT NULL,
     `salt` VARCHAR(16) NOT NULL,

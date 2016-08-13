@@ -8,9 +8,9 @@
 
 **ADDED**: The concept of historical teams. Since the Rams moved from St. Louis to Los Angeles this year, I thought this was a great time to add in some "historical compatability" as I also fixed #16. So now, drafts from previous years will still show the "St. Louis Rams", but drafts from 2016 on will only have "Los Angeles Rams" as an option.
 
-**FIXED** Issues #17 (user management was broken).
+**FIXED** Issues #17 (user management was broken). ALSO, for anyone running an instance of the app that upgraded from 1.x to 2.0, you need to change the column type of the "enabled" column on the "users" table from `BIT` to `TINYINT`. New installs won't have this issue as `initialize.sql` correctly set the column to `TINYINT`.
 
-**FIXED** Trade bugs were squashed, and I removed unnecessary validation that each manager needed to get an asset in return (balanced trades are a thing now, Jason from [@drinkfive](http://www.twitter.com/drinkfive)) !)
+**FIXED** Trade bugs were squashed, and I removed unnecessary validation that each manager needed to get an asset in return (unbalanced trades are a thing now, Jason from [@drinkfive](http://www.twitter.com/drinkfive)) !)
 
 **UPDATED** 2016 NFL player CSV data for the soon-to-be-here season.
 
