@@ -39,7 +39,8 @@ class @BaseController extends AngularController
     @$location.path '/home'
 
   hideFooter: ->
-    return @$location.$$path.indexOf('/board') != -1
+    return @$location.$$path.indexOf('/board') != -1 or
+      @$location.$$path.indexOf('/depth_chart') != -1
 
   sendToPreviousPath: ->
     storedPreviousRoute = @$sessionStorage.previousRoutes.splice(-2)[0]

@@ -17,7 +17,7 @@ class UserController
   }
 
   public function Update(Application $app, Request $request) {
-    $user_id = $request->get('user_id');
+    $user_id = $request->get('id');
     $user = $app['phpdraft.LoginUserRepository']->LoadById($user_id);
     $user->email = $request->get('email');
     $user->name = $request->get('name');

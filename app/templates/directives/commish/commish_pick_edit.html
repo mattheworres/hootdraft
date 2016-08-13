@@ -10,9 +10,10 @@
           typeahead-loading="playerSearchLoading"
           typeahead-on-select="commishPickEditCtrl.selectPlayer($item, $model, $label)"
           typeahead-editable="false"
-          typeahead-wait-ms="250"
+          typeahead-wait-ms="500"
           typeahead-focus-on-select="false"
-          typeahead-template-url="autocompletePickTemplate.html" />
+          typeahead-template-url="autocompletePickTemplate.html"
+          focus-on="{{commishPickEditCtrl.subscriptionKeys.focusPlayerAutocomplete}}" />
       </div>
       <div class="hidden-xs col-sm-1 text-center text-info">
         <i class="fa fa-info-circle" uib-tooltip="Search for players by first or last name - we can suggest a few based on a couple letters!" tooltip-trigger="mouseenter"  tooltip-append-to-body="true" ng-hide="playerSearchLoading"></i>
@@ -98,7 +99,7 @@
   <a tabindex="-1" class="pick-list-display">
     <div class="pick pick{{match.model.position}} col-xs-12">
       <div class="player-data col-xs-12">
-        <div class="player-name-sm" ng-bind-html="match .model.first_name + ' ' + match.model.last_name | uibTypeaheadHighlight:query"></div>
+        <div class="player-name-sm" ng-bind-html="match.model.first_name + ' ' + match.model.last_name | uibTypeaheadHighlight:query"></div>
         <div class="sports-data">{{$parent.$parent.$parent.draft.positions[match.model.position]}}, {{$parent.$parent.$parent.draft.teams[match.model.team]}}</div>
       </div>
     </div>

@@ -47,3 +47,7 @@ $app['phpdraft.PickService'] = function () use ($app) {
 $app['phpdraft.UtilityService'] = function () use ($app) {
   return new \PhpDraft\Domain\Services\UtilityService($app);
 };
+
+$app['phpdraft.DepthChartPositionService'] = function () use ($app) {
+  return new \PhpDraft\Domain\Services\DepthChartPositionService($app);
+};

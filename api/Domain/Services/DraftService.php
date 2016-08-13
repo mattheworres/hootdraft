@@ -5,6 +5,7 @@ use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use PhpDraft\Domain\Entities\Draft;
 use PhpDraft\Domain\Models\PhpDraftResponse;
+use PhpDraft\Domain\Models\DepthChartPositionCreateModel;
 
 class DraftService {
   private $app;
@@ -21,11 +22,15 @@ class DraftService {
     return (int)$draft->draft_current_pick;
   }
 
-  public function CreateNewDraft(Draft $draft) {
+  public function CreateNewDraft(Draft $draft, DepthChartPositionCreateModel $depthChartModel = null) {
     $response = new PhpDraftResponse();
 
     try {
       $draft = $this->app['phpdraft.DraftRepository']->Create($draft);
+
+      if($draft->using_depth_charts) {
+        $depth_charts = $this->app['phpdraft.DepthChartPositionRepository']->Save($depthChartModel, $draft->draft_id);
+      }
 
       $response->success = true;
       $response->draft = $draft;
@@ -37,11 +42,16 @@ class DraftService {
     return $response;
   }
 
-  public function UpdateDraft(Draft $draft) {
+  public function UpdateDraft(Draft $draft, DepthChartPositionCreateModel $depthChartModel = null) {
     $response = new PhpDraftResponse();
 
     try {
       $draft = $this->app['phpdraft.DraftRepository']->Update($draft);
+
+      if($draft->using_depth_charts) {
+        $this->app['phpdraft.DepthChartPositionRepository']->DeleteAllDepthChartPositions($draft->draft_id);
+        $depth_charts = $this->app['phpdraft.DepthChartPositionRepository']->Save($depthChartModel, $draft->draft_id);
+      }
 
       $response->success = true;
       $response->draft = $draft;
@@ -89,6 +99,8 @@ class DraftService {
     try {
       //Delete all trades
       $this->app['phpdraft.TradeRepository']->DeleteAllTrades($draft->draft_id);
+      //Delete all depth chart positions
+      $this->app['phpdraft.DepthChartPositionRepository']->DeleteAllDepthChartPositions($draft->draft_id);
       //Delete all picks
       $this->app['phpdraft.PickRepository']->DeleteAllPicks($draft->draft_id);
       //Delete all managers

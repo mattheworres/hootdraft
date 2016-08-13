@@ -1,44 +1,100 @@
 class DraftCreateController extends BaseController
   @register 'DraftCreateController'
   @inject '$scope',
-  '$rootScope',
-  '$routeParams',
-  'subscriptionKeys',
+  '$loading',
   'workingModalService',
   'api',
-  'messageService'
+  'messageService',
+  'depthChartPositionService'
 
   initialize: ->
+    @draft = 
+      using_depth_charts: false
+    @draft.depthChartPositions = []
+    @depthChartPositionIndex = -1
     @draftLoading = true
     @draftError = false
 
     draftInitializeSuccess = (data) =>
-      @draft = data
+      angular.merge(@draft, data)
       @draftLoading = false
 
-    draftInitializeErrorHandler = () =>
+    draftInitializeErrorHandler = =>
       @draftLoading = false
       @draftError = true
       @messageService.showError "Unable to load draft defaults"
 
     @api.Draft.getCreate({}, draftInitializeSuccess, draftInitializeErrorHandler)
 
-  createClicked: =>
+    @$scope.$watch =>
+      @draft.depthChartPositions
+    , =>
+      @hasNonstandardPositions = @depthChartPositionService.calculateRoundsFromPositions(@draft)
+      @depthChartsUnique = @depthChartPositionService.getDepthChartPositionValidity(@draft)
+    , true
+
+    @$scope.$watch =>
+      @draft.using_depth_charts
+    , =>
+      @hasNonstandardPositions = @depthChartPositionService.calculateRoundsFromPositions(@draft)
+      @depthChartsUnique = @depthChartPositionService.getDepthChartPositionValidity(@draft)
+
+    @$scope.$watch 'draftCreateCtrl.draft.draft_sport', =>
+      @sportChanged()
+
+    @$scope.$watch 'draftCreateCtrl.depthChartPositionIndex', =>
+      @deleteDepthChartPosition()
+
+  createClicked: ->
     if not @createFormIsInvalid()
       @_create()
 
-  createFormIsInvalid: =>
-    return @registerInProgress or not @form.$valid
+  sportChanged: ->
+    positionsSuccess = (data) =>
+      positionResetCallback = =>
+        @$loading.finish('load_data')
 
-  _create: =>
+      @depthChartPositionService.createPositionsBySport(@draft, data.positions, positionResetCallback)
+
+    positionsError = =>
+      @$loading.finish('load_data')
+      @messageService.showError "Unable to load positions for the given draft sport"
+
+    if @draft?.draft_sport?.length > 0
+      @$loading.start('load_data')
+      @api.DepthChartPosition.getPositions {draft_sport: @draft.draft_sport}, positionsSuccess, positionsError
+
+  createFormIsInvalid: ->
+    if @createInProgress or not @form.$valid
+      return true
+    
+    if @draft.using_depth_charts
+      return not @depthChartsUnique
+    else
+      return false
+
+  addDepthChartPosition: ->
+    @depthChartPositionService.addDepthChartPosition(@draft)
+
+  deleteDepthChartPosition: ->
+    if @createInProgress or @depthChartPositionIndex is -1
+      return
+
+    @depthChartPositionService.deleteDepthChartPosition(@draft, @depthChartPositionIndex)
+    @hasNonstandardPositions = @depthChartPositionService.calculateRoundsFromPositions(@draft)
+    @depthChartsUnique = @depthChartPositionService.getDepthChartPositionValidity(@draft)
+
+  _create: ->
     @workingModalService.openModal()
 
     createModel =
       name: @form.name.$viewValue
-      sport: @sport
-      style: @style
+      sport: @draft.draft_sport
+      style: @draft.draft_style
       rounds: @form.rounds.$viewValue
       password: @form.password.$viewValue
+      using_depth_charts: @draft.using_depth_charts
+      depthChartPositions: @draft.depthChartPositions
 
     @createInProgress = true
 
@@ -58,13 +114,10 @@ class DraftCreateController extends BaseController
       @workingModalService.closeModal()
 
       if response?.status is 400
-        registerError = response.data?.errors?.join('\n')
+        createError = response.data?.errors?.join('\n')
       else
-        registerError = "Whoops! We hit a snag - looks like it's on our end (#{response.data.status})"
+        createError = "Whoops! We hit a snag - looks like it's on our end (#{response.data.status})"
 
-      @messageService.showError "#{registerError}", 'Unable to create draft'
+      @messageService.showError "#{createError}", 'Unable to create draft'
 
     @api.Draft.save(createModel, createSuccessHandler, createFailureHandler)
-
-
-

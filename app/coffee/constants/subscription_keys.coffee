@@ -10,3 +10,7 @@ class SubscriptionKeys extends AngularService
   reloadDraft: 'reloadDraft'
   loadDraftDependentData: 'loadDraftDependentData'
   reloadCommishManagers: 'reloadCommishManagers'
+
+  collapseMenus: 'collapseNavMenus'
+
+  focusPlayerAutocomplete: 'focusPlayerAutocomplete'

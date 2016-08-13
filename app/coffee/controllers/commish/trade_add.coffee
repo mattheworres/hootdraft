@@ -75,7 +75,7 @@ class AddTradeController extends BaseController
       @_saveTrade()
 
   tradeFormIsInvalid: ->
-    return not @$scope.manager1_id? or not @$scope.manager2_id? or @$scope.firstManagerAssets.length == 0 or @$scope.secondManagerAssets.length == 0 or @$scope.firstManagerSelectedAssets.length == 0 or @$scope.secondManagerSelectedAssets.length == 0
+    return not @$scope.manager1_id? or not @$scope.manager2_id? or (@$scope.firstManagerSelectedAssets.length == 0 and @$scope.secondManagerSelectedAssets.length == 0)
 
   toggleAsset: (asset) ->
     asset.chosenAsset = not asset.chosenAsset

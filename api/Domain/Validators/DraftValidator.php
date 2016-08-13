@@ -187,6 +187,41 @@ class DraftValidator {
     return new PhpDraftResponse($valid, $errors);
   }
 
+  public function IsDraftInProgressOrCompletedInLessThanTen(Draft $draft) {
+    $valid = true;
+    $errors = array();
+    $draft_statuses = $this->app['phpdraft.DraftDataRepository']->GetStatuses();
+    $current_status_text = strtolower($draft_statuses[$draft->draft_status]);
+    $is_in_progress = $this->app['phpdraft.DraftService']->DraftInProgress($draft);
+    $is_complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);
+    $isLessThanTenMinutes = false;
+
+    if($is_complete) {
+      $utc_timezone = new \DateTimeZone("UTC");
+      $now_utc = new \DateTime(null, $utc_timezone);
+      $end_time = new \DateTime($draft->draft_end_time, $utc_timezone);
+      $now_seconds = $now_utc->getTimestamp();
+      $end_seconds = $end_time->getTimestamp();
+      $seconds_elapsed = $end_seconds - $now_seconds;
+
+      if($seconds_elapsed < 600) {
+        $isLessThanTenMinutes = true;
+      }
+    }
+
+    if(!$is_complete && !$is_in_progress) {
+      $valid = false;
+      $errors[] = "Unable to work on draft #$draft->draft_id: draft is $current_status_text";
+    }
+
+    if($is_complete && !$isLessThanTenMinutes) {
+      $valid = false;
+      $errors[] = "Unable to work on draft #$draft->draft_id: draft is complete and beyond the ten minute grace period.";
+    }
+
+    return new PhpDraftResponse($valid, $errors);
+  }
+
   public function IsDraftComplete(Draft $draft) {
     $valid = true;
     $errors = array();

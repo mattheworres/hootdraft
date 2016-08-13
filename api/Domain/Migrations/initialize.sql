@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS `draft` (
   `draft_current_round` int(5) unsigned NOT NULL default '1',
   `draft_current_pick` int(5) unsigned NOT NULL default '1',
   `nfl_extended` TINYINT(1) NOT NULL DEFAULT '0',
+  `using_depth_charts` TINYINT(1) NOT NULL DEFAULT '0',
   PRIMARY KEY  (`draft_id`),
   INDEX `commish_id` (`commish_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
@@ -70,10 +71,13 @@ CREATE TABLE IF NOT EXISTS `players` (
   `draft_id` int(11) unsigned NOT NULL default '0',
   `player_round` int(11) NOT NULL default '0',
   `player_pick` int(11) NOT NULL default '0',
+  `depth_chart_position_id` int(11) NULL,
+  `position_eligibility` VARCHAR(24) NULL,
   PRIMARY KEY  (`player_id`),
   INDEX `manager_idx` (`manager_id`),
   INDEX `draft_idx` (`draft_id`),
-  INDEX `counter_idx` (`player_counter`)
+  INDEX `counter_idx` (`player_counter`),
+  INDEX `depth_chart_idx` (`depth_chart_position_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -192,3 +196,15 @@ CREATE TABLE IF NOT EXISTS `draft_stats` (
   PRIMARY KEY  (`draft_stat_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
+--
+-- Table structure for storing depth chart positions for drafts
+--
+CREATE TABLE IF NOT EXISTS `depth_chart_positions` (
+    `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `draft_id` int(11) NOT NULL,
+    `position` varchar(6) NOT NULL,
+    `slots` int(5) NOT NULL,
+    `display_order` tinyint(3) unsigned NOT NULL default '0',
+    PRIMARY KEY  (`id`),
+    INDEX `draft_idx` (`draft_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;

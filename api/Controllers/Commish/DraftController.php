@@ -15,6 +15,7 @@ class DraftController
 
     $draft = new Draft();
 
+    $draft->draft_style = 'serpentine';
     $draft->commish_id = $currentUser->id;
     $draft->commish_name = $currentUser->name;
 
@@ -37,6 +38,7 @@ class DraftController
     $draft->draft_style = $request->get('style');
     $draft->draft_rounds = (int)$request->get('rounds');
     $draft->draft_password = $request->get('password');
+    $draft->using_depth_charts = (bool)$request->get('using_depth_charts');
 
     $validity = $app['phpdraft.DraftValidator']->IsDraftValidForCreateAndUpdate($draft);
 
@@ -44,7 +46,19 @@ class DraftController
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
-    $response = $app['phpdraft.DraftService']->CreateNewDraft($draft);
+    $createPositionsModel = null;
+
+    if($draft->using_depth_charts == 1) {
+      $createPositionsModel = $this->_BuildDepthChartPositionModel($request);
+
+      $positionValidity = $app['phpdraft.DepthChartPositionValidator']->AreDepthChartPositionsValid($createPositionsModel);
+
+      if(!$positionValidity->success) {
+        return $app->json($positionValidity, Response::HTTP_BAD_REQUEST);
+      }
+    }
+
+    $response = $app['phpdraft.DraftService']->CreateNewDraft($draft, $createPositionsModel);
 
     return $app->json($response, $response->responseType(Response::HTTP_CREATED));
   }
@@ -56,6 +70,9 @@ class DraftController
     $draft->sports = $app['phpdraft.DraftDataRepository']->GetSports();
     $draft->styles = $app['phpdraft.DraftDataRepository']->GetStyles();
     $draft->statuses = $app['phpdraft.DraftDataRepository']->GetStatuses();
+    $draft->depthChartPositions = $draft->using_depth_charts == 1
+      ? $app['phpdraft.DepthChartPositionRepository']->LoadAll($draftId)
+      : array();
 
     return $app->json($draft, Response::HTTP_OK);
   }
@@ -69,7 +86,7 @@ class DraftController
     $draft->draft_style = $request->get('style');
     $draft->draft_rounds = (int)$request->get('rounds');
     $draft->draft_password = $request->get('password');
-    $draft->nfl_extended = (bool)$request->get('nfl_extended');
+    $draft->using_depth_charts = (bool)$request->get('using_depth_charts');
 
     $validity = $app['phpdraft.DraftValidator']->IsDraftValidForCreateAndUpdate($draft);
 
@@ -77,7 +94,19 @@ class DraftController
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
-    $response = $app['phpdraft.DraftService']->UpdateDraft($draft);
+    $createPositionsModel = null;
+
+    if($draft->using_depth_charts == 1) {
+      $createPositionsModel = $this->_BuildDepthChartPositionModel($request);
+
+      $positionValidity = $app['phpdraft.DepthChartPositionValidator']->AreDepthChartPositionsValid($createPositionsModel);
+
+      if(!$positionValidity->success) {
+        return $app->json($positionValidity, Response::HTTP_BAD_REQUEST);
+      }
+    }
+
+    $response = $app['phpdraft.DraftService']->UpdateDraft($draft, $createPositionsModel);
 
     return $app->json($response, $response->responseType());
   }
@@ -149,5 +178,25 @@ class DraftController
     $response = $app['phpdraft.RoundTimeService']->SaveRoundTimes($draft, $createModel);
 
     return $app->json($response, $response->responseType(Response::HTTP_CREATED));
+  }
+
+  private function _BuildDepthChartPositionModel(Request $request, $draftId = null) {
+    $createPositionsModel = new \PhpDraft\Domain\Models\DepthChartPositionCreateModel();
+    $createPositionsModel->depthChartEnabled = true;
+
+    $depthChartPositionJson = $request->get('depthChartPositions');
+    $display_order = 0;
+
+    foreach($depthChartPositionJson as $depthChartPositionRequest) {
+      $depthChartPosition = new \PhpDraft\Domain\Entities\DepthChartPosition();
+      $depthChartPosition->draft_id = $draftId;
+      $depthChartPosition->position = $depthChartPositionRequest['position'];
+      $depthChartPosition->slots = (int)$depthChartPositionRequest['slots'];
+      $depthChartPosition->display_order = $display_order++;
+
+      $createPositionsModel->positions[] = $depthChartPosition;
+    }
+
+    return $createPositionsModel;
   }
 }

@@ -59,6 +59,11 @@ angular.module('app').config ($routeProvider, $locationProvider) ->
     controllerAs: 'boardCtrl'
     templateUrl: 'app/templates/draft/board.html'
 
+  $routeProvider.when '/draft/:draft_id/depth_chart',
+    controller: 'DepthChartController'
+    controllerAs: 'depthChartCtrl'
+    templateUrl: 'app/templates/draft/depth_chart.html'
+
   $routeProvider.when '/draft/:draft_id/picks/manager',
     controller: 'ByManagerController'
     controllerAs: 'managerCtrl'

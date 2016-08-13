@@ -23,4 +23,5 @@ angular.module("app", [
   "mgcrea.ngStrap.affix"
   "ngFileUpload"
   "darthwade.loading"
+  "dndLists"
 ])

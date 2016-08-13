@@ -1,6 +1,6 @@
 class CommishPickEditController extends AngularController
   @register 'CommishPickEditController'
-  @$inject: ["$scope", "$routeParams", "messageService", "pickService", "api", "limitToFilter"]
+  @$inject: ["$scope", "$routeParams", "messageService", "pickService", "api", "limitToFilter", "subscriptionKeys"]
   @inject: (args...) ->
       args.push '$scope'
       args.push '$routeParams'
@@ -8,6 +8,7 @@ class CommishPickEditController extends AngularController
       args.push 'pickService'
       args.push 'api'
       args.push 'limitToFilter'
+      args.push 'subscriptionKeys'
       super args...
 
   constructor: ->

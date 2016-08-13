@@ -1,16 +1,21 @@
 class DraftEditController extends BaseController
   @register 'DraftEditController'
   @inject '$scope',
-  '$rootScope',
-  '$routeParams',
+  '$loading',
   'subscriptionKeys',
   'workingModalService',
   'api',
-  'messageService'
+  'messageService',
+  'depthChartPositionService'
 
   initialize: ->
+    @draftEdit = 
+      using_depth_charts: false
+      depthChartPositions: []
+    @depthChartPositionIndex = -1
     @draftLoading = true
     @draftLoaded = false
+    @sportChangeListenerRegistered = false
     @draftError = false
 
     @deregister = @$scope.$on @subscriptionKeys.loadDraftDependentData, (event, args) =>
@@ -28,12 +33,37 @@ class DraftEditController extends BaseController
     @$scope.$on @subscriptionKeys.scopeDestroy, (event, args) =>
       @deregister()
 
-  _loadCommishDraft: (draft_id) =>
+  # The change of the initial data causes issues, so we only listen for these once the draft has been loaded.
+  _bindDraftSpecificListeners: ->
+    @$scope.$watch =>
+      @draftEdit.depthChartPositions
+    , =>
+      @hasNonstandardPositions = @depthChartPositionService.calculateRoundsFromPositions(@draftEdit)
+      @depthChartsUnique = @depthChartPositionService.getDepthChartPositionValidity(@draftEdit)
+    , true
+
+    @$scope.$watch =>
+      @draftEdit.using_depth_charts
+    , =>
+      @hasNonstandardPositions = @depthChartPositionService.calculateRoundsFromPositions(@draftEdit)
+      @depthChartsUnique = @depthChartPositionService.getDepthChartPositionValidity(@draftEdit)
+
+      if @draftEdit.using_depth_charts and @sportChangeListenerRegistered and @draftEdit.depthChartPositions.length == 0
+        @sportChanged()
+
+    @$scope.$watch 'draftEditCtrl.draftEdit.draft_sport', =>
+      @sportChanged()
+
+    @$scope.$watch 'draftEditCtrl.depthChartPositionIndex', =>
+      @deleteDepthChartPosition()
+
+  _loadCommishDraft: (draft_id) ->
     @draftLoaded = true
 
     draftInitializeSuccess = (data) =>
-      @draftEdit = data
+      angular.merge(@draftEdit, data)
       @draftLoading = false
+      @_bindDraftSpecificListeners()
 
     draftInitializeErrorHandler = () =>
       @draftLoading = false
@@ -42,12 +72,51 @@ class DraftEditController extends BaseController
 
     @api.Draft.commishGet({ draft_id: draft_id }, draftInitializeSuccess, draftInitializeErrorHandler)
 
+  sportChanged: ->
+    positionsSuccess = (data) =>
+      positionResetCallback = =>
+        @$loading.finish('load_data')
+
+      @depthChartPositionService.createPositionsBySport(@draftEdit, data.positions, positionResetCallback)
+
+    positionsError = =>
+      @$loading.finish('load_data')
+      @messageService.showError "Unable to load positions for the given draft sport"
+
+    if @draftEdit?.draft_sport?.length == 0
+      return
+
+    #Angular triggers a change when the listenered is registered regardless, so we must ignore the first one ourselves:
+    if not @sportChangeListenerRegistered
+      @sportChangeListenerRegistered = true
+      return
+
+    @$loading.start('load_data')
+    @api.DepthChartPosition.getPositions {draft_sport: @draftEdit.draft_sport}, positionsSuccess, positionsError
+
   editClicked: =>
     if not @editFormIsInvalid()
       @_edit()
 
+  addDepthChartPosition: ->
+    @depthChartPositionService.addDepthChartPosition(@draftEdit)
+
+  deleteDepthChartPosition: ->
+    if @editInProgress or @depthChartPositionIndex is -1
+      return
+
+    @depthChartPositionService.deleteDepthChartPosition(@draftEdit, @depthChartPositionIndex)
+    @hasNonstandardPositions = @depthChartPositionService.calculateRoundsFromPositions(@draftEdit)
+    @depthChartsUnique = @depthChartPositionService.getDepthChartPositionValidity(@draftEdit)
+
   editFormIsInvalid: =>
-    return @editInProgress or not @form.$valid
+    if @editInProgress or not @form.$valid
+      return true
+    
+    if @draftEdit.using_depth_charts
+      return not @depthChartsUnique
+    else
+      return false
 
   _edit: =>
     @workingModalService.openModal()
@@ -59,6 +128,8 @@ class DraftEditController extends BaseController
       style: @draftEdit.draft_style
       rounds: @draftEdit.draft_rounds
       password: @draftEdit.draft_password
+      using_depth_charts: @draftEdit.using_depth_charts
+      depthChartPositions: @draftEdit.depthChartPositions
 
     @editInProgress = true
 

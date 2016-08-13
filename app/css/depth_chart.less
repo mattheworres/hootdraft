@@ -1,0 +1,206 @@
+#manager_dropdown div.row div select.input-lg {
+  font-weight: bold;
+}
+
+#depth-chart-container {
+  width: 100%;
+  overflow-x: scroll;
+  padding-left: 10px;
+
+  #depth-chart {
+    width: 100%;
+    margin: 0 auto;
+    margin-top: 10px;
+    margin-bottom: 150px;
+
+    div.position {
+      display: block;
+      min-height: 106px;
+      min-width: 750px;
+      width: 100%;
+      margin-bottom: 20px;
+      position: relative;
+
+      &.shown_dropzones {
+        background-color: lighten(@gray-base, 85%);
+        #gradient > .horizontal(lighten(@gray-base, 85%), #FFF);
+
+        &.unassigned {
+          background-color: transparent;
+          #gradient > .horizontal(#FFF, #FFF);
+        }
+      }
+
+      div.dragover-display {
+        display: none;
+      }
+
+      &.dndDragover {
+        &.shown_dropzones {
+          background-color: lighten(@gray-base, 75%);
+          #gradient > .horizontal(lighten(@gray-base, 75%), #FFF);
+        }
+
+        div.position-display {
+          display: none;
+        }
+      }
+
+      li.dndPlaceholder {
+        display: none;
+      }
+
+
+      div.position-detail {
+        width: 200px;
+        height: 106px;
+        float: left;
+        position: relative;
+        margin-right: 10px;
+        text-align: center;
+        border: 2px solid #000;
+        border-radius: 6px;
+        box-shadow: 5px 5px 5px rgba(50, 50, 50, 0.35);
+
+        &.unassigned {
+          display: none;
+        }
+
+        span.position-name {
+          font-size: 35px;
+          color: #000;
+          display: inherit;
+        }
+
+        span.position-count {
+          font-size: 28px;
+        }
+
+        &.position-default {
+          background-color: lighten(@gray-base, 50%);
+        }
+
+        &.position-half {
+          background-color: @brand-warning;
+        }
+
+        &.position-three-quarter {
+          background-color: @brand-primary;
+        }
+
+        &.position-full {
+          background-color: lighten(@brand-success, 5%);
+        }
+
+        &.position-over-full {
+          background-color: @brand-danger;
+        }
+      }
+
+      div.position-display {
+        padding-top: 4px;
+        position: relative;
+
+        div.pick {
+          width: 175px;
+          height: 99px;
+          border: 2px solid #000;
+          border-radius: 6px;
+          padding-left: 5px;
+          padding-right: 5px;
+          float: left;
+          position: relative;
+          font-size: 12px;
+          z-index: 0;
+          box-sizing: border-box;
+          margin-right: 5px;
+          cursor: -moz-grab; cursor: -webkit-grab; cursor: grab;
+          box-shadow: 2px 2px 1px rgba(50, 50, 50, 0.25);
+
+          &.dragging-disabled {
+            cursor: default;
+            user-select: none;
+          }
+
+          span.pick-number {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 154px;
+            padding-right: 5px;
+            text-align: right;
+            font-size: 30px;
+            font-weight: bold;
+            color: #333;
+            filter: alpha(opacity=25);
+            opacity: 0.25;
+            line-height: 32px;
+            z-index: 1;
+          }
+
+          span.last-name {
+            display: block;
+            font-size: 21px;
+            font-weight: bold;
+            color: #000;
+            overflow: hidden;
+            white-space: nowrap;
+          }
+
+          span.first-name {
+            display: block;
+            font-size: 16px;
+            margin-top: 3px;
+            color: #000;
+            overflow: hidden;
+            white-space: nowrap;
+          }
+
+          span.manager {
+            font-weight: bold;
+            display: block;
+            color: #000;
+            margin-top: 2px;
+            font-size: 15px;
+            filter: alpha(opacity=60);
+            opacity: 0.60;
+            overflow: hidden;
+            white-space: nowrap;
+          }
+
+          span.position {
+            display: block;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 75%;
+            margin: 0 0 2px 5px;
+            text-align: left;
+            color: #000;
+            font-size: 15px;
+            filter: alpha(opacity=60);
+            opacity: 0.60;
+            overflow: hidden;
+            white-space: nowrap;
+          }
+
+          span.team {
+            display: block;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 25%;
+            margin: 0 3px 2px 0;
+            text-align: right;
+            color: #000;
+            font-size: 15px;
+            filter: alpha(opacity=60);
+            opacity: 0.60;
+            overflow: hidden;
+            white-space: nowrap;
+          }
+        }
+      }
+    }
+  }
+}

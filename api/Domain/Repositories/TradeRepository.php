@@ -36,7 +36,7 @@ class TradeRepository {
       }
 
       //To help display of UTC times on client, append UTC to the end of the string
-      $trade->trade_time .= $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($trade->trade_time);
+      $trade->trade_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($trade->trade_time);
 
       $trades[] = $trade;
     }
@@ -96,7 +96,6 @@ class TradeRepository {
     $delete_trade_stmt = $this->app['db']->prepare("DELETE FROM trades WHERE trade_id = :trade_id");
 
     foreach ($trades as $trade) {
-      /* @var $trade trade_object */
       $delete_assets_stmt->bindValue(":trade_id", $trade->trade_id);
 
       if (!$delete_assets_stmt->execute())
@@ -112,10 +111,11 @@ class TradeRepository {
   }
 
   public function SaveTrade(Trade $trade) {
-    $stmt = $this->app['db']->prepare("INSERT INTO trades (draft_id, manager1_id, manager2_id, trade_time) VALUES (?, ?, ?, UTC_TIMESTAMP())");
+    $stmt = $this->app['db']->prepare("INSERT INTO trades (draft_id, manager1_id, manager2_id, trade_round, trade_time) VALUES (?, ?, ?, ?, UTC_TIMESTAMP())");
     $stmt->bindParam(1, $trade->draft_id);
     $stmt->bindParam(2, $trade->manager1->manager_id);
     $stmt->bindParam(3, $trade->manager2->manager_id);
+    $stmt->bindParam(4, $trade->trade_round);
 
     if (!$stmt->execute()) {
       throw new Exception("Unable to save trade.");

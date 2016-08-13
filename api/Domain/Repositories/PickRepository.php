@@ -118,6 +118,21 @@ class PickRepository {
     return $pick;
   }
 
+  //Used for when a pick has been updated on the depth chart (public-ish)
+  public function UpdatePickDepthChart(Pick $pick) {
+    $update_stmt = $this->app['db']->prepare("UPDATE players SET depth_chart_position_id = ?, position_eligibility = ? WHERE player_id = ?");
+
+    $update_stmt->bindParam(1, $pick->depth_chart_position_id);
+    $update_stmt->bindParam(2, $pick->position_eligibility);
+    $update_stmt->bindParam(3, $pick->player_id);
+
+    if(!$update_stmt->execute()) {
+      throw new \Exception("Unable to update pick #$pick->player_id for depth chart.");
+    }
+
+    return $pick;
+  }
+
   public function GetCurrentPick(Draft $draft) {
     $stmt = $this->app['db']->prepare("SELECT p.*, m.manager_id, m.manager_name " .
             "FROM players p " .
@@ -299,6 +314,7 @@ class PickRepository {
     }
 
     while ($pick = $stmt->fetch()) {
+      $pick->player_pick = (int)$pick->player_pick;
       $pick->selected = strlen($pick->pick_time) > 0 && $pick->pick_duration > 0;
       $pick->on_the_clock = $draft != null && $pick->player_pick == $draft->draft_current_pick;
 

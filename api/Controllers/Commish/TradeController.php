@@ -88,7 +88,7 @@ class TradeController {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
-    $response = $app['phpdraft.TradeService']->EnterTrade($draft, $new_trade);
+    $response = $app['phpdraft.TradeService']->EnterTrade($draft, $newTrade);
 
     return $app->json($response, $response->responseType(Response::HTTP_CREATED));
   }

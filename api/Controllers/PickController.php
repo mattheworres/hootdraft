@@ -111,4 +111,31 @@ class PickController {
 
     return $app->json($pickSearchModel);
   }
+
+  public function UpdateDepthChart(Application $app, Request $request) {
+    $draft_id = (int)$request->get('draft_id');
+    $pick_id = (int)$request->get('pick_id');
+    $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
+
+    try {
+      $pick = $app['phpdraft.PickRepository']->Load($pick_id);
+
+      $pick->depth_chart_position_id = (int)$request->get('position_id');
+    } catch(\Exception $e) {
+      $response = new PhpDraftResponse(false, array());
+      $response->errors[] = "Unable to edit pick #$pick_id";
+
+      return $app->json($response, $response->responseType());
+    }
+
+    $validity = $app['phpdraft.PickValidator']->IsPickValidForDepthChartUpdate($draft, $pick);
+
+    if(!$validity->success) {
+      return $app->json($validity, $validity->responseType());
+    }
+
+    $response = $app['phpdraft.PickService']->UpdatePickDepthChart($draft, $pick);
+
+    return $app->json($response, $response->responseType());
+  }
 }

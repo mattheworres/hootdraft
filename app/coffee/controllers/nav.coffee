@@ -1,9 +1,22 @@
 class NavController extends BaseController
   @register 'NavController'
-  @inject '$rootScope', '$scope', '$routeParams', '$location', 'messageService', 'subscriptionKeys', 'confirmActionService', 'api', 'errorService'
+  @inject '$rootScope',
+    '$scope',
+    '$routeParams',
+    '$location',
+    'messageService',
+    'subscriptionKeys',
+    'confirmActionService',
+    'api',
+    'errorService'
 
   initialize: ->
     @draftNavHidden = true
+
+    #When we catch wind to collapse the menus (on xs screen sizes only), set those variables
+    @$scope.$on @subscriptionKeys.collapseMenus, (event, args) =>
+      @$scope.navCollapsed = true
+      @$scope.draftNavCollapsed = true
 
   changeDraftNav: ->
     @draftNavHidden = !@draftNavHidden

@@ -21,7 +21,7 @@
                     </label>
                   </div>
                   <div class="col-xs-12">
-                    <input name="email" ng-model="user.email" type="email" class="form-control" maxlength="255" ng-required="true" placeholder="Email" autofocus />
+                    <input name="email" ng-model="user.email" type="email" class="form-control" maxlength="255" ng-required="true" placeholder="Email" autofocus tabindex="1" />
                     <div ng-show="loginCtrl.form.$submitted || loginCtrl.form.email.$touched">
                       <span ng-show="loginCtrl.form.email.$error.required" class="help-block">Email is missing</span>
                       <span ng-show="loginCtrl.form.email.$error.email" class="help-block">Email is invalid</span>
@@ -41,11 +41,11 @@
                   </div>
                   <div class="col-xs-6">
                     <span class="text-right">
-                      <a href="lostPassword">Lost password?</a>
+                      <a href="lostPassword" tabindex="4">Lost password?</a>
                     </span>
                   </div>
                   <div class="col-xs-9">
-                    <input name="password" uib-tooltip="Capslock is on" tooltip-trigger="focus" tooltip-enable="isCapsLockOn" ng-model="user.password" class="form-control" minlength="8" maxlength="255" type="{{loginCtrl.passwordInputType()}}" ng-required="true" placeholder="Password" />
+                    <input name="password" uib-tooltip="Capslock is on" tooltip-trigger="focus" tooltip-enable="isCapsLockOn" ng-model="user.password" class="form-control" minlength="8" maxlength="255" type="{{loginCtrl.passwordInputType()}}" ng-required="true" placeholder="Password" tabindex="2" />
                     <div ng-show="loginCtrl.form.$submitted || loginCtrl.form.password.$touched">
                       <span ng-show="loginCtrl.form.password.$error.required" class="help-block">Password is missing</span>
                       <span ng-show="!loginCtrl.form.password.$error.required && loginCtrl.form.password.$error.minlength" class="help-block">Password is too short - 8 characters minimum</span>
@@ -53,14 +53,14 @@
                     </div>
                   </div>
                   <div class="col-xs-3">
-                    <toggle-switch name="showPassword" ng-model="showPassword" knob-label="Show"></toggle-switch>
+                    <toggle-switch name="showPassword" ng-model="showPassword" knob-label="Show" tabindex="5"></toggle-switch>
                   </div>
                 </div>
               </div>
             </div>
             <div class="row">
               <div class="col-xs-12 text-center v-offset-2">
-                <button type="submit" class="btn btn-primary btn-large" ng-click="loginCtrl.submitClicked()" ng-submit="loginCtrl.submitClicked()" ng-disabled="loginCtrl.loginInProgress">
+                <button type="submit" class="btn btn-primary btn-large" ng-click="loginCtrl.submitClicked()" ng-submit="loginCtrl.submitClicked()" ng-disabled="loginCtrl.loginInProgress" tabindex="3">
                   Login&nbsp;
                   <i class="fa fa-sign-in"></i>
                 </button>

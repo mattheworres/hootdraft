@@ -82,6 +82,10 @@ $app['commish.pick.controller'] = function() {
   return new PhpDraft\Controllers\Commish\PickController();
 };
 
+$app['commish.depthchartposition.controller'] = function() {
+  return new PhpDraft\Controllers\Commish\DepthChartPositionController();
+};
+
 $app->post('/login', 'authentication.controller:Login');
 $app->post('/register', 'authentication.controller:Register');
 $app->post('/verify', 'authentication.controller:VerifyAccount');
@@ -98,9 +102,11 @@ $app->get('/commissioners/search', 'commish.controller:SearchPublicCommissioners
 $app->get('/commissioners/{commish_id}', 'commish.controller:GetPublicCommissioner');
 
 $app->get('/draft/{draft_id}/managers', 'manager.controller:GetAll')->before($draftViewable);
+$app->get('/draft/{draft_id}/manager/{manager_id}/depth_chart', 'manager.controller:GetManagerDepthChart')->before($draftViewable)->before($draftInProgressOrCompleted);
 
 $app->get('/draft/{draft_id}/picks', 'pick.controller:GetAll')->before($draftViewable)->before($draftInProgressOrCompleted);
 $app->get('/draft/{draft_id}/picks/updated', 'pick.controller:GetUpdated')->before($draftViewable)->before($draftInProgressOrCompleted);
+$app->put('/draft/{draft_id}/pick/{pick_id}/depth_chart/{position_id}', 'pick.controller:UpdateDepthChart')->before($draftViewable)->before($draftInProgressOrCompletedTenMinutes);#Give a ten minute grace period to allow edits right at the end
 $app->get('/draft/{draft_id}/picks/last', 'pick.controller:GetLast')->before($draftViewable)->before($draftInProgressOrCompleted);
 $app->get('/draft/{draft_id}/picks/next', 'pick.controller:GetNext')->before($draftViewable)->before($draftInProgressOrCompleted);
 $app->get('/draft/{draft_id}/manager/{manager_id}/picks/all', 'pick.controller:GetAllManagerPicks')->before($draftViewable)->before($draftInProgressOrCompleted);
@@ -128,6 +134,7 @@ $app->get('/commish/profile', "commish.profile.controller:Get");
 $app->put('/commish/profile', "commish.profile.controller:Put");
 
 $app->get('/commish/draft/create', "commish.draft.controller:GetCreate"); //Only requires commish role, handled by firewall
+$app->get('/commish/depthchartposition/positions', "commish.depthchartposition.controller:GetPositions"); //Only requires commish role, handled by firewall
 $app->get('/commish/draft/{draft_id}', "commish.draft.controller:Get")->before($commishEditableDraft);
 $app->get('/commish/draft/{draft_id}/timers', "commish.draft.controller:GetTimers")->before($commishEditableDraft);
 $app->post('/commish/draft', "commish.draft.controller:Create"); //Only requires commish role, handled by firewall
