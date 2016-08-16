@@ -1,6 +1,7 @@
 ![PHP Draft](/images/logo_xlarge.png?raw=true "PHP Draft")
 
 <a href="https://codeclimate.com/github/mattheworres/phpdraft"><img src="https://codeclimate.com/github/mattheworres/phpdraft/badges/gpa.svg" /></a>
+<a href="https://codeclimate.com/github/mattheworres/phpdraft/coverage"><img src="https://codeclimate.com/github/mattheworres/phpdraft/badges/coverage.svg" /></a>
 [![Join the chat at https://gitter.im/mattheworres/phpdraft](https://badges.gitter.im/mattheworres/phpdraft.svg)](https://gitter.im/mattheworres/phpdraft?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 PHP Draft allows commissioners to setup web-based real-time drafts for their fantasy sports leagues. If your leagues do **offline drafts** (instead of using your fantasy provider's online drafting tools), PHP Draft is just for you! 
