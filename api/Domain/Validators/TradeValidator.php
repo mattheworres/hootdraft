@@ -30,10 +30,8 @@ class TradeValidator {
   public function IsTradeValid(Draft $draft, Trade $trade) {
     $valid = true;
     $errors = array();
-    $manager1_asset_count = 0;
-    $manager2_asset_count = 0;
-    $asset_count = count($trade->trade_assets);
-    $unique_asset_count = count(array_unique($trade->trade_assets));
+    $assetCount = count($trade->trade_assets);
+    $uniqueAssetCount = count(array_unique($trade->trade_assets));
 
     if(empty($trade->trade_round) || $trade->trade_round < 0 || $trade->trade_round > $draft->draft_rounds) {
       $errors[] = "Invalid value for trade round.";
@@ -41,22 +39,21 @@ class TradeValidator {
     }
 
     foreach($trade->trade_assets as $trade_asset) {
-      if($trade_asset->oldmanager_id == $trade->manager1_id) {
-        $manager1_asset_count++;
-      } else if($trade_asset->oldmanager_id == $trade->manager2_id) {
-        $manager2_asset_count++;
-      } else {
-        $errors[] = "Asset #$trade_asset->player_id does not belong to either manager.";
+      if($trade_asset->oldmanager_id != $trade->manager1_id 
+        || $trade_asset->oldmanager_id != $trade->manager2_id) {
+        $player_id = $trade_asset->player->player_id;
+        $errors[] = "Asset #$player_id does not belong to either manager.";
         $valid = false;
       }
 
       if($trade_asset->player->draft_id != $draft->draft_id) {
-        $errors[] = "Asset #$trade_asset->player_id does not belong to draft #$draft->draft_id";
+        $player_id = $trade_asset->player->player_id;
+        $errors[] = "Asset #$player_id does not belong to draft #$draft->draft_id";
         $valid = false;
       }
     }
 
-    if($asset_count != $unique_asset_count) {
+    if($assetCount != $uniqueAssetCount) {
       $errors[] = "One or more of the trade assets are duplicate.";
       $valid = false;
     }

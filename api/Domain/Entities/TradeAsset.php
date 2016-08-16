@@ -3,7 +3,7 @@ namespace PhpDraft\Domain\Entities;
 
 class TradeAsset {
   public function __toString() {
-    return $this->player->player_id;
+    return (string)$this->player->player_id;
   }
 
   /** @var int */
