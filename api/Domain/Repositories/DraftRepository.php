@@ -470,15 +470,15 @@ class DraftRepository {
   }
 
   private function SetCachedDraft(Draft $draft) {
-    $this->app['phpdraft.ObjectCache']->set("draft$draft->draft_id", $draft, CACHE_SECONDS);
+    $this->app['phpdraft.DatabaseCacheService']->SetCachedItem("draft$draft->draft_id", $draft);
   }
 
   private function GetCachedDraft($draft_id) {
-    return $this->app['phpdraft.ObjectCache']->get("draft$draft_id");
+    return $this->app['phpdraft.DatabaseCacheService']->GetCachedItem("draft$draft_id");
   }
 
   private function UnsetCachedDraft($draft_id) {
-    $this->app['phpdraft.ObjectCache']->delete("draft$draft_id");
+    $this->app['phpdraft.DatabaseCacheService']->DeleteCachedItem("draft$draft_id");
   }
 
   private function ProtectPrivateDraft(Draft $draft) {

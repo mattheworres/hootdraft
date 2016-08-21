@@ -19,6 +19,8 @@ $configuration_variables = array(
   //Provide the number of seconds to cache drafts in PHP memory to save on database calls. Cache is automatically updated when
   //changes are made to the draft, so the higher the number the better.
   'CACHE_SECONDS' => 3600,
+  //Provide the absolute path to a folder PHP can write to. On Windows machines it will look like 'C:/full/path/to/tmp'
+  'CACHE_PATH' => '/var/www/example.com/tmp',
 
   //Provide a secret key to generate all JWT authentication tokens. Make sure it's long, and keep it a secret!
   'AUTH_KEY' => 'auth',

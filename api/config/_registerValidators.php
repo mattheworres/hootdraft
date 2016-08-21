@@ -38,7 +38,3 @@ $app['phpdraft.ProPlayerValidator'] = function () use ($app) {
 $app['phpdraft.DepthChartPositionValidator'] = function () use ($app) {
   return new \PhpDraft\Domain\Validators\DepthChartPositionValidator($app);
 };
-
-$app['phpdraft.ObjectCache'] = function () use ($app) {
-  return new \phpFastCache();
-};

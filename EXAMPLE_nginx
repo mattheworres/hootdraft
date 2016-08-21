@@ -1,0 +1,45 @@
+# Example NGINX Configuration
+# This is an example of what is required in order to get PHPDraft to run on NGINX.
+# This config also uses PHP-FPM 7.0 so paths may very there.
+# Mileage may vary.
+#TODO: Add in pieces for SSL certificates and HTTP/2 support
+
+server {
+        listen 80;
+        listen [::]:80;
+        #listen 443 ssl http2;
+
+        #Change the absolute path below to the base directory that PHP Draft lives
+        root /var/www/example.com/html;
+
+        index index.html;
+
+        #Change the domain below to the domain name or IP address the site will run off of
+        server_name example.com www.example.com;
+
+        location /api/ {
+                try_files $uri /api/bootstrap.php$is_args$args;
+        }
+
+        #Ensure the path passed to fastcgi_pass below matches up with where php-fpm lives
+        location ~* \.php$ {
+                include snippets/fastcgi-php.conf;
+                fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+        }
+
+        location / {
+                # First attempt to serve request as file, then
+                # as directory, then fall back to displaying a 404.
+                try_files $uri $uri/ index.html =404;
+        }
+
+        error_page 404 /404.html;
+        error_page 500 502 503 504 /50x.html;
+        location = /50x.html {
+                root /usr/share/nginx/html;
+        }
+
+        location ~ /\.ht {
+                deny all;
+        }
+}
