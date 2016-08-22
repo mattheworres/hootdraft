@@ -2,12 +2,40 @@
 # This is an example of what is required in order to get PHPDraft to run on NGINX.
 # This config also uses PHP-FPM 7.0 so paths may very there.
 # Mileage may vary.
-#TODO: Add in pieces for SSL certificates and HTTP/2 support
 
+#Server block #1: forward any non-HTTPS requests to the third server block.
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+
+        #Change the domain below to the domain name or IP address the site will run off of
+        server_name example.com;
+
+        #We want NGINX to forward to the https version, along with a 301 status to indicate a permanent redirect
+        #Be sure to change domain below to the correct one, without "www"
+        return 301 https://example.com$request_uri;
+}
+
+#Server block #2: forward any HTTPS or non-HTTPS requests to the "www" subdomain to the third server block
 server {
         listen 80;
         listen [::]:80;
-        #listen 443 ssl http2;
+        listen 443 ssl http2;
+
+        #Domain below should have the www subdomain:
+        server_name www.example.com;
+
+        ssl_certificate /etc/nginx/ssl/your_ssl_certificate.crt;
+        ssl_certificate_key /etc/nginx/ssl/your_ssl_private.key;
+
+        #We want NGINX to forward to the non-www HTTPS version, along with a 301 status to indicate a permanent redirect
+        #Be sure to change domain below to the correct one, without "www"
+        return 301 https://example.com$request_uri;
+}
+
+#Server block #3: serve the Angular app via index.html, Silex API thru /api, files/media as-is
+server {
+        listen 443 ssl http2;
 
         #Change the absolute path below to the base directory that PHP Draft lives
         root /var/www/example.com/html;
@@ -15,7 +43,13 @@ server {
         index index.html;
 
         #Change the domain below to the domain name or IP address the site will run off of
-        server_name example.com www.example.com;
+        #NOTE: the "www" subdomain is purposefully left off. In the first server block, we are explicitly
+        #choosing to forward 
+        server_name example.com;
+
+        #Change both paths below to point to both the SSL certificate and the private key you have on the server:
+        ssl_certificate /etc/nginx/ssl/your_ssl_certificate.crt;
+        ssl_certificate_key /etc/nginx/ssl/your_ssl_private.key;
 
         location /api/ {
                 try_files $uri /api/bootstrap.php$is_args$args;
@@ -30,7 +64,7 @@ server {
         location / {
                 # First attempt to serve request as file, then
                 # as directory, then fall back to displaying a 404.
-                try_files $uri $uri/ index.html =404;
+                try_files $uri $uri/ index.html;
         }
 
         error_page 404 /404.html;

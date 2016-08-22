@@ -51,7 +51,7 @@ class DatabaseCacheService {
   * @param string $itemKey The unique identifier of the object in the cache
   */
   public function DeleteCachedItem($itemKey) {
-    $this->cacheInstance->delete($itemKey);
+    $this->cacheInstance->deleteItem($itemKey);
   }
 
   /*
