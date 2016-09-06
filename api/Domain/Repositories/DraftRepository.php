@@ -315,7 +315,7 @@ class DraftRepository {
       using_depth_charts = ?
       WHERE draft_id = ?");
 
-    $draft->using_depth_charts = $draft->using_depth_charts == 1;
+    $draft->using_depth_charts = $draft->using_depth_charts;
 
     $update_stmt->bindParam(1, $draft->commish_id);
     $update_stmt->bindParam(2, $draft->draft_name);
