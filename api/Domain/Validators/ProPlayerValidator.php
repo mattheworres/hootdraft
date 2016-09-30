@@ -15,6 +15,7 @@ class ProPlayerValidator {
     $this->app = $app;
   }
 
+  //$file is an instance of Symfony\Component\HttpFoundation\File\UploadedFile
   public function IsUploadSportValid($sport, &$file) {
     $valid = true;
     $errors = array();
@@ -34,9 +35,11 @@ class ProPlayerValidator {
       $valid = false;
       $errors[] =  "Must upload a CSV file";
     } else {
-      if ($file->getError() > 0) {
+      $fileErrorCode = $file->getError();
+
+      if ($fileErrorCode > 0) {
         $valid = false;
-        $errors[] = "Upload error - " . $file->getError();
+        $errors[] = "Upload error - " . $fileErrorCode;
       }
     }
 
