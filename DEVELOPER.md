@@ -59,7 +59,7 @@ There are several flags that can be set that change how or what processes are ru
 
   Gulp Build Flag                      | Notes
   ---------------------------      | -------------
-  `--minifyy`             | `boolean` Run minification on all Coffeescript transpilation (greatly reduces filesize for better network performance)
+  `--minify`             | `boolean` Run minification on all Coffeescript transpilation (greatly reduces filesize for better network performance)
   `--templates`    | `boolean` Compile HTML Angular templates into the Javascript for better network performance
   `--concat`             | `boolean` Concatenate similar Javascript files together into singular files like `vendor.js` and `app.js` (also for better network performance)
   `--env`             | `string` Specify the environment to build for, corresponds to the `/app/config/*.json` file for environment-specific settings. Defaults to `dev` and compiles into `js/config.js`
@@ -69,6 +69,16 @@ When a new PHP Draft release is made, this is the command I run (for reference):
 ```shell
 gulp build --minify --templates --concat --env=dist
 ```
+## Unit Tests
+To run unit tests for the project, use this command at the base directory of the code:
+
+```shell
+vendor/bin/phpunit
+```
+
+Tests are located within the `/tests` folder.
+
+Unit test coverage is anemic and well below where it should be - I just recently added them :) As I add new features or change existing ones, I will add test coverage as best I can.
 
 ## Project Structure
 If you intend on submitting code to the project, it would be helpful for you to have a basic understanding of how things are structured on both the backend (Silex/PHP) and the front end (Angular/Coffeescript). PHP Draft is no longer written in "your father's PHP", and was intentionally done this way to vastly improve its maintainability and increase the ease to introduce new features.
