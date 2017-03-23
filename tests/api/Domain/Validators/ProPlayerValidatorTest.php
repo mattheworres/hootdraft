@@ -7,7 +7,7 @@ use PhpDraft\Domain\Repositories\DraftDataRepository;
 
 class ProPlayerValidatorTest extends TestCase {
   function setUp() {
-    $this->app = require __DIR__.'/../../../../api/config/_app.php';
+    $this->app = require dirname(__FILE__).'/../../../../api/config/_app.php';
     $draftDataRepository = new DraftDataRepository($this->app);
     $this->sut = new ProPlayerValidator($this->app);
     $this->app['phpdraft.DraftDataRepository'] = $draftDataRepository;

@@ -11,7 +11,7 @@ use PhpDraft\Domain\Validators\TradeValidator;
 
 class TradeValidatorTest extends TestCase {
   function setUp() {
-    $this->app = require __DIR__.'/../../../../api/config/_app.php';
+    $this->app = require dirname(__FILE__).'/../../../../api/config/_app.php';
     $this->draft = new Draft();
     $this->trade = new Trade();
     $this->trade->manager1 = new Manager();

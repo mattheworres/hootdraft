@@ -10,7 +10,7 @@ use PhpDraft\Domain\Models\PhpDraftResponse;
 
 class PickValidatorTest extends TestCase {
   function setUp() {
-    $this->app = require __DIR__.'/../../../../api/config/_app.php';
+    $this->app = require dirname(__FILE__).'/../../../../api/config/_app.php';
     $draftDataRepository = new DraftDataRepository($this->app);
     $this->app['phpdraft.DraftDataRepository'] = $draftDataRepository;
     $this->sut = new PickValidator($this->app);

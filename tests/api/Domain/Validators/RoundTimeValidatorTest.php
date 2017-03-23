@@ -8,7 +8,7 @@ use PhpDraft\Domain\Models\RoundTimeCreateModel;
 
 class RoundTimeValidatorTest extends TestCase {
   function setUp() {
-    $this->app = require __DIR__.'/../../../../api/config/_app.php';
+    $this->app = require dirname(__FILE__).'/../../../../api/config/_app.php';
     $this->roundTimeCreateModel = new RoundTimeCreateModel();
     $this->sut = new RoundTimeValidator($this->app);
   }
