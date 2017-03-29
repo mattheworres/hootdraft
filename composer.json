@@ -1,20 +1,22 @@
 {
     "require": {
         "php": ">=5.5.0",
-        "silex/silex": "2.0.2",
-        "monolog/monolog": "~1.13",
-        "symfony/security": "2.8.4",
-        "cnam/security-jwt-service-provider":"2.1.0",
-        "doctrine/dbal": "2.5.4",
+        "silex/silex": "~2.0.2",
+        "symfony/security": "~2.8.4",
+        "cnam/security-jwt-service-provider":"~2.1.0",
+        "doctrine/dbal": "~2.5.4",
         "egulias/email-validator": "~1.2",
-        "phpmailer/phpmailer": "~5.2",
+        "phpmailer/phpmailer": "~5.2.23",
         "google/recaptcha": "~1.1",
         "phpfastcache/phpfastcache": "^3.0"
     },
     "require-dev": {
+        "monolog/monolog": "~1.13",
         "phpunit/phpunit": "5.5.*",
         "phpmd/phpmd" : "@stable",
-        "robmorgan/phinx": "^0.8.0"
+        "robmorgan/phinx": "^0.8.0",
+        "deployer/deployer": "~4.3.0",
+        "deployer/recipes": "dev-master"
     },
     "autoload": {
         "psr-4": {
