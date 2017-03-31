@@ -63,6 +63,6 @@
 
 #### Common Issues
 
-1. If you are encountering issues while `SaltService` attempts to create password salts (in new user registration and forgotten password processes), your installation of PHP may be missing the `mcrypt` extension. Depending on what type of PHP you have installed your mileage may vary, but `SaltService` requires the extension to be installed and enabled.
+1. If you are encountering issues while `SaltService` attempts to create password salts (in new user registration and forgotten password processes), your installation of PHP may be missing the `mcrypt` extension. Depending on what type of PHP you have installed your mileage may vary, but `SaltService` requires the extension to be installed and enabled (on Ubuntu, a quick `sudo apt-get install php7.0-mcrypt` does the trick. Run `php -m` afterwards to verify that `mcrypt` is listed).
 
 1. If you encounter issues at the end of the draft (like the draft ends on an error), and you also cannot manually generate the draft statistics for that draft through the Admin option on the site, it's likely due to the fact that MySQL's `ONLY_FULL_GROUP_BY` option is enabled and is breaking the SQL query/queries related to draft stats. See this StackOverflow thread for some help: http://stackoverflow.com/a/36033983/324527 (H/T to user `Eyo Okon Eyo`)

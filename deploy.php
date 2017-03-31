@@ -10,11 +10,11 @@ set('phinx', ['remove-all' => '', 'environment' => 'production']);
 set('phpdraft:rollback_required', false);
 
 // Servers
-server('production', 'localhost')
-    ->user('user')
-    ->password('password')  //To provide password at terminal prompt, pass NULL here instead
-    //->identityFile()    //Optional, if empty assumes id_rsa within .ssh
-    ->set('deploy_path', '/var/www/domain.com') //Is abs path to the base directory of the site
+server('production', 'staging.phpdraft.com')
+    ->user('YOUR_SSH_USER')
+    ->identityFile()    //If empty assumes id_rsa within .ssh
+    //->password(NULL)  //To provide password at terminal prompt, pass NULL here instead
+    ->set('deploy_path', '/var/www/example.com') //Is abs path to the base directory of the site
     ;
 
 desc('Deploy PHP Draft to production');
@@ -24,9 +24,9 @@ task('deploy', [
     'deploy:lock',
     'deploy:release',
     'phpdraft:upload_files',
-    'phinx:breakpoint',         //Remove existing breakpoints
-    'phinx:breakpoint',         //Set a breakpoint at the existing migration
-    'phinx:migrate',
+    'phpdraft:remote_composer',
+    'phpdraft:breakpoint',
+    'phpdraft:migrate',
     'deploy:symlink',
     'deploy:unlock',
     'cleanup',
@@ -46,17 +46,7 @@ task('phpdraft:package_release', [
     'phpdraft:package_success'
 ]);
 
-desc('Restart PHP-FPM service (useful if changes don\'t show immediately after deploy)');
-task('php-fpm:restart', function () {
-    // The user must have rights for restart service
-    // /etc/sudoers: username ALL=NOPASSWD:/bin/systemctl restart php-fpm.service
-    run('sudo systemctl restart php-fpm.service');
-});
-
-//Optional: enable this if you are using php-fpm and have added the deploy user to the sudoers:
-//after('deploy:symlink', 'php-fpm:restart');
 after('deploy:failed', 'phpdraft:rollback');
-after('deploy:failed', 'deploy:unlock');
 after('deploy:failed', 'phpdraft:failure');
 
 // Private Tasks
@@ -66,7 +56,6 @@ task('phpdraft:verify_install', function() {
 
     $items_required_for_deploy = [
         'js',
-        'js/config.js',
         'appsettings.php',
         'phinx.yml',
         'css',
@@ -90,20 +79,23 @@ task('phpdraft:upload_files', function() {
     $phpdraft_files = [
         'api',
         'css',
+        'db',
         'fonts',
         'images',
         'js',
         '.htaccess',
         'appsettings.php',
+        'composer.json',
+        'composer.lock',
         'phinx.yml',
-        'deploy_libs',
+        'deploy',
         'index.html',
         'web.config'
     ];
 
     //List the folders we want to exclude children from based on the list below
     $dynamic_upload_folders = [
-        'vendor'
+        //'vendor'
     ];
 
     //Exclude any children matching the list below from the list above
@@ -147,12 +139,21 @@ task('phpdraft:upload_files', function() {
     }
 })->setPrivate();
 
+desc('Install Composer dependencies remotely');
+task('phpdraft:remote_composer', function() {
+    cd('{{release_path}}');
+
+    run('php deploy/composer.phar install --no-dev --prefer-dist -o --no-progress --no-suggest');
+
+    cd('{{deploy_path}}');
+})->setPrivate();
+
 desc('Set Phinx breakpoint');
 task('phpdraft:breakpoint', function() {
     cd('{{release_path}}');
 
-    run('php deploy_libs/phinx.phar breakpoint -e production --remove-all');
-    run('php deploy_libs/phinx.phar breakpoint -e production');
+    run('php deploy/phinx.phar breakpoint -e production --remove-all');
+    run('php deploy/phinx.phar breakpoint -e production');
 
     set('phpdraft:rollback_required', true);
 
@@ -163,17 +164,17 @@ desc('Run Phinx migrations');
 task('phpdraft:migrate', function() {
     cd('{{release_path}}');
 
-    run('php deploy_libs/phinx.phar migrate -e production');
+    run('php deploy/phinx.phar migrate -e production');
 
     cd('{{deploy_path}}');
 })->setPrivate();
 
 desc('Rollback migrations on failure');
 task('phpdraft:rollback', function() {
-    writeln('<comment>Rolling back database migrations...');
+    writeln('<comment>Rolling back database migrations...</comment>');
     if(get("phpdraft:rollback_required") == true) {
        cd('{{release_path}}');
-       run('php deploy_libs/phinx.phar rollback -e production'); 
+       run('php deploy/phinx.phar rollback -e production'); 
        cd('{{deploy_path}}');
     }
 })->setPrivate();
@@ -221,17 +222,17 @@ task('phpdraft:verify_package', function() {
     }
 })->setPrivate();
 
-desc('Install NPM packages');
+desc('Install NPM packages (locally)');
 task('phpdraft:npm_install', function() {
     runLocally('npm install');
 })->setPrivate();
 
-desc('Install Bower packages');
+desc('Install Bower packages (locally)');
 task('phpdraft:bower_install', function() {
     runLocally('bower install');
 })->setPrivate();
 
-desc('Install Composer packages');
+desc('Install Composer packages (locally)');
 task('phpdraft:composer_install', function() {
     runLocally('composer install --prefer-dist -o --no-progress --no-suggest');
 })->setPrivate();
@@ -254,7 +255,7 @@ task('phpdraft:get_release_details', function() {
         'releaseFile' => "$phpdraftReleaseFile.zip",
         'resourceFile' => "$phpdraftResourcesFile.zip"
     ]);
-});
+})->setPrivate();
 
 desc('Package release with 7zip');
 task('phpdraft:zip_package', function() {
@@ -271,6 +272,8 @@ task('phpdraft:zip_package', function() {
     $phpdraft_release_files = [
         '.htaccess',
         'EXAMPLE_appsettings.php',
+        'composer.json',
+        'composer.lock',
         'README.md',
         'INSTALL.md',
         'phinx.yml.EXAMPLE',
@@ -289,7 +292,7 @@ task('phpdraft:zip_package', function() {
     foreach($phpdraft_release_files as $archiveFile) {
         runLocally("7z a $archivePath/$releaseFileName $archiveFile");
     }
-});
+})->setPrivate();
 
 desc('Package resources with 7zip');
 task('phpdraft:zip_resources', function() {
@@ -304,7 +307,7 @@ task('phpdraft:zip_resources', function() {
     foreach($goodResources as $resourceFile) {
         runLocally("7z a $archivePath/$resourceFileName $phpdraft_resource_dir/$resourceFile");    
     }
-});
+})->setPrivate();
 
 desc('Tell user the package was successfully created');
 task('phpdraft:package_success', function() {
@@ -315,4 +318,4 @@ task('phpdraft:package_success', function() {
     writeln("<info>PHP Draft successfully packaged!");
     writeln("<info>Main archive here: $archivePath/$releaseFileName");
     writeln("<info>Resources archive here: $archivePath/$resourceFileName");
-});
+})->setPrivate();
