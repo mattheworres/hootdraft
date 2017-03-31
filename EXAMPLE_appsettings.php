@@ -16,13 +16,15 @@ $configuration_variables = array(
   'DB_USER' => 'database_username',
   'DB_PASS' => 'database_password',
 
-  //Provide the number of seconds to cache drafts in PHP memory to save on database calls. Cache is automatically updated when
+  //The number of seconds to cache drafts in PHP memory to save on database calls. Cache is automatically updated when
   //changes are made to the draft, so the higher the number the better.
   'CACHE_SECONDS' => 3600,
+  //The absolute path to a folder PHP can write to. On Windows machines it will look like 'C:/full/path/to/tmp'
+  'CACHE_PATH' => '/var/www/example.com/tmp',
 
   //Provide a secret key to generate all JWT authentication tokens. Make sure it's long, and keep it a secret!
   'AUTH_KEY' => 'auth',
-  //Provide the number of seconds for tokens to be valid (after this time, they will need to re-authenticate; default: 86,400 (1 day))
+  //The number of seconds for tokens to be valid (after this time, they will need to re-authenticate; default: 86,400 (1 day))
   'AUTH_SECONDS' => 86400,
   //Grab your application's Google Recaptcha 2.0 secret key. Without it registration will not work!
   'RECAPTCHA_SECRET' => 'recaptcha',

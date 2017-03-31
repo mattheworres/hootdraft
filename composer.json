@@ -1,15 +1,15 @@
 {
     "require": {
         "php": ">=5.5.0",
-        "silex/silex": "2.0.*@dev",
-        "monolog/monolog": "~1.13",
-        "symfony/security": "2.8.4",
+        "silex/silex": "2.0.2",
+        "monolog/monolog": "~1.21",
+        "symfony/security": "~2.8.9",
         "cnam/security-jwt-service-provider":"2.1.0",
         "doctrine/dbal": "2.5.4",
         "egulias/email-validator": "~1.2",
         "phpmailer/phpmailer": "~5.2",
         "google/recaptcha": "~1.1",
-        "phpfastcache/phpfastcache": "^3.0"
+        "phpfastcache/phpfastcache": "~5.0.8"
     },
     "autoload": {
         "psr-4": {
