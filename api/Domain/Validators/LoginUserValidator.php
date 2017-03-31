@@ -70,7 +70,7 @@ class LoginUserValidator {
       $valid = false;
     }
 
-    return new $this->app['phpdraft.ResponseFactory']($valid, $errors);
+    return $this->app['phpdraft.ResponseFactory']($valid, $errors);
   }
 
   public function areLoginCredentialsValid($emailAddress, $password) {

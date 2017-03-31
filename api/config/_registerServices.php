@@ -51,3 +51,7 @@ $app['phpdraft.UtilityService'] = function () use ($app) {
 $app['phpdraft.DepthChartPositionService'] = function () use ($app) {
   return new \PhpDraft\Domain\Services\DepthChartPositionService($app);
 };
+
+$app['phpdraft.DatabaseCacheService'] = function () use ($app) {
+  return new \PhpDraft\Domain\Services\DatabaseCacheService($app);
+};
