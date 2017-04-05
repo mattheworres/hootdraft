@@ -6,15 +6,13 @@ require 'recipe/common.php';
 set('ssh_type', 'native');
 set('ssh_multiplexing', true);
 set('keep_releases', 2);
-set('phinx', ['remove-all' => '', 'environment' => 'production']);
-set('phpdraft:rollback_required', false);
 
 // Servers
-server('production', 'staging.phpdraft.com')
+server('production', 'www.example.com')
     ->user('YOUR_SSH_USER')
     ->identityFile()    //If empty assumes id_rsa within .ssh
     //->password(NULL)  //To provide password at terminal prompt, pass NULL here instead
-    ->set('deploy_path', '/var/www/example.com') //Is abs path to the base directory of the site
+    ->set('deploy_path', '/var/www/www.example.com') //Is abs path to the base directory of the site
     ;
 
 desc('Deploy PHP Draft to production');
@@ -35,12 +33,13 @@ task('deploy', [
 
 desc('Build & Package PHP Draft from source (for Github Releases)');
 task('phpdraft:package_release', [
-    'phpdraft:verify_package',
     'phpdraft:get_release_details',
+    'phpdraft:verify_package',
     'phpdraft:npm_install',
     'phpdraft:bower_install',
     'phpdraft:composer_install',
     'phpdraft:build_app',
+    'phpdraft:copy_deploy',
     'phpdraft:zip_package',
     'phpdraft:zip_resources',
     'phpdraft:package_success'
@@ -220,6 +219,18 @@ task('phpdraft:verify_package', function() {
         writeln('<error>7-Zip not found on path. Install 7-Zip for commandline use</error>');
         throw new \Exception("PHP Draft cannot be packaged for release");
     }
+
+    $releaseFileName = get('phpdraft')['releaseFile'];
+    $resourceFileName = get('phpdraft')['resourceFile'];
+    $archivePath = get('phpdraft')['releasePath'];
+
+    if(file_exists("$archivePath/$releaseFileName")) {
+        throw new \Exception("File $archivePath/$releaseFileName already exists.");
+    }
+
+    if(file_exists("$archivePath/$resourceFileName")) {
+        throw new \Exception("File $archivePath/$resourceFileName already exists.");
+    }
 })->setPrivate();
 
 desc('Install NPM packages (locally)');
@@ -239,8 +250,13 @@ task('phpdraft:composer_install', function() {
 
 desc('Build Angular App');
 task('phpdraft:build_app', function() {
-    runLocally('gulp build --minify --concat --templates --revAssets');
+    runLocally('gulp build --minify --concat --templates --revAssets --env=dist');
 })->setPrivate();
+
+desc('Copy deploy.php from example');
+task('phpdraft:copy_deploy', function() {
+    runLocally('cp deploy.php.EXAMPLE deploy.php');
+});
 
 desc('Ask the user for release details');
 task('phpdraft:get_release_details', function() {
@@ -274,7 +290,7 @@ task('phpdraft:zip_package', function() {
         'EXAMPLE_appsettings.php',
         'composer.json',
         'composer.lock',
-        'README.md',
+        'README.MD',
         'INSTALL.md',
         'phinx.yml.EXAMPLE',
         'deploy',

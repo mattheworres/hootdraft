@@ -91,6 +91,8 @@ class TradeValidatorTest extends TestCase {
 
     $this->assertFalse($result->success);
     $this->assertContains("Asset #1 does not belong to either manager.", $result->errors);
+    //Added since the addition of an AND condition instead of OR in the validator:
+    $this->assertNotContains("Asset #2 does not belong to either manager.", $result->errors);
 
     $tradeAsset1->oldmanager_id = 1;
     $tradeAsset2->oldmanager_id = 4;

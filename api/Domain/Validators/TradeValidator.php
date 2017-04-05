@@ -40,7 +40,7 @@ class TradeValidator {
 
     foreach($trade->trade_assets as $trade_asset) {
       if($trade_asset->oldmanager_id != $trade->manager1_id 
-        || $trade_asset->oldmanager_id != $trade->manager2_id) {
+        && $trade_asset->oldmanager_id != $trade->manager2_id) {
         $player_id = $trade_asset->player->player_id;
         $errors[] = "Asset #$player_id does not belong to either manager.";
         $valid = false;

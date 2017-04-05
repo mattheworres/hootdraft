@@ -12,4 +12,8 @@ js/*
 fonts
 index.html
 appsettings.php
+appsettings.php.local
+appsettings.php.staging
 phinx.yml
+deploy.php
+deploy.php.staging

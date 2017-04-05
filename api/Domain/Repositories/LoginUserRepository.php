@@ -2,12 +2,16 @@
 
 namespace PhpDraft\Domain\Repositories;
 
+use Silex;
 use Silex\Application;
 use PhpDraft\Domain\Entities\LoginUser;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 
 class LoginUserRepository {
-  private $app;
+    /**
+     * @var Silex\Application Application
+     */
+    private $app;
 
   public function __construct(Application $app) {
     $this->app = $app;
@@ -15,10 +19,11 @@ class LoginUserRepository {
 
   public function Load($email) {
     $user = new LoginUser();
+    $email = strtolower($email);
 
     $load_stmt = $this->app['db']->prepare("SELECT * FROM users WHERE email = ? LIMIT 1");
     $load_stmt->setFetchMode(\PDO::FETCH_INTO, $user);
-    $load_stmt->bindParam(1, strtolower($email));
+    $load_stmt->bindParam(1, $email);
 
     if (!$load_stmt->execute())
       throw new \Exception(sprintf('Email "%s" does not exist.', $email));
@@ -98,11 +103,14 @@ class LoginUserRepository {
         VALUES 
         (NULL, ?, ?, ?, ?, ?, ?, UTC_TIMESTAMP())");
 
-    $insert_stmt->bindParam(1, strtolower($user->email));
+    $email = strtolower($user->email);
+    $roles = implode(',', $user->roles);
+
+    $insert_stmt->bindParam(1, $email);
     $insert_stmt->bindParam(2, $user->password);
     $insert_stmt->bindParam(3, $user->salt);
     $insert_stmt->bindParam(4, $user->name);
-    $insert_stmt->bindParam(5, implode(',', $user->roles));
+    $insert_stmt->bindParam(5, $roles);
     $insert_stmt->bindParam(6, $user->verificationKey);
 
     if (!$insert_stmt->execute()) {
@@ -166,12 +174,13 @@ class LoginUserRepository {
   }
 
   public function NameIsUnique($name, $id = null) {
+    $name = strtolower($name);
     if($id == null) {
       $name_stmt = $this->app['db']->prepare("SELECT name FROM users WHERE name LIKE ?");
-      $name_stmt->bindParam(1, strtolower($name));
+      $name_stmt->bindParam(1, $name);
     } else {
       $name_stmt = $this->app['db']->prepare("SELECT name FROM users WHERE name LIKE ? AND id <> ?");
-      $name_stmt->bindParam(1, strtolower($name));
+      $name_stmt->bindParam(1, $name);
       $name_stmt->bindParam(2, $id);
     }
 
@@ -200,8 +209,9 @@ class LoginUserRepository {
   }
 
   public function EmailIsUnique($email) {
+    $email = strtolower($email);
     $email_stmt = $this->app['db']->prepare("SELECT email FROM users WHERE email = ? LIMIT 1");
-    $email_stmt->bindParam(1, strtolower($email));
+    $email_stmt->bindParam(1, $email);
 
     if(!$email_stmt->execute()) {
       throw new \Exception(sprintf('Email %s is invalid', $email));
@@ -238,8 +248,9 @@ class LoginUserRepository {
   }
 
   public function VerificationMatches($email, $verificationKey) {
+    $email = strtolower($email);
     $verification_stmt = $this->app['db']->prepare("SELECT email, verificationKey FROM users WHERE email = ? AND verificationKey = ? LIMIT 1");
-    $verification_stmt->bindParam(1, strtolower($email));
+    $verification_stmt->bindParam(1, $email);
     $verification_stmt->bindParam(2, $verificationKey);
 
     if(!$verification_stmt->execute()) {

@@ -4,8 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "cf2acb89a1c79eb134542137d1d6f020",
-    "content-hash": "0b943e8d25aab939956d6d7b70e1ba4e",
+    "content-hash": "3bb16400ca814ac559802926b8954d7c",
     "packages": [
         {
             "name": "cnam/security-jwt-service-provider",
@@ -49,7 +48,7 @@
                 }
             ],
             "description": "Service Provider for usage jwt token for auth",
-            "time": "2017-02-09 06:24:49"
+            "time": "2017-02-09T06:24:49+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -117,7 +116,7 @@
                 "docblock",
                 "parser"
             ],
-            "time": "2017-02-24 16:22:25"
+            "time": "2017-02-24T16:22:25+00:00"
         },
         {
             "name": "doctrine/cache",
@@ -187,7 +186,7 @@
                 "cache",
                 "caching"
             ],
-            "time": "2016-10-29 11:16:17"
+            "time": "2016-10-29T11:16:17+00:00"
         },
         {
             "name": "doctrine/collections",
@@ -254,7 +253,7 @@
                 "collections",
                 "iterator"
             ],
-            "time": "2017-01-03 10:49:41"
+            "time": "2017-01-03T10:49:41+00:00"
         },
         {
             "name": "doctrine/common",
@@ -327,7 +326,7 @@
                 "persistence",
                 "spl"
             ],
-            "time": "2017-01-13 14:02:13"
+            "time": "2017-01-13T14:02:13+00:00"
         },
         {
             "name": "doctrine/dbal",
@@ -398,7 +397,7 @@
                 "persistence",
                 "queryobject"
             ],
-            "time": "2017-02-08 12:53:47"
+            "time": "2017-02-08T12:53:47+00:00"
         },
         {
             "name": "doctrine/inflector",
@@ -465,7 +464,7 @@
                 "singularize",
                 "string"
             ],
-            "time": "2015-11-06 14:35:42"
+            "time": "2015-11-06T14:35:42+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -519,7 +518,7 @@
                 "lexer",
                 "parser"
             ],
-            "time": "2014-09-09 13:34:57"
+            "time": "2014-09-09T13:34:57+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -571,7 +570,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2017-02-03 22:48:59"
+            "time": "2017-02-03T22:48:59+00:00"
         },
         {
             "name": "firebase/php-jwt",
@@ -614,7 +613,7 @@
             ],
             "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
             "homepage": "https://github.com/firebase/php-jwt",
-            "time": "2016-07-18 04:51:16"
+            "time": "2016-07-18T04:51:16+00:00"
         },
         {
             "name": "google/recaptcha",
@@ -659,7 +658,7 @@
                 "recaptcha",
                 "spam"
             ],
-            "time": "2017-03-09 18:44:34"
+            "time": "2017-03-09T18:44:34+00:00"
         },
         {
             "name": "ircmaxell/password-compat",
@@ -701,7 +700,85 @@
                 "hashing",
                 "password"
             ],
-            "time": "2014-11-20 16:49:30"
+            "time": "2014-11-20T16:49:30+00:00"
+        },
+        {
+            "name": "monolog/monolog",
+            "version": "1.22.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Seldaek/monolog.git",
+                "reference": "1e044bc4b34e91743943479f1be7a1d5eb93add0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/1e044bc4b34e91743943479f1be7a1d5eb93add0",
+                "reference": "1e044bc4b34e91743943479f1be7a1d5eb93add0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0",
+                "psr/log": "~1.0"
+            },
+            "provide": {
+                "psr/log-implementation": "1.0.0"
+            },
+            "require-dev": {
+                "aws/aws-sdk-php": "^2.4.9 || ^3.0",
+                "doctrine/couchdb": "~1.0@dev",
+                "graylog2/gelf-php": "~1.0",
+                "jakub-onderka/php-parallel-lint": "0.9",
+                "php-amqplib/php-amqplib": "~2.4",
+                "php-console/php-console": "^3.1.3",
+                "phpunit/phpunit": "~4.5",
+                "phpunit/phpunit-mock-objects": "2.3.0",
+                "ruflin/elastica": ">=0.90 <3.0",
+                "sentry/sentry": "^0.13",
+                "swiftmailer/swiftmailer": "~5.3"
+            },
+            "suggest": {
+                "aws/aws-sdk-php": "Allow sending log messages to AWS services like DynamoDB",
+                "doctrine/couchdb": "Allow sending log messages to a CouchDB server",
+                "ext-amqp": "Allow sending log messages to an AMQP server (1.0+ required)",
+                "ext-mongo": "Allow sending log messages to a MongoDB server",
+                "graylog2/gelf-php": "Allow sending log messages to a GrayLog2 server",
+                "mongodb/mongodb": "Allow sending log messages to a MongoDB server via PHP Driver",
+                "php-amqplib/php-amqplib": "Allow sending log messages to an AMQP server using php-amqplib",
+                "php-console/php-console": "Allow sending log messages to Google Chrome",
+                "rollbar/rollbar": "Allow sending log messages to Rollbar",
+                "ruflin/elastica": "Allow sending log messages to an Elastic Search server",
+                "sentry/sentry": "Allow sending log messages to a Sentry server"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Monolog\\": "src/Monolog"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jordi Boggiano",
+                    "email": "j.boggiano@seld.be",
+                    "homepage": "http://seld.be"
+                }
+            ],
+            "description": "Sends your logs to files, sockets, inboxes, databases and various web services",
+            "homepage": "http://github.com/Seldaek/monolog",
+            "keywords": [
+                "log",
+                "logging",
+                "psr-3"
+            ],
+            "time": "2017-03-13T07:08:03+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -749,30 +826,44 @@
                 "pseudorandom",
                 "random"
             ],
-            "time": "2017-03-13 16:27:32"
+            "time": "2017-03-13T16:27:32+00:00"
         },
         {
             "name": "phpfastcache/phpfastcache",
-            "version": "3.1.1",
+            "version": "5.0.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPSocialNetwork/phpfastcache.git",
-                "reference": "53241bf437488c4bcfceccb054595d344cf343a3"
+                "reference": "f9c09668b313dd53a6417be42e4af02649914a89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPSocialNetwork/phpfastcache/zipball/53241bf437488c4bcfceccb054595d344cf343a3",
-                "reference": "53241bf437488c4bcfceccb054595d344cf343a3",
+                "url": "https://api.github.com/repos/PHPSocialNetwork/phpfastcache/zipball/f9c09668b313dd53a6417be42e4af02649914a89",
+                "reference": "f9c09668b313dd53a6417be42e4af02649914a89",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.1.0"
+                "ext-json": "*",
+                "php": ">=5.5.0",
+                "phpfastcache/phpssdb": "~1.0.0",
+                "predis/predis": "~1.1.0",
+                "psr/cache": "~1.0.0"
+            },
+            "suggest": {
+                "ext-apc": "*",
+                "ext-intl": "*",
+                "ext-mbstring": "*",
+                "ext-memcache": "*",
+                "ext-memcached": "*",
+                "ext-predis": "*",
+                "ext-redis": "*",
+                "ext-sqlite": "*"
             },
             "type": "library",
             "autoload": {
-                "files": [
-                    "phpfastcache.php"
-                ]
+                "psr-4": {
+                    "phpFastCache\\": "src/phpFastCache/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -784,28 +875,94 @@
                     "email": "khoaofgod@gmail.com",
                     "homepage": "http://www.phpfastcache.com",
                     "role": "Developer"
+                },
+                {
+                    "name": "Georges.L",
+                    "email": "contact@geolim4.com",
+                    "homepage": "https://github.com/Geolim4",
+                    "role": "Developer"
                 }
             ],
-            "description": "PHP Cache Class - Supported Redis, Cookie, Predis, APC, MemCached, WinCache, Files, PDO, Reduce mySQL Call by Caching",
+            "description": "PHP Cache Class - Reduce your database call using cache system. PhpFastCache handles a lot of drivers such as Apc(u), CouchBase, Mongodb, Files, (P)redis, Leveldb, Memcache(d), Ssdb, Sqlite, Wincache, Xcache, Zend Data Cache.",
             "homepage": "http://www.phpfastcache.com",
             "keywords": [
-                "APC Cache",
+                "LevelDb",
                 "apc",
+                "apcu",
                 "cache",
                 "cache class",
                 "caching",
                 "cookie",
+                "couchbase",
                 "files cache",
                 "memcache",
                 "memcached",
+                "mongodb",
                 "mysql cache",
                 "pdo cache",
                 "php cache",
                 "predis",
                 "redis",
-                "wincache"
+                "ssdb",
+                "wincache",
+                "xcache",
+                "zend",
+                "zend data cache",
+                "zend disk cache",
+                "zend memory cache",
+                "zend server"
             ],
-            "time": "2016-02-03 22:06:21"
+            "time": "2017-02-04T01:09:40+00:00"
+        },
+        {
+            "name": "phpfastcache/phpssdb",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHPSocialNetwork/phpssdb.git",
+                "reference": "6755b00200d28ce59cfabde2274d41b045acae98"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHPSocialNetwork/phpssdb/zipball/6755b00200d28ce59cfabde2274d41b045acae98",
+                "reference": "6755b00200d28ce59cfabde2274d41b045acae98",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "phpssdb\\": "src/phpssdb/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Khoa Bui",
+                    "email": "khoaofgod@gmail.com",
+                    "homepage": "http://www.phpfastcache.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Georges.L",
+                    "email": "contact@geolim4.com",
+                    "homepage": "https://github.com/Geolim4",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP SSDB Driver for phpFastCache",
+            "homepage": "http://www.phpfastcache.com",
+            "keywords": [
+                "cache",
+                "driver",
+                "ssdb"
+            ],
+            "time": "2016-07-02T12:58:46+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
@@ -881,7 +1038,7 @@
                 }
             ],
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
-            "time": "2017-03-15 19:32:56"
+            "time": "2017-03-15T19:32:56+00:00"
         },
         {
             "name": "pimple/pimple",
@@ -927,7 +1084,103 @@
                 "container",
                 "dependency injection"
             ],
-            "time": "2015-09-11 15:10:35"
+            "time": "2015-09-11T15:10:35+00:00"
+        },
+        {
+            "name": "predis/predis",
+            "version": "v1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nrk/predis.git",
+                "reference": "f0210e38881631afeafb56ab43405a92cafd9fd1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nrk/predis/zipball/f0210e38881631afeafb56ab43405a92cafd9fd1",
+                "reference": "f0210e38881631afeafb56ab43405a92cafd9fd1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.9"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8"
+            },
+            "suggest": {
+                "ext-curl": "Allows access to Webdis when paired with phpiredis",
+                "ext-phpiredis": "Allows faster serialization and deserialization of the Redis protocol"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Predis\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Daniele Alessandri",
+                    "email": "suppakilla@gmail.com",
+                    "homepage": "http://clorophilla.net"
+                }
+            ],
+            "description": "Flexible and feature-complete Redis client for PHP and HHVM",
+            "homepage": "http://github.com/nrk/predis",
+            "keywords": [
+                "nosql",
+                "predis",
+                "redis"
+            ],
+            "time": "2016-06-16T16:22:20+00:00"
+        },
+        {
+            "name": "psr/cache",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/cache.git",
+                "reference": "d11b50ad223250cf17b86e38383413f5a6764bf8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/cache/zipball/d11b50ad223250cf17b86e38383413f5a6764bf8",
+                "reference": "d11b50ad223250cf17b86e38383413f5a6764bf8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Cache\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for caching libraries",
+            "keywords": [
+                "cache",
+                "psr",
+                "psr-6"
+            ],
+            "time": "2016-08-06T20:24:11+00:00"
         },
         {
             "name": "psr/log",
@@ -974,7 +1227,7 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2016-10-10 12:19:37"
+            "time": "2016-10-10T12:19:37+00:00"
         },
         {
             "name": "silex/silex",
@@ -1059,7 +1312,7 @@
             "keywords": [
                 "microframework"
             ],
-            "time": "2016-11-06 18:09:06"
+            "time": "2016-11-06T18:09:06+00:00"
         },
         {
             "name": "symfony/debug",
@@ -1116,7 +1369,7 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-            "time": "2017-02-18 17:28:00"
+            "time": "2017-02-18T17:28:00+00:00"
         },
         {
             "name": "symfony/event-dispatcher",
@@ -1176,7 +1429,7 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2016-07-19 10:44:15"
+            "time": "2016-07-19T10:44:15+00:00"
         },
         {
             "name": "symfony/http-foundation",
@@ -1229,7 +1482,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "https://symfony.com",
-            "time": "2016-07-17 13:54:30"
+            "time": "2016-07-17T13:54:30+00:00"
         },
         {
             "name": "symfony/http-kernel",
@@ -1311,7 +1564,7 @@
             ],
             "description": "Symfony HttpKernel Component",
             "homepage": "https://symfony.com",
-            "time": "2016-07-30 09:10:37"
+            "time": "2016-07-30T09:10:37+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -1370,7 +1623,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2016-11-14 01:06:16"
+            "time": "2016-11-14T01:06:16+00:00"
         },
         {
             "name": "symfony/polyfill-php55",
@@ -1426,7 +1679,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2016-11-14 01:06:16"
+            "time": "2016-11-14T01:06:16+00:00"
         },
         {
             "name": "symfony/polyfill-php56",
@@ -1482,7 +1735,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2016-11-14 01:06:16"
+            "time": "2016-11-14T01:06:16+00:00"
         },
         {
             "name": "symfony/polyfill-php70",
@@ -1541,7 +1794,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2016-11-14 01:06:16"
+            "time": "2016-11-14T01:06:16+00:00"
         },
         {
             "name": "symfony/polyfill-util",
@@ -1593,7 +1846,7 @@
                 "polyfill",
                 "shim"
             ],
-            "time": "2016-11-14 01:06:16"
+            "time": "2016-11-14T01:06:16+00:00"
         },
         {
             "name": "symfony/property-access",
@@ -1653,7 +1906,7 @@
                 "property path",
                 "reflection"
             ],
-            "time": "2016-07-30 07:22:48"
+            "time": "2016-07-30T07:22:48+00:00"
         },
         {
             "name": "symfony/routing",
@@ -1728,7 +1981,7 @@
                 "uri",
                 "url"
             ],
-            "time": "2017-03-02 15:58:09"
+            "time": "2017-03-02T15:58:09+00:00"
         },
         {
             "name": "symfony/security",
@@ -1808,7 +2061,7 @@
             ],
             "description": "Symfony Security Component",
             "homepage": "https://symfony.com",
-            "time": "2017-03-04 12:20:59"
+            "time": "2017-03-04T12:20:59+00:00"
         },
         {
             "name": "symfony/security-acl",
@@ -1869,7 +2122,7 @@
             ],
             "description": "Symfony Security Component - ACL (Access Control List)",
             "homepage": "https://symfony.com",
-            "time": "2015-12-28 09:39:46"
+            "time": "2015-12-28T09:39:46+00:00"
         }
     ],
     "packages-dev": [
@@ -1929,7 +2182,7 @@
             ],
             "description": "Deployment Tool",
             "homepage": "https://deployer.org",
-            "time": "2017-03-12 07:28:14"
+            "time": "2017-03-12T07:28:14+00:00"
         },
         {
             "name": "deployer/recipes",
@@ -2049,7 +2302,7 @@
                 "constructor",
                 "instantiate"
             ],
-            "time": "2015-06-14 21:17:01"
+            "time": "2015-06-14T21:17:01+00:00"
         },
         {
             "name": "elfet/pure",
@@ -2096,7 +2349,7 @@
                 }
             ],
             "description": "Pure PHP key-value storage",
-            "time": "2016-03-19 14:26:03"
+            "time": "2016-03-19T14:26:03+00:00"
         },
         {
             "name": "evenement/evenement",
@@ -2142,7 +2395,7 @@
                 "event-dispatcher",
                 "event-emitter"
             ],
-            "time": "2012-11-02 14:49:47"
+            "time": "2012-11-02T14:49:47+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -2207,85 +2460,7 @@
                 "uri",
                 "url"
             ],
-            "time": "2017-03-20 17:10:46"
-        },
-        {
-            "name": "monolog/monolog",
-            "version": "1.22.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "1e044bc4b34e91743943479f1be7a1d5eb93add0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/1e044bc4b34e91743943479f1be7a1d5eb93add0",
-                "reference": "1e044bc4b34e91743943479f1be7a1d5eb93add0",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0",
-                "psr/log": "~1.0"
-            },
-            "provide": {
-                "psr/log-implementation": "1.0.0"
-            },
-            "require-dev": {
-                "aws/aws-sdk-php": "^2.4.9 || ^3.0",
-                "doctrine/couchdb": "~1.0@dev",
-                "graylog2/gelf-php": "~1.0",
-                "jakub-onderka/php-parallel-lint": "0.9",
-                "php-amqplib/php-amqplib": "~2.4",
-                "php-console/php-console": "^3.1.3",
-                "phpunit/phpunit": "~4.5",
-                "phpunit/phpunit-mock-objects": "2.3.0",
-                "ruflin/elastica": ">=0.90 <3.0",
-                "sentry/sentry": "^0.13",
-                "swiftmailer/swiftmailer": "~5.3"
-            },
-            "suggest": {
-                "aws/aws-sdk-php": "Allow sending log messages to AWS services like DynamoDB",
-                "doctrine/couchdb": "Allow sending log messages to a CouchDB server",
-                "ext-amqp": "Allow sending log messages to an AMQP server (1.0+ required)",
-                "ext-mongo": "Allow sending log messages to a MongoDB server",
-                "graylog2/gelf-php": "Allow sending log messages to a GrayLog2 server",
-                "mongodb/mongodb": "Allow sending log messages to a MongoDB server via PHP Driver",
-                "php-amqplib/php-amqplib": "Allow sending log messages to an AMQP server using php-amqplib",
-                "php-console/php-console": "Allow sending log messages to Google Chrome",
-                "rollbar/rollbar": "Allow sending log messages to Rollbar",
-                "ruflin/elastica": "Allow sending log messages to an Elastic Search server",
-                "sentry/sentry": "Allow sending log messages to a Sentry server"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Monolog\\": "src/Monolog"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jordi Boggiano",
-                    "email": "j.boggiano@seld.be",
-                    "homepage": "http://seld.be"
-                }
-            ],
-            "description": "Sends your logs to files, sockets, inboxes, databases and various web services",
-            "homepage": "http://github.com/Seldaek/monolog",
-            "keywords": [
-                "log",
-                "logging",
-                "psr-3"
-            ],
-            "time": "2017-03-13 07:08:03"
+            "time": "2017-03-20T17:10:46+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -2327,7 +2502,7 @@
                 "object",
                 "object graph"
             ],
-            "time": "2017-01-26 22:05:40"
+            "time": "2017-01-26T22:05:40+00:00"
         },
         {
             "name": "pdepend/pdepend",
@@ -2367,7 +2542,7 @@
                 "BSD-3-Clause"
             ],
             "description": "Official version of pdepend to be handled with Composer",
-            "time": "2017-01-19 14:23:36"
+            "time": "2017-01-19T14:23:36+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -2421,7 +2596,7 @@
                 "reflection",
                 "static analysis"
             ],
-            "time": "2015-12-27 11:43:31"
+            "time": "2015-12-27T11:43:31+00:00"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -2466,7 +2641,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2016-09-30 07:12:33"
+            "time": "2016-09-30T07:12:33+00:00"
         },
         {
             "name": "phpdocumentor/type-resolver",
@@ -2513,7 +2688,7 @@
                     "email": "me@mikevanriel.com"
                 }
             ],
-            "time": "2016-11-25 06:54:22"
+            "time": "2016-11-25T06:54:22+00:00"
         },
         {
             "name": "phpmd/phpmd",
@@ -2579,7 +2754,7 @@
                 "phpmd",
                 "pmd"
             ],
-            "time": "2017-01-20 14:41:10"
+            "time": "2017-01-20T14:41:10+00:00"
         },
         {
             "name": "phpseclib/phpseclib",
@@ -2671,7 +2846,7 @@
                 "x.509",
                 "x509"
             ],
-            "time": "2016-10-04 00:57:04"
+            "time": "2016-10-04T00:57:04+00:00"
         },
         {
             "name": "phpspec/prophecy",
@@ -2734,7 +2909,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2017-03-02 20:05:34"
+            "time": "2017-03-02T20:05:34+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -2797,7 +2972,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2017-03-01 09:12:17"
+            "time": "2017-03-01T09:12:17+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -2844,7 +3019,7 @@
                 "filesystem",
                 "iterator"
             ],
-            "time": "2016-10-03 07:40:28"
+            "time": "2016-10-03T07:40:28+00:00"
         },
         {
             "name": "phpunit/php-text-template",
@@ -2885,7 +3060,7 @@
             "keywords": [
                 "template"
             ],
-            "time": "2015-06-21 13:50:34"
+            "time": "2015-06-21T13:50:34+00:00"
         },
         {
             "name": "phpunit/php-timer",
@@ -2934,7 +3109,7 @@
             "keywords": [
                 "timer"
             ],
-            "time": "2017-02-26 11:10:40"
+            "time": "2017-02-26T11:10:40+00:00"
         },
         {
             "name": "phpunit/php-token-stream",
@@ -2983,7 +3158,7 @@
             "keywords": [
                 "tokenizer"
             ],
-            "time": "2017-02-27 10:12:30"
+            "time": "2017-02-27T10:12:30+00:00"
         },
         {
             "name": "phpunit/phpunit",
@@ -3066,7 +3241,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-10-03 13:04:15"
+            "time": "2016-10-03T13:04:15+00:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -3125,53 +3300,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2016-12-08 20:27:08"
-        },
-        {
-            "name": "psr/cache",
-            "version": "1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-fig/cache.git",
-                "reference": "d11b50ad223250cf17b86e38383413f5a6764bf8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/cache/zipball/d11b50ad223250cf17b86e38383413f5a6764bf8",
-                "reference": "d11b50ad223250cf17b86e38383413f5a6764bf8",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Psr\\Cache\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
-                }
-            ],
-            "description": "Common interface for caching libraries",
-            "keywords": [
-                "cache",
-                "psr",
-                "psr-6"
-            ],
-            "time": "2016-08-06 20:24:11"
+            "time": "2016-12-08T20:27:08+00:00"
         },
         {
             "name": "psr/http-message",
@@ -3221,7 +3350,7 @@
                 "request",
                 "response"
             ],
-            "time": "2016-08-06 14:39:51"
+            "time": "2016-08-06T14:39:51+00:00"
         },
         {
             "name": "react/cache",
@@ -3255,7 +3384,7 @@
             "keywords": [
                 "cache"
             ],
-            "time": "2016-02-25 18:17:16"
+            "time": "2016-02-25T18:17:16+00:00"
         },
         {
             "name": "react/child-process",
@@ -3295,7 +3424,7 @@
             "keywords": [
                 "process"
             ],
-            "time": "2017-03-14 13:23:20"
+            "time": "2017-03-14T13:23:20+00:00"
         },
         {
             "name": "react/dns",
@@ -3337,7 +3466,7 @@
                 "dns",
                 "dns-resolver"
             ],
-            "time": "2017-03-11 13:46:09"
+            "time": "2017-03-11T13:46:09+00:00"
         },
         {
             "name": "react/event-loop",
@@ -3381,7 +3510,7 @@
                 "asynchronous",
                 "event-loop"
             ],
-            "time": "2016-03-08 02:09:32"
+            "time": "2016-03-08T02:09:32+00:00"
         },
         {
             "name": "react/http",
@@ -3421,7 +3550,7 @@
             "keywords": [
                 "http"
             ],
-            "time": "2017-02-13 14:12:50"
+            "time": "2017-02-13T14:12:50+00:00"
         },
         {
             "name": "react/http-client",
@@ -3464,7 +3593,7 @@
             "keywords": [
                 "http"
             ],
-            "time": "2017-03-20 09:55:48"
+            "time": "2017-03-20T09:55:48+00:00"
         },
         {
             "name": "react/promise",
@@ -3510,7 +3639,7 @@
                 "promise",
                 "promises"
             ],
-            "time": "2017-03-25 12:08:31"
+            "time": "2017-03-25T12:08:31+00:00"
         },
         {
             "name": "react/promise-timer",
@@ -3560,7 +3689,7 @@
                 "timeout",
                 "timer"
             ],
-            "time": "2016-12-27 08:12:19"
+            "time": "2016-12-27T08:12:19+00:00"
         },
         {
             "name": "react/react",
@@ -3613,7 +3742,7 @@
                 "event-loop",
                 "reactor"
             ],
-            "time": "2014-12-11 02:06:55"
+            "time": "2014-12-11T02:06:55+00:00"
         },
         {
             "name": "react/socket",
@@ -3655,7 +3784,7 @@
             "keywords": [
                 "Socket"
             ],
-            "time": "2017-01-26 09:23:38"
+            "time": "2017-01-26T09:23:38+00:00"
         },
         {
             "name": "react/socket-client",
@@ -3697,7 +3826,7 @@
             "keywords": [
                 "Socket"
             ],
-            "time": "2016-12-06 10:54:49"
+            "time": "2016-12-06T10:54:49+00:00"
         },
         {
             "name": "react/stream",
@@ -3741,7 +3870,7 @@
                 "pipe",
                 "stream"
             ],
-            "time": "2017-01-25 14:44:14"
+            "time": "2017-01-25T14:44:14+00:00"
         },
         {
             "name": "ringcentral/psr7",
@@ -3799,7 +3928,7 @@
                 "stream",
                 "uri"
             ],
-            "time": "2016-03-25 17:36:49"
+            "time": "2016-03-25T17:36:49+00:00"
         },
         {
             "name": "robmorgan/phinx",
@@ -3865,7 +3994,7 @@
                 "migrations",
                 "phinx"
             ],
-            "time": "2017-02-28 18:34:31"
+            "time": "2017-02-28T18:34:31+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -3910,7 +4039,7 @@
             ],
             "description": "Looks up which function or method a line of code belongs to",
             "homepage": "https://github.com/sebastianbergmann/code-unit-reverse-lookup/",
-            "time": "2017-03-04 06:30:41"
+            "time": "2017-03-04T06:30:41+00:00"
         },
         {
             "name": "sebastian/comparator",
@@ -3974,7 +4103,7 @@
                 "compare",
                 "equality"
             ],
-            "time": "2017-01-29 09:50:25"
+            "time": "2017-01-29T09:50:25+00:00"
         },
         {
             "name": "sebastian/diff",
@@ -4026,7 +4155,7 @@
             "keywords": [
                 "diff"
             ],
-            "time": "2015-12-08 07:14:41"
+            "time": "2015-12-08T07:14:41+00:00"
         },
         {
             "name": "sebastian/environment",
@@ -4076,7 +4205,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2016-11-26 07:53:53"
+            "time": "2016-11-26T07:53:53+00:00"
         },
         {
             "name": "sebastian/exporter",
@@ -4143,7 +4272,7 @@
                 "export",
                 "exporter"
             ],
-            "time": "2016-06-17 09:04:28"
+            "time": "2016-06-17T09:04:28+00:00"
         },
         {
             "name": "sebastian/global-state",
@@ -4194,7 +4323,7 @@
             "keywords": [
                 "global state"
             ],
-            "time": "2015-10-12 03:26:01"
+            "time": "2015-10-12T03:26:01+00:00"
         },
         {
             "name": "sebastian/object-enumerator",
@@ -4240,7 +4369,7 @@
             ],
             "description": "Traverses array structures and object graphs to enumerate all referenced objects",
             "homepage": "https://github.com/sebastianbergmann/object-enumerator/",
-            "time": "2016-01-28 13:25:10"
+            "time": "2016-01-28T13:25:10+00:00"
         },
         {
             "name": "sebastian/recursion-context",
@@ -4293,7 +4422,7 @@
             ],
             "description": "Provides functionality to recursively process PHP variables",
             "homepage": "http://www.github.com/sebastianbergmann/recursion-context",
-            "time": "2016-10-03 07:41:43"
+            "time": "2016-10-03T07:41:43+00:00"
         },
         {
             "name": "sebastian/resource-operations",
@@ -4335,7 +4464,7 @@
             ],
             "description": "Provides a list of PHP built-in functions that operate on resources",
             "homepage": "https://www.github.com/sebastianbergmann/resource-operations",
-            "time": "2015-07-28 20:34:47"
+            "time": "2015-07-28T20:34:47+00:00"
         },
         {
             "name": "sebastian/version",
@@ -4378,7 +4507,7 @@
             ],
             "description": "Library that helps with managing the version number of Git-hosted PHP projects",
             "homepage": "https://github.com/sebastianbergmann/version",
-            "time": "2016-10-03 07:35:21"
+            "time": "2016-10-03T07:35:21+00:00"
         },
         {
             "name": "symfony/cache",
@@ -4445,7 +4574,7 @@
                 "caching",
                 "psr6"
             ],
-            "time": "2017-03-08 12:16:26"
+            "time": "2017-03-08T12:16:26+00:00"
         },
         {
             "name": "symfony/config",
@@ -4501,7 +4630,7 @@
             ],
             "description": "Symfony Config Component",
             "homepage": "https://symfony.com",
-            "time": "2017-03-01 18:18:25"
+            "time": "2017-03-01T18:18:25+00:00"
         },
         {
             "name": "symfony/console",
@@ -4564,7 +4693,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2017-03-06 19:30:27"
+            "time": "2017-03-06T19:30:27+00:00"
         },
         {
             "name": "symfony/dependency-injection",
@@ -4627,7 +4756,7 @@
             ],
             "description": "Symfony DependencyInjection Component",
             "homepage": "https://symfony.com",
-            "time": "2017-03-05 00:06:55"
+            "time": "2017-03-05T00:06:55+00:00"
         },
         {
             "name": "symfony/expression-language",
@@ -4677,7 +4806,7 @@
             ],
             "description": "Symfony ExpressionLanguage Component",
             "homepage": "https://symfony.com",
-            "time": "2017-02-24 13:58:52"
+            "time": "2017-02-24T13:58:52+00:00"
         },
         {
             "name": "symfony/filesystem",
@@ -4726,7 +4855,7 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2017-03-06 19:30:27"
+            "time": "2017-03-06T19:30:27+00:00"
         },
         {
             "name": "symfony/finder",
@@ -4775,7 +4904,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
-            "time": "2017-02-21 09:12:04"
+            "time": "2017-02-21T09:12:04+00:00"
         },
         {
             "name": "symfony/process",
@@ -4824,7 +4953,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2017-03-04 12:23:14"
+            "time": "2017-03-04T12:23:14+00:00"
         },
         {
             "name": "symfony/yaml",
@@ -4879,7 +5008,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2017-03-07 16:47:02"
+            "time": "2017-03-07T16:47:02+00:00"
         },
         {
             "name": "webmozart/assert",
@@ -4929,7 +5058,7 @@
                 "check",
                 "validate"
             ],
-            "time": "2016-11-23 20:04:58"
+            "time": "2016-11-23T20:04:58+00:00"
         }
     ],
     "aliases": [],
