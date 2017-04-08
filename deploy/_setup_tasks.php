@@ -1,15 +1,35 @@
 <?php
 namespace Deployer;
 
-desc('Setup PHP Draft using a wizard to set important variables');
+desc('PHP Draft: Use a wizard to set important variables');
 task('setup', [
     'phpdraft:setupconfirm',
     'phpdraft:asksetupquestions',
     'phpdraft:copyfiles',
     'phpdraft:replacevalues',
-    'phpdraft:offerbackup',
+    'backup',
     'phpdraft:setupsuccess'
 ]);
+
+desc('PHP Draft: Offer to backup current settings for future upgrade imports');
+task('backup', function() {
+  writeln("\n\n<info>Looking great! Hey, if you want I can back up these snazzy settings files "
+    ."I just created for you. This will make it WAY easier to update PHP Draft in the future!</info>\n");
+  $answer = askConfirmation("Should I back up your settings for you?", false);
+
+  if($answer == true) {
+    writeln("\n\n<info>Awesome! Wherever you tell me to back your settings up to, you should make sure "
+      ."that only your user has permissions to view the file (if the server you're installing on "
+      ."is more important, you should probably ensure your disk is encrypted, too).</info>\n");
+    $backup_location = ask("Great! Where should I back your settings up to (ensure the directory exists first)?",
+      "~/phpdraft_settings");
+
+    runLocally("cp appsettings.php $backup_location/appsettings.php");
+    runLocally("cp js/config.js $backup_location/config.js");
+    runLocally("cp phinx.yml $backup_location/phinx.yml");
+    runLocally("cp deploy.php $backup_location/deploy.php");
+  }
+});
 
 desc('Confirm that the user wants to go through with this; warn of irreversible nature');
 task('phpdraft:setupconfirm', function() {
@@ -121,26 +141,6 @@ task('phpdraft:replacevalues', function() {
       //TODO: Is there something more platform agnostic we can use?
       runLocally("sed -i '' 's|{phpdraft.$property}|$value|g' $file $file");
     }
-  }
-})->setPrivate();
-
-desc('Offer to backup these files for future upgrade imports');
-task('phpdraft:offerbackup', function() {
-  writeln("\n\n<info>Looking great! Hey, if you want I can back up these snazzy settings files "
-    ."I just created for you. This will make it WAY easier to update PHP Draft in the future!</info>\n");
-  $answer = askConfirmation("Should I back up your settings for you?", false);
-
-  if($answer == true) {
-    writeln("\n\n<info>Awesome! Wherever you tell me to back your settings up to, you should make sure "
-      ."that only your user has permissions to view the file (if the server you're installing on "
-      ."is more important, you should probably ensure your disk is encrypted, too).</info>\n");
-    $backup_location = ask("Great! Where should I back your settings up to (ensure the directory exists first)?",
-      "~/phpdraft_settings");
-
-    runLocally("cp appsettings.php $backup_location/appsettings.php");
-    runLocally("cp js/config.js $backup_location/config.js");
-    runLocally("cp phinx.yml $backup_location/phinx.yml");
-    runLocally("cp deploy.php $backup_location/deploy.php");
   }
 })->setPrivate();
 

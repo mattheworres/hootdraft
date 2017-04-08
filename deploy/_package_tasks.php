@@ -1,8 +1,8 @@
 <?php
 namespace Deployer;
 
-desc('Build & Package PHP Draft from source (for Github Releases)');
-task('phpdraft:package_release', [
+desc('PHP Draft: Build & Package from source (for Github Releases)');
+task('package_release', [
     'phpdraft:get_release_details',
     'phpdraft:verify_package',
     'phpdraft:npm_install',
@@ -99,6 +99,7 @@ task('phpdraft:zip_package', function() {
         'api',
         'css',
         'db',
+        'deploy',
         'fonts',
         'images',
         'vendor',
@@ -107,13 +108,10 @@ task('phpdraft:zip_package', function() {
 
     $phpdraft_release_files = [
         '.htaccess',
-        'EXAMPLE_appsettings.php',
         'composer.json',
         'composer.lock',
         'README.MD',
         'INSTALL.md',
-        'phinx.yml.EXAMPLE',
-        'deploy',
         'index.html',
         'web.config'
     ];
@@ -128,6 +126,9 @@ task('phpdraft:zip_package', function() {
     foreach($phpdraft_release_files as $archiveFile) {
         runLocally("7z a $archivePath/$releaseFileName $archiveFile");
     }
+
+    //Hard-coded so we copy a working deploy.php so no one technically needs to edit a single file
+    runLocally("7z a $archivePath/$releaseFileName deploy/deploy.php.ci deploy.php");
 })->setPrivate();
 
 desc('Package resources with 7zip');

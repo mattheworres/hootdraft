@@ -1,7 +1,7 @@
 <?php
 namespace Deployer;
 
-desc('Deploy PHP Draft to production');
+desc('PHP Draft: Deploy to production');
 task('deploy', [
     'phpdraft:verify_install',
     'deploy:prepare',
@@ -20,7 +20,7 @@ task('deploy', [
 after('deploy:failed', 'phpdraft:rollback');
 after('deploy:failed', 'phpdraft:failure');
 
-desc('Import settings prior to a deployment');
+desc('PHP Draft: Import settings before deploying');
 task('import', function() {
     writeln("\n<info>Hello! Let's get those settings files imported for you, right quick!</info>\n");
 
