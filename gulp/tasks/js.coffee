@@ -4,9 +4,9 @@ cfg = require '../config'
 streamqueue = require 'streamqueue'
 order = require 'gulp-order'
 
-write = (stream, manifestSuffix) ->
+write = (stream, manifestSuffix, revAssets = true) ->
     stream
-        .pipe $.if cfg.options.revAssets, $.rev()
+        .pipe $.if cfg.options.revAssets and revAssets, $.rev()
         .pipe gulp.dest 'js'
 
 gulp.task 'js-vendor', ->
@@ -43,7 +43,7 @@ gulp.task 'js-config', ->
     stream = streamqueue objectMode: true, config
         .pipe $.if cfg.options.concat, $.concat 'config.js', newLine: '\n'
 
-    write stream, 'config'
+    write stream, 'config', false
 
 gulp.task 'js-templates', (cb) ->
     return cb() unless cfg.options.templates

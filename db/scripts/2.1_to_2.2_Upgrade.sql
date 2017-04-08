@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `phinxlog` (
   PRIMARY KEY  (`version`),
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Insert rows into phinxlog table to denote the upgrade manually
+-- Insert rows into phinxlog table to denote the upgrade occurred (manually)
 INSERT INTO `phinxlog` (`version`, `migration_name`, `start_time`, `end_time`, `breakpoint`)
 VALUES
   (20170324024149, 'CreateUsers', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0),
@@ -70,4 +70,5 @@ VALUES
   (20170324024155, 'CreateProPlayers', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0),
   (20170324024156, 'CreateRoundTimes', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0),
   (20170324024157, 'CreateDraftStats', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0),
-  (20170324024158, 'CreateDepthChartPositions', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0);
+  (20170324024158, 'CreateDepthChartPositions', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0),
+  (20170324024159, 'FixUsersVerificationColumn', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0);
