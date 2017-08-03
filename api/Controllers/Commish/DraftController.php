@@ -38,7 +38,7 @@ class DraftController
     $draft->draft_style = $request->get('style');
     $draft->draft_rounds = (int)$request->get('rounds');
     $draft->draft_password = $request->get('password');
-    $draft->using_depth_charts = (bool)$request->get('using_depth_charts');
+    $draft->using_depth_charts = $request->get('using_depth_charts') == true ? 1 : 0;
 
     $validity = $app['phpdraft.DraftValidator']->IsDraftValidForCreateAndUpdate($draft);
 
