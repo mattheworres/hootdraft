@@ -6,7 +6,6 @@ task('package_release', [
     'phpdraft:get_release_details',
     'phpdraft:verify_package',
     'phpdraft:npm_install',
-    'phpdraft:bower_install',
     'phpdraft:composer_install',
     'phpdraft:build_app',
     'phpdraft:zip_package',
@@ -19,7 +18,7 @@ task('phpdraft:verify_package', function() {
     $items_required_for_packaging = [
         'app',
         'db',
-        'deploy',
+		'deploy',
         'gulp'
     ];
 
@@ -31,10 +30,10 @@ task('phpdraft:verify_package', function() {
         }
     }
 
-    $npm_output = runLocally('npm -v');
+    $yarn_output = runLocally('yarn -v');
 
-    if(strpos($npm_output, '.') == false) {
-        writeln('<error>NPM not found on path. Install NPM globally for commandline use</error>');
+    if(strpos($yarn_output, '.') == false) {
+        writeln('<error>Yarn not found on path. Install Yarn globally for commandline use</error>');
         throw new \Exception("PHP Draft cannot be packaged for release");
     }
 
@@ -58,14 +57,9 @@ task('phpdraft:verify_package', function() {
     }
 })->setPrivate();
 
-desc('Install NPM packages (locally)');
+desc('Install NPM packages (for building)');
 task('phpdraft:npm_install', function() {
-    runLocally('npm install');
-})->setPrivate();
-
-desc('Install Bower packages (locally)');
-task('phpdraft:bower_install', function() {
-    runLocally('bower install');
+    runLocally('yarn install');
 })->setPrivate();
 
 desc('Install Composer packages (locally)');
@@ -101,7 +95,7 @@ task('phpdraft:zip_package', function() {
         'db',
         'deploy',
         'fonts',
-        'images',
+		'images',
         'vendor',
         'js'
     ];
@@ -111,7 +105,8 @@ task('phpdraft:zip_package', function() {
         'composer.json',
         'composer.lock',
         'README.MD',
-        'INSTALL.md',
+		'INSTALL.md',
+		'package.json',
         'index.html',
         'web.config'
     ];
@@ -142,7 +137,7 @@ task('phpdraft:zip_resources', function() {
     $archivePath = get('phpdraft')['releasePath'];
 
     foreach($goodResources as $resourceFile) {
-        runLocally("7z a $archivePath/$resourceFileName $phpdraft_resource_dir/$resourceFile");    
+        runLocally("7z a $archivePath/$resourceFileName $phpdraft_resource_dir/$resourceFile");
     }
 })->setPrivate();
 

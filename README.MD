@@ -6,7 +6,7 @@
 [![Join the chat at https://gitter.im/mattheworres/phpdraft](https://badges.gitter.im/mattheworres/phpdraft.svg)](https://gitter.im/mattheworres/phpdraft?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 
-PHP Draft allows commissioners to setup web-based real-time drafts for their fantasy sports leagues. If your leagues do **offline drafts** (instead of using your fantasy provider's online drafting tools), PHP Draft is just for you! 
+PHP Draft allows commissioners to setup web-based real-time drafts for their fantasy sports leagues. If your leagues do **offline drafts** (instead of using your fantasy provider's online drafting tools), PHP Draft is just for you!
 
 The league commissioner creates an account, and then adds the fantasy league.
 
@@ -27,7 +27,7 @@ Don't know how to install a web app or run a web server? No problem:
 ##### Sign up for a free commissioner account on [phpdraft.com](https://phpdraft.com) and get drafting today!
 
 ### Minimum Server Requirements
-- PHP 5.5.9+ installed (with `mcrypt` extension installed; PHP 7.x recommended!)
+- PHP 5.5.9+ installed (with `mcrypt` and `pdo_mysql` extension installed; PHP 7.x recommended!)
 - MySQL 5.5+ database
 - Webserver that can perform URL rewrites (Apache, IIS, or NGINX currently, possibly more in the future)
 - SMTP mail account (for user registration/password resets)

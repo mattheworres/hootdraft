@@ -38,13 +38,13 @@ server {
         listen 443 ssl http2;
 
         #Change the absolute path below to the base directory that PHP Draft lives
-        root /var/www/example.com/html;
+        root /var/www/example.com/current;
 
         index index.html;
 
         #Change the domain below to the domain name or IP address the site will run off of
         #NOTE: the "www" subdomain is purposefully left off. In the first server block, we are explicitly
-        #choosing to forward 
+        #choosing to forward
         server_name example.com;
 
         #Change both paths below to point to both the SSL certificate and the private key you have on the server:

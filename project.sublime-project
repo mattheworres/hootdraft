@@ -10,7 +10,17 @@
   {
     "tab_size": 2,
     "translate_tabs_to_spaces": true
-  }
-
+  },
+  "SublimeLinter":
+    {
+        "linters":
+        {
+            "php": {
+                "cmd": "/usr/local/bin/php"
+            },
+            "phpmd": {
+                "cmd": "${project}/vendor/bin/phpmd"
+            }
+        }
+    }
 }
-

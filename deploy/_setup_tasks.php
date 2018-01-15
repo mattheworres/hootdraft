@@ -13,6 +13,13 @@ task('setup', [
 
 desc('PHP Draft: Offer to backup current settings for future upgrade imports');
 task('backup', function() {
+	if (file_exists("js/config.js") == false) {
+		writeln("<error>Looks like js/config.js doesn't exist - I can't back up your settings.</error>\n");
+		writeln("<comment>Ensure you have downloaded a compiled release from https://github.com/mattheworres/phpdraft/releases</comment>\n");
+		writeln("<comment>Or, if you are building from sourcecode, consult the wiki on how to properly prepare a release.</comment>\n");
+		throw new \Exception("PHP Draft is not in a exportable state (use downloads from Releases on Github)");
+	}
+
   writeln("\n\n<info>Looking great! Hey, if you want I can back up these snazzy settings files "
     ."I just created for you. This will make it WAY easier to update PHP Draft in the future!</info>\n");
   $answer = askConfirmation("Should I back up your settings for you?", false);
@@ -28,6 +35,9 @@ task('backup', function() {
     runLocally("cp js/config.js $backup_location/config.js");
     runLocally("cp phinx.yml $backup_location/phinx.yml");
     runLocally("cp deploy.php $backup_location/deploy.php");
+		runLocally("cp .htaccess $backup_location/.htaccess");
+		runLocally("cp index.html $backup_location/index.html");
+    runLocally("cp web.config $backup_location/web.config");
   }
 });
 
@@ -50,8 +60,8 @@ task('phpdraft:asksetupquestions', function() {
   writeln("\n\n<info>Hello! I'm the PHP Draft Setup Wizard (pointy hat not included)</info>");
   writeln("\n<info>I need to ask you a series of questions in order to determine how to properly setup "
     ."your installation of PHP Draft. To make this go smoothly, you should make sure you have everything "
-    ."you need by reading the Install section of the wiki on Github (link here).</info>\n");
-  writeln("\n<info>Helpful hint: you can quit out at any time before I make it to the 'replacevalues' step by hitting CTRL+C!</info>\n");
+    ."you need by reading the Install section of the wiki on Github (https://github.com/mattheworres/phpdraft/blob/master/INSTALL.md).</info>\n");
+  writeln("\n<info>Helpful hint: you can quit out at any time before I permanently overwrite your settings near the end by hitting CTRL+C!</info>\n");
 
   writeln("<comment>Database</comment>");
   $dbHost = ask("Where is the MySQL server located (IP or DNS name, usually localhost)?", "localhost");

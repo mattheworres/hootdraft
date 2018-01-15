@@ -7,7 +7,8 @@ task('deploy', [
     'deploy:prepare',
     'deploy:lock',
     'deploy:release',
-    'phpdraft:upload_files',
+	'phpdraft:upload_files',
+	'phpdraft:remote_yarn',
     'phpdraft:remote_composer',
     'phpdraft:breakpoint',
     'phpdraft:migrate',
@@ -17,6 +18,7 @@ task('deploy', [
     'success'
 ]);
 
+before('deploy:release', 'phpdraft:set_rollback');
 after('deploy:failed', 'phpdraft:rollback');
 after('deploy:failed', 'phpdraft:failure');
 
@@ -29,9 +31,13 @@ task('import', function() {
     $settings_location = ask("What is the absolute (local) path of where your settings files are located?",
         "~/phpdraft_settings");
 
+	runLocally("cp $settings_location/.htaccess .htaccess");
     runLocally("cp $settings_location/appsettings.php appsettings.php");
+	runLocally("cp $settings_location/config.js js/config.js");
     runLocally("cp $settings_location/deploy.php deploy.php");
-    runLocally("cp $settings_location/config.js js/config.js");
+	runLocally("cp $settings_location/index.html index.html");
+	runLocally("cp $settings_location/phinx.yml phinx.yml");
+	runLocally("cp $settings_location/web.config web.config");
 
     writeln("\n\n<info>Success! I imported those settings for you, you should be ready to deploy now.</info>\n");
 });
@@ -68,62 +74,73 @@ task('phpdraft:upload_files', function() {
         'db',
         'fonts',
         'images',
-        'js',
+		'js',
         '.htaccess',
         'appsettings.php',
         'composer.json',
-        'composer.lock',
+		'composer.lock',
+		'package.json',
         'phinx.yml',
         'deploy',
         'index.html',
         'web.config'
     ];
+	//FOR MATT: need to install Yarn on Emerson, then test the deploy once again
+	//Next, i'll need to verify that package works correctly
+    // //List the folders we want to exclude children from based on the list below
+    // $dynamic_upload_folders = [
+    //     //'vendor'
+    // ];
 
-    //List the folders we want to exclude children from based on the list below
-    $dynamic_upload_folders = [
-        //'vendor'
-    ];
+    // //Exclude any children matching the list below from the list above
+    // //These exclusions are almost all dev dependencies from Composer
+    // $dynamic_exclusions = [
+    //     '..',
+    //     '.',
+    //     '.DS_Store',
+    //     'bin',
+    //     'composer',
+    //     'robmorgan',
+    //     'phpunit',
+    //     'myclabs',
+    //     'phpspec',
+    //     'sebastian',
+    //     'phpmd',
+    //     'pdepend',
+    //     'phpdocumentor',
+    //     'webmozart',
+    //     'deployer',
+    //     'elfet',
+    //     'react',
+    //     'ringcentral',
+    //     'guzzlehttp',
+    //     'evenement',
+    //     'phpseclib'
+    // ];
 
-    //Exclude any children matching the list below from the list above
-    //These exclusions are almost all dev dependencies from Composer
-    $dynamic_exclusions = [
-        '..',
-        '.',
-        '.DS_Store',
-        'bin',
-        'composer',
-        'robmorgan',
-        'phpunit',
-        'myclabs',
-        'phpspec',
-        'sebastian',
-        'phpmd',
-        'pdepend',
-        'phpdocumentor',
-        'webmozart',
-        'deployer',
-        'elfet',
-        'react',
-        'ringcentral',
-        'guzzlehttp',
-        'evenement',
-        'phpseclib'
-    ];
+    // foreach($dynamic_upload_folders as $dynamic_folder) {
+    //     $list_of_items = scandir($dynamic_folder);
+    //     $good_items = array_diff($list_of_items, $dynamic_exclusions);
 
-    foreach($dynamic_upload_folders as $dynamic_folder) {
-        $list_of_items = scandir($dynamic_folder);
-        $good_items = array_diff($list_of_items, $dynamic_exclusions);
-
-        foreach($good_items as $item) {
-            $phpdraft_files[] = "$dynamic_folder/$item";
-        }
-    }
+    //     foreach($good_items as $item) {
+    //         $phpdraft_files[] = "$dynamic_folder/$item";
+    //     }
+    // }
 
     foreach ($phpdraft_files as $file)
     {
         upload($file, "{{release_path}}/{$file}");
     }
 })->setPrivate();
+
+desc('Install NPM dependencies remotely');
+task('phpdraft:remote_yarn', function() {
+	cd('{{release_path}}');
+
+    run('yarn --production');
+
+    cd('{{deploy_path}}');
+});
 
 desc('Install Composer dependencies remotely');
 task('phpdraft:remote_composer', function() {
@@ -141,14 +158,19 @@ task('phpdraft:breakpoint', function() {
     run('php deploy/phinx.phar breakpoint -e production --remove-all');
     run('php deploy/phinx.phar breakpoint -e production');
 
-    set('phpdraft:rollback_required', true);
-
     cd('{{deploy_path}}');
+})->setPrivate();
+
+desc('Set rollback var to false in case of error');
+task('phpdraft:set_rollback', function() {
+    set('phpdraft_rollback_required', false);
 })->setPrivate();
 
 desc('Run Phinx migrations');
 task('phpdraft:migrate', function() {
-    cd('{{release_path}}');
+	cd('{{release_path}}');
+
+	set('phpdraft_rollback_required', true);
 
     run('php deploy/phinx.phar migrate -e production');
 
@@ -158,9 +180,9 @@ task('phpdraft:migrate', function() {
 desc('Rollback migrations on failure');
 task('phpdraft:rollback', function() {
     writeln('<comment>Rolling back database migrations...</comment>');
-    if(get("phpdraft:rollback_required") == true) {
+    if(get("phpdraft_rollback_required") == true) {
        cd('{{release_path}}');
-       run('php deploy/phinx.phar rollback -e production'); 
+       run('php deploy/phinx.phar rollback -e production');
        cd('{{deploy_path}}');
     }
 })->setPrivate();
