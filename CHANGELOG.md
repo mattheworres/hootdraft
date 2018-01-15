@@ -1,4 +1,17 @@
 # Changelog
+## v2.2.0
+**Official Release**
+
+**ADDED**: Deployer automated deployments with settings wizard and settings export/import. This should make installing a release (downloaded from the Github Releases page) super easy and repeatable with less human error. Follow the settings wizard once, and then allow it to back up your settings in a secure folder locally so that you can import them each time you download a new release. Maintain settings for multiple instances to easily keep them up to date.  I also added a packaging task with Deployer to make building the release ZIP files for Github more repeatable and with less human error. Because I error. A lot.
+
+**ADDED**: Phinx database migrations! No more hand-coded SQL files. Phinx is totally integrated with the automated deploys, and in most instances you shouldn't be touching much (if any) SQL. Provided a 2.1-to-2.2 SQL migration file to prepare 2.1 installs for the 2.2 code, but this should make adding columns/features pretty straightforward
+
+**ADDED**: Support and tooling to better help CI and deployment servers to support PHPDraft installs. I have a personal copy of Atlassian Bamboo that I now use to push builds to production, and so can you. Special `.ci` files that have replacement tokens for secret values that servers like Bamboo and Jenkins easily replace.
+
+**FIXED** Issues #38 and #41 - I was lazy with this bug previously by switching the MySQL mode (bad developer!) but should have fixed the queries related to the draft statistics for good now. Huzzah.
+
+**FIXED** Issue #37 - Updated this document! My gosh. I've been sitting on these changes for like 8 months. Crazy year in terms of time spent (and not much was spent developing, good and bad) - but hopefully I can more regularly get changes out with the deployment/database dev ops support I've added.
+
 ## v2.1.0
 **Official Release**
 
@@ -92,7 +105,7 @@ Also, thanks to @JustinPyvis for the Super Rugby sports player data, and @YamieS
 
 **ADDED**: Flag to use extended NFL rosters (that includes defensive players). By default its false (most fantasy leagues only track offensive players), but you can enable it. If using defensive players, it's suggest to also upload the "extended" pro players CSV file for the NFL, as this includes all defensive players as well (and offensive linemen, etc.)
 
-## v1.1.0 
+## v1.1.0
 **Official Release**
 
 **ADDED**: Trades feature
@@ -109,7 +122,7 @@ Also, thanks to @JustinPyvis for the Super Rugby sports player data, and @YamieS
 
 **REQUIRED**: DB Migration from previous versions (new tables, updated values): use /sql/1.0_to_1.1_migration.sql if coming from 1.0.0 - 1.0.4
 
-## v1.0.4 
+## v1.0.4
 
 **Critical Fixes Release**
 
