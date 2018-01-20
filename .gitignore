@@ -11,3 +11,10 @@ css/*
 js/*
 fonts
 index.html
+appsettings.php
+appsettings.php.local
+appsettings.php.staging
+phinx.yml
+phinx.yml.local
+deploy.php
+deploy.php.staging

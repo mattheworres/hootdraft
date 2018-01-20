@@ -48,7 +48,7 @@ class DraftService {
     try {
       $draft = $this->app['phpdraft.DraftRepository']->Update($draft);
 
-      if($draft->using_depth_charts) {
+      if($draft->using_depth_charts == 1) {
         $this->app['phpdraft.DepthChartPositionRepository']->DeleteAllDepthChartPositions($draft->draft_id);
         $depth_charts = $this->app['phpdraft.DepthChartPositionRepository']->Save($depthChartModel, $draft->draft_id);
       }

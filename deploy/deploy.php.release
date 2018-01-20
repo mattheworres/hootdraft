@@ -1,0 +1,23 @@
+<?php
+namespace Deployer;
+require 'recipe/common.php';
+require dirname(__FILE__).'/deploy/_deploy_tasks.php';
+require dirname(__FILE__).'/deploy/_package_tasks.php';
+require dirname(__FILE__).'/deploy/_setup_tasks.php';
+
+// Configuration
+set('ssh_type', 'native');
+set('ssh_multiplexing', true);
+set('keep_releases', 2);
+set('restart_fpm', false);
+
+// Servers
+server('production', '127.0.0.1')
+    ->user('your-ssh-user')
+    ->identityFile()    //If empty assumes id_rsa within .ssh
+    //->password(NULL)  //To provide password at terminal prompt, pass NULL here instead
+    ->set('deploy_path', '/var/www/your_site_name') //Is abs path to the base directory of the site
+    ;
+
+//See deploy/_deploy_tasks.php for task definition
+//See deploy/_package_tasks.php for task definition

@@ -1,0 +1,37 @@
+<?php
+//PHPDraft Application Settings
+
+$configuration_variables = array(
+  'DB_DRIVER' => 'pdo_mysql',
+  'DB_HOST' => '{phpdraft.dbHost}',
+  'DB_NAME' => '{phpdraft.dbName}',
+  'DB_PORT' => {phpdraft.dbPort},
+  'DB_USER' => '{phpdraft.dbUser}',
+  'DB_PASS' => '{phpdraft.dbPass}',
+  'CACHE_SECONDS' => {phpdraft.cacheSeconds},
+  'CACHE_PATH' => '{phpdraft.cachePath}',
+  'AUTH_KEY' => '{phpdraft.authKey}',
+  'AUTH_SECONDS' => {phpdraft.authSeconds},
+  'RECAPTCHA_SECRET' => '{phpdraft.recaptchaPrivateKey}',
+  'MAIL_DEVELOPMENT' => false,
+  'MAIL_SERVER' => '{phpdraft.mailServer}',
+  'MAIL_USER' => '{phpdraft.mailUser}',
+  'MAIL_PASS' => '{phpdraft.mailPass}',
+  'MAIL_PORT' => {phpdraft.mailPort},
+  'MAIL_USE_ENCRYPTION' => true,
+  'MAIL_ENCRYPTION' => 'tls',
+  'APP_BASE_URL' => '{phpdraft.appBaseUrl}',
+  'API_BASE_URL' => '{phpdraft.apiBaseUrl}',
+  'AUTH_KEY_HEADER' => 'X-Access-Token',
+  'DRAFT_PASSWORD_HEADER' => 'X-PhpDraft-DraftPassword',
+  'DEBUG_MODE' => false,
+  'LOGFILE_NAME' => 'phpdraft.log',
+  'SET_CSV_TIMEOUT' => false
+);
+
+foreach($configuration_variables as $name => $value) {
+  define($name, $value);
+}
+
+unset($configuration_variables);
+?>

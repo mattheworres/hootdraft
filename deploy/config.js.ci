@@ -1,0 +1,10 @@
+(function(angular, undefined) {
+  angular.module("config", [])
+
+.constant("ENV", {
+  "apiEndpoint": "{phpdraft.apiBaseUrl}",
+  "recaptchaPublicKey": "{phpdraft.recaptchaPublicKey}"
+})
+
+;
+})(angular);

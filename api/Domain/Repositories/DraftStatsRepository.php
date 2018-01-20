@@ -65,7 +65,7 @@ class DraftStatsRepository {
     $this->_LoadTeamSuperlatives($draft->draft_id, $draft_stats, $teams);
     $this->_LoadPositionSuperlatives($draft->draft_id, $draft_stats, $positions);
 
-    $insert_stmt = $this->app['db']->prepare("INSERT INTO draft_stats 
+    $insert_stmt = $this->app['db']->prepare("INSERT INTO draft_stats
       (draft_id, drafting_time_seconds, longest_avg_pick_manager_name, longest_avg_pick_seconds, shortest_avg_pick_manager_name, shortest_avg_pick_seconds,
         longest_single_pick_manager_name, longest_single_pick_seconds, shortest_single_pick_manager_name, shortest_single_pick_seconds,
         average_pick_seconds, longest_round, longest_round_seconds, shortest_round, shortest_round_seconds,
@@ -134,12 +134,12 @@ class DraftStatsRepository {
   }
 
   private function _LoadLongestAveragePick($draft_id, DraftStats &$stats) {
-    $stmt = $this->app['db']->prepare("SELECT p.pick_duration, m.manager_name, avg(pick_duration) as pick_average
+    $stmt = $this->app['db']->prepare("SELECT m.manager_name, avg(p.pick_duration) as pick_average
     FROM players p
     LEFT OUTER JOIN managers m
     ON m.manager_id = p.manager_id
     WHERE p.draft_id = ?
-    GROUP BY m.manager_name 
+    GROUP BY m.manager_name
     ORDER BY pick_average DESC
     LIMIT 1");
 
@@ -154,7 +154,7 @@ class DraftStatsRepository {
   }
 
   private function _LoadShortestAveragePick($draft_id, DraftStats &$stats) {
-    $stmt = $this->app['db']->prepare("SELECT p.pick_duration, m.manager_name, avg(pick_duration) as pick_average
+    $stmt = $this->app['db']->prepare("SELECT m.manager_name, avg(p.pick_duration) as pick_average
     FROM players p
     LEFT OUTER JOIN managers m
     ON m.manager_id = p.manager_id
@@ -174,7 +174,7 @@ class DraftStatsRepository {
   }
 
   private function _LoadSlowestPick($draft_id, DraftStats &$stats) {
-    $stmt = $this->app['db']->prepare("SELECT p.pick_duration, p.player_pick, m.manager_name, max(pick_duration) as pick_max
+    $stmt = $this->app['db']->prepare("SELECT m.manager_name, max(p.pick_duration) as pick_max
     FROM players p
     LEFT OUTER JOIN managers m
     ON m.manager_id = p.manager_id
@@ -194,7 +194,7 @@ class DraftStatsRepository {
   }
 
   private function _LoadFastestPick($draft_id, DraftStats &$stats) {
-    $stmt = $this->app['db']->prepare("SELECT p.pick_duration, p.player_pick, m.manager_name, min(pick_duration) as pick_min
+    $stmt = $this->app['db']->prepare("SELECT m.manager_name, min(p.pick_duration) as pick_min
     FROM players p
     LEFT OUTER JOIN managers m
     ON m.manager_id = p.manager_id
@@ -214,7 +214,7 @@ class DraftStatsRepository {
   }
 
   private function _LoadAveragePickTime($draft_id, DraftStats &$stats) {
-    $stmt = $this->app['db']->prepare("SELECT avg(pick_duration) as pick_average
+    $stmt = $this->app['db']->prepare("SELECT avg(p.pick_duration) as pick_average
     FROM players p
     WHERE p.draft_id = ?
     LIMIT 1");
