@@ -60,7 +60,7 @@ task('phpdraft:asksetupquestions', function() {
   writeln("\n\n<info>Hello! I'm the PHP Draft Setup Wizard (pointy hat not included)</info>");
   writeln("\n<info>I need to ask you a series of questions in order to determine how to properly setup "
     ."your installation of PHP Draft. To make this go smoothly, you should make sure you have everything "
-    ."you need by reading the Install section of the wiki on Github (https://github.com/mattheworres/phpdraft/blob/master/INSTALL.md).</info>\n");
+    ."you need by reading the Install section of the wiki on Github (https://github.com/mattheworres/phpdraft/wiki/Installing-PHP-Draft).</info>\n");
   writeln("\n<info>Helpful hint: you can quit out at any time before I permanently overwrite your settings near the end by hitting CTRL+C!</info>\n");
 
   writeln("<comment>Database</comment>");

@@ -105,7 +105,6 @@ task('phpdraft:zip_package', function() {
         'composer.json',
         'composer.lock',
         'README.MD',
-		'INSTALL.md',
 		'package.json',
         'index.html',
         'web.config'

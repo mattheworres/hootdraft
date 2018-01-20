@@ -36,11 +36,7 @@ Don't know how to install a web app or run a web server? No problem:
 
 ## Installing PHP Draft
 
-See [INSTALL.md](INSTALL.md) for detailed installation instructions, and [OPENSHIFT_DEPLOYMENT.md](OPENSHIFT_DEPLOYMENT.md) if you are interested in installing PHPDraft in the cloud (free!).
-
-**If you currently use PHP Draft v1.3.0**, please see [UPGRADE.md](UPGRADE.md) for instructions on how to perform an upgrade instead of a new installation.
-
-Currently there are no plans to support upgrading from versions previous to 1.3.0.
+See [Installation instructions](https://github.com/mattheworres/phpdraft/wiki/Installing-PHP-Draft) for detailed installation instructions.
 
 ## Feature Requests
 
@@ -60,13 +56,13 @@ You can also hit me up on [Twitter](https://twitter.com/mattheworres) if you're 
 
 ## Contributing & custom development
 
-See [DEVELOPER.md](DEVELOPER.md) if you are interested in developing or making custom changes to your PHP Draft.
+See the [Developing wiki page](https://github.com/mattheworres/phpdraft/wiki/Developing) if you are interested in developing or making custom changes to your PHP Draft.
 
 If you come up with something that others may find worthwhile - please fork this repository and submit a pull request. I provide this code (and the hundreds of hours of my personal time I've poured into the project) free of charge under an open source license without any expectation of payment or even gratitude. I do it to help a few folks out, and to return the favor I ask that you help pass it on :)
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for the most up to date version info.
+See the [Changelog](https://github.com/mattheworres/phpdraft/wiki/Changelog) for the most up to date version info.
 
 ## Creators
 
@@ -91,4 +87,4 @@ See [CHANGELOG.md](CHANGELOG.md) for the most up to date version info.
 
 ## Copyright and license
 
-Code and documentation copyright 2010-2016 Matthew Orres. Code released under the GNU v3 license.
+Code and documentation copyright 2010-2018 Matthew Orres. Code released under the GNU v3 license.
