@@ -74,7 +74,7 @@ task('phpdraft:build_app', function() {
 
 desc('Ask the user for release details');
 task('phpdraft:get_release_details', function() {
-    $phpdraftReleasePath = ask('Where should the release package be stored (provide an absolute path, no trailing slash)?', '$/phpdraft_releases');
+    $phpdraftReleasePath = ask('Where should the release package be stored (provide an absolute path, no trailing slash)?', '~/phpdraft_releases');
 
     $phpdraftReleaseFile = ask('Name for the main archive (.zip will be appended)', 'PHPDraft_2.x.x_Official');
 
@@ -114,15 +114,26 @@ task('phpdraft:zip_package', function() {
     $archivePath = get('phpdraft')['releasePath'];
 
     foreach($phpdraft_release_dirs as $archiveDirectory) {
-        runLocally("7z a $archivePath/$releaseFileName $archiveDirectory");
+		writeln("<comment>Directory: $archivePath/$releaseFileName $archiveDirectory</comment>");
+		runLocally("7z a $archivePath/$releaseFileName $archiveDirectory");
     }
 
     foreach($phpdraft_release_files as $archiveFile) {
+		writeln("<comment>File: $archivePath/$releaseFileName $archiveFile</comment>");
         runLocally("7z a $archivePath/$releaseFileName $archiveFile");
     }
 
     //Hard-coded so we copy a working deploy.php so no one technically needs to edit a single file
-    runLocally("7z a $archivePath/$releaseFileName deploy/deploy.php.ci deploy.php");
+	runLocally("7z a $archivePath/$releaseFileName deploy/deploy.php.release");
+	runLocally("7z a $archivePath/$releaseFileName deploy/appsettings.php.ci");
+	runLocally("7z a $archivePath/$releaseFileName deploy/phinx.yml.ci");
+	runLocally("7z rn $archivePath/$releaseFileName deploy/deploy.php.release deploy.php");
+	runLocally("7z rn $archivePath/$releaseFileName deploy/appsettings.php.ci appsettings.php");
+	runLocally("7z rn $archivePath/$releaseFileName deploy/phinx.yml.ci phinx.yml");
+
+	//Re-include them in case anyone using this packaged release needs CI versions of these!
+	runLocally("7z a $archivePath/$releaseFileName deploy/appsettings.php.ci");
+	runLocally("7z a $archivePath/$releaseFileName deploy/phinx.yml.ci");
 })->setPrivate();
 
 desc('Package resources with 7zip');
