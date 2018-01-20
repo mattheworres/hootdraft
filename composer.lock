@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "3bb16400ca814ac559802926b8954d7c",
+    "content-hash": "08e23feb5712e81e9124c074de400024",
     "packages": [
         {
             "name": "cnam/security-jwt-service-provider",
@@ -966,19 +966,20 @@
         },
         {
             "name": "phpmailer/phpmailer",
-            "version": "v5.2.23",
+            "version": "v5.2.26",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPMailer/PHPMailer.git",
-                "reference": "7115df4a6f76281109ebe352900c42403b728bb4"
+                "reference": "70362997bda4376378be7d92d81e2200550923f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/7115df4a6f76281109ebe352900c42403b728bb4",
-                "reference": "7115df4a6f76281109ebe352900c42403b728bb4",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/70362997bda4376378be7d92d81e2200550923f7",
+                "reference": "70362997bda4376378be7d92d81e2200550923f7",
                 "shasum": ""
             },
             "require": {
+                "ext-ctype": "*",
                 "php": ">=5.0.0"
             },
             "require-dev": {
@@ -1038,7 +1039,7 @@
                 }
             ],
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
-            "time": "2017-03-15T19:32:56+00:00"
+            "time": "2017-11-04T09:26:05+00:00"
         },
         {
             "name": "pimple/pimple",
@@ -2183,72 +2184,6 @@
             "description": "Deployment Tool",
             "homepage": "https://deployer.org",
             "time": "2017-03-12T07:28:14+00:00"
-        },
-        {
-            "name": "deployer/recipes",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/deployphp/recipes.git",
-                "reference": "39e777eda8125ff7fee36a6398c53aa61f97b197"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/deployphp/recipes/zipball/39e777eda8125ff7fee36a6398c53aa61f97b197",
-                "reference": "39e777eda8125ff7fee36a6398c53aa61f97b197",
-                "shasum": ""
-            },
-            "replace": {
-                "deployphp/recipes": "self.version"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.0-dev"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Samuel Gordalina",
-                    "email": "samuel.gordalina@gmail.com",
-                    "homepage": "https://gordalina.com",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "Tomas Majer",
-                    "email": "tomasmajer@gmail.com",
-                    "homepage": "http://tomaj.sk",
-                    "role": "Contributor"
-                },
-                {
-                    "name": "Hubert Kowalski",
-                    "email": "h.kowalski@hakger.pl",
-                    "homepage": "https://hakger.pl",
-                    "role": "Contributor"
-                },
-                {
-                    "name": "Anton Medvedev",
-                    "email": "anton@medv.io",
-                    "homepage": "http://medv.io",
-                    "role": "Contributor"
-                }
-            ],
-            "description": "3rd party deployer recipes",
-            "homepage": "https://github.com/deployphp/recipes",
-            "keywords": [
-                "cachetool",
-                "deploy",
-                "deployer",
-                "deployment",
-                "newrelic",
-                "recipes",
-                "slack"
-            ],
-            "time": "2017-03-28 17:27:02"
         },
         {
             "name": "doctrine/instantiator",
@@ -5064,8 +4999,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "phpmd/phpmd": 0,
-        "deployer/recipes": 20
+        "phpmd/phpmd": 0
     },
     "prefer-stable": false,
     "prefer-lowest": false,

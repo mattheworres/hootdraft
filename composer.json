@@ -7,7 +7,7 @@
         "cnam/security-jwt-service-provider" : "~2.1.1",
         "doctrine/dbal": "~2.5.12",
         "egulias/email-validator": "~1.2",
-        "phpmailer/phpmailer": "~5.2.23",
+        "phpmailer/phpmailer": "~5.2.26",
         "google/recaptcha": "~1.1",
         "phpfastcache/phpfastcache": "~5.0.15"
     },
