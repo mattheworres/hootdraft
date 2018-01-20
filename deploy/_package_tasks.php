@@ -5,7 +5,7 @@ desc('PHP Draft: Build & Package from source (for Github Releases)');
 task('package_release', [
     'phpdraft:get_release_details',
     'phpdraft:verify_package',
-    'phpdraft:npm_install',
+    'phpdraft:yarn_install',
     'phpdraft:composer_install',
     'phpdraft:build_app',
     'phpdraft:zip_package',
@@ -58,7 +58,7 @@ task('phpdraft:verify_package', function() {
 })->setPrivate();
 
 desc('Install NPM packages (for building)');
-task('phpdraft:npm_install', function() {
+task('phpdraft:yarn_install', function() {
     runLocally('yarn install');
 })->setPrivate();
 

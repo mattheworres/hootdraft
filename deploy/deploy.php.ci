@@ -9,6 +9,7 @@ require dirname(__FILE__).'/deploy/_setup_tasks.php';
 set('ssh_type', 'native');
 set('ssh_multiplexing', true);
 set('keep_releases', {phpdraft.deployReleasesKept});
+set('restart_fpm', false);
 
 // Servers
 server('production', '{phpdraft.deployLocation}')

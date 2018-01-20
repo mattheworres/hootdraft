@@ -12,7 +12,8 @@ task('deploy', [
     'phpdraft:remote_composer',
     'phpdraft:breakpoint',
     'phpdraft:migrate',
-    'deploy:symlink',
+	'deploy:symlink',
+	//'phpdraft:restart_fpm',
     'deploy:unlock',
     'cleanup',
     'success'
@@ -85,47 +86,6 @@ task('phpdraft:upload_files', function() {
         'index.html',
         'web.config'
     ];
-	//FOR MATT: need to install Yarn on Emerson, then test the deploy once again
-	//Next, i'll need to verify that package works correctly
-    // //List the folders we want to exclude children from based on the list below
-    // $dynamic_upload_folders = [
-    //     //'vendor'
-    // ];
-
-    // //Exclude any children matching the list below from the list above
-    // //These exclusions are almost all dev dependencies from Composer
-    // $dynamic_exclusions = [
-    //     '..',
-    //     '.',
-    //     '.DS_Store',
-    //     'bin',
-    //     'composer',
-    //     'robmorgan',
-    //     'phpunit',
-    //     'myclabs',
-    //     'phpspec',
-    //     'sebastian',
-    //     'phpmd',
-    //     'pdepend',
-    //     'phpdocumentor',
-    //     'webmozart',
-    //     'deployer',
-    //     'elfet',
-    //     'react',
-    //     'ringcentral',
-    //     'guzzlehttp',
-    //     'evenement',
-    //     'phpseclib'
-    // ];
-
-    // foreach($dynamic_upload_folders as $dynamic_folder) {
-    //     $list_of_items = scandir($dynamic_folder);
-    //     $good_items = array_diff($list_of_items, $dynamic_exclusions);
-
-    //     foreach($good_items as $item) {
-    //         $phpdraft_files[] = "$dynamic_folder/$item";
-    //     }
-    // }
 
     foreach ($phpdraft_files as $file)
     {
@@ -150,6 +110,21 @@ task('phpdraft:remote_composer', function() {
 
     cd('{{deploy_path}}');
 })->setPrivate();
+
+//TODO: SSH user needs elevated via the sudoers file in order to do this in Deployer
+// desc('Restart the PHP FPM service');
+// task('phpdraft:restart_fpm', function() {
+// 	cd('{{release_path}}');
+
+// 	if(get("restart_fpm") == true) {
+// 		writeln("<comment>Restarting the php7.0-fpm service...</comment>");
+// 		run('sudo service php7.0-fpm restart');
+// 	} else {
+// 		writeln("<comment>Skipping restart of php7.0-fpm service.</comment>");
+// 	}
+
+//     cd('{{deploy_path}}');
+// })->setPrivate();
 
 desc('Set Phinx breakpoint');
 task('phpdraft:breakpoint', function() {

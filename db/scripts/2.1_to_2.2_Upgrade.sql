@@ -13,7 +13,7 @@ ALTER TABLE depth_chart_positions CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 -- Change individual column charsets to UTF-8 & collations to utf8_general_ci
 
-ALTER TABLE draft 
+ALTER TABLE draft
   MODIFY draft_name TEXT CHARACTER SET utf8 COLLATE utf8_general_ci,
   MODIFY draft_sport TEXT CHARACTER SET utf8 COLLATE utf8_general_ci,
   MODIFY draft_status TEXT CHARACTER SET utf8 COLLATE utf8_general_ci,
@@ -22,7 +22,7 @@ ALTER TABLE draft
 
 ALTER TABLE depth_chart_positions MODIFY position VARCHAR(6) CHARACTER SET utf8 COLLATE utf8_general_ci;
 
-ALTER TABLE draft_stats 
+ALTER TABLE draft_stats
   MODIFY longest_avg_pick_manager_name TEXT CHARACTER SET utf8 COLLATE utf8_general_ci,
   MODIFY shortest_avg_pick_manager_name TEXT CHARACTER SET utf8 COLLATE utf8_general_ci,
   MODIFY longest_single_pick_manager_name TEXT CHARACTER SET utf8 COLLATE utf8_general_ci,
@@ -34,7 +34,7 @@ ALTER TABLE draft_stats
 
 ALTER TABLE managers MODIFY manager_name TEXT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
-ALTER TABLE players 
+ALTER TABLE players
   MODIFY first_name TEXT CHARACTER SET utf8 COLLATE utf8_general_ci,
   MODIFY last_name TEXT CHARACTER SET utf8 COLLATE utf8_general_ci,
   MODIFY team CHAR(3) CHARACTER SET utf8 COLLATE utf8_general_ci,
@@ -49,14 +49,14 @@ ALTER TABLE pro_players
   MODIFY team TEXT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 -- Create phinxlog table
-CREATE TABLE IF NOT EXISTS `phinxlog` (
+CREATE TABLE `phinxlog` (
   `version` BIGINT(20) NOT NULL,
-  `migration_name` VARCHAR(100) DEFAULT NULL,
-  `start_time` TIMESTAMP NULL DEFAULT NULL,
-  `end_time` TIMESTAMP NULL DEFAULT NULL,
-  `breakpoint` TINYINT(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY  (`version`),
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  migration_name VARCHAR(100) DEFAULT NULL,
+  start_time TIMESTAMP NULL DEFAULT NULL,
+  end_time TIMESTAMP NULL DEFAULT NULL,
+  breakpoint TINYINT(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY  (`version`)
+) ENGINE=`InnoDB` DEFAULT CHARSET=`utf8`;
 
 -- Insert rows into phinxlog table to denote the upgrade occurred (manually)
 INSERT INTO `phinxlog` (`version`, `migration_name`, `start_time`, `end_time`, `breakpoint`)
