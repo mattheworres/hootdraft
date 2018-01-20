@@ -114,12 +114,10 @@ task('phpdraft:zip_package', function() {
     $archivePath = get('phpdraft')['releasePath'];
 
     foreach($phpdraft_release_dirs as $archiveDirectory) {
-		writeln("<comment>Directory: $archivePath/$releaseFileName $archiveDirectory</comment>");
 		runLocally("7z a $archivePath/$releaseFileName $archiveDirectory");
     }
 
     foreach($phpdraft_release_files as $archiveFile) {
-		writeln("<comment>File: $archivePath/$releaseFileName $archiveFile</comment>");
         runLocally("7z a $archivePath/$releaseFileName $archiveFile");
     }
 
