@@ -10,12 +10,12 @@ build:
         node: v8.9.4
 
 checks:
-		php: true
+    php: true
 
 filter:
     excluded_paths:
         - tests/*
-				- resources/*
-				- gulp/*
-				- deploy/*
-				- db/*
+        - resources/*
+        - gulp/*
+        - deploy/*
+        - db/*
