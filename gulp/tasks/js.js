@@ -19,9 +19,9 @@ gulp.task('js-vendor', function() {
 
     const stream = gulp.src(cfg.paths.vendor.js)
         .pipe($.if(cfg.options.sourceMaps, $.sourcemaps.init({loadMaps: true})))
-		//.pipe(debug(object => object))
-		.pipe($.if(cfg.options.minify && isUnminified, $.uglify()))
-		.on('error', function (err) {gutil.log(gutil.colors.red('[Error]'), err.toString());})
+    //.pipe(debug(object => object))
+    .pipe($.if(cfg.options.minify && isUnminified, $.uglify()))
+    .on('error', function (err) {gutil.log(gutil.colors.red('[Error]'), err.toString());})
         .pipe($.concat('vendor.js', {newLine: '\n'}))
         .pipe($.if(cfg.options.sourceMaps, $.sourcemaps.write()));
 
@@ -30,67 +30,67 @@ gulp.task('js-vendor', function() {
 
 
 gulp.task('uglify-error-debugging', function (cb) {
-	pump([
-		gulp.src('app/**/*.js'),
-    	$.uglify(),
-		gulp.dest('./dist/')
+  pump([
+    gulp.src('app/**/*.js'),
+      $.uglify(),
+    gulp.dest('./dist/')
   ], cb);
 });
 
 gulp.task('js-app', function() {
-    const js = gulp.src(cfg.paths.app.js)
-        .pipe(order(cfg.paths.app.jsLoadOrder, { base: './' }))
-        .pipe($.if(cfg.options.sourceMaps, $.sourcemaps.init()))
-		.pipe($.coffee({bare: true}))
-		//.pipe(debug(object => object))
-		.pipe($.if(cfg.options.minify, $.ngAnnotate()))
-		.on('error', function (err) {gutil.log(gutil.colors.red('[Error]'), err.toString());});
+  const js = gulp.src(cfg.paths.app.js)
+    .pipe(order(cfg.paths.app.jsLoadOrder, { base: './' }))
+    .pipe($.if(cfg.options.sourceMaps, $.sourcemaps.init()))
+    .pipe($.coffee({bare: true}))
+    //.pipe(debug(object => object))
+    .pipe($.if(cfg.options.minify, $.ngAnnotate()))
+    .on('error', function (err) {gutil.log(gutil.colors.red('[Error]'), err.toString());});
 
-    const stream = streamqueue({objectMode: true}, js)
-        .pipe($.if(cfg.options.concat, $.concat('app.js', {newLine: '\n'})))
-		.pipe($.if(cfg.options.minify, $.uglify()))
-		.on('error', function (err) {gutil.log(gutil.colors.red('[Error]'), err.toString());})
-        .pipe($.if(cfg.options.sourceMaps, $.sourcemaps.write()));
+  const stream = streamqueue({objectMode: true}, js)
+    .pipe($.if(cfg.options.concat, $.concat('app.js', {newLine: '\n'})))
+    .pipe($.if(cfg.options.minify, $.uglify()))
+    .on('error', function (err) {gutil.log(gutil.colors.red('[Error]'), err.toString());})
+    .pipe($.if(cfg.options.sourceMaps, $.sourcemaps.write()));
 
-    return write(stream, 'app');
+  return write(stream, 'app');
 });
 
 gulp.task('js-config', function() {
-    const config = gulp.src(cfg.paths.app.config)
-		//.pipe(debug(object => object))
-		.pipe($.ngConstant({
-            name: 'config',
-            wrap: true
-        })
-    );
+  const config = gulp.src(cfg.paths.app.config)
+  //.pipe(debug(object => object))
+  .pipe($.ngConstant({
+      name: 'config',
+      wrap: true
+    })
+  );
 
-	const stream = streamqueue({objectMode: true}, config)
-		//.pipe(debug(object => object))
-        .pipe($.if(cfg.options.concat, $.concat('config.js', {newLine: '\n'})));
+const stream = streamqueue({objectMode: true}, config)
+  //.pipe(debug(object => object))
+  .pipe($.if(cfg.options.concat, $.concat('config.js', {newLine: '\n'})));
 
-    return write(stream, 'config', false);
+  return write(stream, 'config', false);
 });
 
 gulp.task('js-templates', function (cb) {
-	var stream;
-	if (!cfg.options.templates) {
-		return cb();
-	}
-	stream = gulp.src(cfg.paths.app.templates).pipe($.naturalSort()).pipe($.if(cfg.options.minify, $.htmlMinifier({
-		collapseBooleanAttributes: true,
-		collapseWhitespace: true,
-		removeAttributeQuotes: true,
-		removeComments: true,
-		removeEmptyAttributes: true,
-		removeRedundantAttributes: true,
-		removeScriptTypeAttributes: true,
-		removeStyleLinkTypeAttributes: true,
-		useShortDoctype: true
-	}))).pipe($.angularTemplatecache({
-		root: 'app/templates',
-		module: 'app'
-	}));
-	return write(stream, 'templates');
+  var stream;
+  if (!cfg.options.templates) {
+    return cb();
+  }
+  stream = gulp.src(cfg.paths.app.templates).pipe($.naturalSort()).pipe($.if(cfg.options.minify, $.htmlMinifier({
+    collapseBooleanAttributes: true,
+    collapseWhitespace: true,
+    removeAttributeQuotes: true,
+    removeComments: true,
+    removeEmptyAttributes: true,
+    removeRedundantAttributes: true,
+    removeScriptTypeAttributes: true,
+    removeStyleLinkTypeAttributes: true,
+    useShortDoctype: true
+  }))).pipe($.angularTemplatecache({
+    root: 'app/templates',
+    module: 'app'
+  }));
+  return write(stream, 'templates');
 });
 
 gulp.task('js', ['js-vendor', 'js-app', 'js-config', 'js-templates']);
