@@ -131,8 +131,12 @@ task('phpdraft:asksetupquestions', function() {
 
 desc('Copy files from the deploy directory to their place.');
 task('phpdraft:copyfiles', function() {
-  runLocally('cp deploy/appsettings.php.ci appsettings.php');
+	if(file_exists('js') !== true) {
+		runLocally('mkdir js');
+	}
+
   runLocally('cp deploy/config.js.ci js/config.js');
+  runLocally('cp deploy/appsettings.php.ci appsettings.php');
   runLocally('cp deploy/phinx.yml.ci phinx.yml');
   runLocally('cp deploy/deploy.php.ci deploy.php');
 })->setPrivate();
