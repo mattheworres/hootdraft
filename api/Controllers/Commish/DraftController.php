@@ -42,18 +42,18 @@ class DraftController
 
     $validity = $app['phpdraft.DraftValidator']->IsDraftValidForCreateAndUpdate($draft);
 
-    if(!$validity->success) {
+    if (!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
     $createPositionsModel = null;
 
-    if($draft->using_depth_charts == 1) {
+    if ($draft->using_depth_charts == 1) {
       $createPositionsModel = $this->_BuildDepthChartPositionModel($request);
 
       $positionValidity = $app['phpdraft.DepthChartPositionValidator']->AreDepthChartPositionsValid($createPositionsModel);
 
-      if(!$positionValidity->success) {
+      if (!$positionValidity->success) {
         return $app->json($positionValidity, Response::HTTP_BAD_REQUEST);
       }
     }
@@ -90,18 +90,18 @@ class DraftController
 
     $validity = $app['phpdraft.DraftValidator']->IsDraftValidForCreateAndUpdate($draft);
 
-    if(!$validity->success) {
+    if (!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
     $createPositionsModel = null;
 
-    if($draft->using_depth_charts == 1) {
+    if ($draft->using_depth_charts == 1) {
       $createPositionsModel = $this->_BuildDepthChartPositionModel($request);
 
       $positionValidity = $app['phpdraft.DepthChartPositionValidator']->AreDepthChartPositionsValid($createPositionsModel);
 
-      if(!$positionValidity->success) {
+      if (!$positionValidity->success) {
         return $app->json($positionValidity, Response::HTTP_BAD_REQUEST);
       }
     }
@@ -120,7 +120,7 @@ class DraftController
 
     $validity = $app['phpdraft.DraftValidator']->IsDraftStatusValid($draft, $oldStatus);
 
-    if(!$validity->success) {
+    if (!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
@@ -154,10 +154,10 @@ class DraftController
     $createModel = new \PhpDraft\Domain\Models\RoundTimeCreateModel();
     $createModel->isRoundTimesEnabled = (bool)$request->get('isRoundTimesEnabled');
 
-    if($createModel->isRoundTimesEnabled) {
+    if ($createModel->isRoundTimesEnabled) {
       $roundTimesJson = $request->get('roundTimes');
 
-      foreach($roundTimesJson as $roundTimeRequest) {
+      foreach ($roundTimesJson as $roundTimeRequest) {
         $newRoundTime = new \PhpDraft\Domain\Entities\RoundTime();
         $newRoundTime->draft_id = $draftId;
         $newRoundTime->is_static_time = $roundTimeRequest['is_static_time'] == "true" ? 1 : 0;
@@ -170,7 +170,7 @@ class DraftController
 
     $validity = $app['phpdraft.RoundTimeValidator']->AreRoundTimesValid($createModel);
 
-    if(!$validity->success) {
+    if (!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
@@ -187,7 +187,7 @@ class DraftController
     $depthChartPositionJson = $request->get('depthChartPositions');
     $display_order = 0;
 
-    foreach($depthChartPositionJson as $depthChartPositionRequest) {
+    foreach ($depthChartPositionJson as $depthChartPositionRequest) {
       $depthChartPosition = new \PhpDraft\Domain\Entities\DepthChartPosition();
       $depthChartPosition->draft_id = $draftId;
       $depthChartPosition->position = $depthChartPositionRequest['position'];

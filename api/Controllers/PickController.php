@@ -30,7 +30,7 @@ class PickController {
     $draftId = (int)$request->get('draft_id');
     $amount = (int)$request->get('amount');
 
-    if($amount == 0) {
+    if ($amount == 0) {
       $amount = 10;
     }
 
@@ -41,7 +41,7 @@ class PickController {
     $draftId = (int)$request->get('draft_id');
     $amount = (int)$request->get('amount');
 
-    if($amount == 0) {
+    if ($amount == 0) {
       $amount = 10;
     }
 
@@ -52,7 +52,7 @@ class PickController {
 
   public function GetAllManagerPicks(Application $app, Request $request) {
     $draftId = (int)$request->get('draft_id');
-    $managerId  = (int)$request->get('manager_id');
+    $managerId = (int)$request->get('manager_id');
 
     $draft = $app['phpdraft.DraftRepository']->Load($draftId);
 
@@ -103,7 +103,7 @@ class PickController {
     #If there's a space and no matches so far, create another searches where we manually split them firstname/lastname by sace automatically
     $splitNameAutomatically = count($pickSearchModel->player_results) == 0 && strpos($keywords, " ") != false;
 
-    if($splitNameAutomatically) {
+    if ($splitNameAutomatically) {
       $pickSearchModel = new PickSearchModel($draftId, $keywords, $team, $position, $sort);
       $names = explode(" ", $keywords, 2);
       $pickSearchModel = $app['phpdraft.PickRepository']->SearchSplit($pickSearchModel, $names[0], $names[1]);
@@ -121,7 +121,7 @@ class PickController {
       $pick = $app['phpdraft.PickRepository']->Load($pick_id);
 
       $pick->depth_chart_position_id = (int)$request->get('position_id');
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response = new PhpDraftResponse(false, array());
       $response->errors[] = "Unable to edit pick #$pick_id";
 
@@ -130,7 +130,7 @@ class PickController {
 
     $validity = $app['phpdraft.PickValidator']->IsPickValidForDepthChartUpdate($draft, $pick);
 
-    if(!$validity->success) {
+    if (!$validity->success) {
       return $app->json($validity, $validity->responseType());
     }
 

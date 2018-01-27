@@ -24,7 +24,7 @@ class RoundTimeService {
 
       $response->success = true;
       $response->roundTimes = $roundTimes;
-    }catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response->success = false;
       $response->errors = array($e->getMessage());
     }
@@ -39,7 +39,7 @@ class RoundTimeService {
       $current_pick = $this->app['phpdraft.PickRepository']->GetCurrentPick($draft);
       $last_pick = $this->app['phpdraft.PickRepository']->GetPreviousPick($draft);
       $current_round_picktime = $this->app['phpdraft.RoundTimeRepository']->LoadByRound($draft);
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response->success = false;
       $response->errors = array($e->getMessage());
     }
@@ -47,7 +47,7 @@ class RoundTimeService {
     $response->success = true;
     $response->timer_enabled = $current_round_picktime != null;
 
-    if(!$response->timer_enabled) {
+    if (!$response->timer_enabled) {
       return $response;
     }
 

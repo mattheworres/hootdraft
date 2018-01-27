@@ -20,7 +20,7 @@ class PickValidator {
     $teams = $this->app['phpdraft.DraftDataRepository']->GetTeams($draft->draft_sport);
     $positions = $this->app['phpdraft.DraftDataRepository']->GetPositions($draft->draft_sport);
 
-    if(empty($pick->first_name)
+    if (empty($pick->first_name)
       || empty($pick->last_name)
       || empty($pick->team)
       || empty($pick->position)) {
@@ -28,32 +28,32 @@ class PickValidator {
       $valid = false;
     }
 
-    if($pick->draft_id != $draft->draft_id) {
+    if ($pick->draft_id != $draft->draft_id) {
       $errors[] = "Pick does not belong to draft #$draft->draft_id.";
       $valid = false;
     }
 
-    if(strlen($pick->first_name) > 255) {
+    if (strlen($pick->first_name) > 255) {
       $errors[] = "First name is above maximum length.";
       $valid = false;
     }
 
-    if(strlen($pick->last_name) > 255) {
+    if (strlen($pick->last_name) > 255) {
       $errors[] = "Last name is above maximum length.";
       $valid = false;
     }
 
-    if($draft->draft_current_pick != $pick->player_pick) {
+    if ($draft->draft_current_pick != $pick->player_pick) {
       $errors[] = "Pick #$pick->player_pick is not the current pick for draft #$draft->draft_id.";
       $valid = false;
     }
 
-    if(!array_key_exists($pick->team, $teams)) {
+    if (!array_key_exists($pick->team, $teams)) {
       $errors[] = "Team $pick->team is an invalid value.";
       $valid = false;
     }
 
-    if(!array_key_exists($pick->position, $positions)) {
+    if (!array_key_exists($pick->position, $positions)) {
       $errors[] = "Position $pick->position is an invalid value.";
       $valid = false;
     }
@@ -67,7 +67,7 @@ class PickValidator {
     $teams = $this->app['phpdraft.DraftDataRepository']->GetTeams($draft->draft_sport);
     $positions = $this->app['phpdraft.DraftDataRepository']->GetPositions($draft->draft_sport);
 
-    if(empty($pick->first_name)
+    if (empty($pick->first_name)
       || empty($pick->last_name)
       || empty($pick->team)
       || empty($pick->position)) {
@@ -75,27 +75,27 @@ class PickValidator {
       $valid = false;
     }
 
-    if($pick->draft_id != $draft->draft_id) {
+    if ($pick->draft_id != $draft->draft_id) {
       $errors[] = "Pick does not belong to draft #$draft->draft_id.";
       $valid = false;
     }
 
-    if(strlen($pick->first_name) > 255) {
+    if (strlen($pick->first_name) > 255) {
       $errors[] = "First name is above maximum length.";
       $valid = false;
     }
 
-    if(strlen($pick->last_name) > 255) {
+    if (strlen($pick->last_name) > 255) {
       $errors[] = "Last name is above maximum length.";
       $valid = false;
     }
 
-    if(!array_key_exists($pick->team, $teams)) {
+    if (!array_key_exists($pick->team, $teams)) {
       $errors[] = "Team $pick->team is an invalid value.";
       $valid = false;
     }
 
-    if(!array_key_exists($pick->position, $positions)) {
+    if (!array_key_exists($pick->position, $positions)) {
       $errors[] = "Position $pick->position is an invalid value.";
       $valid = false;
     }
@@ -107,7 +107,7 @@ class PickValidator {
     $valid = true;
     $errors = array();
 
-    if($pick->draft_id != $draft->draft_id) {
+    if ($pick->draft_id != $draft->draft_id) {
       $errors[] = "Pick does not belong to draft #$draft->draft_id.";
       $valid = false;
     }

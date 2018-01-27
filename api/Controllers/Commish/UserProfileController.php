@@ -12,7 +12,7 @@ class UserProfileController {
   public function Get(Application $app, Request $request) {
     $user = $app['phpdraft.LoginUserService']->GetCurrentUser();
 
-    if(empty($user)) {
+    if (empty($user)) {
       return $app->json(new PhpDraftResponse(false));
     }
 
@@ -22,7 +22,7 @@ class UserProfileController {
   public function Put(Application $app, Request $request) {
     $validity = $app['phpdraft.LoginUserValidator']->IsUserProfileUpdateValid($request);
 
-    if(!$validity->success) {
+    if (!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 

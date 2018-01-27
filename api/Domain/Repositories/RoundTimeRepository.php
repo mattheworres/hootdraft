@@ -27,23 +27,23 @@ class RoundTimeRepository {
     $timerStmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\RoundTime');
     $timerStmt->bindParam(1, $draftId);
 
-    if(!$timerStmt->execute()) {
+    if (!$timerStmt->execute()) {
       throw new \Exception("Unable to load round times.");
     }
 
     $timers = array();
 
-    while($timer = $timerStmt->fetch()) {
+    while ($timer = $timerStmt->fetch()) {
       $timers[] = $timer;
     }
 
     $isStaticTime = false;
 
-    if(count($timers) == 1 && $timers[0]->is_static_time) {
+    if (count($timers) == 1 && $timers[0]->is_static_time) {
       $isStaticTime = true;
     }
 
-    if(empty($timers) || count($timers) != $draft->draft_rounds) {
+    if (empty($timers) || count($timers) != $draft->draft_rounds) {
       $timers = $this->_CoalesceDraftTimers($draft, $timers, $isStaticTime);
     }
 
@@ -53,15 +53,15 @@ class RoundTimeRepository {
   private function _CoalesceDraftTimers(Draft $draft, $existing_timers, $isStaticTime) {
     $coalescedTimers = array();
 
-    for($i = 0; $i < $draft->draft_rounds; $i++) {
-      if($isStaticTime && $i == 0) {
+    for ($i = 0; $i < $draft->draft_rounds; $i++) {
+      if ($isStaticTime && $i == 0) {
         $timer = $existing_timers[$i];
         $timer->draft_round = $i + 1;
         $coalescedTimers[] = $timer;
         continue;
       }
 
-      if(array_key_exists($i, $existing_timers)) {
+      if (array_key_exists($i, $existing_timers)) {
         $coalescedTimers[] = $existing_timers[$i];
       } else {
         $newTimer = new RoundTime();
@@ -105,7 +105,7 @@ class RoundTimeRepository {
     $deleteRoundTime = $this->app['db']->prepare("DELETE FROM round_times WHERE draft_id = ?");
     $deleteRoundTime->bindParam(1, $draftId);
 
-    if(!$deleteRoundTime->execute()) {
+    if (!$deleteRoundTime->execute()) {
       throw new \Exception("Unable to delete round times: " . $this->app['db']->errorInfo());
     }
 
@@ -119,11 +119,11 @@ class RoundTimeRepository {
     $staticRoundTimeStmt->setFetchMode(\PDO::FETCH_INTO, $roundTime);
     $staticRoundTimeStmt->bindParam(1, $draft->draft_id);
 
-    if(!$staticRoundTimeStmt->execute()) {
+    if (!$staticRoundTimeStmt->execute()) {
       throw new \Exception("Unable to get static round time.");
     }
 
-    if($staticRoundTimeStmt->rowCount() == 1) {
+    if ($staticRoundTimeStmt->rowCount() == 1) {
       $staticRoundTimeStmt->fetch();
 
       return $roundTime;
@@ -138,7 +138,7 @@ class RoundTimeRepository {
       throw new \Exception("Unable to load round time:" . $this->app['db']->errorInfo());
     }
 
-    if($roundTimeStmt->rowCount() == 0) {
+    if ($roundTimeStmt->rowCount() == 0) {
       return null;
     }
 

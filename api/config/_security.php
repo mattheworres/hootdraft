@@ -9,7 +9,7 @@ if (!$app instanceof Silex\Application) {
   throw new Exception('Invalid application setup.');
 }
 
-$app['users'] = function () use ($app) {
+$app['users'] = function() use ($app) {
   return new UserProvider($app);
 };
 

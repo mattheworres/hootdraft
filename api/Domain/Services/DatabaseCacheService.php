@@ -27,7 +27,7 @@ class DatabaseCacheService {
   public function GetCachedItem($itemKey) {
     $cachedItem = $this->_LoadCacheObject($itemKey);
 
-    if(!$cachedItem->isHit()) {
+    if (!$cachedItem->isHit()) {
       return null;
     }
 

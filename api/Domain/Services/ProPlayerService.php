@@ -39,7 +39,7 @@ class ProPlayerService {
       #If there's a space and no matches so far, create another searches where we manually split them firstname/lastname by sace automatically
       $split_name_automatically = count($players) == 0 && strpos($searchTerm, " ") != false;
 
-      if($split_name_automatically) {
+      if ($split_name_automatically) {
         $names = explode(" ", $searchTerm, 2);
         $players = $this->app['phpdraft.ProPlayerRepository']->SearchPlayersByAssumedName($league, $names[0], $names[1]);
       }
@@ -67,12 +67,14 @@ class ProPlayerService {
       return $response;
     }
 
-    if (SET_CSV_TIMEOUT)
-      set_time_limit(0);
+    if (SET_CSV_TIMEOUT) {
+          set_time_limit(0);
+    }
 
     while (($data = fgetcsv($handle, 1000, ';')) !== FALSE) {
-      if ($data[0] == "Player")
-        continue;
+      if ($data[0] == "Player") {
+              continue;
+      }
 
       $new_player = new ProPlayer();
 

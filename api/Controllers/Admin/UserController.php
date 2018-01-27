@@ -30,7 +30,7 @@ class UserController
 
     $validity = $app['phpdraft.LoginUserValidator']->IsAdminUserUpdateValid($user);
 
-    if(!$validity->success) {
+    if (!$validity->success) {
       return $app->json($validity, $validity->responseType());
     }
 
@@ -45,7 +45,7 @@ class UserController
     $user_id = $request->get('user_id');
     $user = $app['phpdraft.LoginUserRepository']->LoadById($user_id);
 
-    if($app['phpdraft.LoginUserService']->CurrentUserIsAdmin($user)) {
+    if ($app['phpdraft.LoginUserService']->CurrentUserIsAdmin($user)) {
       $response = new PhpDraftResponse(false, array());
       $response->errors[] = "Unable to delete user - user is admin.";
 

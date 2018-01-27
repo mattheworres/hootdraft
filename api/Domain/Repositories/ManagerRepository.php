@@ -18,11 +18,13 @@ class ManagerRepository {
     $load_stmt->setFetchMode(\PDO::FETCH_INTO, $manager);
     $load_stmt->bindParam(1, $id);
 
-    if (!$load_stmt->execute())
-      throw new \Exception(sprintf('Manager "%s" does not exist.', $manager));
+    if (!$load_stmt->execute()) {
+          throw new \Exception(sprintf('Manager "%s" does not exist.', $manager));
+    }
 
-    if (!$load_stmt->fetch())
-      throw new \Exception(sprintf('Manager "%s" does not exist.', $id));
+    if (!$load_stmt->fetch()) {
+          throw new \Exception(sprintf('Manager "%s" does not exist.', $id));
+    }
 
     return $manager;
   }
@@ -35,11 +37,11 @@ class ManagerRepository {
 
     $managers_stmt->bindParam(1, $draft_id);
 
-    if(!$managers_stmt->execute()) {
+    if (!$managers_stmt->execute()) {
       throw new \Exception("Unable to load managers for draft #$draft_id");
     }
 
-    while($manager = $managers_stmt->fetch()) {
+    while ($manager = $managers_stmt->fetch()) {
       $managers[] = $manager;
     }
 
@@ -49,7 +51,7 @@ class ManagerRepository {
   public function GetManagersByDraftOrder($draft_id, $descending = false) {
     $managers = array();
 
-    if($descending) {
+    if ($descending) {
       $managers_stmt = $this->app['db']->prepare("SELECT * FROM managers WHERE draft_id = ? ORDER BY draft_order DESC");
     } else {
       $managers_stmt = $this->app['db']->prepare("SELECT * FROM managers WHERE draft_id = ? ORDER BY draft_order");  
@@ -59,11 +61,11 @@ class ManagerRepository {
 
     $managers_stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Manager');
 
-    if(!$managers_stmt->execute()) {
+    if (!$managers_stmt->execute()) {
       throw new \Exception("Unable to load managers for draft #$draft_id");
     }
 
-    while($manager = $managers_stmt->fetch()) {
+    while ($manager = $managers_stmt->fetch()) {
       $managers[] = $manager;
     }
 
@@ -75,7 +77,7 @@ class ManagerRepository {
     $manager_stmt = $this->app['db']->prepare("SELECT manager_name FROM managers WHERE draft_id = ?");
     $manager_stmt->bindParam(1, $draft_id);
 
-    if(!$manager_stmt->execute()) {
+    if (!$manager_stmt->execute()) {
       throw new \Exception("Draft id '%s' is invalid", $draft_id);
     }
 
@@ -86,7 +88,7 @@ class ManagerRepository {
     $manager_stmt = $this->app['db']->prepare("SELECT COUNT(manager_id) FROM managers WHERE draft_id = ?");
     $manager_stmt->bindParam(1, $draft_id);
 
-    if(!$manager_stmt->execute()) {
+    if (!$manager_stmt->execute()) {
       throw new \Exception("Unable to get number of managers for draft #$draft_id");
     }
 
@@ -94,7 +96,7 @@ class ManagerRepository {
   }
 
   public function NameIsUnique($name, $draft_id, $id = null) {
-    if(!empty($id)) {
+    if (!empty($id)) {
       $name_stmt = $this->app['db']->prepare("SELECT manager_name FROM managers WHERE manager_name LIKE ? AND draft_id = ? AND manager_id <> ?");
       $name_stmt->bindParam(1, $name);
       $name_stmt->bindParam(2, $draft_id);
@@ -105,7 +107,7 @@ class ManagerRepository {
       $name_stmt->bindParam(2, $draft_id);
     }
 
-    if(!$name_stmt->execute()) {
+    if (!$name_stmt->execute()) {
       throw new \Exception("Manager name '$name' is invalid");
     }
 
@@ -117,7 +119,7 @@ class ManagerRepository {
     $exists_stmt->bindParam(1, $id);
     $exists_stmt->bindParam(2, $draft_id);
 
-    if(!$exists_stmt->execute()) {
+    if (!$exists_stmt->execute()) {
       throw new \Exception("Manager ID $id is invalid");
     }
 
@@ -136,7 +138,7 @@ class ManagerRepository {
       throw new \Exception("Unable to create new manager: " . $this->app['db']->errorInfo());
     }
 
-    $manager->manager_id = (int) $this->app['db']->lastInsertId();
+    $manager->manager_id = (int)$this->app['db']->lastInsertId();
 
     return $manager;
   }
@@ -148,7 +150,7 @@ class ManagerRepository {
     $newDraftOrder = $this->_GetLowestDraftorder($draft_id) + 1;
     $newManagers = array();
 
-    foreach($managersArray as $newManager) {
+    foreach ($managersArray as $newManager) {
       $save_stmt->bindValue(':draft_id', $newManager->draft_id);
       $save_stmt->bindValue(':manager_name', $newManager->manager_name);
       $save_stmt->bindValue(':draft_order', $newDraftOrder++);
@@ -169,7 +171,7 @@ class ManagerRepository {
     $update_stmt->bindParam(1, $manager->manager_name);
     $update_stmt->bindParam(2, $manager->manager_id);
 
-    if(!$update_stmt->execute()) {
+    if (!$update_stmt->execute()) {
       throw new \Exception("Unable to update manager #$manager->manager_id");
     }
 
@@ -181,11 +183,11 @@ class ManagerRepository {
 
     $newDraftOrder = 1;
 
-    foreach($managersIdArray as $manager_id) {
+    foreach ($managersIdArray as $manager_id) {
       $reorder_stmt->bindValue(':draft_order', $newDraftOrder++);
       $reorder_stmt->bindValue(':manager_id', $manager_id);
 
-      if(!$reorder_stmt->execute()) {
+      if (!$reorder_stmt->execute()) {
         throw new \Exception("Unable to update manager order for manager #$manager_id");
       }
     }
@@ -197,7 +199,7 @@ class ManagerRepository {
     $delete_stmt = $this->app['db']->prepare("DELETE FROM managers WHERE manager_id = ?");
     $delete_stmt->bindParam(1, $manager_id);
 
-    if(!$delete_stmt->execute()) {
+    if (!$delete_stmt->execute()) {
       throw new \Exception("Unable to delete manager $manager_id.");
     }
 
@@ -208,7 +210,7 @@ class ManagerRepository {
     $delete_stmt = $this->app['db']->prepare("DELETE FROM managers WHERE draft_id = ?");
     $delete_stmt->bindParam(1, $draft_id);
 
-    if(!$delete_stmt->execute()) {
+    if (!$delete_stmt->execute()) {
       throw new \Exception("Unable to delete managers for draft $draft_id.");
     }
 

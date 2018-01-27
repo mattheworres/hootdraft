@@ -138,10 +138,10 @@ class ProPlayerRepository {
     return;
   }
 
-   /**
-   * Adds a new pro player to the DB
-   * @return boolean success whether or not the database operation succeeded.
-   */
+    /**
+     * Adds a new pro player to the DB
+     * @return boolean success whether or not the database operation succeeded.
+     */
   private function _saveProPlayer(ProPlayer $proPlayer) {
     if ($proPlayer->pro_player_id > 0) {
       throw new \Exception("Unable to save pro player: invalid ID.");
@@ -161,7 +161,7 @@ class ProPlayerRepository {
         throw new \Exception("Unable to save pro player.");
       }
 
-      $proPlayer->draft_id = (int) $this->app['db']->lastInsertId();
+      $proPlayer->draft_id = (int)$this->app['db']->lastInsertId();
 
       return $proPlayer;
     }

@@ -22,7 +22,7 @@ class ProPlayerController
 
     $validity = $app['phpdraft.ProPlayerValidator']->IsUploadSportValid($sport, $file);
 
-    if(!$validity->success) {
+    if (!$validity->success) {
       return $app->json($validity, $validity->responseType());
     }
 

@@ -30,7 +30,7 @@ class PickController {
       $pick->last_name = $request->get('last_name');
       $pick->team = $request->get('team');
       $pick->position = $request->get('position');
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response = new PhpDraftResponse(false, array());
       $response->errors[] = "Unable to add pick #$pick_id";
 
@@ -39,7 +39,7 @@ class PickController {
 
     $validity = $app['phpdraft.PickValidator']->IsPickValidForAdd($draft, $pick);
 
-    if(!$validity->success) {
+    if (!$validity->success) {
       return $app->json($validity, $validity->responseType());
     }
 
@@ -60,7 +60,7 @@ class PickController {
       $pick->last_name = $request->get('last_name');
       $pick->team = $request->get('team');
       $pick->position = $request->get('position');
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response = new PhpDraftResponse(false, array());
       $response->errors[] = "Unable to edit pick #$pick_id";
 
@@ -69,7 +69,7 @@ class PickController {
 
     $validity = $app['phpdraft.PickValidator']->IsPickValidForUpdate($draft, $pick);
 
-    if(!$validity->success) {
+    if (!$validity->success) {
       return $app->json($validity, $validity->responseType());
     }
 
@@ -99,7 +99,7 @@ class PickController {
       $response->draft_rounds = $draft->draft_rounds;
       $response->last_5_picks = $app['phpdraft.PickRepository']->LoadLastPicks($draft_id, 5);
       $response->success = true;
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response->success = false;
       $response->errors[] = "Unable to load last 5 picks.";
     }
@@ -117,7 +117,7 @@ class PickController {
       $response->round = $round;
       $response->round_picks = $app['phpdraft.PickRepository']->LoadRoundPicks($draft, $round, false, true);
       $response->success = true;
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response->success = false;
       $response->errors[] = "Unable to load round #$round's picks";
     }
