@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 require_once dirname(__FILE__) . '/../../vendor/autoload.php';
 
 $app = new Silex\Application();
@@ -8,6 +7,7 @@ $app = new Silex\Application();
 //Please see README.md for instructions on how to setup
 require_once dirname(__FILE__) . '/../../appsettings.php';
 
+// global DEBUG_MODE Set from appsettings.php
 $app['debug'] = DEBUG_MODE;
 
 require_once dirname(__FILE__) . '/_database.php'; //Sets up database connections
