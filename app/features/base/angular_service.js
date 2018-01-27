@@ -1,6 +1,5 @@
-this.AngularService = class AngularService extends AngularComponent {
-    static register(name) {
-		super(name, "service");
-		//return super.register(name, "service");
+class AngularService extends AngularComponent {
+    register(name) {
+      super.register(name, "service");
     }
 };

@@ -1,11 +1,18 @@
-const Cls = (this.BaseController = class BaseController extends AngularController {
-  static initClass() {
+class BaseController extends AngularController {
+  constructor() {
+    super(...arguments);
+
+    if (typeof this.initialize === 'function') {
+      this.initialize();
+    }
+
     //default dependencies in case @inject is never called from the child
     this.$inject = ["$routeParams", "$scope", "$rootScope", "$location", "$sessionStorage",
-    "$window", "authenticationService", "messageService", "donationPromptService",
-    "draftService", "subscriptionKeys", "DTOptionsBuilder"];
+      "$window", "authenticationService", "messageService", "donationPromptService",
+      "draftService", "subscriptionKeys", "DTOptionsBuilder"];
   }
-  static inject(...args) {
+
+  inject(...args) {
       args.push('$routeParams');
       args.push('$scope');
       args.push('$rootScope');
@@ -21,13 +28,6 @@ const Cls = (this.BaseController = class BaseController extends AngularControlle
       args.push('api');
       return super.inject(...Array.from(args || []));
     }
-
-  constructor() {
-    super(...arguments);
-    if (typeof this.initialize === 'function') {
-      this.initialize();
-    }
-  }
 
   isAuthenticated() {
     return this.authenticationService.isAuthenticated();
@@ -93,5 +93,4 @@ const Cls = (this.BaseController = class BaseController extends AngularControlle
 
     return whitelisted_paths.some(whitelisted_path => ~path.indexOf(whitelisted_path));
   }
-});
-Cls.initClass();
+}

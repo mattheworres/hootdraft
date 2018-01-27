@@ -1,6 +1,7 @@
 class SubscriptionKeys extends AngularService {
 	constructor() {
-		this.register('subscriptionKeys');
+    super();
+    this.register('subscriptionKeys');
 
 		this.scopeDestroy = '$destroy';
 		this.viewContentLoaded = '$viewContentLoaded';

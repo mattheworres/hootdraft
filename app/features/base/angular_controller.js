@@ -1,6 +1,5 @@
-this.AngularController = class AngularController extends AngularComponent {
-    static register(name) {
-		super(name, "controller");
-		//return super.register(name, "controller");
+class AngularController extends AngularComponent {
+    register(name) {
+		  super.register(name, "controller");
     }
 };

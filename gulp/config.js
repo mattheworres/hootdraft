@@ -32,8 +32,14 @@ module.exports = {
             fonts: 'app/fonts/**/*',
             html: 'app/index.html',
             img: 'app/img/**/*',
-            js: 'app/coffee/**/*.coffee',
+            js: 'app/features/**/*.js',
             jsLoadOrder: [
+              'app/features/app.js',
+              'app/features/base/*.js',
+              'app/features/**/*.js'
+            ],
+            coffee: 'app/coffee/**/*.coffee',
+            coffeeLoadOrder: [
                 'app/coffee/app.coffee',
                 'app/coffee/angular_base/*.coffee',
                 'app/coffee/base/**/*.coffee',

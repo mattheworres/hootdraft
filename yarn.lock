@@ -624,6 +624,10 @@ babel-plugin-syntax-async-functions@^6.8.0:
   version "6.13.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-async-functions/-/babel-plugin-syntax-async-functions-6.13.0.tgz#cad9cad1191b5ad634bf30ae0872391e0647be95"
 
+babel-plugin-syntax-class-properties@^6.8.0:
+  version "6.13.0"
+  resolved "https://registry.yarnpkg.com/babel-plugin-syntax-class-properties/-/babel-plugin-syntax-class-properties-6.13.0.tgz#d7eb23b79a317f8543962c505b827c7d6cac27de"
+
 babel-plugin-syntax-exponentiation-operator@^6.8.0:
   version "6.13.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-exponentiation-operator/-/babel-plugin-syntax-exponentiation-operator-6.13.0.tgz#9ee7e8337290da95288201a6a57f4170317830de"
@@ -639,6 +643,15 @@ babel-plugin-transform-async-to-generator@^6.22.0:
     babel-helper-remap-async-to-generator "^6.24.1"
     babel-plugin-syntax-async-functions "^6.8.0"
     babel-runtime "^6.22.0"
+
+babel-plugin-transform-class-properties@^6.24.1:
+  version "6.24.1"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-class-properties/-/babel-plugin-transform-class-properties-6.24.1.tgz#6a79763ea61d33d36f37b611aa9def81a81b46ac"
+  dependencies:
+    babel-helper-function-name "^6.24.1"
+    babel-plugin-syntax-class-properties "^6.8.0"
+    babel-runtime "^6.22.0"
+    babel-template "^6.24.1"
 
 babel-plugin-transform-es2015-arrow-functions@^6.22.0:
   version "6.22.0"
@@ -1302,9 +1315,9 @@ code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
 
-coffeescript@^1.10.0:
-  version "1.12.7"
-  resolved "https://registry.yarnpkg.com/coffeescript/-/coffeescript-1.12.7.tgz#e57ee4c4867cf7f606bfc4a0f2d550c0981ddd27"
+coffeescript@^2.1.0:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/coffeescript/-/coffeescript-2.1.1.tgz#18aefff7ac606a4e32d0ebdfd9afa52b41032bb0"
 
 collection-visit@^1.0.0:
   version "1.0.0"
@@ -2366,13 +2379,14 @@ gulp-babel@*:
     through2 "^2.0.0"
     vinyl-sourcemaps-apply "^0.2.0"
 
-gulp-coffee@2.3.5:
-  version "2.3.5"
-  resolved "https://registry.yarnpkg.com/gulp-coffee/-/gulp-coffee-2.3.5.tgz#8c64e9ac884e1bab4e20b66ac7c386a816859041"
+gulp-coffee@*:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/gulp-coffee/-/gulp-coffee-3.0.2.tgz#4514a561f6f16266a6564a807467b82658ef6530"
   dependencies:
-    coffeescript "^1.10.0"
-    gulp-util "^3.0.2"
+    coffeescript "^2.1.0"
     merge "^1.2.0"
+    plugin-error "^0.1.2"
+    replace-ext "^1.0.0"
     through2 "^2.0.1"
     vinyl-sourcemaps-apply "^0.2.1"
 
@@ -2578,7 +2592,7 @@ gulp-uglify@*:
     uglify-js "^3.0.5"
     vinyl-sourcemaps-apply "^0.2.0"
 
-gulp-util@*, gulp-util@^3.0.0, gulp-util@^3.0.2, gulp-util@^3.0.5, gulp-util@^3.0.7:
+gulp-util@*, gulp-util@^3.0.0, gulp-util@^3.0.5, gulp-util@^3.0.7:
   version "3.0.8"
   resolved "https://registry.yarnpkg.com/gulp-util/-/gulp-util-3.0.8.tgz#0054e1e744502e27c04c187c3ecc505dd54bbb4f"
   dependencies:
