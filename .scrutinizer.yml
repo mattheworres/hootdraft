@@ -1,0 +1,21 @@
+build:
+    nodes:
+        analysis:
+            project_setup:
+                override: true
+            tests:
+                override:
+                    - php-scrutinizer-run --enable-security-analysis
+    environment:
+        node: v8.9.4
+
+checks:
+		php: true
+
+filter:
+    excluded_paths:
+        - tests/*
+				- resources/*
+				- gulp/*
+				- deploy/*
+				- db/*
