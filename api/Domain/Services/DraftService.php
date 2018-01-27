@@ -34,7 +34,7 @@ class DraftService {
 
       $response->success = true;
       $response->draft = $draft;
-    }catch(\Exception $e) {
+    } catch(\Exception $e) {
       $response->success = false;
       $response->errors = array($e->getMessage());
     }
@@ -55,7 +55,7 @@ class DraftService {
 
       $response->success = true;
       $response->draft = $draft;
-    }catch(\Exception $e) {
+    } catch(\Exception $e) {
       $response->success = false;
       $response->errors = array($e->getMessage());
     }
@@ -70,7 +70,7 @@ class DraftService {
       $draft = $this->app['phpdraft.DraftRepository']->UpdateStatus($draft);
 
       //If we know we're moving from undrafted to in progress, perform the necessary setup steps:
-      if($draft->draft_status != $old_status && $draft->draft_status == "in_progress") {
+      if ($draft->draft_status != $old_status && $draft->draft_status == "in_progress") {
         //Delete all trades
         $this->app['phpdraft.TradeRepository']->DeleteAllTrades($draft->draft_id);
         //Delete all picks
@@ -85,7 +85,7 @@ class DraftService {
 
       $response->success = true;
       $response->draft = $draft;
-    }catch(\Exception $e) {
+    } catch(\Exception $e) {
       $response->success = false;
       $response->errors = array($e->getMessage());
     }
@@ -111,7 +111,7 @@ class DraftService {
       $this->app['phpdraft.DraftRepository']->DeleteDraft($draft->draft_id);
 
       $response->success = true;
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response->success = false;
       $response->errors = array($e->getMessage());
     }
@@ -125,7 +125,7 @@ class DraftService {
     try {
       $response->draft_statistics = $this->app['phpdraft.DraftStatsRepository']->LoadDraftStats($draft_id);
       $response->success = true;
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $message = $e->getMessage();
       $response->success = false;
       $response->errors[] = $message;

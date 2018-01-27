@@ -25,11 +25,13 @@ class LoginUserRepository {
     $load_stmt->setFetchMode(\PDO::FETCH_INTO, $user);
     $load_stmt->bindParam(1, $email);
 
-    if (!$load_stmt->execute())
-      throw new \Exception(sprintf('Email "%s" does not exist.', $email));
+    if (!$load_stmt->execute()) {
+          throw new \Exception(sprintf('Email "%s" does not exist.', $email));
+    }
 
-    if (!$load_stmt->fetch())
-      throw new \Exception(sprintf('Email "%s" does not exist.', $email));
+    if (!$load_stmt->fetch()) {
+          throw new \Exception(sprintf('Email "%s" does not exist.', $email));
+    }
 
     return $user;
   }
@@ -43,11 +45,13 @@ class LoginUserRepository {
     $load_stmt->setFetchMode(\PDO::FETCH_INTO, $user);
     $load_stmt->bindParam(1, $id);
 
-    if (!$load_stmt->execute())
-      throw new \Exception(sprintf('User #%s does not exist.', $id));
+    if (!$load_stmt->execute()) {
+          throw new \Exception(sprintf('User #%s does not exist.', $id));
+    }
 
-    if (!$load_stmt->fetch())
-      throw new \Exception(sprintf('User #%s does not exist.', $id));
+    if (!$load_stmt->fetch()) {
+          throw new \Exception(sprintf('User #%s does not exist.', $id));
+    }
 
     return $user;
   }
@@ -61,11 +65,13 @@ class LoginUserRepository {
     $load_stmt->setFetchMode(\PDO::FETCH_INTO, $user);
     $load_stmt->bindParam(1, $id);
 
-    if (!$load_stmt->execute())
-      throw new \Exception(sprintf('User #%s does not exist.', $id));
+    if (!$load_stmt->execute()) {
+          throw new \Exception(sprintf('User #%s does not exist.', $id));
+    }
 
-    if (!$load_stmt->fetch())
-      throw new \Exception(sprintf('User #%s does not exist.', $id));
+    if (!$load_stmt->fetch()) {
+          throw new \Exception(sprintf('User #%s does not exist.', $id));
+    }
 
     unset($user->enabled);
     unset($user->email);
@@ -85,11 +91,11 @@ class LoginUserRepository {
 
     $users = array();
 
-    if(!$load_stmt->execute()) {
+    if (!$load_stmt->execute()) {
       throw new \Exception("Unable to load users.");
     }
 
-    while($user = $load_stmt->fetch()) {
+    while ($user = $load_stmt->fetch()) {
       
       $users[] = $this->_ScrubUser($user);
     }
@@ -117,7 +123,7 @@ class LoginUserRepository {
       throw new \Exception("Unable to create user.");
     }
 
-    $user->id = (int) $this->app['db']->lastInsertId();
+    $user->id = (int)$this->app['db']->lastInsertId();
 
     return $user;
   }
@@ -155,7 +161,7 @@ class LoginUserRepository {
 
     $result = $update_stmt->execute();
 
-    if($result == false) {
+    if ($result == false) {
       throw new \Exception("Unable to erase verification key for user.");
     }
 
@@ -166,7 +172,7 @@ class LoginUserRepository {
     $delete_stmt = $this->app['db']->prepare("DELETE FROM users WHERE id = ?");
     $delete_stmt->bindParam(1, $user->id);
 
-    if(!$delete_stmt->execute()) {
+    if (!$delete_stmt->execute()) {
       throw new \Exception("Unable to delete user #$user->id");
     }
 
@@ -175,7 +181,7 @@ class LoginUserRepository {
 
   public function NameIsUnique($name, $id = null) {
     $name = strtolower($name);
-    if($id == null) {
+    if ($id == null) {
       $name_stmt = $this->app['db']->prepare("SELECT name FROM users WHERE name LIKE ?");
       $name_stmt->bindParam(1, $name);
     } else {
@@ -184,7 +190,7 @@ class LoginUserRepository {
       $name_stmt->bindParam(2, $id);
     }
 
-    if(!$name_stmt->execute()) {
+    if (!$name_stmt->execute()) {
       throw new \Exception(sprintf('Name %s is invalid', $name));
     }
 
@@ -192,7 +198,7 @@ class LoginUserRepository {
   }
 
   public function EmailExists($email, $id = null) {
-    if($id == null) {
+    if ($id == null) {
       $email_stmt = $this->app['db']->prepare("SELECT email FROM users WHERE email = ?");
       $email_stmt->bindParam(1, $email);
     } else {
@@ -213,7 +219,7 @@ class LoginUserRepository {
     $email_stmt = $this->app['db']->prepare("SELECT email FROM users WHERE email = ? LIMIT 1");
     $email_stmt->bindParam(1, $email);
 
-    if(!$email_stmt->execute()) {
+    if (!$email_stmt->execute()) {
       throw new \Exception(sprintf('Email %s is invalid', $email));
     }
 
@@ -229,11 +235,11 @@ class LoginUserRepository {
 
     $users = array();
 
-    if(!$search_stmt->execute()) {
+    if (!$search_stmt->execute()) {
       throw new \Exception("Unable to load users");
     }
 
-    while($user = $search_stmt->fetch()) {
+    while ($user = $search_stmt->fetch()) {
       unset($user->enabled);
       unset($user->email);
       unset($user->password);
@@ -253,7 +259,7 @@ class LoginUserRepository {
     $verification_stmt->bindParam(1, $email);
     $verification_stmt->bindParam(2, $verificationKey);
 
-    if(!$verification_stmt->execute()) {
+    if (!$verification_stmt->execute()) {
       throw new \Exception('Verification is invalid.');
     }
 

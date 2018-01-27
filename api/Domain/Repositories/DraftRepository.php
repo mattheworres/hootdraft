@@ -36,13 +36,13 @@ class DraftRepository {
     /*$draft_stmt->bindParam(1, $startIndex, \PDO::PARAM_INT);
     $draft_stmt->bindParam(2, $pageSize, \PDO::PARAM_INT);*/
 
-    if(!$draft_stmt->execute()) {
+    if (!$draft_stmt->execute()) {
       throw new \Exception("Unable to load drafts.");
     }
 
     $drafts = array();
 
-    while($draft = $draft_stmt->fetch()) {
+    while ($draft = $draft_stmt->fetch()) {
       $currentUserOwnsIt = !empty($current_user) && $draft->commish_id == $current_user->id;
       $currentUserIsAdmin = !empty($current_user) && $this->app['phpdraft.LoginUserService']->CurrentUserIsAdmin($current_user);
 
@@ -57,7 +57,7 @@ class DraftRepository {
       $draft->draft_start_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_start_time);
       $draft->draft_end_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_end_time);
 
-      if(!$currentUserOwnsIt && !$currentUserIsAdmin && !$draft->draft_visible && $password != $draft->draft_password) {
+      if (!$currentUserOwnsIt && !$currentUserIsAdmin && !$draft->draft_visible && $password != $draft->draft_password) {
         $draft->is_locked = true;
         $draft = $this->ProtectPrivateDraft($draft);
       }
@@ -82,7 +82,7 @@ class DraftRepository {
     $draft_stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Draft');
     $draft_stmt->bindParam(1, $commish_id);
 
-    if(!$draft_stmt->execute()) {
+    if (!$draft_stmt->execute()) {
       throw new \Exception("Unable to load drafts.");
     }
 
@@ -90,7 +90,7 @@ class DraftRepository {
 
     $drafts = array();
 
-    while($draft = $draft_stmt->fetch()) {
+    while ($draft = $draft_stmt->fetch()) {
       $currentUserOwnsIt = !empty($current_user) && $draft->commish_id == $current_user->id;
       $currentUserIsAdmin = !empty($current_user) && $this->app['phpdraft.LoginUserService']->CurrentUserIsAdmin($current_user);
 
@@ -105,7 +105,7 @@ class DraftRepository {
       $draft->draft_start_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_start_time);
       $draft->draft_end_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_end_time);
 
-      if(!$currentUserOwnsIt && !$currentUserIsAdmin && !$draft->draft_visible && $password != $draft->draft_password) {
+      if (!$currentUserOwnsIt && !$currentUserIsAdmin && !$draft->draft_visible && $password != $draft->draft_password) {
         $draft->is_locked = true;
         $draft = $this->ProtectPrivateDraft($draft);
       }
@@ -131,13 +131,13 @@ class DraftRepository {
     $draft_stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Draft');
     $draft_stmt->bindParam(1, $commish_id);
 
-    if(!$draft_stmt->execute()) {
+    if (!$draft_stmt->execute()) {
       throw new \Exception("Unable to load drafts.");
     }
 
     $drafts = array();
 
-    while($draft = $draft_stmt->fetch()) {
+    while ($draft = $draft_stmt->fetch()) {
       $draft->draft_create_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_create_time);
       $draft->draft_start_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_start_time);
       $draft->draft_end_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_end_time);
@@ -158,13 +158,13 @@ class DraftRepository {
 
     $draft_stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Draft');
 
-    if(!$draft_stmt->execute()) {
+    if (!$draft_stmt->execute()) {
       throw new \Exception("Unable to load drafts.");
     }
 
     $drafts = array();
 
-    while($draft = $draft_stmt->fetch()) {
+    while ($draft = $draft_stmt->fetch()) {
       $draft->draft_create_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_create_time);
       $draft->draft_start_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_start_time);
       $draft->draft_end_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_end_time);
@@ -180,7 +180,7 @@ class DraftRepository {
 
     $cachedDraft = $this->GetCachedDraft($id);
 
-    if($cachedDraft != null) {
+    if ($cachedDraft != null) {
       $draft = $cachedDraft;
     } else {
       $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
@@ -191,7 +191,7 @@ class DraftRepository {
 
       $draft_stmt->bindParam(1, $id, \PDO::PARAM_INT);
 
-      if(!$draft_stmt->execute() || !$draft_stmt->fetch()) {
+      if (!$draft_stmt->execute() || !$draft_stmt->fetch()) {
         throw new \Exception("Unable to load draft");
       }
 
@@ -216,21 +216,21 @@ class DraftRepository {
     $draft->in_progress = $this->app['phpdraft.DraftService']->DraftInProgress($draft);
     $draft->complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);
 
-    if($getDraftData) {
+    if ($getDraftData) {
       $draft->sports = $this->app['phpdraft.DraftDataRepository']->GetSports();
       $draft->styles = $this->app['phpdraft.DraftDataRepository']->GetStyles();
       $draft->statuses = $this->app['phpdraft.DraftDataRepository']->GetStatuses();
       $draft->teams = $this->app['phpdraft.DraftDataRepository']->GetTeams($draft->draft_sport);
       $draft->historical_teams = $this->app['phpdraft.DraftDataRepository']->GetHistoricalTeams($draft->draft_sport);
       $draft->positions = $this->app['phpdraft.DraftDataRepository']->GetPositions($draft->draft_sport);
-      if($draft->using_depth_charts) {
+      if ($draft->using_depth_charts) {
         $draft->depthChartPositions = $this->app['phpdraft.DepthChartPositionRepository']->LoadAll($draft->draft_id);
       }
     }
 
     $draft->is_locked = false;
 
-    if(!$currentUserOwnsIt && !$currentUserIsAdmin && !$draft->draft_visible && $password != $draft->draft_password) {
+    if (!$currentUserOwnsIt && !$currentUserIsAdmin && !$draft->draft_visible && $password != $draft->draft_password) {
       $draft->is_locked = true;
       $draft = $this->ProtectPrivateDraft($draft);
     }
@@ -249,7 +249,7 @@ class DraftRepository {
 
     $cachedDraft = $this->GetCachedDraft($id);
 
-    if($bustCache || $cachedDraft == null) {
+    if ($bustCache || $cachedDraft == null) {
       $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
       LEFT OUTER JOIN users u
       ON d.commish_id = u.id
@@ -259,13 +259,13 @@ class DraftRepository {
 
       $draft_stmt->bindParam(1, $id, \PDO::PARAM_INT);
 
-      if(!$draft_stmt->execute() || !$draft_stmt->fetch()) {
+      if (!$draft_stmt->execute() || !$draft_stmt->fetch()) {
         throw new \Exception("Unable to load draft");
       }
 
       $draft->using_depth_charts = $draft->using_depth_charts == 1;
 
-      if($bustCache) {
+      if ($bustCache) {
         $this->UnsetCachedDraft($draft->draft_id);
       }
 
@@ -294,7 +294,7 @@ class DraftRepository {
     $insert_stmt->bindParam(7, $draft->draft_password);
     $insert_stmt->bindParam(8, $draft->using_depth_charts);
 
-    if(!$insert_stmt->execute()) {
+    if (!$insert_stmt->execute()) {
       throw new \Exception("Unable to create draft.");
     }
 
@@ -326,7 +326,7 @@ class DraftRepository {
     $update_stmt->bindParam(7, $draft->using_depth_charts);
     $update_stmt->bindParam(8, $draft->draft_id);
 
-    if(!$update_stmt->execute()) {
+    if (!$update_stmt->execute()) {
       throw new \Exception("Unable to update draft.");
     }
 
@@ -342,7 +342,7 @@ class DraftRepository {
     $status_stmt->bindParam(1, $draft->draft_status);
     $status_stmt->bindParam(2, $draft->draft_id);
 
-    if(!$status_stmt->execute()) {
+    if (!$status_stmt->execute()) {
       throw new \Exception("Unable to update draft status.");
     }
 
@@ -357,7 +357,7 @@ class DraftRepository {
 
     $status_stmt->bindParam(1, $draft->draft_id);
 
-    if(!$status_stmt->execute()) {
+    if (!$status_stmt->execute()) {
       throw new \Exception("Unable to update draft's stats timestamp.");
     }
 
@@ -375,7 +375,7 @@ class DraftRepository {
     $increment_stmt->bindParam(1, $incrementedCounter);
     $increment_stmt->bindParam(2, $draft->draft_id);
 
-    if(!$increment_stmt->execute()) {
+    if (!$increment_stmt->execute()) {
       throw new \Exception("Unable to increment draft counter.");
     }
 
@@ -387,8 +387,8 @@ class DraftRepository {
   //$next_pick can't be type-hinted - can be null
   public function MoveDraftForward(Draft $draft, $next_pick) {
     if ($next_pick !== null) {
-      $draft->draft_current_pick = (int) $next_pick->player_pick;
-      $draft->draft_current_round = (int) $next_pick->player_round;
+      $draft->draft_current_pick = (int)$next_pick->player_pick;
+      $draft->draft_current_round = (int)$next_pick->player_round;
 
       $stmt = $this->app['db']->prepare("UPDATE draft SET draft_current_pick = ?, draft_current_round = ? WHERE draft_id = ?");
       $stmt->bindParam(1, $draft->draft_current_pick);
@@ -426,7 +426,7 @@ class DraftRepository {
 
     $reset_stmt->bindParam(1, $draft->draft_id);
 
-    if(!$reset_stmt->execute()) {
+    if (!$reset_stmt->execute()) {
       throw new \Exception("Unable to set draft to in progress.");
     }
 
@@ -436,7 +436,7 @@ class DraftRepository {
   }
 
   public function NameIsUnique($name, $id = null) {
-    if(!empty($id)) {
+    if (!empty($id)) {
       $name_stmt = $this->app['db']->prepare("SELECT draft_name FROM draft WHERE draft_name LIKE ? AND draft_id <> ?");
       $name_stmt->bindParam(1, $name);
       $name_stmt->bindParam(2, $id);
@@ -445,7 +445,7 @@ class DraftRepository {
       $name_stmt->bindParam(1, $name);
     }
 
-    if(!$name_stmt->execute()) {
+    if (!$name_stmt->execute()) {
       throw new \Exception("Draft name '%s' is invalid", $name);
     }
 
@@ -456,7 +456,7 @@ class DraftRepository {
     $delete_stmt = $this->app['db']->prepare("DELETE FROM draft WHERE draft_id = ?");
     $delete_stmt->bindParam(1, $draft_id);
 
-    if(!$delete_stmt->execute()) {
+    if (!$delete_stmt->execute()) {
       throw new \Exception("Unable to delete draft $draft_id.");
     }
 

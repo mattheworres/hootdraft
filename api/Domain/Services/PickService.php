@@ -29,7 +29,7 @@ class PickService {
     try {
       $response->allPicks = $this->app['phpdraft.PickRepository']->LoadAll($draft);
       $response->success = true;
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response->success = false;
       $message = $e->getMessage();
       $response->errors[] = "Unable to load picks: $message";
@@ -44,7 +44,7 @@ class PickService {
     try {
       $response->pick = $this->app['phpdraft.PickRepository']->GetCurrentPick($draft);
 
-      if($include_data) {
+      if ($include_data) {
         $response->teams = $this->app['phpdraft.DraftDataRepository']->GetTeams($draft->draft_sport);
         $response->historical_teams = $this->app['phpdraft.DraftDataRepository']->GetHistoricalTeams($draft->draft_sport);
         $response->positions = $this->app['phpdraft.DraftDataRepository']->GetPositions($draft->draft_sport);
@@ -53,7 +53,7 @@ class PickService {
       }
 
       $response->success = true;
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       //Rather than unset all of the 1-5 properties from the try above, just grab a new Response object:
       $response = new PhpDraftResponse(false, array());
 
@@ -83,7 +83,7 @@ class PickService {
 
       $response->draft_is_complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);
 
-      if($response->draft_is_complete == 1) {
+      if ($response->draft_is_complete == 1) {
         $response->draft_statistics = $this->app['phpdraft.DraftStatsRepository']->CalculateDraftStatistics($draft);
       }
 
@@ -93,7 +93,7 @@ class PickService {
       $response->next_5_picks = $this->app['phpdraft.PickRepository']->LoadNextPicks($draft->draft_id, $draft->draft_current_pick, 5);
 
       $response->success = true;
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response = new PhpDraftResponse(false, array());
 
       $errorMessage = $e->getMessage();
@@ -117,7 +117,7 @@ class PickService {
 
       $response->pick = $pick;
       $response->success = true;
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response = new PhpDraftResponse(false, array());
 
       $errorMessage = $e->getMessage();
@@ -137,7 +137,7 @@ class PickService {
 
       $response->pick = $pick;
       $response->success = true;
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response->success = false;
       $errorMessage = $e->getMessage();
       $response->errors[] = "Unable to update pick depth chart: $errorMessage";
@@ -153,7 +153,7 @@ class PickService {
       $response->matches = $this->app['phpdraft.PickRepository']->SearchAlreadyDrafted($draft_id, $first_name, $last_name);
       $response->possibleMatchExists = count($response->matches) > 0;
       $response->success = true;
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response = new PhpDraftResponse(false, array());
       $errorMessage = $e->getMessage();
       $response->errors[] = "Unable to check for already drafted: $errorMessage";
@@ -168,7 +168,7 @@ class PickService {
     try {
       $draft = $this->app['phpdraft.DraftRepository']->Load($draft_id);
 
-      if($pick_counter < $draft->draft_counter) {
+      if ($pick_counter < $draft->draft_counter) {
         $response->updated_picks = $this->app['phpdraft.PickRepository']->LoadUpdatedPicks($draft_id, $pick_counter);
         $response->current_pick = $this->app['phpdraft.PickRepository']->GetCurrentPick($draft);
         $response->previous_pick = $this->app['phpdraft.PickRepository']->GetPreviousPick($draft);
@@ -181,7 +181,7 @@ class PickService {
 
       $response->draft_counter = $draft->draft_counter;
       $response->success = true;
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response->success = false;
       $errorMessage = $e->getMessage();
       $response->errors[] = "Unable to get updated picks: $errorMessage";
@@ -200,10 +200,11 @@ class PickService {
     $pick->pick_time = $now_utc->format('Y-m-d H:i:s');
 
     //Calculate the pick duration
-    if ($pick->player_pick == 1 || $previous_pick == null)
-      $start_time = new \DateTime($draft->draft_start_time, new \DateTimeZone("UTC"));
-    else
-      $start_time = new \DateTime($previous_pick->pick_time, new \DateTimeZone("UTC"));
+    if ($pick->player_pick == 1 || $previous_pick == null) {
+          $start_time = new \DateTime($draft->draft_start_time, new \DateTimeZone("UTC"));
+    } else {
+          $start_time = new \DateTime($previous_pick->pick_time, new \DateTimeZone("UTC"));
+    }
 
     $start_time_timestamp = $start_time->getTimestamp();
 

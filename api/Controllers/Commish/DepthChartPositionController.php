@@ -14,7 +14,7 @@ class DepthChartPositionController
 
     $validity = $app['phpdraft.DepthChartPositionValidator']->IsDraftSportValid($draft_sport);
 
-    if(!$validity->success) {
+    if (!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 

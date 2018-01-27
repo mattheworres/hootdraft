@@ -47,7 +47,7 @@ class TradeService {
 
       $response->success = true;
       $response->trade = $trade;
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response->success = false;
       $response->errors = array($e->getMessage());
     }

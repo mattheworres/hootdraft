@@ -24,7 +24,7 @@ class LoginUserValidator {
     $name = $request->get('_name');
     $recaptcha = $request->get('_recaptcha');
 
-    if(empty($password)
+    if (empty($password)
       || empty($confirmPassword)
       || empty($emailAddress)
       || empty($name)
@@ -41,7 +41,7 @@ class LoginUserValidator {
 
     $this->validateEmailAddress($emailAddress, $errors, $valid);
 
-    if(!$this->app['phpdraft.LoginUserRepository']->NameIsUnique($name)) {
+    if (!$this->app['phpdraft.LoginUserRepository']->NameIsUnique($name)) {
       $errors[] = "Name already taken.";
       $valid = false;
     }
@@ -58,14 +58,14 @@ class LoginUserValidator {
     $emailAddress = $request->get('_email');
     $verificationToken = $this->app['phpdraft.SaltService']->UrlDecodeSalt($request->get('_verificationToken'));
 
-    if(strlen($verificationToken) != 16) {
+    if (strlen($verificationToken) != 16) {
       $errors[] = "Verification token invalid.";
       $valid = false;
     }
 
     $this->validateEmailAddress($emailAddress, $errors, $valid);
 
-    if(!$this->app['phpdraft.LoginUserRepository']->VerificationMatches($emailAddress, $verificationToken)) {
+    if (!$this->app['phpdraft.LoginUserRepository']->VerificationMatches($emailAddress, $verificationToken)) {
       $errors[] = "Verification token invalid.";
       $valid = false;
     }
@@ -99,18 +99,18 @@ class LoginUserValidator {
     $valid = true;
     $errors = array();
 
-    if(empty($emailAddress)
+    if (empty($emailAddress)
       || empty($verificationToken)) {
       $errors[] = "One or more missing fields";
       $valid = false;
     }
 
-    if(strlen($verificationToken) != 16) {
+    if (strlen($verificationToken) != 16) {
       $errors[] = "Verification token invalid.";
       $valid = false;
     }
 
-    if(!$this->app['phpdraft.LoginUserRepository']->VerificationMatches($emailAddress, $verificationToken)) {
+    if (!$this->app['phpdraft.LoginUserRepository']->VerificationMatches($emailAddress, $verificationToken)) {
       $errors[] = "Verification token invalid.";
       $valid = false;
     }
@@ -131,7 +131,7 @@ class LoginUserValidator {
     $confirmPassword = $request->get('_confirmPassword');
     $verificationToken = $this->app['phpdraft.SaltService']->UrlDecodeSalt($request->get('_verificationToken'));
 
-    if(empty($emailAddress)
+    if (empty($emailAddress)
       || empty($password)
       || empty($confirmPassword)
       || empty($verificationToken)) {
@@ -139,12 +139,12 @@ class LoginUserValidator {
       $valid = false;
     }
 
-    if(strlen($verificationToken) != 16) {
+    if (strlen($verificationToken) != 16) {
       $errors[] = "Verification token invalid.";
       $valid = false;
     }
 
-    if(!$this->app['phpdraft.LoginUserRepository']->VerificationMatches($emailAddress, $verificationToken)) {
+    if (!$this->app['phpdraft.LoginUserRepository']->VerificationMatches($emailAddress, $verificationToken)) {
       $errors[] = "Verification token invalid.";
       $valid = false;
     }
@@ -172,7 +172,7 @@ class LoginUserValidator {
 
     $currentUser = $this->app['phpdraft.LoginUserService']->GetCurrentUser();
 
-    if(empty($currentUser) || $currentUser == null) {
+    if (empty($currentUser) || $currentUser == null) {
       $valid = false;
       $errors[] = "Invalid user.";
 
@@ -181,38 +181,38 @@ class LoginUserValidator {
     }
 
     //Password required to make any changes
-    if(empty($password) || !$this->app['security.encoder.digest']->isPasswordValid($currentUser->password, $password, $currentUser->salt)) {
+    if (empty($password) || !$this->app['security.encoder.digest']->isPasswordValid($currentUser->password, $password, $currentUser->salt)) {
       $errors[] = "Incorrect password entered.";
       $valid = false;
     }
 
     //Need to verify new email
-    if(empty($emailAddress)) {
+    if (empty($emailAddress)) {
       $errors[] = "Email address is missing.";
       $valid = false;
-    } else if(!$this->app['phpdraft.StringsEqual']($emailAddress, $currentUser->email)) {
+    } else if (!$this->app['phpdraft.StringsEqual']($emailAddress, $currentUser->email)) {
       $this->validateEmailAddress($emailAddress, $errors, $valid);
 
       $this->validateUniqueEmail($emailAddress, $errors, $valid);
     }
 
     //Need to verify new password, ensure old password is correct
-    if(!empty($newPassword)) {
+    if (!empty($newPassword)) {
       $this->validatePasswordLength($newPassword, $errors, $valid);
 
       $this->validatePasswordsMatch($newPassword, $newConfirmedPassword, $errors, $valid);
     }
 
     //If the name has changed, ensure the new one is valid and unique
-    if($currentUser->name != $name) {
-      if(empty($name)) {
+    if ($currentUser->name != $name) {
+      if (empty($name)) {
         $errors[] = "Name is required.";
         $valid = false;
       }
 
       $this->validateNameLength($name, $errors, $valid);
 
-      if(!$this->app['phpdraft.LoginUserRepository']->NameIsUnique($name)) {
+      if (!$this->app['phpdraft.LoginUserRepository']->NameIsUnique($name)) {
         $errors[] = "Name already taken.";
         $valid = false;
       }
@@ -227,7 +227,7 @@ class LoginUserValidator {
 
     $loadedUser = $this->app['phpdraft.LoginUserRepository']->LoadById($user->id);
 
-    if($user->id == 0 || empty($loadedUser)) {
+    if ($user->id == 0 || empty($loadedUser)) {
       $valid = false;
       $errors[] = "Invalid user.";
 
@@ -236,21 +236,21 @@ class LoginUserValidator {
     }
 
     //Need to verify new email
-    if(empty($user->email)) {
+    if (empty($user->email)) {
       $errors[] = "Email address is missing.";
       $valid = false;
-    } else if(!$this->app['phpdraft.StringsEqual']($user->email, $loadedUser->email)) {
+    } else if (!$this->app['phpdraft.StringsEqual']($user->email, $loadedUser->email)) {
       $this->validateEmailAddress($user->email, $errors, $valid);
 
       $this->validateUniqueEmail($user->email, $errors, $valid);
     }
 
-    if(strlen($user->name) > 100) {
+    if (strlen($user->name) > 100) {
       $errors[] = "Name is above maximum length";
       $valid = false;
     }
 
-    if(!$this->app['phpdraft.LoginUserRepository']->NameIsUnique($user->name, $user->id)) {
+    if (!$this->app['phpdraft.LoginUserRepository']->NameIsUnique($user->name, $user->id)) {
       $errors[] = "Name already taken.";
       $valid = false;
     }
@@ -259,47 +259,47 @@ class LoginUserValidator {
   }
 
   private function validatePasswordsMatch($password1, $password2, &$errors, &$valid) {
-    if(!$this->app['phpdraft.StringsEqual']($password1, $password2)) {
+    if (!$this->app['phpdraft.StringsEqual']($password1, $password2)) {
       $errors[] = "Password values do not match.";
       $valid = false;
     }
   }
 
   private function validateUniqueEmail($emailAddress, &$errors, &$valid) {
-    if(!$this->app['phpdraft.LoginUserRepository']->EmailIsUnique($emailAddress)) {
+    if (!$this->app['phpdraft.LoginUserRepository']->EmailIsUnique($emailAddress)) {
       $errors[] = "Email already registered.";
       $valid = false;
     }
   }
 
   private function validateEmailExists($emailAddress, &$errors, &$valid) {
-    if(!$this->app['phpdraft.LoginUserRepository']->EmailExists($emailAddress)) {
+    if (!$this->app['phpdraft.LoginUserRepository']->EmailExists($emailAddress)) {
       $errors[] = "Email invalid.";
       $valid = false;
     }
   }
 
   private function validateEmailAddress($emailAddress, &$errors, &$valid) {
-    if(!$this->app['phpdraft.EmailValidator']->isValid($emailAddress) || strlen($emailAddress) > 255) {
+    if (!$this->app['phpdraft.EmailValidator']->isValid($emailAddress) || strlen($emailAddress) > 255) {
       $errors[] = "Email invalid.";
       $valid = false;
     }
   }
 
   private function validatePasswordLength($password, &$errors, &$valid) {
-    if(strlen($password) < 8) {
+    if (strlen($password) < 8) {
       $errors[] = "Password is below minimum length.";
       $valid = false;
     }
 
-    if(strlen($password) > 255) {
+    if (strlen($password) > 255) {
       $errors[] = "Password is above maximum length.";
       $valid = false;
     }
   }
 
   private function validateNameLength($name, &$errors, &$valid) {
-    if(strlen($name) > 100) {
+    if (strlen($name) > 100) {
       $errors[] = "Name is above maximum length";
       $valid = false;
     }

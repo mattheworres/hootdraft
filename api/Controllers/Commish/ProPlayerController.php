@@ -26,7 +26,7 @@ class ProPlayerController {
 
     $response = new PhpDraftResponse();
 
-    if(count($searchTerm) > 0) {
+    if (count($searchTerm) > 0) {
       $response = $app['phpdraft.ProPlayerService']->SearchPlayers($league, $searchTerm);
     } else {
       $response = $app['phpdraft.ProPlayerService']->SearchPlayersManual($league, $first, $last, $team, $position);

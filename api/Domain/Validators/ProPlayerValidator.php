@@ -21,19 +21,19 @@ class ProPlayerValidator {
     $errors = array();
     $sports = $this->app['phpdraft.DraftDataRepository']->GetSports();
 
-    if(empty($sport)) {
+    if (empty($sport)) {
       $errors[] = "One or more missing fields.";
       $valid = false;
     }
 
-    if(!array_key_exists($sport, $sports)) {
+    if (!array_key_exists($sport, $sports)) {
       $errors[] = "Sport $sport is an invalid value.";
       $valid = false;
     }
 
     if (!isset($file)) {
       $valid = false;
-      $errors[] =  "Must upload a CSV file";
+      $errors[] = "Must upload a CSV file";
     } else {
       $fileErrorCode = $file->getError();
 

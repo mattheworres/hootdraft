@@ -12,7 +12,7 @@ class IndexController
 
     $minified_css = '';
 
-    foreach($colors as $position => $hex_color_key) {
+    foreach ($colors as $position => $hex_color_key) {
       $minified_css .= "div.pick$position{background-color:$hex_color_key;}";
     }
 

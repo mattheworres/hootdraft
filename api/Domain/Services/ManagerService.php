@@ -21,7 +21,7 @@ class ManagerService {
 
       $response->success = true;
       $response->manager = $manager;
-    }catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response->success = false;
       $response->errors = array($e->getMessage());
     }
@@ -37,7 +37,7 @@ class ManagerService {
 
       $response->success = true;
       $response->managers = $managers;
-    }catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response->success = false;
       $response->errors = array($e->getMessage());
     }
@@ -52,7 +52,7 @@ class ManagerService {
       $this->app['phpdraft.ManagerRepository']->ReorderManagers($managersIdArray);
       
       $response->success = true;
-    }catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response->success = false;
       $response->errors = array($e->getMessage());
     }
@@ -87,7 +87,7 @@ class ManagerService {
       $managers = $this->app['phpdraft.ManagerRepository']->GetManagersByDraftOrder($draft_id);
       $managersIdArray = array();
 
-      foreach($managers as $manager) {
+      foreach ($managers as $manager) {
         $managersIdArray[] = $manager->manager_id;
       }
 
@@ -97,7 +97,7 @@ class ManagerService {
 
       $response->managers = $managers;
       $response->success = true;
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response->success = false;
       $response->errors = array($e->getMessage());
     }

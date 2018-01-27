@@ -16,7 +16,7 @@ $app['phpdraft.ResponseFactory'] = $app->factory(function() {
   };
 });
 
-$app['phpdraft.EmailValidator'] = $app->factory(function () {
+$app['phpdraft.EmailValidator'] = $app->factory(function() {
   return new EmailValidator();
 });
 

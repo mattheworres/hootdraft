@@ -19,7 +19,7 @@ class TradeController {
 
     try {
       $manager = $app['phpdraft.ManagerRepository']->Load($managerId);
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response = new PhpDraftResponse(false, array());
       $response->errors[] = "Unable to load manager #$managerId";
       return $app->json($response, Response::HTTP_BAD_REQUEST);
@@ -27,7 +27,7 @@ class TradeController {
 
     $validity = $app['phpdraft.TradeValidator']->IsManagerValidForAssetRetrieval($draft, $manager);
 
-    if(!$validity->success) {
+    if (!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
@@ -53,17 +53,17 @@ class TradeController {
       $newTrade->manager1 = $app['phpdraft.ManagerRepository']->Load($newTrade->manager1_id);
       $newTrade->manager2 = $app['phpdraft.ManagerRepository']->Load($newTrade->manager2_id);
 
-      foreach($assets_json as $asset_id) {
+      foreach ($assets_json as $asset_id) {
         $newTradeAsset = new TradeAsset();
         $newTradeAsset->player = $app['phpdraft.PickRepository']->Load($asset_id);
         $newTradeAsset->was_drafted = $app['phpdraft.PickService']->PickHasBeenSelected($newTradeAsset->player);
 
-        if($newTradeAsset->player->manager_id == $newTrade->manager1_id) {
+        if ($newTradeAsset->player->manager_id == $newTrade->manager1_id) {
           $newTradeAsset->oldmanager_id = $newTrade->manager1_id;
           $newTradeAsset->newmanager_id = $newTrade->manager2_id;
           $newTradeAsset->oldmanager = $newTrade->manager1;
           $newTradeAsset->newmanager = $newTrade->manager2;
-        } else if($newTradeAsset->player->manager_id == $newTrade->manager2_id) {
+        } else if ($newTradeAsset->player->manager_id == $newTrade->manager2_id) {
           $newTradeAsset->oldmanager_id = $newTrade->manager2_id;
           $newTradeAsset->newmanager_id = $newTrade->manager1_id;
           $newTradeAsset->oldmanager = $newTrade->manager2;
@@ -74,7 +74,7 @@ class TradeController {
 
         $newTrade->trade_assets[] = $newTradeAsset;
       }
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response = new PhpDraftResponse(false, array());
       $message = $e->getMessage();
       $response->errors[] = "Unable to build trade: $message";
@@ -84,7 +84,7 @@ class TradeController {
 
     $validity = $app['phpdraft.TradeValidator']->IsTradeValid($draft, $newTrade);
 
-    if(!$validity->success) {
+    if (!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 

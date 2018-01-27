@@ -26,7 +26,7 @@ class ManagerController {
 
     $validity = $app['phpdraft.ManagerValidator']->IsManagerValidForCreate($draftId, $manager);
 
-    if(!$validity->success) {
+    if (!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
@@ -41,7 +41,7 @@ class ManagerController {
     $managersJson = $request->get('managers');
     $newManagers = array();
 
-    foreach($managersJson as $managerRequest) {
+    foreach ($managersJson as $managerRequest) {
       $newManager = new Manager();
       $newManager->draft_id = $draftId;
       $newManager->manager_name = $managerRequest['manager_name'];
@@ -51,7 +51,7 @@ class ManagerController {
 
     $validity = $app['phpdraft.ManagerValidator']->AreManagersValidForCreate($draftId, $newManagers);
 
-    if(!$validity->success) {
+    if (!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
@@ -66,13 +66,13 @@ class ManagerController {
     $managersIdJson = $request->get('ordered_manager_ids');
     $managerIds = array();
 
-    foreach($managersIdJson as $managerId) {
+    foreach ($managersIdJson as $managerId) {
       $managerIds[] = (int)$managerId;
     }
 
     $validity = $app['phpdraft.ManagerValidator']->AreManagerIdsValidForOrdering($draftId, $managerIds);
 
-    if(!$validity->success) {
+    if (!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
@@ -88,7 +88,7 @@ class ManagerController {
     try {
       $draft = $app['phpdraft.DraftRepository']->Load($draftId);
       $manager = $app['phpdraft.ManagerRepository']->Load($managerId);
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response = new PhpDraftResponse(false, array());
       $response->errors[] = "Unable to load manager #$managerId";
 
@@ -99,7 +99,7 @@ class ManagerController {
 
     $validity = $app['phpdraft.ManagerValidator']->IsManagerValidForUpdate($draft, $manager);
 
-    if(!$validity->success) {
+    if (!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
@@ -114,14 +114,14 @@ class ManagerController {
 
     try {
       $manager = $app['phpdraft.ManagerRepository']->Load($managerId);
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response = new PhpDraftResponse(false, array());
       $response->errors[] = "Unable to delete manager #$managerId";
 
       return $app->json($response, Response::HTTP_BAD_REQUEST);
     }
 
-    if($manager->draft_id != $draftId) {
+    if ($manager->draft_id != $draftId) {
       $response = new PhpDraftResponse(false, array());
       $response->errors[] = "Unable to delete manager #$managerId";
 

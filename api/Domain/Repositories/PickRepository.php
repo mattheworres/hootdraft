@@ -45,7 +45,7 @@ class PickRepository {
 
     $pick_stmt->setFetchMode(\PDO::FETCH_INTO, $pick);
 
-    if(!$pick_stmt->execute() || !$pick_stmt->fetch()) {
+    if (!$pick_stmt->execute() || !$pick_stmt->fetch()) {
       throw new \Exception("Unable to load pick " . $id);
     }
 
@@ -74,7 +74,7 @@ class PickRepository {
   public function LoadUpdatedPicks($draft_id, $pick_counter) {
     $picks = array();
     
-    $stmt = $this->app['db']->prepare("SELECT p.*, m.manager_name FROM players p ".
+    $stmt = $this->app['db']->prepare("SELECT p.*, m.manager_name FROM players p " .
             "LEFT OUTER JOIN managers m " .
             "ON m.manager_id = p.manager_id " .
             "WHERE p.draft_id = ? " .
@@ -85,11 +85,11 @@ class PickRepository {
     
     $stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Pick');
     
-    if(!$stmt->execute()) {
+    if (!$stmt->execute()) {
       throw new \Exception("Unable to load updated picks.");
     }
     
-    while($pick = $stmt->fetch()) {
+    while ($pick = $stmt->fetch()) {
       $pick->selected = strlen($pick->pick_time) > 0 && $pick->pick_duration > 0;
       $picks[] = $pick;
     }
@@ -111,7 +111,7 @@ class PickRepository {
     $update_stmt->bindParam(8, $pick->player_counter);
     $update_stmt->bindParam(9, $pick->player_id);
 
-    if(!$update_stmt->execute()) {
+    if (!$update_stmt->execute()) {
       throw new \Exception("Unable to update pick #$pick->player_id");
     }
 
@@ -126,7 +126,7 @@ class PickRepository {
     $update_stmt->bindParam(2, $pick->position_eligibility);
     $update_stmt->bindParam(3, $pick->player_id);
 
-    if(!$update_stmt->execute()) {
+    if (!$update_stmt->execute()) {
       throw new \Exception("Unable to update pick #$pick->player_id for depth chart.");
     }
 
@@ -235,7 +235,7 @@ class PickRepository {
   public function LoadLastPicks($draft_id, $amount) {
     $picks = array();
 
-    $stmt = $this->app['db']->prepare("SELECT p.*, m.manager_name, m.manager_id FROM players p ".
+    $stmt = $this->app['db']->prepare("SELECT p.*, m.manager_name, m.manager_id FROM players p " .
             "LEFT OUTER JOIN managers m " .
             "ON m.manager_id = p.manager_id " .
             "WHERE p.draft_id = ? " .
@@ -249,11 +249,11 @@ class PickRepository {
     
     $stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Pick');
     
-    if(!$stmt->execute()) {
+    if (!$stmt->execute()) {
       throw new Exception("Unable to load last $amount picks.");
     }
     
-    while($pick = $stmt->fetch()) {
+    while ($pick = $stmt->fetch()) {
       $pick->selected = strlen($pick->pick_time) > 0 && $pick->pick_duration > 0;
       $picks[] = $pick;
     }
@@ -264,7 +264,7 @@ class PickRepository {
   public function LoadNextPicks($draft_id, $currentPick, $amount) {
     $picks = array();
 
-    $stmt = $this->app['db']->prepare("SELECT p.*, m.manager_name, m.manager_id FROM players p ".
+    $stmt = $this->app['db']->prepare("SELECT p.*, m.manager_name, m.manager_id FROM players p " .
             "LEFT OUTER JOIN managers m " .
             "ON m.manager_id = p.manager_id " .
             "WHERE p.draft_id = ? " .
@@ -278,11 +278,11 @@ class PickRepository {
     
     $stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Pick');
     
-    if(!$stmt->execute()) {
+    if (!$stmt->execute()) {
       throw new Exception("Unable to load next $amount picks.");
     }
     
-    while($pick = $stmt->fetch()) {
+    while ($pick = $stmt->fetch()) {
       $pick->selected = strlen($pick->pick_time) > 0 && $pick->pick_duration > 0;
       $pick->on_the_clock = $pick->player_pick == $currentPick;
 
@@ -293,7 +293,7 @@ class PickRepository {
   }
 
   public function LoadManagerPicks($manager_id, $draft = null, $selected = true) {
-    $manager_id = (int) $manager_id;
+    $manager_id = (int)$manager_id;
 
     if ($manager_id == 0) {
       throw new \Exception("Unable to get manager #" . $manager_id . "'s picks.");
@@ -364,18 +364,20 @@ class PickRepository {
    * @param int $draft_id 
    */
   public function SearchStrict(PickSearchModel $searchModel) {
-    $draft_id = (int) $searchModel->draft_id;
+    $draft_id = (int)$searchModel->draft_id;
     $param_number = 4;
     $players = array();
 
     $sql = "SELECT p.*, m.manager_name, MATCH (p.first_name, p.last_name) AGAINST (?) as search_score " .
             "FROM players p LEFT OUTER JOIN managers m ON m.manager_id = p.manager_id WHERE MATCH (p.first_name, p.last_name) AGAINST (?) AND p.draft_id = ? ";
 
-    if ($searchModel->hasTeam())
-      $sql .= "AND p.team = ? ";
+    if ($searchModel->hasTeam()) {
+          $sql .= "AND p.team = ? ";
+    }
 
-    if ($searchModel->hasPosition())
-      $sql .= "AND p.position = ? ";
+    if ($searchModel->hasPosition()) {
+          $sql .= "AND p.position = ? ";
+    }
 
     $sql .= "AND p.pick_time IS NOT NULL ORDER BY search_score ASC, p.player_pick $searchModel->sort";
 
@@ -414,21 +416,24 @@ class PickRepository {
    * @param int $draft_id 
    */
   public function SearchLoose(PickSearchModel $searchModel) {
-    $draft_id = (int) $searchModel->draft_id;
+    $draft_id = (int)$searchModel->draft_id;
     $players = array();
     $param_number = 2;
     $loose_search_score = -1;
 
     $sql = "SELECT p.*, m.manager_name FROM players p LEFT OUTER JOIN managers m ON m.manager_id = p.manager_id WHERE p.draft_id = ? ";
 
-    if ($searchModel->hasName())
-      $sql .= "AND (p.first_name LIKE ? OR p.last_name LIKE ?)";
+    if ($searchModel->hasName()) {
+          $sql .= "AND (p.first_name LIKE ? OR p.last_name LIKE ?)";
+    }
 
-    if ($searchModel->hasTeam())
-      $sql .= "AND p.team = ? ";
+    if ($searchModel->hasTeam()) {
+          $sql .= "AND p.team = ? ";
+    }
 
-    if ($searchModel->hasPosition())
-      $sql .= "AND p.position = ? ";
+    if ($searchModel->hasPosition()) {
+          $sql .= "AND p.position = ? ";
+    }
 
     $sql .= "AND p.pick_time IS NOT NULL ORDER BY p.player_pick $searchModel->sort";
 
@@ -478,7 +483,7 @@ class PickRepository {
    * @param int $draft_id 
    */
   public function SearchSplit(PickSearchModel $searchModel, $first_name, $last_name) {
-    $draft_id = (int) $searchModel->draft_id;
+    $draft_id = (int)$searchModel->draft_id;
     $players = array();
     $param_number = 4;
     $loose_search_score = -1;
@@ -541,11 +546,11 @@ class PickRepository {
 
     $stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Pick');
 
-    if(!$stmt->execute()) {
+    if (!$stmt->execute()) {
         throw new \Exception("Unable to check to see if $first_name $last_name was already drafted.");
     }
 
-    while($pick = $stmt->fetch()) {
+    while ($pick = $stmt->fetch()) {
       $pick->selected = strlen($pick->pick_time) > 0 && $pick->pick_duration > 0;
       $picks[] = $pick;
     }
@@ -557,7 +562,7 @@ class PickRepository {
     $delete_stmt = $this->app['db']->prepare("DELETE FROM players WHERE draft_id = ?");
     $delete_stmt->bindParam(1, $draft_id);
 
-    if(!$delete_stmt->execute()) {
+    if (!$delete_stmt->execute()) {
       throw new \Exception("Unable to delete picks for $draft_id.");
     }
 
@@ -577,16 +582,16 @@ class PickRepository {
           $managers = $ascending_managers;
           $even = false;
         } else {
-          if($descending_managers == null) {
+          if ($descending_managers == null) {
             throw new \Exception("Descending managers list is empty - unable to setup draft.");
           }
 
           $managers = $descending_managers;
           $even = true;
         }
+      } else {
+              $managers = $ascending_managers;
       }
-      else
-        $managers = $ascending_managers;
 
       foreach ($managers as $manager) {
         $new_pick = new Pick();
@@ -619,7 +624,7 @@ class PickRepository {
     $insert_stmt->bindParam(3, $pick->player_round);
     $insert_stmt->bindParam(4, $pick->player_pick);
 
-    if(!$insert_stmt->execute()) {
+    if (!$insert_stmt->execute()) {
       throw new \Exception("Unable to insert pick #$pick->player_pick for draft $pick->draft_id");
     }
 

@@ -21,7 +21,7 @@ class DraftStatsRepository {
 
     $load_stmt->setFetchMode(\PDO::FETCH_INTO, $stats);
 
-    if(!$load_stmt->execute()) {
+    if (!$load_stmt->execute()) {
       throw new \Exception("Unable to load draft stats");
     }
 
@@ -29,7 +29,7 @@ class DraftStatsRepository {
       return null;
     }
 
-    if(!$load_stmt->fetch()) {
+    if (!$load_stmt->fetch()) {
       throw new \Exception("Error while loading draft stats");
     }
 
@@ -103,7 +103,7 @@ class DraftStatsRepository {
     $insert_stmt->bindValue(':least_drafted_position', $draft_stats->least_drafted_position);
     $insert_stmt->bindValue(':least_drafted_position_count', $draft_stats->least_drafted_position_count);
 
-    if(!$insert_stmt->execute()) {
+    if (!$insert_stmt->execute()) {
       throw new \Exception("Unable to insert new draft stats row.");
     }
 
@@ -118,7 +118,7 @@ class DraftStatsRepository {
     $delete_stmt = $this->app['db']->prepare("DELETE FROM draft_stats WHERE draft_id = ?");
     $delete_stmt->bindParam(1, $draft_id);
 
-    if(!$delete_stmt->execute()) {
+    if (!$delete_stmt->execute()) {
       throw new \Exception("Unable to delete existing stats rows.");
     }
   }
@@ -170,7 +170,7 @@ class DraftStatsRepository {
     $row = $stmt->fetch();
 
     $stats->shortest_avg_pick_manager_name = $row['manager_name'];
-    $stats->shortest_avg_pick_seconds = (int) $row['pick_average'];
+    $stats->shortest_avg_pick_seconds = (int)$row['pick_average'];
   }
 
   private function _LoadSlowestPick($draft_id, DraftStats &$stats) {
@@ -190,7 +190,7 @@ class DraftStatsRepository {
     $row = $stmt->fetch();
 
     $stats->longest_single_pick_manager_name = $row['manager_name'];
-    $stats->longest_single_pick_seconds = (int) $row['pick_max'];
+    $stats->longest_single_pick_seconds = (int)$row['pick_max'];
   }
 
   private function _LoadFastestPick($draft_id, DraftStats &$stats) {
@@ -210,7 +210,7 @@ class DraftStatsRepository {
     $row = $stmt->fetch();
 
     $stats->shortest_single_pick_manager_name = $row['manager_name'];
-    $stats->shortest_single_pick_seconds = (int) $row['pick_min'];
+    $stats->shortest_single_pick_seconds = (int)$row['pick_min'];
   }
 
   private function _LoadAveragePickTime($draft_id, DraftStats &$stats) {
@@ -225,7 +225,7 @@ class DraftStatsRepository {
 
     $row = $stmt->fetch();
 
-    $stats->average_pick_seconds = (int) $row['pick_average'];
+    $stats->average_pick_seconds = (int)$row['pick_average'];
   }
 
   private function _LoadRoundTimes(Draft $draft, DraftStats &$stats) {
@@ -243,8 +243,8 @@ class DraftStatsRepository {
 
     $row = $stmt->fetch();
 
-    $stats->longest_round = (int) $row['player_round'];
-    $stats->longest_round_seconds = (int) $row['round_time'];
+    $stats->longest_round = (int)$row['player_round'];
+    $stats->longest_round_seconds = (int)$row['round_time'];
 
     //Stupid that I can't just re-use the above statement. All that changes is DESC to ASC. Stupid.
     $stmt = $this->app['db']->prepare("SELECT DISTINCT p.player_round, sum( p.pick_duration ) AS round_time
@@ -261,8 +261,8 @@ class DraftStatsRepository {
 
     $row = $stmt->fetch();
 
-    $stats->shortest_round = (int) $row['player_round'];
-    $stats->shortest_round_seconds = (int) $row['round_time'];
+    $stats->shortest_round = (int)$row['player_round'];
+    $stats->shortest_round_seconds = (int)$row['round_time'];
 
     $stmt = $this->app['db']->prepare("SELECT p.player_round, sum( p.pick_duration ) / ? AS avg_round_time
     FROM players p
@@ -279,7 +279,7 @@ class DraftStatsRepository {
 
     $row = $stmt->fetch();
 
-    $stats->average_round_seconds = (int) $row['avg_round_time'];
+    $stats->average_round_seconds = (int)$row['avg_round_time'];
   }
 
   private function _LoadTeamSuperlatives($draft_id, DraftStats &$stats, $teams) {
@@ -298,7 +298,7 @@ class DraftStatsRepository {
     $row = $stmt->fetch();
 
     $stats->most_drafted_team = isset($row['team']) ? $teams[$row['team']] : "";
-    $stats->most_drafted_team_count = (int) $row['team_occurences'];
+    $stats->most_drafted_team_count = (int)$row['team_occurences'];
 
     $stmt = $this->app['db']->prepare("SELECT DISTINCT p.team, count(team) as team_occurences
     FROM players p
@@ -315,7 +315,7 @@ class DraftStatsRepository {
     $row = $stmt->fetch();
 
     $stats->least_drafted_team = isset($row['team']) ? $teams[$row['team']] : "";
-    $stats->least_drafted_team_count = (int) $row['team_occurences'];
+    $stats->least_drafted_team_count = (int)$row['team_occurences'];
   }
 
   private function _LoadPositionSuperlatives($draft_id, DraftStats &$stats, $positions) {
@@ -334,7 +334,7 @@ class DraftStatsRepository {
     $row = $stmt->fetch();
 
     $stats->most_drafted_position = isset($row['position']) ? $positions[$row['position']] : "";
-    $stats->most_drafted_position_count = (int) $row['position_occurences'];
+    $stats->most_drafted_position_count = (int)$row['position_occurences'];
 
     $stmt = $this->app['db']->prepare("SELECT DISTINCT p.position, count(position) as position_occurences
     FROM players p
@@ -351,6 +351,6 @@ class DraftStatsRepository {
     $row = $stmt->fetch();
 
     $stats->least_drafted_position = isset($row['position']) ? $positions[$row['position']] : "";
-    $stats->least_drafted_position_count = (int) $row['position_occurences'];
+    $stats->least_drafted_position_count = (int)$row['position_occurences'];
   }
 }

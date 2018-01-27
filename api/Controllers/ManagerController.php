@@ -17,13 +17,13 @@ class ManagerController {
     $draft_id = (int)$request->get('draft_id');
     $manager_id = (int)$request->get('manager_id');
 
-    if(empty($draft_id) || $draft_id == 0) {
+    if (empty($draft_id) || $draft_id == 0) {
       throw new \Exception("Unable to load draft.");
     }
 
     $draft = $app['phpdraft.DraftRepository']->Load($draft_id);
 
-    if(!$draft->using_depth_charts) {
+    if (!$draft->using_depth_charts) {
       $response = $app['phpdraft.ResponseFactory'](false, array("Draft is not configured to use depth charts."));
       return $app->json($response, $response->responseType());
     }

@@ -11,7 +11,7 @@ class UtilityService {
   }
 
   public function ConvertTimeForClientDisplay($time_value) {
-    if(empty($time_value)) {
+    if (empty($time_value)) {
       return null;
     }
 
@@ -19,7 +19,7 @@ class UtilityService {
     $supposed_utc_index = $time_value_length > 3 ? $time_value_length - 3 : 0;
     $utc_index = strstr($time_value, "UTC");
 
-    if($utc_index == $supposed_utc_index) {
+    if ($utc_index == $supposed_utc_index) {
       return $time_value;
     } else {
       return $time_value . " UTC";
