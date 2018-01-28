@@ -17,6 +17,7 @@ class DepthChartController extends BaseController
     @depthChartPositions = []
 
     @_loadManagers()
+    #TODO: This likely doesn't do what I thought it would do - just returns a bool
     @hideFooter()
 
     @deregister = @$scope.$on @subscriptionKeys.loadDraftDependentData, (event, args) =>

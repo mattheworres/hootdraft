@@ -1,4 +1,4 @@
-angular.module('app').factory('authTokenHttpRequestInterceptor', $sessionStorage =>
+angular.module('phpdraft').factory('authTokenHttpRequestInterceptor', $sessionStorage =>
     ({
         request(config) {
             if ($sessionStorage.authenticated) {
@@ -11,4 +11,4 @@ angular.module('app').factory('authTokenHttpRequestInterceptor', $sessionStorage
     })
 );
 
-angular.module('app').config($httpProvider => $httpProvider.interceptors.push('authTokenHttpRequestInterceptor'));
+angular.module('phpdraft').config($httpProvider => $httpProvider.interceptors.push('authTokenHttpRequestInterceptor'));

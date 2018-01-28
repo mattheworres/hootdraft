@@ -1,33 +1,32 @@
-class BaseController extends AngularController {
+class BaseController  {
   constructor() {
-    super(...arguments);
-
+    //Todo: Remove this as ES6 controllers should have their own ctor
     if (typeof this.initialize === 'function') {
       this.initialize();
     }
 
-    //default dependencies in case @inject is never called from the child
-    this.$inject = ["$routeParams", "$scope", "$rootScope", "$location", "$sessionStorage",
-      "$window", "authenticationService", "messageService", "donationPromptService",
-      "draftService", "subscriptionKeys", "DTOptionsBuilder"];
+    // //default dependencies in case @inject is never called from the child
+    // this.$inject = ["$routeParams", "$scope", "$rootScope", "$location", "$sessionStorage",
+    //   "$window", "authenticationService", "messageService", "donationPromptService",
+    //   "draftService", "subscriptionKeys", "DTOptionsBuilder"];
   }
 
-  inject(...args) {
-      args.push('$routeParams');
-      args.push('$scope');
-      args.push('$rootScope');
-      args.push('$location');
-      args.push('$sessionStorage');
-      args.push('$window');
-      args.push('authenticationService');
-      args.push('messageService');
-      args.push('donationPromptService');
-      args.push('draftService');
-      args.push('subscriptionKeys');
-      args.push('DTOptionsBuilder');
-      args.push('api');
-      return super.inject(...Array.from(args || []));
-    }
+  // inject(...args) {
+  //     args.push('$routeParams');
+  //     args.push('$scope');
+  //     args.push('$rootScope');
+  //     args.push('$location');
+  //     args.push('$sessionStorage');
+  //     args.push('$window');
+  //     args.push('authenticationService');
+  //     args.push('messageService');
+  //     args.push('donationPromptService');
+  //     args.push('draftService');
+  //     args.push('subscriptionKeys');
+  //     args.push('DTOptionsBuilder');
+  //     args.push('api');
+  //     return super.inject(...Array.from(args || []));
+  //   }
 
   isAuthenticated() {
     return this.authenticationService.isAuthenticated();

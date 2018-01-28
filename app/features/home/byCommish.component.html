@@ -18,9 +18,9 @@
             </label>
             <div class="col-xs-9">
                 <input name="nameSearch" ng-model="nameSearch" class="form-control" maxlength="255" placeholder="Search for commissioner by name" autofocus
-                  uib-typeahead="commish as commish.name for commish in byCommishCtrl.searchCommisioners($viewValue)"
+                  uib-typeahead="commish as commish.name for commish in $ctrl.searchCommisioners($viewValue)"
                   typeahead-loading="commishSearchLoading"
-                  typeahead-on-select="byCommishCtrl.selectCommissioner($item, $model, $label)"
+                  typeahead-on-select="$ctrl.selectCommissioner($item, $model, $label)"
                   typeahead-editable="false"
                   typeahead-wait-ms="250" />
               </div>
@@ -47,7 +47,7 @@
       <div class="hidden-xs hidden-sm col-md-1 col-lg-2">&nbsp;</div>
       <div class="col-xs-12 col-sm-12 col-md-10 col-lg-8">
         <section-loading show-loading=draftTableLoading></section-loading>
-        <table datatable="ng" ng-hide="draftTableLoading" dt-options="byCommishCtrl.dtOptions" dt-column-defs="byCommishCtrl.dtColumnDefs" class="table table-striped table-bordered">
+        <table datatable="ng" ng-hide="draftTableLoading" dt-options="$ctrl.dtOptions" dt-column-defs="$ctrl.dtColumnDefs" class="table table-striped table-bordered">
           <thead>
             <tr>
               <th>League Name</th>
@@ -57,7 +57,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="draft in byCommishCtrl.drafts">
+            <tr ng-repeat="draft in $ctrl.drafts">
               <td>
                 <i ng-hide="::draft.draft_visible" class="fa fa-lock" alt="Locked" title="This draft is password protected!"></i>&nbsp;
                 <strong><a href="draft/{{::draft.draft_id}}">{{::draft.draft_name}}</a></strong>

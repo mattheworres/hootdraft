@@ -38,14 +38,7 @@ module.exports = {
               'app/features/base/*.js',
               'app/features/**/*.js'
             ],
-            coffee: 'app/coffee/**/*.coffee',
-            coffeeLoadOrder: [
-                'app/coffee/app.coffee',
-                'app/coffee/angular_base/*.coffee',
-                'app/coffee/base/**/*.coffee',
-                'app/coffee/**/*.coffee'
-            ],
-            templates: 'app/templates/**/*.html'
+            templates: 'app/features/**/*.html'
         },
 
         vendor: {
@@ -58,16 +51,16 @@ module.exports = {
                 'bower_components/slip/slip.js',
                 'bower_components/FlipClock/compiled/flipclock.js',
                 'bower_components/datatables/media/js/jquery.dataTables.js',
-                'bower_components/angular/angular.js',
+                'node_modules/angular/angular.min.js',
                 'bower_components/angular-datatables/dist/angular-datatables.js',
                 'bower_components/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.js',
-                'bower_components/angular-route/angular-route.js',
+                'node_modules/angular-route/angular-route.min.js',
                 'bower_components/angular-animate/angular-animate.js',
-                'bower_components/angular-sanitize/angular-sanitize.js',
+                'node_modules/angular-sanitize/angular-sanitize.min.js',
                 'bower_components/ngstorage/ngStorage.js',
-                'bower_components/angular-animate/angular-animate.js',
-                'bower_components/angular-ui-bootstrap-bower/ui-bootstrap-tpls.js',
-                'bower_components/angular-resource/angular-resource.js',
+                'node_modules/angular-animate/angular-animate.min.js',
+                'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
+                'node_modules/angular-resource/angular-resource.min.js',
                 'bower_components/ng-lodash/build/ng-lodash.js',
                 'bower_components/angular-toastr/dist/angular-toastr.tpls.js',
                 'bower_components/angular-recaptcha/release/angular-recaptcha.js',
@@ -89,7 +82,7 @@ module.exports = {
                 'bower_components/angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js'
             ],
             css: [
-                'bower_components/angular-ui-bootstrap-bower/ui-bootstrap-csp.css',
+                'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css',
                 'bower_components/angular-toastr/dist/angular-toastr.css',
                 'bower_components/datatables/media/css/jquery.dataTables.css',
                 'bower_components/angular-datatables/dist/plugins/bootstrap/datatables.bootstrap.css',

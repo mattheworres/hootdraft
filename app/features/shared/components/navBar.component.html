@@ -32,7 +32,7 @@
               &nbsp;Leagues by Commissioner
             </a>
           </li>
-          <li ng-show="navCtrl.isAuthenticated()">
+          <li ng-show="$ctrl.isAuthenticated()">
             <a href="#" ng-click="navCollapsed = !navCollapsed">
               <i class="fa fa-plus"></i>
               &nbsp;Add New League
@@ -40,13 +40,13 @@
           </li>
         </ul>
       </li>
-      <li ng-show="navCtrl.isAuthenticated()">
+      <li ng-show="$ctrl.isAuthenticated()">
         <a href="commish/draft/create" ng-click="navCollapsed = !navCollapsed">
           <i class="fa fa-plus"></i>&nbsp;&nbsp;
           New League
         </a>
       </li>
-      <li ng-show="navCtrl.isAdmin()" uib-dropdown>
+      <li ng-show="$ctrl.isAdmin()" uib-dropdown>
         <a href id="adminDropdown" class="dropdown-toggle" uib-dropdown-toggle role="button" aria-expanded="false">
           <i class="fa fa-unlock"></i>&nbsp;&nbsp;
             Admin Stuff
@@ -76,20 +76,20 @@
     </ul>
 
     <ul class="nav navbar-nav navbar-right navbar-form">
-      <li ng-hide="navCtrl.isAuthenticated()">
+      <li ng-hide="$ctrl.isAuthenticated()">
         <a class="btn btn-primary" role="button" href="login">
           Commissioner Login&nbsp;
           <i class="fa fa-sign-in"></i>
         </a>
       </li>
-      <li ng-show="navCtrl.isAuthenticated()">
-        <a class="btn btn-primary" role="button" ng-click="navCtrl.logOut()">
+      <li ng-show="$ctrl.isAuthenticated()">
+        <a class="btn btn-primary" role="button" ng-click="$ctrl.logOut()">
           Log Out&nbsp;
           <i class="fa fa-sign-out"></i>
         </a>
       </li>
     </ul>
-    <p ng-show="navCtrl.isAuthenticated()" class="navbar-text navbar-right hidden-sm"><strong><a href="profile">{{navCtrl.authenticatedName()}}</a></strong> logged in</p>
+    <p ng-show="$ctrl.isAuthenticated()" class="navbar-text navbar-right hidden-sm"><strong><a href="profile">{{$ctrl.authenticatedName()}}</a></strong> logged in</p>
   </div>
 </nav>
 
@@ -166,7 +166,7 @@
             </a>
             <ul class="dropdown-menu" aria-labelledby="commishDropdown">
               <li ng-show="draft.setting_up">
-                <a href="#" ng-click="navCtrl.showStartDraftModal()" ng-click="draftNavCollapsed = !draftNavCollapsed">
+                <a href="#" ng-click="$ctrl.showStartDraftModal()" ng-click="draftNavCollapsed = !draftNavCollapsed">
                   <i class="fa fa-play"></i>
                   &nbsp;Start Draft!
                 </a>
@@ -202,13 +202,13 @@
                 </a>
               </li>
               <li ng-show="draft.in_progress">
-                <a href="#" ng-click="navCtrl.showResetDraftModal()" ng-click="draftNavCollapsed = !draftNavCollapsed">
+                <a href="#" ng-click="$ctrl.showResetDraftModal()" ng-click="draftNavCollapsed = !draftNavCollapsed">
                   <i class="fa fa-warning"></i>
                   &nbsp;Reset Draft
                 </a>
               </li>
               <li>
-                <a href="#" ng-click="navCtrl.showDeleteDraftModal()" ng-click="draftNavCollapsed = !draftNavCollapsed">
+                <a href="#" ng-click="$ctrl.showDeleteDraftModal()" ng-click="draftNavCollapsed = !draftNavCollapsed">
                   <i class="fa fa-trash"></i>
                   &nbsp;Delete Draft
                 </a>

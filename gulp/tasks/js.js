@@ -90,8 +90,8 @@ gulp.task('js-templates', function (cb) {
     removeStyleLinkTypeAttributes: true,
     useShortDoctype: true
   }))).pipe($.angularTemplatecache({
-    root: 'app/templates',
-    module: 'app'
+    root: 'app/features',
+    module: 'phpdraft'
   }));
   return write(stream, 'templates');
 });

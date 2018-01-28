@@ -1,20 +1,21 @@
-class SubscriptionKeys extends AngularService {
-	constructor() {
-    super();
-    this.register('subscriptionKeys');
+//TODO: Make this a real Angular constant
 
-		this.scopeDestroy = '$destroy';
-		this.viewContentLoaded = '$viewContentLoaded';
-		this.routeChangeStart = '$routeChangeStart';
-		this.routeChangeSuccess = '$routeChangeSuccess';
-		this.locationChangeStart = '$locationChangeStart';
+class SubscriptionKeys {
+  constructor() {
+    this.scopeDestroy = '$destroy';
+    this.viewContentLoaded = '$viewContentLoaded';
+    this.routeChangeStart = '$routeChangeStart';
+    this.routeChangeSuccess = '$routeChangeSuccess';
+    this.locationChangeStart = '$locationChangeStart';
 
-		this.reloadDraft = 'reloadDraft';
-		this.loadDraftDependentData = 'loadDraftDependentData';
-		this.reloadCommishManagers = 'reloadCommishManagers';
+    this.reloadDraft = 'reloadDraft';
+    this.loadDraftDependentData = 'loadDraftDependentData';
+    this.reloadCommishManagers = 'reloadCommishManagers';
 
-		this.collapseMenus = 'collapseNavMenus';
+    this.collapseMenus = 'collapseNavMenus';
 
-		this.focusPlayerAutocomplete = 'focusPlayerAutocomplete';
-	}
+    this.focusPlayerAutocomplete = 'focusPlayerAutocomplete';
+  }
 }
+
+angular.module('phpdraft').service('subscriptionKeys', SubscriptionKeys);

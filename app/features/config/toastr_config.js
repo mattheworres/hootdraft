@@ -1,4 +1,4 @@
-angular.module("app").config(toastrConfig =>
+angular.module("phpdraft").config(toastrConfig =>
   angular.extend(toastrConfig, {
     allowHtml: false,
     autoDismiss: false,

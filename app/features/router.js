@@ -1,26 +1,20 @@
-angular.module('app').config(function($routeProvider, $locationProvider) {
+angular.module('phpdraft').config(function($routeProvider, $locationProvider) {
   $locationProvider
     .html5Mode(true)
     .hashPrefix('!');
 
   $routeProvider.when('/', {
-    controller: 'HomeController',
-    controllerAs: 'homeCtrl',
-    templateUrl: 'app/templates/home/home.html'
+    template: '<home></home>'
   });
 
   $routeProvider.when('/home', {
-    controller: 'HomeController',
-    controllerAs: 'homeCtrl',
-    templateUrl: 'app/templates/home/home.html'
+    template: '<home></home>'
   });
 
-  // $routeProvider.when('/by-commish', {
-  //   controller: 'ByCommishController',
-  //   controllerAs: 'byCommishCtrl',
-  //   templateUrl: 'app/templates/home/by_commish.html',
-  //   reloadOnSearch: false
-  // });
+  $routeProvider.when('/by-commish', {
+    template: '<by-commish></by-commish>',
+    reloadOnSearch: false
+  });
 
   // $routeProvider.when('/login', {
   //   controller: 'LoginController',
