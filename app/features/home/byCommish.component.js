@@ -12,11 +12,6 @@ class ByCommishController {
     this.DTOptionsBuilder = DTOptionsBuilder;
     this.DTColumnDefBuilder = DTColumnDefBuilder;
     this.limitToFilter = limitToFilter;
-
-    this.searchCommisioners = this.searchCommisioners.bind(this);
-    this.getSingleCommish = this.getSingleCommish.bind(this);
-    this.getCommishDrafts = this.getCommishDrafts.bind(this);
-    this.setupDatatable = this.setupDatatable.bind(this);
   }
 
   $onInit() {

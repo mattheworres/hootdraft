@@ -1,6 +1,6 @@
 class LostPasswordController {
   constructor($q, ENV, $scope, messageService, workingModalService,
-    authenticationService, vcRecaptchaService, pathHelperService) {
+    authenticationService, vcRecaptchaService) {
     this.$q = $q;
     this.ENV = ENV;
     this.$scope = $scope;
@@ -8,18 +8,14 @@ class LostPasswordController {
     this.workingModalService = workingModalService;
     this.authenticationService = authenticationService;
     this.vcRecaptchaService = vcRecaptchaService;
-    this.pathHelperService = pathHelperService;
-    this.submitClicked = this.submitClicked.bind(this);
-    this.lostFormIsInvalid = this.lostFormIsInvalid.bind(this);
-    this.lostPassword = this.lostPassword.bind(this);
   }
 
   $onInit() {
     this.$scope.showLostForm = true;
 
     if (this.authenticationService.isAuthenticated()) {
-      this.messageService.showInfo(`Already logged in as ${this.authenticationService.currentUserName()}.`, 'Logged In');
-      this.sendToPreviousPath();
+      this.authenticationService.sendAuthenticatedUserToPreviousPath();
+      return;
     }
 
     this.$scope.recaptchaPublicKey = this.ENV.recaptchaPublicKey;
@@ -96,7 +92,6 @@ LostPasswordController.$inject = [
   'workingModalService',
   'authenticationService',
   'vcRecaptchaService',
-  'pathHelperService',
 ];
 
 angular.module('phpdraft.authentication').component('lostPassword', {

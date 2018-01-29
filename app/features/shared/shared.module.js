@@ -1,5 +1,6 @@
 angular.module('phpdraft.shared', [
   'ngResource',
+  'ngRoute',
   'darthwade.loading',
   'ngStorage',
   'toastr',

@@ -1,9 +1,10 @@
 class AuthenticationService {
-  constructor(api, $q, $sessionStorage) {
+  constructor(api, $q, $sessionStorage, messageService, pathHelperService) {
     this.api = api;
     this.$q = $q;
     this.$sessionStorage = $sessionStorage;
-    this.isAuthenticationExpired = this.isAuthenticationExpired.bind(this);
+    this.messageService = messageService;
+    this.pathHelperService = pathHelperService;
   }
 
   cacheSession(userData) {
@@ -28,6 +29,11 @@ class AuthenticationService {
 
   cacheRoles(roles) {
     this.$sessionStorage.roles = roles;
+  }
+
+  sendAuthenticatedUserToPreviousPath() {
+    this.messageService.showInfo(`Already logged in as ${this.currentUserName()}.`, 'Logged In');
+    this.pathHelperService.sendToPreviousPath();
   }
 
   isAuthenticated() {
@@ -134,6 +140,8 @@ AuthenticationService.$inject = [
   'api',
   '$q',
   '$sessionStorage',
+  'messageService',
+  'pathHelperService',
 ];
 
 angular.module('phpdraft.shared').service('authenticationService', AuthenticationService);

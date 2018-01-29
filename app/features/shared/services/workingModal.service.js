@@ -1,6 +1,5 @@
 class WorkingModalService {
   constructor($uibModal, $interval) {
-    this.openModal = this.openModal.bind(this);
     this.$uibModal = $uibModal;
     this.$interval = $interval;
   }

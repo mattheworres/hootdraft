@@ -8,19 +8,14 @@ class LoginController {
     this.workingModalService = workingModalService;
     this.authenticationService = authenticationService;
     this.pathHelperService = pathHelperService;
-    this.passwordInputType = this.passwordInputType.bind(this);
-    this.submitClicked = this.submitClicked.bind(this);
-    this.login = this.login.bind(this);
   }
 
   $onInit() {
     this.showPassword = false;
 
     if (this.authenticationService.isAuthenticated()) {
-      this.messageService.showInfo(
-        `Already logged in as ${this.authenticationService.currentUserName()}.`,
-        'Logged In');
-      this.pathHelperService.sendToPreviousPath();
+      this.authenticationService.sendAuthenticatedUserToPreviousPath();
+      return;
     }
   }
 

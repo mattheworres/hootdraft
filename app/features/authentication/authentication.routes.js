@@ -10,4 +10,8 @@ angular.module('phpdraft.authentication').config(($routeProvider, $locationProvi
   $routeProvider.when('/lostPassword', {
     template: '<lost-password></lost-password>',
   });
+
+  $routeProvider.when('/resetPassword/:email?/:token?', {
+    template: '<reset-password></reset-password>',
+  });
 });

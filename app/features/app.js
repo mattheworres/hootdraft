@@ -25,6 +25,7 @@ angular.module('phpdraft', [
   'vcRecaptcha',
   //TODO: Begin showing app-level angular modules here
   'phpdraft.config',
+  'phpdraft.env',
   'phpdraft.shared',
   'phpdraft.home',
   'phpdraft.navigation',

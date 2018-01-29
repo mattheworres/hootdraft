@@ -8,7 +8,6 @@ class HomeController {
     this.messageService = messageService;
     this.DTOptionsBuilder = DTOptionsBuilder;
     this.DTColumnDefBuilder = DTColumnDefBuilder;
-    this.setupDatatable = this.setupDatatable.bind(this);
   }
 
   $onInit() {

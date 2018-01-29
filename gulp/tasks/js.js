@@ -36,6 +36,7 @@ gulp.task('uglify-error-debugging', cb => {
 gulp.task('js-app', () => {
   const babelJs = gulp.src(cfg.paths.app.js)
     .pipe($.babel())
+    .pipe($.order(cfg.paths.app.jsLoadOrder, {base: './'}))
     .pipe($.if(cfg.options.minify, $.ngAnnotate()))
     .pipe($.if(cfg.options.sourceMaps, $.sourcemaps.write('.')))
     //.pipe($.debug({title: 'Debug title'}))
@@ -46,7 +47,6 @@ gulp.task('js-app', () => {
     .pipe($.if(cfg.options.concat, $.concat('app.js', {newLine: '\n'})))
     .pipe($.if(cfg.options.minify, $.uglify()))
     .pipe($.if(cfg.options.sourceMaps, $.sourcemaps.write()))
-    .pipe($.order(cfg.paths.app.jsLoadOrder, {base: './'}))
     //.on('error', function (err) {gutil.log(gutil.colors.red('[Error]'), err.toString());})
     ;
 
@@ -56,7 +56,7 @@ gulp.task('js-app', () => {
 gulp.task('js-config', () => {
   const config = gulp.src(cfg.paths.app.config)
     .pipe($.ngConstant({
-      name: 'phpdraft.config',
+      name: 'phpdraft.env',
       wrap: true,
     })
     );

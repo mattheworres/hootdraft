@@ -1,8 +1,6 @@
 class ConfirmActionModalController {
   constructor($uibModalInstance) {
     this.$uibModalInstance = $uibModalInstance;
-
-    this.cancel = this.cancel.bind(this);
   }
 
   yesClicked() {
