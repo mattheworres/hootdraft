@@ -5,10 +5,11 @@ class ConfirmActionService {
 
   showConfirmationModal(message, confirmationCallback, title, iconClass, confirmButtonText) {
     this.modalInstance = this.$uibModal.open({
-      template: '<confirm-action-modal></confirm-action-modal>',
-      // templateUrl: 'app/templates/modals/confirm_action_modal.html',
-      // controller: 'ConfirmActionModalController',
-      // controllerAs: 'modalCtrl',
+      template: `<confirm-action-modal
+        title="$resolve.title"
+        message="$resolve.message"
+        icon-class="$resolve.iconClass"
+        confirm-button-text="$resolve.confirmButtonText"></confirm-action-modal>`,
       resolve: {
         title: () => {
           if ((title !== null) && (title.length > 0)) {
@@ -16,7 +17,6 @@ class ConfirmActionService {
           }
 
           return 'Are you sure?';
-
         },
         message: () => message,
         iconClass: () => {
@@ -48,11 +48,11 @@ class ConfirmActionService {
   }
 
   closeModal() {
-    return __guardMethod__(this.modalInstance, 'close', o => o.close()); // eslint-disable-line no-use-before-define
+    return guard(this.modalInstance, 'close', o => o.close()); // eslint-disable-line no-use-before-define
   }
 }
 
-function __guardMethod__(obj, methodName, transform) { // eslint-disable-line no-underscore-dangle
+function guard(obj, methodName, transform) {
   if (angular.isDefined(obj) && obj !== null && angular.isFunction(obj[methodName])) {
     return transform(obj, methodName);
   }

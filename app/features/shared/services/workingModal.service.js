@@ -12,10 +12,7 @@ class WorkingModalService {
     this.closeModal();
 
     this.modalInstance = this.$uibModal.open({
-      //templateUrl: 'app/templates/modals/working_modal.html',
-      //controller: 'WorkingModalController',
-      //controllerAs: 'modalCtrl',
-      template: '<working-modal></working-modal>',
+      template: '<working-modal typical-loading-time-ms="$resolve.typicalLoadingTimeMs" loading-bar-increment="$resolve.loadingBarIncrement" loading-bar-max="$resolve.loadingBarMax"></working-modal>',
       size: 'sm',
       keyboard: false,
       backdrop: 'static',

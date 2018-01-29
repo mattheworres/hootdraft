@@ -36,6 +36,10 @@ class AuthenticationService {
       (this.$sessionStorage.auth_token !== null);
   }
 
+  currentUserName() {
+    return this.$sessionStorage.user_name;
+  }
+
   isAdmin() {
     return this.$sessionStorage.user_admin;
   }

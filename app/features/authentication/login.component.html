@@ -10,7 +10,7 @@
     <div class="row">
       <div class="col-xs-1 col-sm-2 col-md-4">&nbsp;</div>
       <div class="col-xs-10 col-sm-8 col-md-4">
-        <form class="form-horizontal" name="loginCtrl.form">
+        <form class="form-horizontal" name="$ctrl.form">
           <fieldset>
             <div class="row">
               <div class="col-xs-12 v-offset-2">
@@ -21,11 +21,20 @@
                     </label>
                   </div>
                   <div class="col-xs-12">
-                    <input name="email" ng-model="user.email" type="email" class="form-control" maxlength="255" ng-required="true" placeholder="Email" autofocus tabindex="1" />
-                    <div ng-show="loginCtrl.form.$submitted || loginCtrl.form.email.$touched">
-                      <span ng-show="loginCtrl.form.email.$error.required" class="help-block">Email is missing</span>
-                      <span ng-show="loginCtrl.form.email.$error.email" class="help-block">Email is invalid</span>
-                      <span ng-show="loginCtrl.form.email.$error.maxlength" class="help-block">Email is too long</span>
+                    <input name="email"
+                      autocomplete="username"
+                      ng-model="user.email"
+                      type="email"
+                      class="form-control"
+                      maxlength="255"
+                      ng-required="true"
+                      placeholder="Email"
+                      autofocus
+                      tabindex="1" />
+                    <div ng-show="$ctrl.form.$submitted || $ctrl.form.email.$touched">
+                      <span ng-show="$ctrl.form.email.$error.required" class="help-block">Email is missing</span>
+                      <span ng-show="$ctrl.form.email.$error.email" class="help-block">Email is invalid</span>
+                      <span ng-show="$ctrl.form.email.$error.maxlength" class="help-block">Email is too long</span>
                     </div>
                   </div>
                 </div>
@@ -45,11 +54,23 @@
                     </span>
                   </div>
                   <div class="col-xs-9">
-                    <input name="password" uib-tooltip="Capslock is on" tooltip-trigger="focus" tooltip-enable="isCapsLockOn" ng-model="user.password" class="form-control" minlength="8" maxlength="255" type="{{loginCtrl.passwordInputType()}}" ng-required="true" placeholder="Password" tabindex="2" />
-                    <div ng-show="loginCtrl.form.$submitted || loginCtrl.form.password.$touched">
-                      <span ng-show="loginCtrl.form.password.$error.required" class="help-block">Password is missing</span>
-                      <span ng-show="!loginCtrl.form.password.$error.required && loginCtrl.form.password.$error.minlength" class="help-block">Password is too short - 8 characters minimum</span>
-                      <span ng-show="loginCtrl.form.password.$error.maxlength" class="help-block">Password is too long</span>
+                    <input name="password"
+                      autocomplete="current-password"
+                      uib-tooltip="Capslock is on"
+                      tooltip-trigger="focus"
+                      tooltip-enable="isCapsLockOn"
+                      ng-model="user.password"
+                      class="form-control"
+                      minlength="8"
+                      maxlength="255"
+                      type="{{$ctrl.passwordInputType()}}"
+                      ng-required="true"
+                      placeholder="Password"
+                      tabindex="2" />
+                    <div ng-show="$ctrl.form.$submitted || $ctrl.form.password.$touched">
+                      <span ng-show="$ctrl.form.password.$error.required" class="help-block">Password is missing</span>
+                      <span ng-show="!$ctrl.form.password.$error.required && $ctrl.form.password.$error.minlength" class="help-block">Password is too short - 8 characters minimum</span>
+                      <span ng-show="$ctrl.form.password.$error.maxlength" class="help-block">Password is too long</span>
                     </div>
                   </div>
                   <div class="col-xs-3">
@@ -60,7 +81,7 @@
             </div>
             <div class="row">
               <div class="col-xs-12 text-center v-offset-2">
-                <button type="submit" class="btn btn-primary btn-large" ng-click="loginCtrl.submitClicked()" ng-submit="loginCtrl.submitClicked()" ng-disabled="loginCtrl.loginInProgress" tabindex="3">
+                <button type="submit" class="btn btn-primary btn-large" ng-click="$ctrl.submitClicked()" ng-submit="$ctrl.submitClicked()" ng-disabled="$ctrl.loginInProgress" tabindex="3">
                   Login&nbsp;
                   <i class="fa fa-sign-in"></i>
                 </button>
@@ -87,4 +108,3 @@
   </div>
 </div>
 
-  

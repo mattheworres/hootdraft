@@ -1,10 +1,6 @@
 class WorkingModalController {
-  constructor($interval, typicalLoadingTimeMs, loadingBarMax, loadingBarIncrement) {
+  constructor($interval) {
     this.$interval = $interval;
-    this.typicalLoadingTimeMs = typicalLoadingTimeMs;
-    this.loadingBarMax = loadingBarMax;
-    this.loadingBarIncrement = loadingBarIncrement;
-    this.initialize = this.initialize.bind(this);
   }
 
   $onInit() {
@@ -31,12 +27,14 @@ class WorkingModalController {
 
 WorkingModalController.$inject = [
   '$interval',
-  'typicalLoadingTimeMs',
-  'loadingBarMax',
-  'loadingBarIncrement',
 ];
 
 angular.module('phpdraft.modals').component('workingModal', {
   controller: WorkingModalController,
   templateUrl: 'app/features/modals/workingModal.component.html',
+  bindings: {
+    typicalLoadingTimeMs: '<',
+    loadingBarIncrement: '<',
+    loadingBarMax: '<',
+  },
 });

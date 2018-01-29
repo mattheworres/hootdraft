@@ -1,10 +1,6 @@
 class ConfirmActionModalController {
-  constructor($uibModalInstance, title, message, iconClass, confirmButtonText) {
+  constructor($uibModalInstance) {
     this.$uibModalInstance = $uibModalInstance;
-    this.title = title;
-    this.message = message;
-    this.iconClass = iconClass;
-    this.confirmButtonText = confirmButtonText;
 
     this.cancel = this.cancel.bind(this);
   }
@@ -24,13 +20,15 @@ class ConfirmActionModalController {
 
 ConfirmActionModalController.$inject = [
   '$uibModalInstance',
-  'title',
-  'message',
-  'iconClass',
-  'confirmButtonText',
 ];
 
 angular.module('phpdraft.modals').component('confirmActionModal', {
   controller: ConfirmActionModalController,
   templateUrl: 'app/features/modals/confirmActionModal.component.html',
+  bindings: {
+    title: '<',
+    message: '<',
+    iconClass: '<',
+    confirmButtonText: '<',
+  },
 });
