@@ -6,4 +6,8 @@ angular.module('phpdraft.authentication').config(($routeProvider, $locationProvi
   $routeProvider.when('/login', {
     template: '<login></login>',
   });
+
+  $routeProvider.when('/lostPassword', {
+    template: '<lost-password></lost-password>',
+  });
 });

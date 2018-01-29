@@ -31,7 +31,9 @@ class WorkingModalService {
   }
 
   closeModal() {
-    return __guardMethod__(this.modalInstance, 'close', o => o.close()); // eslint-disable-line no-use-before-define
+    if (angular.isDefined(this.modalInstance) && angular.isDefined(this.modalInstance.close)) {
+      this.modalInstance.close();
+    }
   }
 }
 
@@ -39,13 +41,5 @@ WorkingModalService.$inject = [
   '$uibModal',
   '$interval',
 ];
-
-function __guardMethod__(obj, methodName, transform) { // eslint-disable-line no-underscore-dangle
-  if (angular.isDefined(obj) && obj !== null && angular.isFunction(obj[methodName])) {
-    return transform(obj, methodName);
-  }
-
-  return null;
-}
 
 angular.module('phpdraft.shared').service('workingModalService', WorkingModalService);

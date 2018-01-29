@@ -48,16 +48,10 @@ class ConfirmActionService {
   }
 
   closeModal() {
-    return guard(this.modalInstance, 'close', o => o.close()); // eslint-disable-line no-use-before-define
+    if (angular.isDefined(this.modalInstance) && angular.isDefined(this.modalInstance.close)) {
+      this.modalInstance.close();
+    }
   }
-}
-
-function guard(obj, methodName, transform) {
-  if (angular.isDefined(obj) && obj !== null && angular.isFunction(obj[methodName])) {
-    return transform(obj, methodName);
-  }
-
-  return null;
 }
 
 ConfirmActionService.$inject = [

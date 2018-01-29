@@ -14,32 +14,26 @@ class LoginController {
   }
 
   $onInit() {
-    this.$scope.showPassword = false;
+    this.showPassword = false;
 
     if (this.authenticationService.isAuthenticated()) {
       this.messageService.showInfo(
         `Already logged in as ${this.authenticationService.currentUserName()}.`,
         'Logged In');
-      return this.pathHelperService.sendToPreviousPath();
+      this.pathHelperService.sendToPreviousPath();
     }
-
-    return null;
   }
 
   passwordInputType() {
-    if (this.$scope.showPassword) {
-      return 'text';
-    }
-
-    return 'password';
+    return this.showPassword
+      ? 'text'
+      : 'password';
   }
 
   submitClicked() {
     if (this.form.$valid) {
-      return this.login();
+      this.login();
     }
-
-    return null;
   }
 
   login() {
@@ -62,7 +56,7 @@ class LoginController {
 
       this.pathHelperService.sendToPreviousPath();
 
-      return this.messageService.showSuccess(`Welcome back, ${this.authenticationService.currentUserName()}!`, 'Logged In');
+      this.messageService.showSuccess(`Welcome back, ${this.authenticationService.currentUserName()}!`, 'Logged In');
     };
 
     const loginFailureHandler = response => {
@@ -71,20 +65,19 @@ class LoginController {
       this.workingModalService.closeModal();
 
       if (response.status === 400) {
-        loginError = guard(response.data.data === null ? null : response.data.data.errors, x => x.join('\n')); // eslint-disable-line no-use-before-define
+        loginError = angular.isDefined(response.data.data) &&
+          angular.isDefined(response.data.data.errors)
+          ? response.data.data.errors.join('\n')
+          : 'Unknown 400 error';
       } else {
         loginError = `Whoops! We hit a snag - looks like it's on our end (${response.data.status})`;
       }
 
-      return this.messageService.showError(`${loginError}`, 'Unable to Login');
+      this.messageService.showError(`${loginError}`, 'Unable to Login');
     };
 
-    return loginResult.promise.then(loginSuccessHandler, loginFailureHandler);
+    loginResult.promise.then(loginSuccessHandler, loginFailureHandler);
   }
-}
-
-function guard(value, transform) {
-  return (angular.isDefined(value) && value !== null) ? transform(value) : null;
 }
 
 LoginController.$inject = [
