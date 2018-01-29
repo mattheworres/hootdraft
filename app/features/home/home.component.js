@@ -12,7 +12,6 @@ class HomeController {
   }
 
   $onInit() {
-    let draftsPromise;
     this.drafts = [];
 
     this.$scope.draftTableLoading = true;
@@ -24,36 +23,36 @@ class HomeController {
 
     const errorHandler = () => {
       this.$scope.draftTableLoading = false;
-      this.messageService.showError("Unable to load drafts");
+      this.messageService.showError('Unable to load drafts');
     };
 
-    draftsPromise = this.api.Draft.getDraftList({}, draftSuccessHandler, errorHandler);
+    this.api.Draft.getDraftList({}, draftSuccessHandler, errorHandler);
   }
 
   setupDatatable() {
-    //TODO: Fix so we use fromFnPromise, and so default sorting is observed. Not working with "Angular way"
+    //TODO: Fix so we use fromFnPromise, and so default sorting is observed. Not working with 'Angular way'
     this.dtOptions = this.DTOptionsBuilder
-        .withPaginationType('simple')
-        .newOptions()
-        .withDisplayLength(25)
-        .withBootstrap()
-        .withBootstrapOptions({
-            ColVis: {
-                classes: {
-                    masterButton: 'btn btn-primary'
-                }
-            }
-          })
-        .withColVis()
-        .withOption('order', [4, 'desc']);
+      .withPaginationType('simple')
+      .newOptions()
+      .withDisplayLength(25)
+      .withBootstrap()
+      .withBootstrapOptions({
+        ColVis: {
+          classes: {
+            masterButton: 'btn btn-primary',
+          },
+        },
+      })
+      .withColVis()
+      .withOption('order', [4, 'desc']);
 
     this.dtColumnDefs = [
-      this.DTColumnDefBuilder.newColumnDef(0).withOption("bSearchable", true),
-      this.DTColumnDefBuilder.newColumnDef(1).withOption("bSearchable", true),
-      this.DTColumnDefBuilder.newColumnDef(2).withOption("bSearchable", true),
-      this.DTColumnDefBuilder.newColumnDef(3).withOption("bSearchable", true),
-      this.DTColumnDefBuilder.newColumnDef(4).withOption("bSearchable", true).withOption('sType', 'date'),
-      this.DTColumnDefBuilder.newColumnDef(5).withOption("bSearchable", true)
+      this.DTColumnDefBuilder.newColumnDef(0).withOption('bSearchable', true),
+      this.DTColumnDefBuilder.newColumnDef(1).withOption('bSearchable', true),
+      this.DTColumnDefBuilder.newColumnDef(2).withOption('bSearchable', true),
+      this.DTColumnDefBuilder.newColumnDef(3).withOption('bSearchable', true),
+      this.DTColumnDefBuilder.newColumnDef(4).withOption('bSearchable', true).withOption('sType', 'date'),
+      this.DTColumnDefBuilder.newColumnDef(5).withOption('bSearchable', true),
     ];
 
     this.$scope.$on('event:dataTableLoaded', (event, loadedDT) => {
@@ -69,10 +68,10 @@ HomeController.$inject = [
   'api',
   'messageService',
   'DTOptionsBuilder',
-  'DTColumnDefBuilder'
+  'DTColumnDefBuilder',
 ];
 
-angular.module('phpdraft').component('home', {
+angular.module('phpdraft.home').component('home', {
   controller: HomeController,
-  templateUrl: 'app/features/home/home.component.html'
-})
+  templateUrl: 'app/features/home/home.component.html',
+});

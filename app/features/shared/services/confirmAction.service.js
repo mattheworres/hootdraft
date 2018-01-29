@@ -11,56 +11,57 @@ class ConfirmActionService {
       // controllerAs: 'modalCtrl',
       resolve: {
         title: () => {
-          if ((title != null) && (title.length > 0)) {
+          if ((title !== null) && (title.length > 0)) {
             return title;
-          } else {
-            return 'Are you sure?';
           }
+
+          return 'Are you sure?';
+
         },
-        message: () => {
-          return message;
-        },
+        message: () => message,
         iconClass: () => {
-          if ((iconClass != null) && (iconClass.length > 0)) {
+          if ((iconClass !== null) && (iconClass.length > 0)) {
             return iconClass;
-          } else {
-            return 'fa-question';
           }
+
+          return 'fa-question';
         },
         confirmButtonText: () => {
-          if ((confirmButtonText != null) && (confirmButtonText.length > 0)) {
+          if ((confirmButtonText !== null) && (confirmButtonText.length > 0)) {
             return confirmButtonText;
-          } else {
-            return 'Yes';
           }
-        }
-      }
+
+          return 'Yes';
+        },
+      },
     });
 
     return this.modalInstance.result.then(clickedYes => {
-        this.modalInstance.dismiss('cancel');
+      this.modalInstance.dismiss('cancel');
 
-        if (clickedYes) {
-          return (typeof confirmationCallback === 'function' ? confirmationCallback() : undefined);
-        }
+      if (clickedYes) {
+        return angular.isFunction(confirmationCallback) ? confirmationCallback() : null;
+      }
+
+      return null;
     });
   }
 
   closeModal() {
-    return __guardMethod__(this.modalInstance, 'close', o => o.close());
+    return __guardMethod__(this.modalInstance, 'close', o => o.close()); // eslint-disable-line no-use-before-define
   }
 }
 
-function __guardMethod__(obj, methodName, transform) {
-  if (typeof obj !== 'undefined' && obj !== null && typeof obj[methodName] === 'function') {
+function __guardMethod__(obj, methodName, transform) { // eslint-disable-line no-underscore-dangle
+  if (angular.isDefined(obj) && obj !== null && angular.isFunction(obj[methodName])) {
     return transform(obj, methodName);
-  } else {
-    return undefined;
   }
+
+  return null;
 }
 
 ConfirmActionService.$inject = [
-  '$uibModal'
+  '$uibModal',
 ];
 
-angular.module('phpdraft').service('confirmActionService', ConfirmActionService);
+angular.module('phpdraft.shared').service('confirmActionService', ConfirmActionService);

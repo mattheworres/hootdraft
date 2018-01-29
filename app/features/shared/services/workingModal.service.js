@@ -6,11 +6,12 @@ class WorkingModalService {
   }
 
   openModal(typicalLoadingTimeMs, loadingBarIncrement) {
-    if (typicalLoadingTimeMs == null) { typicalLoadingTimeMs = 0; }
-    if (loadingBarIncrement == null) { loadingBarIncrement = 250; }
+    const loadingTimeMs = typicalLoadingTimeMs === null ? 0 : typicalLoadingTimeMs;
+    const increment = loadingBarIncrement === null ? 250 : loadingBarIncrement;
+
     this.closeModal();
 
-    return this.modalInstance = this.$uibModal.open({
+    this.modalInstance = this.$uibModal.open({
       //templateUrl: 'app/templates/modals/working_modal.html',
       //controller: 'WorkingModalController',
       //controllerAs: 'modalCtrl',
@@ -19,37 +20,35 @@ class WorkingModalService {
       keyboard: false,
       backdrop: 'static',
       resolve: {
-        typicalLoadingTimeMs: () => {
-          return typicalLoadingTimeMs;
-        },
-        loadingBarIncrement: () => {
-          return loadingBarIncrement;
-        },
+        typicalLoadingTimeMs: () => loadingTimeMs,
+        loadingBarIncrement: () => increment,
         loadingBarMax: () => {
-          if(typicalLoadingTimeMs > 0) {
+          if (loadingTimeMs > 0) {
             return 0;
-          } else {
-            return 100;
           }
-        }
-      }
+
+          return 100;
+        },
+      },
     });
   }
 
   closeModal() {
-    return __guardMethod__(this.modalInstance, 'close', o => o.close());
+    return __guardMethod__(this.modalInstance, 'close', o => o.close()); // eslint-disable-line no-use-before-define
   }
 }
 
 WorkingModalService.$inject = [
   '$uibModal',
-  '$interval'
+  '$interval',
 ];
 
-function __guardMethod__(obj, methodName, transform) {
-  if (typeof obj !== 'undefined' && obj !== null && typeof obj[methodName] === 'function') {
+function __guardMethod__(obj, methodName, transform) { // eslint-disable-line no-underscore-dangle
+  if (angular.isDefined(obj) && obj !== null && angular.isFunction(obj[methodName])) {
     return transform(obj, methodName);
-  } else {
-    return undefined;
   }
+
+  return null;
 }
+
+angular.module('phpdraft.shared').service('workingModalService', WorkingModalService);

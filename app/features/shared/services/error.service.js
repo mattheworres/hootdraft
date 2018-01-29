@@ -9,7 +9,7 @@ class ErrorService {
 }
 
 ErrorService.$inject = [
-  '$sessionStorage'
+  '$sessionStorage',
 ];
 
-angular.module('phpdraft').service('errorService', ErrorService);
+angular.module('phpdraft.shared').service('errorService', ErrorService);

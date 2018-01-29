@@ -4,27 +4,27 @@ class MessageService {
   }
 
   showSuccess(message, title) {
-    if (title == null) { title = 'Success!'; }
-    this.toastr.success(message, title);
+    const messageTitle = title === null ? 'Success!' : title;
+    this.toastr.success(message, messageTitle);
   }
 
   showError(message, title) {
-    if (title == null) { title = 'Error'; }
-    this.toastr.error(message, title);
+    const messageTitle = title === null ? 'Error' : title;
+    this.toastr.error(message, messageTitle);
   }
 
   showInfo(message, title) {
-    if (title == null) { title = 'Information'; }
-    this.toastr.info(message, title);
+    const messageTitle = title === null ? 'Information' : title;
+    this.toastr.info(message, messageTitle);
   }
 
   showWarning(message, title) {
-    if (title == null) { title = 'Warning'; }
-    this.toastr.warning(message, title);
+    const messageTitle = title === null ? 'Warning' : title;
+    this.toastr.warning(message, messageTitle);
   }
 
   closeToasts(toast) {
-    if (typeof toast === 'undefined') {
+    if (angular.isUndefined(toast)) {
       this.toastr.clear();
     } else {
       this.toastr.clear(toast);
@@ -33,7 +33,7 @@ class MessageService {
 }
 
 MessageService.$inject = [
-  'toastr'
+  'toastr',
 ];
 
-angular.module('phpdraft').service('messageService', MessageService);
+angular.module('phpdraft.shared').service('messageService', MessageService);

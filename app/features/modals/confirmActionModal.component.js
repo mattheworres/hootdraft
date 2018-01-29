@@ -6,7 +6,6 @@ class ConfirmActionModalController {
     this.iconClass = iconClass;
     this.confirmButtonText = confirmButtonText;
 
-    this.inject();
     this.cancel = this.cancel.bind(this);
   }
 
@@ -28,10 +27,10 @@ ConfirmActionModalController.$inject = [
   'title',
   'message',
   'iconClass',
-  'confirmButtonText'
+  'confirmButtonText',
 ];
 
-angular.module('phpdraft').component('confirmActionModal', {
+angular.module('phpdraft.modals').component('confirmActionModal', {
   controller: ConfirmActionModalController,
-  templateUrl: 'app/features/modals/confirmActionModal.component.html'
-})
+  templateUrl: 'app/features/modals/confirmActionModal.component.html',
+});

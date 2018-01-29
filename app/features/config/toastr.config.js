@@ -1,4 +1,4 @@
-angular.module("phpdraft").config(toastrConfig =>
+angular.module('phpdraft.config').config(toastrConfig =>
   angular.extend(toastrConfig, {
     allowHtml: false,
     autoDismiss: false,
@@ -10,7 +10,7 @@ angular.module("phpdraft").config(toastrConfig =>
       error: 'toast-error',
       info: 'toast-info',
       success: 'toast-success',
-      warning: 'toast-warning'
+      warning: 'toast-warning',
     },
     maxOpened: 5,
     messageClass: 'toast-message',
@@ -25,6 +25,6 @@ angular.module("phpdraft").config(toastrConfig =>
     target: 'body',
     timeOut: 5000,
     titleClass: 'toast-title',
-    toastClass: 'toast'
+    toastClass: 'toast',
   })
 );

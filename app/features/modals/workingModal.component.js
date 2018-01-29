@@ -1,11 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS001: Remove Babel/TypeScript constructor workaround
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
-class WorkingModalController  {
+class WorkingModalController {
   constructor($interval, typicalLoadingTimeMs, loadingBarMax, loadingBarIncrement) {
     this.$interval = $interval;
     this.typicalLoadingTimeMs = typicalLoadingTimeMs;
@@ -14,13 +7,9 @@ class WorkingModalController  {
     this.initialize = this.initialize.bind(this);
   }
 
-  static initClass() {
-    this.register('WorkingModalController');
-  }
-
-  initialize() {
-    if(this.typicalLoadingTimeMs !== 0) {
-      return this.setupLoadingTimer();
+  $onInit() {
+    if (this.typicalLoadingTimeMs !== 0) {
+      this.setupLoadingTimer();
     }
   }
 
@@ -30,13 +19,13 @@ class WorkingModalController  {
     const loadingIntervalHandler = () => {
       this.loadingBarMax += this.progressIncrements;
 
-      if(this.loadingBarMax >= 100) {
+      if (this.loadingBarMax >= 100) {
         this.$interval.cancel(this.intervalPromise);
-        return this.intervalPromise = undefined;
+        this.intervalPromise = undefined;// eslint-disable-line no-undefined
       }
     };
 
-    return this.intervalPromise = this.$interval(loadingIntervalHandler, this.loadingBarIncrement);
+    this.intervalPromise = this.$interval(loadingIntervalHandler, this.loadingBarIncrement);
   }
 }
 
@@ -44,10 +33,10 @@ WorkingModalController.$inject = [
   '$interval',
   'typicalLoadingTimeMs',
   'loadingBarMax',
-  'loadingBarIncrement'
-]
+  'loadingBarIncrement',
+];
 
-angular.module('phpdraft').component('workingModal', {
+angular.module('phpdraft.modals').component('workingModal', {
   controller: WorkingModalController,
-  templateUrl: 'app/features/modals/workingModal.component.html'
+  templateUrl: 'app/features/modals/workingModal.component.html',
 });

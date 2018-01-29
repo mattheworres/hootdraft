@@ -1,20 +1,7 @@
-angular.module('phpdraft').config(function($routeProvider, $locationProvider) {
+angular.module('phpdraft').config(($routeProvider, $locationProvider) => {
   $locationProvider
     .html5Mode(true)
     .hashPrefix('!');
-
-  $routeProvider.when('/', {
-    template: '<home></home>'
-  });
-
-  $routeProvider.when('/home', {
-    template: '<home></home>'
-  });
-
-  $routeProvider.when('/by-commish', {
-    template: '<by-commish></by-commish>',
-    reloadOnSearch: false
-  });
 
   // $routeProvider.when('/login', {
   //   controller: 'LoginController',
