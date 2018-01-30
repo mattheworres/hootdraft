@@ -14,4 +14,8 @@ angular.module('phpdraft.authentication').config(($routeProvider, $locationProvi
   $routeProvider.when('/resetPassword/:email?/:token?', {
     template: '<reset-password></reset-password>',
   });
+
+  $routeProvider.when('/register', {
+    template: '<register></register>',
+  });
 });

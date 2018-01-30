@@ -2,7 +2,7 @@ angular.module('phpdraft', [
   'ngAnimate',
   'ngResource',
   'ngRoute',
-  'ngSanitize',
+  'ngSanitize', // TODO: maybe keep this one on app?
   'angular-flipclock',
   'angularMoment',
   'darthwade.loading',
