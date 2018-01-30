@@ -1,6 +1,6 @@
 class LostPasswordController {
   constructor($q, ENV, $scope, messageService, workingModalService,
-    authenticationService, vcRecaptchaService) {
+    authenticationService, vcRecaptchaService, errorService) {
     this.$q = $q;
     this.ENV = ENV;
     this.$scope = $scope;
@@ -8,6 +8,7 @@ class LostPasswordController {
     this.workingModalService = workingModalService;
     this.authenticationService = authenticationService;
     this.vcRecaptchaService = vcRecaptchaService;
+    this.errorService = errorService;
   }
 
   $onInit() {
@@ -64,18 +65,10 @@ class LostPasswordController {
     };
 
     const lostFailureHandler = response => {
-      let lostError;
       this.lostInProgress = false;
       this.workingModalService.closeModal();
 
-      if (angular.isDefined(response) && angular.isDefined(response.data) && response.data.status === 400) {
-        lostError = angular.isDefined(response.data.data) &&
-          angular.isDefined(response.data.data.errors)
-          ? response.data.data.errors.join('\n')
-          : 'Unknown 400 error';
-      } else {
-        lostError = `Whoops! We hit a snag - looks like it's on our end (${response.data.status})`;
-      }
+      const lostError = this.errorService.parseValidationErrorsFromResponse(response);
 
       return this.messageService.showError(`${lostError}`, 'Unable to Request New Password');
     };
@@ -92,6 +85,7 @@ LostPasswordController.$inject = [
   'workingModalService',
   'authenticationService',
   'vcRecaptchaService',
+  'errorService',
 ];
 
 angular.module('phpdraft.authentication').component('lostPassword', {

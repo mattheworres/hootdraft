@@ -1,6 +1,6 @@
 class ResetPasswordController {
   constructor($q, ENV, $routeParams, messageService,
-    workingModalService, authenticationService, $location) {
+    workingModalService, authenticationService, $location, errorService) {
     this.$q = $q;
     this.ENV = ENV;
     this.$routeParams = $routeParams;
@@ -8,6 +8,7 @@ class ResetPasswordController {
     this.workingModalService = workingModalService;
     this.authenticationService = authenticationService;
     this.$location = $location;
+    this.errorService = errorService;
   }
 
   $onInit() {
@@ -90,18 +91,10 @@ class ResetPasswordController {
     };
 
     const resetFailureHandler = response => {
-      let resetError;
       this.resetInProgress = false;
       this.workingModalService.closeModal();
 
-      if (angular.isDefined(response) && angular.isDefined(response.data) && response.data.status === 400) {
-        resetError = angular.isDefined(response.data.data) &&
-          angular.isDefined(response.data.data.errors)
-          ? response.data.data.errors.join('\n')
-          : 'Unknown 400 error';
-      } else {
-        resetError = `Whoops! We hit a snag - looks like it's on our end (${response.data.status})`;
-      }
+      const resetError = this.errorService.parseValidationErrorsFromResponse(response);
 
       this.messageService.showError(`${resetError}`, 'Unable to Reset Password');
     };
@@ -118,6 +111,7 @@ ResetPasswordController.$inject = [
   'workingModalService',
   'authenticationService',
   '$location',
+  'errorService',
 ];
 
 angular.module('phpdraft.authentication').component('resetPassword', {

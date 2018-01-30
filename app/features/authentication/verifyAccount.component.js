@@ -1,7 +1,7 @@
 class VerifyAccountController {
   constructor($q, $routeParams, messageService,
     workingModalService, authenticationService, $location,
-    $timeout) {
+    $timeout, errorService) {
     this.$q = $q;
     this.$routeParams = $routeParams;
     this.messageService = messageService;
@@ -9,6 +9,7 @@ class VerifyAccountController {
     this.authenticationService = authenticationService;
     this.$location = $location;
     this.$timeout = $timeout;
+    this.errorService = errorService;
   }
 
   $onInit() {
@@ -42,19 +43,11 @@ class VerifyAccountController {
     };
 
     const failureHandler = response => {
-      let verifyError;
       this.workingModalService.closeModal();
 
       this.showErrorInformation = true;
 
-      if (angular.isDefined(response) && angular.isDefined(response.data) && response.data.status === 400) {
-        verifyError = angular.isDefined(response.data.data) &&
-          angular.isDefined(response.data.data.errors)
-          ? response.data.data.errors.join('\n')
-          : 'Unknown 400 error';
-      } else {
-        verifyError = `Whoops! We hit a snag - looks like it's on our end (${response.data.status})`;
-      }
+      const verifyError = this.errorService.parseValidationErrorsFromResponse(response);
 
       this.messageService.showError(`${verifyError}`, 'Unable to verify');
     };
@@ -80,6 +73,7 @@ VerifyAccountController.$inject = [
   'authenticationService',
   '$location',
   '$timeout',
+  'errorService',
 ];
 
 angular.module('phpdraft.authentication').component('verifyAccount', {

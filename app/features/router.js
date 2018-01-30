@@ -3,12 +3,6 @@ angular.module('phpdraft').config(($routeProvider, $locationProvider) => {
     .html5Mode(true)
     .hashPrefix('!');
 
-  // $routeProvider.when('/profile', {
-  //   controller: 'EditProfileController',
-  //   controllerAs: 'editProfileCtrl',
-  //   templateUrl: 'app/templates/authentication/edit_profile.html'
-  // });
-
   // $routeProvider.when('/draft/:draft_id', {
   //   controller: 'DraftIndexController',
   //   controllerAs: 'draftCtrl',

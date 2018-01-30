@@ -1,12 +1,13 @@
 class RegisterController {
   constructor($q, ENV, messageService, workingModalService,
-    authenticationService, vcRecaptchaService) {
+    authenticationService, vcRecaptchaService, errorService) {
     this.$q = $q;
     this.ENV = ENV;
     this.messageService = messageService;
     this.workingModalService = workingModalService;
     this.authenticationService = authenticationService;
     this.vcRecaptchaService = vcRecaptchaService;
+    this.errorService = errorService;
   }
 
   $onInit() {
@@ -73,18 +74,10 @@ class RegisterController {
     };
 
     const registerFailureHandler = response => {
-      let registerError;
       this.registerInProgress = false;
       this.workingModalService.closeModal();
 
-      if (angular.isDefined(response) && angular.isDefined(response.data) && response.data.status === 400) {
-        registerError = angular.isDefined(response.data.data) &&
-          angular.isDefined(response.data.data.errors)
-          ? response.data.data.errors.join('\n')
-          : 'Unknown 400 error';
-      } else {
-        registerError = `Whoops! We hit a snag - looks like it's on our end (${response.data.status})`;
-      }
+      const registerError = this.errorService.parseValidationErrorsFromResponse(response);
 
       this.messageService.showError(`${registerError}`, 'Unable to register');
     };
@@ -100,6 +93,7 @@ RegisterController.$inject = [
   'workingModalService',
   'authenticationService',
   'vcRecaptchaService',
+  'errorService',
 ];
 
 angular.module('phpdraft.authentication').component('register', {

@@ -10,7 +10,7 @@
     <div class="row">
       <div class="col-xs-1 col-sm-2 col-md-3">&nbsp;</div>
       <div class="col-xs-10 col-sm-8 col-md-6">
-        <form class="form-horizontal" name="editProfileCtrl.form">
+        <form class="form-horizontal" name="$ctrl.form">
           <fieldset>
             <div class="row">
               <div class="col-xs-12 v-offset-2">
@@ -21,11 +21,19 @@
                     </label>
                   </div>
                   <div class="col-xs-8">
-                    <input name="email" ng-model="editProfileCtrl.userProfile.email" type="email" class="form-control" maxlength="255" ng-required="true" placeholder="Email" autofocus />
-                    <div ng-show="editProfileCtrl.form.$submitted || editProfileCtrl.userProfile.email.$touched">
-                      <span ng-show="editProfileCtrl.userProfile.email.$error.required" class="help-block">Email is missing</span>
-                      <span ng-show="editProfileCtrl.userProfile.email.$error.email" class="help-block">Email is invalid</span>
-                      <span ng-show="editProfileCtrl.userProfile.email.$error.maxlength" class="help-block">Email is too long</span>
+                    <input name="email"
+                      ng-model="$ctrl.userProfile.email"
+                      autocomplete="username"
+                      type="email"
+                      class="form-control"
+                      maxlength="255"
+                      ng-required="true"
+                      placeholder="Email"
+                      autofocus />
+                    <div ng-show="$ctrl.form.$submitted || $ctrl.form.email.$touched">
+                      <span ng-show="$ctrl.form.email.$error.required" class="help-block">Email is missing</span>
+                      <span ng-show="$ctrl.form.email.$error.email" class="help-block">Email is invalid</span>
+                      <span ng-show="$ctrl.form.email.$error.maxlength" class="help-block">Email is too long</span>
                     </div>
                   </div>
                   <div class="col-xs-1 text-center">
@@ -43,11 +51,17 @@
                     </label>
                   </div>
                   <div class="col-xs-8">
-                    <input name="name" ng-model="editProfileCtrl.userProfile.name" class="form-control" maxlength="255" ng-required="true" placeholder="Your name (for display)" />
-                    <div ng-show="editProfileCtrl.form.$submitted || editProfileCtrl.userProfile.name.$touched">
-                      <span ng-show="editProfileCtrl.userProfile.name.$error.required" class="help-block">Name is missing</span>
-                      <span ng-show="editProfileCtrl.userProfile.name.$error.minlength" class="help-block">Name is too short</span>
-                      <span ng-show="editProfileCtrl.userProfile.name.$error.maxlength" class="help-block">Name is too long</span>
+                    <input name="name"
+                      ng-model="$ctrl.userProfile.name"
+                      autocomplete="nickname"
+                      class="form-control"
+                      maxlength="255"
+                      ng-required="true"
+                      placeholder="Your name (for display)" />
+                    <div ng-show="$ctrl.form.$submitted || $ctrl.form.name.$touched">
+                      <span ng-show="$ctrl.form.name.$error.required" class="help-block">Name is missing</span>
+                      <span ng-show="$ctrl.form.name.$error.minlength" class="help-block">Name is too short</span>
+                      <span ng-show="$ctrl.form.name.$error.maxlength" class="help-block">Name is too long</span>
                     </div>
                   </div>
                   <div class="col-xs-1 text-center">
@@ -65,11 +79,22 @@
                     </label>
                   </div>
                   <div class="col-xs-6">
-                    <input name="password" ng-model="editProfileCtrl.userProfile.password" uib-tooltip="Capslock is on" tooltip-trigger="focus" tooltip-enable="isCapsLockOn" class="form-control" minlength="8" maxlength="255" type="{{editProfileCtrl.passwordInputType()}}" ng-required="true" placeholder="Password" />
-                    <div ng-show="editProfileCtrl.form.$submitted || editProfileCtrl.userProfile.password.$touched">
-                      <span ng-show="editProfileCtrl.userProfile.password.$error.required" class="help-block">Password is missing</span>
-                      <span ng-show="!editProfileCtrl.userProfile.password.$error.required && editProfileCtrl.form.password.$error.minlength" class="help-block">Password is too short - 8 characters minimum</span>
-                      <span ng-show="editProfileCtrl.userProfile.password.$error.maxlength" class="help-block">Password is too long</span>
+                    <input name="password"
+                      ng-model="$ctrl.userProfile.password"
+                      autocomplete="current-password"
+                      uib-tooltip="Capslock is on"
+                      tooltip-trigger="focus"
+                      tooltip-enable="isCapsLockOn"
+                      class="form-control"
+                      minlength="8"
+                      maxlength="255"
+                      type="{{$ctrl.passwordInputType()}}"
+                      ng-required="true"
+                      placeholder="Password" />
+                    <div ng-show="$ctrl.form.$submitted || $ctrl.form.password.$touched">
+                      <span ng-show="$ctrl.form.password.$error.required" class="help-block">Password is missing</span>
+                      <span ng-show="!$ctrl.form.password.$error.required && $ctrl.form.password.$error.minlength" class="help-block">Password is too short - 8 characters minimum</span>
+                      <span ng-show="$ctrl.form.password.$error.maxlength" class="help-block">Password is too long</span>
                     </div>
                   </div>
                   <div class="col-xs-1 col-xs-offset-2 text-center">
@@ -87,14 +112,25 @@
                     </label>
                   </div>
                   <div class="col-xs-6">
-                    <input id="newPassword" name="newPassword" ng-model="editProfileCtrl.userProfile.newPassword" uib-tooltip="Capslock is on" tooltip-trigger="focus" tooltip-enable="isCapsLockOn" class="form-control" minlength="8" maxlength="255" type="{{editProfileCtrl.passwordInputType()}}" placeholder="Enter your new password" />
-                    <div ng-show="editProfileCtrl.form.$submitted || editProfileCtrl.userProfile.newPassword.$touched">
-                      <span ng-show="!editProfileCtrl.userProfile.newPassword.$error.required && editProfileCtrl.userProfile.newPassword.$error.minlength" class="help-block">New password is too short - 8 characters minimum</span>
-                      <span ng-show="editProfileCtrl.userProfile.newPassword.$error.maxlength" class="help-block">New password is too long</span>
+                    <input id="newPassword"
+                      name="newPassword"
+                      ng-model="$ctrl.userProfile.newPassword"
+                      autocomplete="new-password"
+                      uib-tooltip="Capslock is on"
+                      tooltip-trigger="focus"
+                      tooltip-enable="isCapsLockOn"
+                      class="form-control"
+                      minlength="8"
+                      maxlength="255"
+                      type="{{$ctrl.passwordInputType()}}"
+                      placeholder="Enter your new password" />
+                    <div ng-show="$ctrl.form.$submitted || $ctrl.form.newPassword.$touched">
+                      <span ng-show="!$ctrl.form.newPassword.$error.required && $ctrl.form.newPassword.$error.minlength" class="help-block">New password is too short - 8 characters minimum</span>
+                      <span ng-show="$ctrl.form.newPassword.$error.maxlength" class="help-block">New password is too long</span>
                     </div>
                   </div>
                   <div class="col-xs-3 text-right">
-                    <toggle-switch name="showPassword" ng-model="showPassword" knob-label="Show"></toggle-switch>
+                    <toggle-switch name="showPassword" ng-model="$ctrl.showPassword" knob-label="Show"></toggle-switch>
                   </div>
                 </div>
               </div>
@@ -108,10 +144,22 @@
                     </label>
                   </div>
                   <div class="col-xs-6">
-                    <input id="newConfirmedPassword" name="newConfirmedPassword" uib-tooltip="Capslock is on" tooltip-trigger="focus" tooltip-enable="isCapsLockOn" ng-model="editProfileCtrl.userProfile.newConfirmedPassword" class="form-control" minlength="8" maxlength="255" type="{{editProfileCtrl.passwordInputType()}}" placeholder="Confirm your new password" match="editProfileCtrl.userProfile.newPassword" />
-                    <div ng-show="editProfileCtrl.form.$submitted || editProfileCtrl.userProfile.newConfirmedPassword.$touched">
-                      <span ng-show="editProfileCtrl.userProfile.newConfirmedPassword.$error.required" class="help-block">You must confirm your new password</span>
-                      <span ng-show="editProfileCtrl.userProfile.newConfirmedPassword.$error.match" class="help-block">New passwords do not match.</span>
+                    <input id="newConfirmedPassword"
+                      name="newConfirmedPassword"
+                      uib-tooltip="Capslock is on"
+                      autocomplete="new-password"
+                      tooltip-trigger="focus"
+                      tooltip-enable="isCapsLockOn"
+                      ng-model="$ctrl.userProfile.newConfirmedPassword"
+                      class="form-control"
+                      minlength="8"
+                      maxlength="255"
+                      type="{{$ctrl.passwordInputType()}}"
+                      placeholder="Confirm your new password"
+                      match="$ctrl.userProfile.newPassword" />
+                    <div ng-show="$ctrl.form.$submitted || $ctrl.form.newConfirmedPassword.$touched">
+                      <span ng-show="$ctrl.form.newConfirmedPassword.$error.required" class="help-block">You must confirm your new password</span>
+                      <span ng-show="$ctrl.form.newConfirmedPassword.$error.match" class="help-block">New passwords do not match.</span>
                     </div>
                   </div>
                   <div class="col-xs-1 col-xs-offset-2 text-center">
@@ -122,7 +170,7 @@
             </div>
             <div class="row">
               <div class="col-xs-6 col-xs-offset-3 text-center v-offset-2">
-                <button type="submit" class="btn btn-primary btn-block" ng-click="editProfileCtrl.submitClicked()" ng-submit="editProfileCtrl.submitClicked()" ng-disabled="editProfileCtrl.profileFormIsInvalid()">
+                <button type="submit" class="btn btn-primary btn-block" ng-click="$ctrl.submitClicked()" ng-submit="$ctrl.submitClicked()" ng-disabled="$ctrl.profileFormIsInvalid()">
                   <i class="fa fa-floppy-o"></i>&nbsp;&nbsp;
                   Update User Profile
                 </button>
@@ -136,4 +184,3 @@
   </div>
 </div>
 
-  

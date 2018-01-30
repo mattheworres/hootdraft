@@ -1,6 +1,6 @@
 class LoginController {
   constructor($q, $scope, api, messageService, workingModalService,
-    authenticationService, pathHelperService) {
+    authenticationService, pathHelperService, errorService) {
     this.$q = $q;
     this.$scope = $scope;
     this.api = api;
@@ -8,6 +8,7 @@ class LoginController {
     this.workingModalService = workingModalService;
     this.authenticationService = authenticationService;
     this.pathHelperService = pathHelperService;
+    this.errorService = errorService;
   }
 
   $onInit() {
@@ -55,18 +56,10 @@ class LoginController {
     };
 
     const loginFailureHandler = response => {
-      let loginError;
       this.loginInProgress = false;
       this.workingModalService.closeModal();
 
-      if (response.status === 400) {
-        loginError = angular.isDefined(response.data.data) &&
-          angular.isDefined(response.data.data.errors)
-          ? response.data.data.errors.join('\n')
-          : 'Unknown 400 error';
-      } else {
-        loginError = `Whoops! We hit a snag - looks like it's on our end (${response.data.status})`;
-      }
+      const loginError = this.errorService.parseValidationErrorsFromResponse(response);
 
       this.messageService.showError(`${loginError}`, 'Unable to Login');
     };
@@ -83,6 +76,7 @@ LoginController.$inject = [
   'workingModalService',
   'authenticationService',
   'pathHelperService',
+  'errorService',
 ];
 
 angular.module('phpdraft.authentication').component('login', {

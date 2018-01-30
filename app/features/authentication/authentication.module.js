@@ -3,6 +3,7 @@ angular.module('phpdraft.authentication', [
   'ngCapsLock',
   'toggle-switch',
   'ui.bootstrap',
+  'validation.match',
   'vcRecaptcha',
   'phpdraft.shared',
 ]);

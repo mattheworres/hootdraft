@@ -22,4 +22,8 @@ angular.module('phpdraft.authentication').config(($routeProvider, $locationProvi
   $routeProvider.when('/verify/:email?/:token?', {
     template: '<verify-account></verify-account>',
   });
+
+  $routeProvider.when('/profile', {
+    template: '<edit-profile></edit-profile>',
+  });
 });
