@@ -97,7 +97,8 @@ class LoginUserService {
 
   public function CreateUnverifiedNewUser(LoginUser $user) {
     $user->enabled = false;
-    $user->verificationKey = $this->app['phpdraft.SaltService']->GenerateSalt();
+
+    $user->verificationKey = $this->app['phpdraft.SaltService']->GenerateSaltForUrl();
     $user->salt = $this->app['phpdraft.SaltService']->GenerateSalt();
     $user->password = $this->app['security.encoder.digest']->encodePassword($user->password, $user->salt);
     $user->roles = array('ROLE_COMMISH');
@@ -117,7 +118,7 @@ class LoginUserService {
       $message->is_html = true;
       $verificationLink = $this->_CreateEmailVerificationLink($user);
       $message->body = sprintf("The account for the email <strong>%s</strong> was created but the email address must be verified before the account can be activated.<br/><br/>\n\n
-        
+
         Visit this address in your web browser to activate the user:<br/><br/>\n\n
 
         <a href=\"%s\">%s</a><br/>\n\n
@@ -148,12 +149,7 @@ class LoginUserService {
   }
 
   public function BeginForgottenPasswordProcess(LoginUser $user) {
-    $user->verificationKey = $this->app['phpdraft.SaltService']->GenerateSalt();
-
-    //Found out that forward slashes are no good for URLs. Go figure.
-    while (strpos($user->verificationKey, '/') != 0) {
-      $user->verificationKey = $this->app['phpdraft.SaltService']->GenerateSalt();
-    }
+    $user->verificationKey = $this->app['phpdraft.SaltService']->GenerateSaltForUrl();
 
     $response = new PhpDraftResponse();
 
@@ -172,7 +168,7 @@ class LoginUserService {
       $message->is_html = true;
       $verificationLink = $this->_CreateForgottenPasswordLink($user);
       $message->body = sprintf("A password recovery request has been made for the account <strong>%s</strong><br/><br/>\n\n
-        
+
         To reset your password, visit the following address in your web browser:<br/><br/>\n\n
 
         <a href=\"%s\">%s</a><br/>\n
@@ -266,7 +262,7 @@ class LoginUserService {
         $message->is_html = true;
         $verificationLink = $this->_CreateEmailVerificationLink($user);
         $message->body = sprintf("The account <strong>%s</strong> was updated but the email address must be verified before the account can be re-activated.<br/><br/>\n\n
-          
+
           Visit this address in your web browser to re-activate the user:<br/><br/>\n\n
 
           <a href=\"%s\">%s</a><br/>\n
@@ -318,7 +314,7 @@ class LoginUserService {
 
   public function CurrentUserIsAdmin(LoginUser $user) {
     $roles = explode(',', $user->roles);
-    
+
     return in_array('ROLE_ADMIN', $roles);
   }
 

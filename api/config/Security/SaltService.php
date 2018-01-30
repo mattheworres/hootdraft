@@ -12,4 +12,14 @@ class SaltService {
   public function UrlDecodeSalt($encoded_salt_value) {
     return str_replace(' ', '+', urldecode($encoded_salt_value));
   }
+
+  public function GenerateSaltForUrl() {
+    $salt = $this->GenerateSalt();
+
+    while(strpos($salt, '/') != 0) {
+      $salt = $this->GenerateSalt();
+    }
+
+    return $salt;
+  }
 }
