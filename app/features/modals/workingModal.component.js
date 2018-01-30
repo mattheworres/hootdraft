@@ -4,24 +4,27 @@ class WorkingModalController {
   }
 
   $onInit() {
-    if (this.typicalLoadingTimeMs !== 0) {
+    if (parseInt(this.typicalLoadingTimeMs, 10) > 0) {
       this.setupLoadingTimer();
     }
   }
 
   setupLoadingTimer() {
-    this.progressIncrements = Math.round((this.loadingBarIncrement / this.typicalLoadingTimeMs) * 1000) / 10;
+    const increment = parseInt(this.loadingBarIncrement, 10);
+    const loadingTimeMs = parseInt(this.typicalLoadingTimeMs, 10);
+    this.currentProgress = parseInt(this.loadingBarMax, 10);
+    this.progressIncrements = parseInt(Math.round((increment / loadingTimeMs) * 1000) / 10, 10);
 
     const loadingIntervalHandler = () => {
-      this.loadingBarMax += this.progressIncrements;
+      this.currentProgress += this.progressIncrements;
 
-      if (this.loadingBarMax >= 100) {
+      if (this.currentProgress >= 100) {
         this.$interval.cancel(this.intervalPromise);
         this.intervalPromise = undefined;// eslint-disable-line no-undefined
       }
     };
 
-    this.intervalPromise = this.$interval(loadingIntervalHandler, this.loadingBarIncrement);
+    this.intervalPromise = this.$interval(loadingIntervalHandler, increment);
   }
 }
 
@@ -31,10 +34,10 @@ WorkingModalController.$inject = [
 
 angular.module('phpdraft.modals').component('workingModal', {
   controller: WorkingModalController,
-  templateUrl: 'app/features/modals/workingModal.component.html',
   bindings: {
-    typicalLoadingTimeMs: '<',
-    loadingBarIncrement: '<',
-    loadingBarMax: '<',
+    typicalLoadingTimeMs: '@',
+    loadingBarIncrement: '@',
+    loadingBarMax: '@',
   },
+  templateUrl: 'app/features/modals/workingModal.component.html',
 });

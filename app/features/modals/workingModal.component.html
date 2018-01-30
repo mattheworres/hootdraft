@@ -3,6 +3,12 @@
 </div>
 <div class="modal-body">
   <div class="progress">
-      <div class="progress-bar progress-bar-striped" ng-class="{'active': $ctrl.loadingBarMax >= 100}" role="progressbar" aria-valuenow="{{$ctrl.loadingBarMax}}" aria-valuemin="0" aria-valuemax="{{$ctrl.loadingBarMax}}" style="width: {{$ctrl.loadingBarMax}}%"></div>
+      <div class="progress-bar progress-bar-striped"
+        ng-class="{'active': $ctrl.loadingBarMax >= 100}"
+        role="progressbar"
+        aria-valuenow="{{$ctrl.loadingBarMax}}"
+        aria-valuemin="0"
+        aria-valuemax="{{$ctrl.loadingBarMax}}"
+        ng-style="{'width': $ctrl.currentProgress + '%'}"></div>
   </div>
 </div>

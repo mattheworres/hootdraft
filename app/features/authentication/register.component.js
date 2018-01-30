@@ -15,8 +15,8 @@ class RegisterController {
     this.showRegistrationForm = true;
 
     if (this.authenticationService.isAuthenticated()) {
-      this.messageService.showInfo(`Already logged in as ${this.$sessionStorage.user_name}.`, 'Logged In');
-      this.sendToPreviousPath();
+      this.authenticationService.sendAuthenticatedUserToPreviousPath();
+      return;
     }
 
     this.recaptchaPublicKey = this.ENV.recaptchaPublicKey;

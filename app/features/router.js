@@ -3,18 +3,6 @@ angular.module('phpdraft').config(($routeProvider, $locationProvider) => {
     .html5Mode(true)
     .hashPrefix('!');
 
-  // $routeProvider.when('/register', {
-  //   controller: 'RegisterController',
-  //   controllerAs: 'registerCtrl',
-  //   templateUrl: 'app/templates/authentication/register.html'
-  // });
-
-  // $routeProvider.when('/verify/:email?/:token?', {
-  //   controller: 'VerificationController',
-  //   controllerAs: 'verificationCtrl',
-  //   templateUrl: 'app/templates/authentication/verify.html'
-  // });
-
   // $routeProvider.when('/profile', {
   //   controller: 'EditProfileController',
   //   controllerAs: 'editProfileCtrl',

@@ -5,27 +5,22 @@ class WorkingModalService {
   }
 
   openModal(typicalLoadingTimeMs, loadingBarIncrement) {
-    const loadingTimeMs = typicalLoadingTimeMs === null ? 0 : typicalLoadingTimeMs;
-    const increment = loadingBarIncrement === null ? 250 : loadingBarIncrement;
+    const loadingTimeMs = angular.isUndefined(typicalLoadingTimeMs) ? 100 : typicalLoadingTimeMs;
+    const increment = angular.isUndefined(loadingBarIncrement) ? 250 : loadingBarIncrement;
+    const loadingBarMax = loadingTimeMs > 0 ? 0 : 100;
 
     this.closeModal();
 
     this.modalInstance = this.$uibModal.open({
-      template: '<working-modal typical-loading-time-ms="$resolve.typicalLoadingTimeMs" loading-bar-increment="$resolve.loadingBarIncrement" loading-bar-max="$resolve.loadingBarMax"></working-modal>',
       size: 'sm',
       keyboard: false,
       backdrop: 'static',
-      resolve: {
-        typicalLoadingTimeMs: () => loadingTimeMs,
-        loadingBarIncrement: () => increment,
-        loadingBarMax: () => {
-          if (loadingTimeMs > 0) {
-            return 0;
-          }
-
-          return 100;
-        },
-      },
+      template: `
+      <working-modal
+        typical-loading-time-ms="${loadingTimeMs}"
+        loading-bar-increment="${increment}"
+        loading-bar-max="${loadingBarMax}">
+      </working-modal>`,
     });
   }
 
