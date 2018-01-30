@@ -3,48 +3,30 @@ class ConfirmActionService {
     this.$uibModal = $uibModal;
   }
 
-  showConfirmationModal(message, confirmationCallback, title, iconClass, confirmButtonText) {
+  showConfirmationModal(message, confirmationCallback, userTitle, userIconClass, userConfirmButtonText) {
+    const title = this.coerceOption(userTitle, 'Are you sure?'),
+      iconClass = this.coerceOption(userIconClass, 'fa-question'),
+      confirmButtonText = this.coerceOption(userConfirmButtonText, 'Yes');
+
     this.modalInstance = this.$uibModal.open({
       template: `<confirm-action-modal
-        title="$resolve.title"
-        message="$resolve.message"
-        icon-class="$resolve.iconClass"
-        confirm-button-text="$resolve.confirmButtonText"></confirm-action-modal>`,
-      resolve: {
-        title: () => {
-          if ((title !== null) && (title.length > 0)) {
-            return title;
-          }
-
-          return 'Are you sure?';
-        },
-        message: () => message,
-        iconClass: () => {
-          if ((iconClass !== null) && (iconClass.length > 0)) {
-            return iconClass;
-          }
-
-          return 'fa-question';
-        },
-        confirmButtonText: () => {
-          if ((confirmButtonText !== null) && (confirmButtonText.length > 0)) {
-            return confirmButtonText;
-          }
-
-          return 'Yes';
-        },
-      },
+        title="${title}"
+        message="${message}"
+        icon-class="${iconClass}"
+        confirm-button-text="${confirmButtonText}"></confirm-action-modal>`,
     });
 
-    return this.modalInstance.result.then(clickedYes => {
+    this.modalInstance.result.then(clickedYes => {
       this.modalInstance.dismiss('cancel');
 
-      if (clickedYes) {
-        return angular.isFunction(confirmationCallback) ? confirmationCallback() : null;
+      if (clickedYes && angular.isFunction(confirmationCallback)) {
+        confirmationCallback();
       }
-
-      return null;
     });
+  }
+
+  coerceOption(option, defaultOption) {
+    return option !== null && option.length > 0 ? option : defaultOption;
   }
 
   closeModal() {

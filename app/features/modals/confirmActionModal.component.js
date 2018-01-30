@@ -24,9 +24,9 @@ angular.module('phpdraft.modals').component('confirmActionModal', {
   controller: ConfirmActionModalController,
   templateUrl: 'app/features/modals/confirmActionModal.component.html',
   bindings: {
-    title: '<',
-    message: '<',
-    iconClass: '<',
-    confirmButtonText: '<',
+    title: '@',
+    message: '@',
+    iconClass: '@',
+    confirmButtonText: '@',
   },
 });

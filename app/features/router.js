@@ -21,18 +21,6 @@ angular.module('phpdraft').config(($routeProvider, $locationProvider) => {
   //   templateUrl: 'app/templates/draft/depth_chart.html'
   // });
 
-  // $routeProvider.when('/draft/:draft_id/picks/manager', {
-  //   controller: 'ByManagerController',
-  //   controllerAs: 'managerCtrl',
-  //   templateUrl: 'app/templates/picks/by_manager.html'
-  // });
-
-  // $routeProvider.when('/draft/:draft_id/picks/round', {
-  //   controller: 'ByRoundController',
-  //   controllerAs: 'roundCtrl',
-  //   templateUrl: 'app/templates/picks/by_round.html'
-  // });
-
   // $routeProvider.when('/draft/:draft_id/trades', {
   //   controller: 'TradesController',
   //   controllerAs: 'tradesCtrl',
@@ -50,6 +38,20 @@ angular.module('phpdraft').config(($routeProvider, $locationProvider) => {
   //   controllerAs: 'statsCtrl',
   //   templateUrl: 'app/templates/draft/stats.html'
   // });
+
+
+  // $routeProvider.when('/draft/:draft_id/picks/manager', {
+  //   controller: 'ByManagerController',
+  //   controllerAs: 'managerCtrl',
+  //   templateUrl: 'app/templates/picks/by_manager.html'
+  // });
+
+  // $routeProvider.when('/draft/:draft_id/picks/round', {
+  //   controller: 'ByRoundController',
+  //   controllerAs: 'roundCtrl',
+  //   templateUrl: 'app/templates/picks/by_round.html'
+  // });
+
 
   // $routeProvider.when('/commish/draft/create', {
   //   controller: 'DraftCreateController',
@@ -86,6 +88,7 @@ angular.module('phpdraft').config(($routeProvider, $locationProvider) => {
   //   controllerAs: 'addTradeCtrl',
   //   templateUrl: 'app/templates/commish/add_trade.html'
   // });
+
 
   // $routeProvider.when('/admin/users', {
   //   controller: 'UsersController',
