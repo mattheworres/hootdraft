@@ -79,7 +79,7 @@ LoginController.$inject = [
   'errorService',
 ];
 
-angular.module('phpdraft.authentication').component('login', {
+angular.module('phpdraft.authentication').component('phpdLogin', {
   controller: LoginController,
   templateUrl: 'app/features/authentication/login.component.html',
 });

@@ -193,15 +193,6 @@
     "no-ternary": "off",
     "no-trailing-spaces": "error",
     "no-console": "off",
-    "no-underscore-dangle": [
-      "error",
-      {
-        "allow": [
-          "_delete",
-          "_export"
-        ]
-      }
-    ],
     "no-unneeded-ternary": "error",
     "no-whitespace-before-property": "error",
     "object-curly-spacing": "error",

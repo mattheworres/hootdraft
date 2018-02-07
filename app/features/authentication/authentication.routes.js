@@ -4,26 +4,26 @@ angular.module('phpdraft.authentication').config(($routeProvider, $locationProvi
     .hashPrefix('!');
 
   $routeProvider.when('/login', {
-    template: '<login></login>',
+    template: '<phpd-login></phpd-login>',
   });
 
   $routeProvider.when('/lostPassword', {
-    template: '<lost-password></lost-password>',
+    template: '<phpd-lost-password></phpd-lost-password>',
   });
 
   $routeProvider.when('/resetPassword/:email?/:token?', {
-    template: '<reset-password></reset-password>',
+    template: '<phpd-reset-password></phpd-reset-password>',
   });
 
   $routeProvider.when('/register', {
-    template: '<register></register>',
+    template: '<phpd-register></phpd-register>',
   });
 
   $routeProvider.when('/verify/:email?/:token?', {
-    template: '<verify-account></verify-account>',
+    template: '<phpd-verify-account></phpd-verify-account>',
   });
 
   $routeProvider.when('/profile', {
-    template: '<edit-profile></edit-profile>',
+    template: '<phpd-edit-profile></phpd-edit-profile>',
   });
 });

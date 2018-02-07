@@ -1,4 +1,4 @@
-<div class="col-xs-12 col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6" ng-show="draftError">
+<div class="col-xs-12 col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6 state-box" ng-show="$ctrl.draftStatus.error">
   <div class="panel panel-danger">
     <div class="panel-heading">
       <h3 class="panel-title">
@@ -12,7 +12,20 @@
   </div>
 </div>
 
-<div class="col-xs-12 col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6" ng-show="draftLoading">
+<div class="col-xs-12 col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6 state-box" ng-show="$ctrl.draftStatus.badConnection">
+  <div class="panel panel-warning">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        <i class="fa fa-exclamation-triangle"></i>&nbsp;&nbsp; Connection Issues
+      </h3>
+    </div>
+    <div class="panel-body">
+      <h4>Looks like we have interwebs issues. Is your computer online right now? Take a look, then try to reload the page.</h4>
+    </div>
+  </div>
+</div>
+
+<div class="col-xs-12 col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6 state-box" ng-show="$ctrl.draftStatus.loading">
   <div class="panel panel-info">
     <div class="panel-heading">
       <h3 class="panel-title">
@@ -26,7 +39,7 @@
   </div>
 </div>
 
-<div class="col-xs-12 col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6" ng-show="draftLocked">
+<div class="col-xs-12 col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6 state-box" ng-show="$ctrl.draftStatus.locked">
   <div class="panel panel-default">
     <div class="panel-heading">
       <h3 class="panel-title">
@@ -35,7 +48,7 @@
       </h3>
     </div>
     <div class="panel-body">
-      <p><strong>{{commishName}}</strong> has locked this draft, so you must <a href="#" ng-click="ctrl.showDraftPasswordModal()">provide a password</a> in order to see more.</p>
+      <p><strong>{{commishName}}</strong> has locked this draft, so you must <a href="#" ng-click="$ctrl.showDraftPasswordModal()">provide a password</a> in order to see more.</p>
       <p>If your name happens to be {{commishName}} you can try <a href="login">logging in</a> to make this message go away :)</p>
     </div>
   </div>

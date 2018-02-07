@@ -115,7 +115,7 @@ ByCommishController.$inject = [
   'limitToFilter',
 ];
 
-angular.module('phpdraft.home').component('byCommish', {
+angular.module('phpdraft.home').component('phpdByCommish', {
   controller: ByCommishController,
   templateUrl: 'app/features/home/byCommish.component.html',
 });

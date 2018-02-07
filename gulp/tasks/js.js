@@ -1,6 +1,7 @@
 const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
 const cfg = require('../config');
+const webpack = require('webpack-stream');
 const streamqueue = require('streamqueue');
 const pump = require('pump');
 
@@ -16,11 +17,12 @@ gulp.task('js-vendor', () => {
   const isUnminified = file => !/\.min\.js$/.test(file.path);
 
   const stream = gulp.src(cfg.paths.vendor.js)
-    .pipe($.if(cfg.options.sourceMaps, $.sourcemaps.init({loadMaps: true})))
+    //.pipe($.if(cfg.options.sourceMaps, $.sourcemaps.init({loadMaps: true})))
     .pipe($.if(cfg.options.minify && isUnminified, $.uglify()))
     //.on('error', function (err) {gutil.log(gutil.colors.red('[Error]'), err.toString());})
     .pipe($.concat('vendor.js', {newLine: '\n'}))
-    .pipe($.if(cfg.options.sourceMaps, $.sourcemaps.write()));
+    //.pipe($.if(cfg.options.sourceMaps, $.sourcemaps.write()))
+    ;
 
   return write(stream, 'vendor');
 });
@@ -35,10 +37,35 @@ gulp.task('uglify-error-debugging', cb => {
 
 gulp.task('js-app', () => {
   const babelJs = gulp.src(cfg.paths.app.js)
-    .pipe($.babel())
+    .pipe($.plumber())
     .pipe($.order(cfg.paths.app.jsLoadOrder, {base: './'}))
+    .pipe($.babel())
+    // .pipe(webpack({
+    //   module: {
+    //     rules: [
+    //       {
+    //         test: /\.js$/,
+    //         exclude: /(node_modules|bower_components)/,
+    //         use: {
+    //           loader: 'babel-loader',
+    //           options: {
+    //             presets: ['env'],
+    //             plugins: [
+    //               //'transform-runtime',
+    //               //'transform-regenerator',
+    //               //'transform-async-to-generator',
+    //               //'syntax-async-functions',
+    //               //'transform-es2015-modules-umd',
+    //               'angularjs-annotate',
+    //             ],
+    //           },
+    //         },
+    //       },
+    //     ],
+    //   },
+    // }))
     .pipe($.if(cfg.options.minify, $.ngAnnotate()))
-    .pipe($.if(cfg.options.sourceMaps, $.sourcemaps.write('.')))
+    //.pipe($.if(cfg.options.sourceMaps, $.sourcemaps.write('.')))
     //.pipe($.debug({title: 'Debug title'}))
     //.on('error', function (err) {$.gutil.log($.gutil.colors.red('[Error]'), err.toString());})
     ;
@@ -46,7 +73,30 @@ gulp.task('js-app', () => {
   const stream = streamqueue({objectMode: true}, babelJs)
     .pipe($.if(cfg.options.concat, $.concat('app.js', {newLine: '\n'})))
     .pipe($.if(cfg.options.minify, $.uglify()))
-    .pipe($.if(cfg.options.sourceMaps, $.sourcemaps.write()))
+    //.pipe($.if(cfg.options.sourceMaps, $.sourcemaps.write()))
+    // .pipe(webpack({
+    //   module: {
+    //     rules: [
+    //       {
+    //         test: /\.js$/,
+    //         exclude: /(node_modules|bower_components)/,
+    //         use: {
+    //           loader: 'babel-loader',
+    //           options: {
+    //             presets: ['env'],
+    //             plugins: [
+    //               'transform-runtime',
+    //               'transform-regenerator',
+    //               'transform-async-to-generator',
+    //               'syntax-async-functions',
+    //               'transform-es2015-modules-umd',
+    //             ],
+    //           },
+    //         },
+    //       },
+    //     ],
+    //   },
+    // }))
     //.on('error', function (err) {gutil.log(gutil.colors.red('[Error]'), err.toString());})
     ;
 

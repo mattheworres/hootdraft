@@ -20,7 +20,7 @@ ConfirmActionModalController.$inject = [
   '$uibModalInstance',
 ];
 
-angular.module('phpdraft.modals').component('confirmActionModal', {
+angular.module('phpdraft.modals').component('phpdConfirmActionModal', {
   controller: ConfirmActionModalController,
   templateUrl: 'app/features/modals/confirmActionModal.component.html',
   bindings: {

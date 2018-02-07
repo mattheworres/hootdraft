@@ -7,21 +7,21 @@
       <h4>Add up to 20 managers (teams) for your league's draft.</h4>
     </div>
     <div class="col-xs-2">
-      <button class="btn btn-block btn-success" ng-click="addManagersCtrl.addEmptyManager()">
+      <button class="btn btn-block btn-success" ng-click="$ctrl.addEmptyManager()">
         <i class="fa fa-plus"></i>&nbsp;&nbsp;Add
       </button>
     </div>
   </div>
   <form class="v-offset-2" novalidate>
-    <div class="form-group" ng-repeat="manager in addManagersCtrl.editableManagers">
+    <div class="form-group" ng-repeat="manager in $ctrl.editableManagers">
       <div class="col-xs-3 control-label">
         <strong>Manager Name:</strong>
       </div>
       <div class="col-xs-8">
-        <input ng-model="addManagersCtrl.editableManagers[$index].manager_name" class="form-control" maxlength="255" placeholder="New manager/team name" />
+        <input ng-model="$ctrl.editableManagers[$index].manager_name" class="form-control" maxlength="255" placeholder="New manager/team name" />
       </div>
       <div class="col-xs-1">
-        <span class="clickable fa-stack" ng-click="addManagersCtrl.removeManager($index)">
+        <span class="clickable fa-stack" ng-click="$ctrl.removeManager($index)">
           <i class="fa fa-circle fa-stack-2x"></i>
           <i class="fa fa-minus fa-stack-1x fa-inverse"></i>
         </span>
@@ -30,6 +30,6 @@
   </form>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="addManagersCtrl.addManagers()" ng-submit="addManagersCtrl.addManagers()">Save</button>
-  <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="addManagersCtrl.cancel()">Cancel</button>
+  <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="$ctrl.addManagers()" ng-submit="$ctrl.addManagers()">Save</button>
+  <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="$ctrl.cancel()">Cancel</button>
 </div>

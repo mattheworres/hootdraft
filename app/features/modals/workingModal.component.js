@@ -32,7 +32,7 @@ WorkingModalController.$inject = [
   '$interval',
 ];
 
-angular.module('phpdraft.modals').component('workingModal', {
+angular.module('phpdraft.modals').component('phpdWorkingModal', {
   controller: WorkingModalController,
   bindings: {
     typicalLoadingTimeMs: '@',

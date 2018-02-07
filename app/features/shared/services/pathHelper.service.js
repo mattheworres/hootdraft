@@ -10,7 +10,7 @@ class PathHelperService {
       : null;
     if (storedPreviousRoute !== null &&
       this.$sessionStorage.previousRoutes.length > 1 &&
-      !this._pathIsWhitelisted(storedPreviousRoute)) { // eslint-disable-line no-underscore-dangle
+      !this._pathIsWhitelisted(storedPreviousRoute)) {
       this.$location.path(storedPreviousRoute);
     } else {
       this.$location.path('/home');

@@ -1,5 +1,5 @@
 angular.module('phpdraft', [
-  // 'ngAnimate',
+  'ngAnimate',
   // 'ngResource',
   // 'ngRoute',
   'ngSanitize', // TODO: maybe keep this one on app?
@@ -24,10 +24,12 @@ angular.module('phpdraft', [
   // 'validation.match',
   // 'vcRecaptcha',
   //TODO: Begin showing app-level angular modules here
+  'phpdraft.authentication',
   'phpdraft.config',
+  'phpdraft.draft',
   'phpdraft.env',
   'phpdraft.shared',
   'phpdraft.home',
   'phpdraft.navigation',
-  'phpdraft.authentication',
+  'phpdraft.pick',
 ]);

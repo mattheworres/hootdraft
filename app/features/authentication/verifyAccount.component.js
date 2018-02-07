@@ -76,7 +76,7 @@ VerifyAccountController.$inject = [
   'errorService',
 ];
 
-angular.module('phpdraft.authentication').component('verifyAccount', {
+angular.module('phpdraft.authentication').component('phpdVerifyAccount', {
   controller: VerifyAccountController,
   templateUrl: 'app/features/authentication/verifyAccount.component.html',
 });

@@ -16,11 +16,11 @@ class WorkingModalService {
       keyboard: false,
       backdrop: 'static',
       template: `
-      <working-modal
+      <phpd-working-modal
         typical-loading-time-ms="${loadingTimeMs}"
         loading-bar-increment="${increment}"
         loading-bar-max="${loadingBarMax}">
-      </working-modal>`,
+      </phpd-working-modal>`,
     });
   }
 

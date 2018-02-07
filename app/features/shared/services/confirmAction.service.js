@@ -9,11 +9,11 @@ class ConfirmActionService {
       confirmButtonText = this.coerceOption(userConfirmButtonText, 'Yes');
 
     this.modalInstance = this.$uibModal.open({
-      template: `<confirm-action-modal
+      template: `<phpd-confirm-action-modal
         title="${title}"
         message="${message}"
         icon-class="${iconClass}"
-        confirm-button-text="${confirmButtonText}"></confirm-action-modal>`,
+        confirm-button-text="${confirmButtonText}"></phpd-confirm-action-modal>`,
     });
 
     this.modalInstance.result.then(clickedYes => {

@@ -114,7 +114,7 @@ ResetPasswordController.$inject = [
   'errorService',
 ];
 
-angular.module('phpdraft.authentication').component('resetPassword', {
+angular.module('phpdraft.authentication').component('phpdResetPassword', {
   controller: ResetPasswordController,
   templateUrl: 'app/features/authentication/resetPassword.component.html',
 });

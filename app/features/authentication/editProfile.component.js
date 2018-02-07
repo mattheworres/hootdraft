@@ -114,7 +114,7 @@ EditProfileController.$inject = [
   'pathHelperService',
 ];
 
-angular.module('phpdraft.authentication').component('editProfile', {
+angular.module('phpdraft.authentication').component('phpdEditProfile', {
   controller: EditProfileController,
   templateUrl: 'app/features/authentication/editProfile.component.html',
 });

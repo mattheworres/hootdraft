@@ -9,12 +9,6 @@ angular.module('phpdraft').config(($routeProvider, $locationProvider) => {
   //   templateUrl: 'app/templates/draft/index.html'
   // });
 
-  // $routeProvider.when('/draft/:draft_id/board', {
-  //   controller: 'BoardController',
-  //   controllerAs: 'boardCtrl',
-  //   templateUrl: 'app/templates/draft/board.html'
-  // });
-
   // $routeProvider.when('/draft/:draft_id/depth_chart', {
   //   controller: 'DepthChartController',
   //   controllerAs: 'depthChartCtrl',
@@ -25,12 +19,6 @@ angular.module('phpdraft').config(($routeProvider, $locationProvider) => {
   //   controller: 'TradesController',
   //   controllerAs: 'tradesCtrl',
   //   templateUrl: 'app/templates/draft/trades.html'
-  // });
-
-  // $routeProvider.when('/draft/:draft_id/search', {
-  //   controller: 'SearchController',
-  //   controllerAs: 'searchCtrl',
-  //   templateUrl: 'app/templates/picks/search.html'
   // });
 
   // $routeProvider.when('/draft/:draft_id/stats', {
@@ -50,6 +38,12 @@ angular.module('phpdraft').config(($routeProvider, $locationProvider) => {
   //   controller: 'ByRoundController',
   //   controllerAs: 'roundCtrl',
   //   templateUrl: 'app/templates/picks/by_round.html'
+  // });
+
+  // $routeProvider.when('/draft/:draft_id/search', {
+  //   controller: 'SearchController',
+  //   controllerAs: 'searchCtrl',
+  //   templateUrl: 'app/templates/picks/search.html'
   // });
 
 

@@ -22,7 +22,7 @@ class LostPasswordController {
     this.$scope.recaptchaPublicKey = this.ENV.recaptchaPublicKey;
 
     this.$scope.setRecaptchaResponse = response => {
-      this.form._recaptcha = response; // eslint-disable-line no-underscore-dangle
+      this.form._recaptcha = response;
     };
   }
 
@@ -35,7 +35,7 @@ class LostPasswordController {
   lostFormIsInvalid() {
     return this.lostInProgress ||
       !this.form.$valid ||
-      ((this.form._recaptcha === null ? null : this.form._recaptcha.length) === 0); // eslint-disable-line no-underscore-dangle
+      ((this.form._recaptcha === null ? null : this.form._recaptcha.length) === 0);
   }
 
   lostPassword() {
@@ -43,7 +43,7 @@ class LostPasswordController {
 
     const lostModel = {
       _email: this.form.email.$viewValue,
-      _recaptcha: this.form._recaptcha, // eslint-disable-line no-underscore-dangle
+      _recaptcha: this.form._recaptcha,
     };
 
     this.lostInProgress = true;
@@ -88,7 +88,7 @@ LostPasswordController.$inject = [
   'errorService',
 ];
 
-angular.module('phpdraft.authentication').component('lostPassword', {
+angular.module('phpdraft.authentication').component('phpdLostPassword', {
   controller: LostPasswordController,
   templateUrl: 'app/features/authentication/lostPassword.component.html',
 });

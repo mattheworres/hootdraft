@@ -70,7 +70,7 @@ HomeController.$inject = [
   'DTColumnDefBuilder',
 ];
 
-angular.module('phpdraft.home').component('home', {
+angular.module('phpdraft.home').component('phpdHome', {
   controller: HomeController,
   templateUrl: 'app/features/home/home.component.html',
 });

@@ -18,7 +18,7 @@ FooterController.$inject = [
   '$location',
 ];
 
-angular.module('phpdraft.navigation').component('footerBar', {
+angular.module('phpdraft.navigation').component('phpdFooterBar', {
   controller: FooterController,
   templateUrl: 'app/features/navigation/footerBar.component.html',
 });

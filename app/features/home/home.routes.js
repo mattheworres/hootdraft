@@ -4,15 +4,15 @@ angular.module('phpdraft.home').config(($routeProvider, $locationProvider) => {
     .hashPrefix('!');
 
   $routeProvider.when('/', {
-    template: '<home></home>',
+    template: '<phpd-home></phpd-home>',
   });
 
   $routeProvider.when('/home', {
-    template: '<home></home>',
+    template: '<phpd-home></phpd-home>',
   });
 
   $routeProvider.when('/by-commish', {
-    template: '<by-commish></by-commish>',
+    template: '<phpd-by-commish></phpd-by-commish>',
     reloadOnSearch: false,
   });
 });

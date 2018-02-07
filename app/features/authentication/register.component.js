@@ -23,7 +23,7 @@ class RegisterController {
     this.recaptchaPublicKey = this.ENV.recaptchaPublicKey;
 
     this.setRecaptchaResponse = response => {
-      this.form._recaptcha = response; // eslint-disable-line no-underscore-dangle
+      this.form._recaptcha = response;
     };
   }
 
@@ -40,7 +40,7 @@ class RegisterController {
   }
 
   registerFormIsInvalid() {
-    return this.registerInProgress || !this.form.$valid || ((this.form._recaptcha === null ? null : this.form._recaptcha.length) === 0); // eslint-disable-line no-underscore-dangle
+    return this.registerInProgress || !this.form.$valid || ((this.form._recaptcha === null ? null : this.form._recaptcha.length) === 0);
   }
 
   register() {
@@ -51,7 +51,7 @@ class RegisterController {
       _name: this.form.name.$viewValue,
       _password: this.form.password.$viewValue,
       _confirmPassword: this.form.confirmedPassword.$viewValue,
-      _recaptcha: this.form._recaptcha, // eslint-disable-line no-underscore-dangle
+      _recaptcha: this.form._recaptcha,
     };
 
     this.registerInProgress = true;
@@ -96,7 +96,7 @@ RegisterController.$inject = [
   'errorService',
 ];
 
-angular.module('phpdraft.authentication').component('register', {
+angular.module('phpdraft.authentication').component('phpdRegister', {
   controller: RegisterController,
   templateUrl: 'app/features/authentication/register.component.html',
 });

@@ -7,7 +7,7 @@ yargs.option('minify', {type: 'boolean'});
 yargs.option('open', {default: 'http://phpdraft.local', type: 'string'});
 yargs.option('revAssets', {type: 'boolean'});
 yargs.option('serve', {default: true, type: 'boolean'});
-yargs.option('sourceMaps', {type: 'boolean'});
+yargs.option('sourceMaps', {default: false, type: 'boolean'});
 yargs.option('templates', {type: 'boolean'});
 
 const {argv} = yargs;
@@ -52,16 +52,16 @@ module.exports = {
         'bower_components/slip/slip.js',
         'bower_components/FlipClock/compiled/flipclock.js',
         'bower_components/datatables/media/js/jquery.dataTables.js',
-        'node_modules/angular/angular.min.js',
+        'node_modules/angular/angular.js',
         'bower_components/angular-datatables/dist/angular-datatables.js',
         'bower_components/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.js',
-        'node_modules/angular-route/angular-route.min.js',
+        'node_modules/angular-route/angular-route.js',
         'bower_components/angular-animate/angular-animate.js',
-        'node_modules/angular-sanitize/angular-sanitize.min.js',
+        'node_modules/angular-sanitize/angular-sanitize.js',
         'bower_components/ngstorage/ngStorage.js',
-        'node_modules/angular-animate/angular-animate.min.js',
+        'node_modules/angular-animate/angular-animate.js',
         'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
-        'node_modules/angular-resource/angular-resource.min.js',
+        'node_modules/angular-resource/angular-resource.js',
         'bower_components/ng-lodash/build/ng-lodash.js',
         'bower_components/angular-toastr/dist/angular-toastr.tpls.js',
         'bower_components/angular-recaptcha/release/angular-recaptcha.js',
@@ -77,10 +77,10 @@ module.exports = {
         'bower_components/angular-strap/dist/modules/dimensions.js',
         'bower_components/angular-strap/dist/modules/debounce.js',
         'bower_components/angular-strap/dist/modules/affix.js',
-        'bower_components/ng-file-upload/ng-file-upload.min.js',
+        'bower_components/ng-file-upload/ng-file-upload.js',
         'bower_components/spin.js/spin.js',
-        'bower_components/angular-loading/angular-loading.min.js',
-        'bower_components/angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js',
+        'bower_components/angular-loading/angular-loading.js',
+        'bower_components/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js',
       ],
       css: [
         'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css',
