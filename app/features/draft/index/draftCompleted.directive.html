@@ -1,0 +1,28 @@
+<phpd-donation-prompt ng-show="status.valid && draft.complete"></phpd-donation-prompt>
+<div class="row" ng-show="status.valid && draft.complete">
+  <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+  <div class="col-xs-12 col-sm-6 col-md-5">
+    <phpd-draft-information draft="draft" status="status"></phpd-draft-information>
+  </div>
+  <div class="col-xs-12 col-sm-6 col-md-5">
+    <div class="panel panel-primary panel-no-border">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          <i class="fa fa-list"></i>&nbsp;&nbsp;
+          Round {{selectedDraftRound}} Picks
+        </h3>
+      </div>
+      <div class="panel-body pick-list-display">
+        <phpd-section-loading show-loading="$ctrl.roundLoading" loading-text="Loading the round, hold on."></phpd-section-loading>
+        <phpd-section-error show-error="$ctrl.roundError" section-name="round {{selectedDraftRound}} picks"></phpd-section-error>
+        <phpd-picks-by-round draft="draft"
+          selected-draft-round="selectedDraftRound"
+          picks="roundPicks"
+          pager-item-tally="pagerItemTally"
+          picks-loading="$ctrl.roundLoading">
+        </phpd-picks-by-round>
+      </div>
+    </div>
+  </div>
+  <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+</div>

@@ -1,0 +1,45 @@
+<div data-ng-cloak>
+  <div class="container-fluid v-offset-3">
+    <phpd-draft-state commish-name="$ctrl.draft.commish_name" draft-status="$ctrl.status"></phpd-draft-state>
+
+    <phpd-draft-setting-up
+      draft="$ctrl.draft"
+      status="$ctrl.status"
+      managers="managers"
+
+      editable-managers="editableManagers"
+      reorder-managers="$ctrl.reorderManagers"
+      before-swipe="$ctrl.beforeSwipe"
+      open-add-managers="$ctrl.openAddManagerModal"
+      commish-managers-loading="$ctrl.commishManagersLoading"
+      delete-manager="$ctrl.deleteManager"
+      enable-manager-edit="$ctrl.enableManagerEdit"
+      cancel-manager-edit="$ctrl.cancelManagerEdit"
+      save-manager="$ctrl.saveManager"
+      is-edit-active="isEditActive"
+
+      ng-hide="$ctrl.status.loading || !$ctrl.status.valid || $ctrl.status.Locked">
+    </phpd-draft-setting-up>
+
+    <!--<draft-in-progress
+      draft="$ctrl.draft"
+      draft-valid="$ctrl.valid"
+      last-five-picks="lastFivePicks"
+      next-five-picks="nextFivePicks"
+      last-five-loading="lastLoading"
+      next-five-loading="nextLoading"
+      ng-hide="$ctrl.status.loading || !$ctrl.status.valid || $ctrl.status.Locked">
+    </draft-in-progress> -->
+    <phpd-draft-completed
+      draft="$ctrl.draft"
+      status="$ctrl.status"
+      round-picks="$ctrl.roundPicks"
+      selected-draft-round="selectedDraftRound"
+      pager-item-tally="pagerItemTally"
+      round-error="$ctrl.roundError"
+      round-loading="$ctrl.roundLoading"
+      ng-hide="$ctrl.status.loading || !$ctrl.status.valid || $ctrl.status.Locked">
+    </phpd-draft-completed>
+  </div>
+</div>
+

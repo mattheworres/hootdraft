@@ -24,7 +24,6 @@ class DraftService {
     this.timerInstance = null;
     this.apiCallInProgress = false;
     this.pollingIntervalMs = 2750;
-    this.dependentDataCallbacks = [];
     this.draftStatus = {
       loading: false,
       error: false,
@@ -39,10 +38,13 @@ class DraftService {
 
     this.deregister = this.$rootScope.$on(this.subscriptionKeys.routeHasDraft, (event, args) => {
       const {hasDraft} = args;
+      const draftIdChanged = this.draftId !== this.$routeParams.draft_id;
 
-      if (hasDraft === false) {
+      if (hasDraft === false || draftIdChanged) {
         this.activeComponents = 0;
         this._stopPollingForData();
+      } else {
+        this.$rootScope.$broadcast(this.subscriptionKeys.draftCounterHasChanged, {draft: this.draft, status: this.draftStatus});
       }
     });
   }
@@ -56,7 +58,7 @@ class DraftService {
     this.defer = this.$q.defer();
 
     //If we've already received the draft, we can stop here and pass back the draft reference for this component call
-    if (this.draft !== null) {
+    if (this.draft !== null && this.draft.draft_id === this.$routeParams.draft_id) {
       this.defer.resolve(this.draft);
       return this.defer.promise;
     }

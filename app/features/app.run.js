@@ -3,11 +3,12 @@ angular.module('phpdraft').run((
   $routeParams, authenticationService, messageService,
   $location, $sessionStorage) => {
   $rootScope.$on(subscriptionKeys.viewContentLoaded, () => { //eslint-disable-line angular/on-watch
-    if (angular.isDefined($routeParams.draft_id) && $routeParams.draft_id === null) {
+    if (angular.isDefined($routeParams.draft_id) && $routeParams.draft_id !== null) {
       // $interval.cancel($rootScope.draftIntervalPromise);
       // $rootScope.draftIntervalPromise = undefined;
       // $rootScope.showDraftMenu = false;
       // $rootScope.loadDraftData = false;
+
       $rootScope.$broadcast(subscriptionKeys.routeHasDraft, {hasDraft: true});
     } else {
       $rootScope.$broadcast(subscriptionKeys.routeHasDraft, {hasDraft: false});

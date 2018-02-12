@@ -7,7 +7,7 @@
             Current Pick
           </div>
           <div class="hidden-sm col-md-6 col-lg-3 non-clock-content" dw-loading="load_current_display" dw-loading-options="{text: 'Update current pick...'}">
-            <phpd-pick-display draft="$ctrl.draft" pick=$ctrl.currentPick></phpd-pick-display>
+            <phpd-pick-display draft="$ctrl.draft" pick="$ctrl.currentPick"></phpd-pick-display>
           </div>
 
           <div class="col-sm-12 col-md-6 col-lg-4 active-pick-timer text-center" ng-show="$ctrl.timerEnabled && !$ctrl.timerUp">

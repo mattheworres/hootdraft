@@ -1,15 +1,15 @@
 <div class="row" ng-hide="picksLoading">
   <div class="col-xs-12">
-    <uib-pager 
+    <ul uib-pager
       total-items="pagerItemTally"
       max-size="5"
       class="round-pager"
       ng-model="selectedDraftRound"
       rotate="false">
-    </uib-pager>
+    </ul>
   </div>
 </div>
-<section-loading show-loading=picksLoading></section-loading>
+<phpd-section-loading show-loading="picksLoading" loading-text="Loading picks, hold on."></phpd-section-loading>
 <div class="row" ng-repeat="pick in picks" ng-hide="picksLoading">
-  <pick-display draft=draft pick=pick></pick-display>
+  <phpd-pick-display draft="draft" pick="pick"></phpd-pick-display>
 </div>

@@ -1,7 +1,7 @@
-<div class="row" ng-show="draftValid && draft.setting_up">
+<div class="row" ng-show="status.valid && draft.setting_up">
   <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
   <div class="col-xs-12 col-sm-6 col-md-5">
-    <draft-information draft=draft></draft-information>
+    <phpd-draft-information draft="draft" status="status"></phpd-draft-information>
   </div>
   <div class="col-xs-12 col-sm-6 col-md-5">
     <div class="panel panel-primary panel-no-border">
@@ -22,8 +22,8 @@
           </div>
         </div>
       </div>
-      <div class="panel-body" ng-show="draft.commish_editable"> 
-        <commish-managers draft=draft></commish-managers>
+      <div class="panel-body" ng-show="draft.commish_editable">
+        <phpd-commish-managers draft="draft"></phpd-commish-managers>
       </div>
     </div>
   </div>
