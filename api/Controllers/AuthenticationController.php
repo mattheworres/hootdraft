@@ -22,7 +22,7 @@ class AuthenticationController
     try {
       $credentialValidity = $app['phpdraft.LoginUserValidator']->areLoginCredentialsValid($email, $password);
 
-      if($credentialValidity->success == false) {
+      if ($credentialValidity->success == false) {
         throw new UsernameNotFoundException(sprintf('Email %s does not exist', $email));
       }
 
@@ -42,13 +42,13 @@ class AuthenticationController
         $response->auth_timeout = $authTimeout->format('Y-m-d H:i:s');
 
         //If user is enabled, provided valid password and has a verification (pwd reset) key, wipe it (no longer needed)
-        if($user->hasVerificationKey()) {
+        if ($user->hasVerificationKey()) {
           $app['phpdraft.LoginUserRepository']->EraseVerificationKey($user->getEmail());
         }
       }
     } catch (UsernameNotFoundException $e) {
       $response->success = false;
-      $response->errors[] =  'Invalid credentials.';
+      $response->errors[] = 'Invalid credentials.';
     }
 
     return $app->json($response, $response->responseType());
@@ -57,7 +57,7 @@ class AuthenticationController
   public function Register(Application $app, Request $request) {
     $validity = $app['phpdraft.LoginUserValidator']->IsRegistrationUserValid($request);
 
-    if(!$validity->success) {
+    if (!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
@@ -70,12 +70,12 @@ class AuthenticationController
     $captcha = $request->get('_recaptcha');
     $userIp = $request->getClientIp();
 
-    if(!in_array($userIp, $whitelist)){
+    if (!in_array($userIp, $whitelist)) {
 
       $recaptcha = new \ReCaptcha\ReCaptcha(RECAPTCHA_SECRET);
       $recaptchaResponse = $recaptcha->verify($captcha, $userIp);
 
-      if(!$recaptchaResponse->isSuccess()) {
+      if (!$recaptchaResponse->isSuccess()) {
         $response = new PhpDraftResponse(false, array());
         $response->errors = $recaptchaResponse->getErrorCodes();
         return $app->json($response, $response->responseType());
@@ -96,7 +96,7 @@ class AuthenticationController
   public function VerifyAccount(Application $app, Request $request) {
     $validity = $app['phpdraft.LoginUserValidator']->IsVerificationValid($request);
 
-    if(!$validity->success) {
+    if (!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
@@ -112,7 +112,7 @@ class AuthenticationController
   public function LostPassword(Application $app, Request $request) {
     $validity = $app['phpdraft.LoginUserValidator']->IsForgottenPasswordUserValid($request);
 
-    if(!$validity->success) {
+    if (!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 
@@ -127,12 +127,12 @@ class AuthenticationController
     $captcha = $request->get('_recaptcha');
     $userIp = $request->getClientIp();
 
-    if(!in_array($userIp, $whitelist)){
+    if (!in_array($userIp, $whitelist)) {
 
       $recaptcha = new \ReCaptcha\ReCaptcha(RECAPTCHA_SECRET);
       $recaptchaResponse = $recaptcha->verify($captcha, $userIp);
 
-      if(!$recaptchaResponse->isSuccess()) {
+      if (!$recaptchaResponse->isSuccess()) {
         $response = new PhpDraftResponse(false, array());
         $response->errors = $recaptchaResponse->getErrorCodes();
         return $app->json($response, $response->responseType());
@@ -158,7 +158,7 @@ class AuthenticationController
   public function ResetPassword(Application $app, Request $request) {
     $validity = $app['phpdraft.LoginUserValidator']->IsResetPasswordRequestValid($request);
 
-    if(!$validity->success) {
+    if (!$validity->success) {
       return $app->json($validity, Response::HTTP_BAD_REQUEST);
     }
 

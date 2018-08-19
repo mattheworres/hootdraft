@@ -18,7 +18,7 @@ class AuthenticationEntryPoint implements AuthenticationEntryPointInterface {
   {
       $array = array('success' => false);
       
-      if($authException) {
+      if ($authException) {
         $array['error'] = $authException;
       }
 

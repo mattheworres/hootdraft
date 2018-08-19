@@ -5,7 +5,7 @@ if (!$app instanceof Silex\Application) {
 }
 
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
-    'db.options' => array (
+    'db.options' => array(
         'driver'    => DB_DRIVER,
         'host'      => DB_HOST,
         'dbname'    => DB_NAME,

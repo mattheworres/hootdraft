@@ -11,7 +11,7 @@ class DraftController {
     $draft_id = (int)$request->get('id');
     $getDraftData = $request->get('get_draft_data') == 'true';
 
-    if(empty($draft_id) || $draft_id == 0) {
+    if (empty($draft_id) || $draft_id == 0) {
       throw new \Exception("Unable to load draft.");
     }
 

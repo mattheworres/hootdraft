@@ -30,19 +30,19 @@ class DepthChartPositionService {
 
       $unassignedPicks = array();
 
-      foreach($allManagerPicks as $pick) {
-        if(is_null($pick->depth_chart_position_id)) {
+      foreach ($allManagerPicks as $pick) {
+        if (is_null($pick->depth_chart_position_id)) {
           $unassignedPicks[] = $pick;
         }
       }
 
       $response->depthChartPositions[] = new DepthChartDisplayModel(null, 'Unassigned', null, $unassignedPicks);
 
-      foreach($depthChartPositions as $position) {
+      foreach ($depthChartPositions as $position) {
         $picks = array();
 
-        foreach($allManagerPicks as $pick) {
-          if($pick->depth_chart_position_id == $position->id) {
+        foreach ($allManagerPicks as $pick) {
+          if ($pick->depth_chart_position_id == $position->id) {
             $picks[] = $pick;
           }
         }

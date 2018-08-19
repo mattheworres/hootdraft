@@ -389,7 +389,7 @@ class DraftDataRepository {
   }
 
   public function GetHistoricalTeams($pro_league) {
-    switch(strtolower($pro_league)) {
+    switch (strtolower($pro_league)) {
       case 'nhl':
       case'hockey':
         return $this->historical_nhl_teams;

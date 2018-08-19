@@ -23,12 +23,12 @@ class EmailService {
     $this->mailer->Host = MAIL_SERVER;
     $this->mailer->Port = MAIL_PORT;
 
-    if(MAIL_DEVELOPMENT != true) {
+    if (MAIL_DEVELOPMENT != true) {
       $this->mailer->SMTPAuth = true;
       $this->mailer->Username = MAIL_USER;
       $this->mailer->Password = MAIL_PASS;
 
-      if(MAIL_USE_ENCRYPTION == true) {
+      if (MAIL_USE_ENCRYPTION == true) {
         $this->mailer->SMTPSecure = MAIL_ENCRYPTION;
       }
     }
@@ -38,7 +38,7 @@ class EmailService {
   }
 
   public function SendMail(MailMessage $message) {
-    foreach($message->to_addresses as $address => $name) {
+    foreach ($message->to_addresses as $address => $name) {
       $this->mailer->addAddress($address, $name);
     }
 
@@ -48,7 +48,7 @@ class EmailService {
 
     $this->mailer->Body = $message->body;
 
-    if(!$this->mailer->send()) {
+    if (!$this->mailer->send()) {
       throw new \Exception("Unable to send mail: " . $this->mailer->ErrorInfo);
     }
 

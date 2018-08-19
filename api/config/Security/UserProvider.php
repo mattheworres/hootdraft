@@ -25,11 +25,13 @@ class UserProvider implements UserProviderInterface
     $user_stmt->setFetchMode(\PDO::FETCH_INTO, $user);
     $user_stmt->bindParam(1, $email);
 
-    if (!$user_stmt->execute())
-      throw new UsernameNotFoundException(sprintf('Email "%s" does not exist.', $email));
+    if (!$user_stmt->execute()) {
+          throw new UsernameNotFoundException(sprintf('Email "%s" does not exist.', $email));
+    }
 
-    if (!$user_stmt->fetch())
-      throw new UsernameNotFoundException(sprintf('Email "%s" does not exist.', $email));
+    if (!$user_stmt->fetch()) {
+          throw new UsernameNotFoundException(sprintf('Email "%s" does not exist.', $email));
+    }
 
     return new PhpDraftSecurityUser($user->email,
       $user->name,

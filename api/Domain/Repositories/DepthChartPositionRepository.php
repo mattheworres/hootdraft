@@ -17,7 +17,7 @@ class DepthChartPositionRepository {
   public function LoadAll($draft_id) {
     $positions = array();
     
-    $stmt = $this->app['db']->prepare("SELECT d.* ".
+    $stmt = $this->app['db']->prepare("SELECT d.* " .
             "FROM depth_chart_positions d " .
             "WHERE d.draft_id = ? " .
             "ORDER BY d.display_order");
@@ -26,11 +26,11 @@ class DepthChartPositionRepository {
     
     $stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\DepthChartPosition');
     
-    if(!$stmt->execute()) {
+    if (!$stmt->execute()) {
       throw new \Exception("Unable to load updated positions.");
     }
     
-    while($position = $stmt->fetch()) {
+    while ($position = $stmt->fetch()) {
       $positions[] = $position;
     }
     
@@ -66,7 +66,7 @@ class DepthChartPositionRepository {
     $delete_stmt = $this->app['db']->prepare("DELETE FROM depth_chart_positions WHERE draft_id = ?");
     $delete_stmt->bindParam(1, $draft_id);
 
-    if(!$delete_stmt->execute()) {
+    if (!$delete_stmt->execute()) {
       throw new \Exception("Unable to delete existing depth chart positions.");
     }
   }

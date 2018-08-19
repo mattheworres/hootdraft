@@ -13,7 +13,7 @@ class PhpDraftResponse {
   public $success;
   public $errors;
 
-  public function responseType($successResponse = Response::HTTP_OK){
+  public function responseType($successResponse = Response::HTTP_OK) {
     return $this->success
       ? $successResponse
       : Response::HTTP_BAD_REQUEST;

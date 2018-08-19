@@ -106,7 +106,7 @@ $app->get('/draft/{draft_id}/manager/{manager_id}/depth_chart', 'manager.control
 
 $app->get('/draft/{draft_id}/picks', 'pick.controller:GetAll')->before($draftViewable)->before($draftInProgressOrCompleted);
 $app->get('/draft/{draft_id}/picks/updated', 'pick.controller:GetUpdated')->before($draftViewable)->before($draftInProgressOrCompleted);
-$app->put('/draft/{draft_id}/pick/{pick_id}/depth_chart/{position_id}', 'pick.controller:UpdateDepthChart')->before($draftViewable)->before($draftInProgressOrCompletedTenMinutes);#Give a ten minute grace period to allow edits right at the end
+$app->put('/draft/{draft_id}/pick/{pick_id}/depth_chart/{position_id}', 'pick.controller:UpdateDepthChart')->before($draftViewable)->before($draftInProgressOrCompletedTenMinutes); #Give a ten minute grace period to allow edits right at the end
 $app->get('/draft/{draft_id}/picks/last', 'pick.controller:GetLast')->before($draftViewable)->before($draftInProgressOrCompleted);
 $app->get('/draft/{draft_id}/picks/next', 'pick.controller:GetNext')->before($draftViewable)->before($draftInProgressOrCompleted);
 $app->get('/draft/{draft_id}/manager/{manager_id}/picks/all', 'pick.controller:GetAllManagerPicks')->before($draftViewable)->before($draftInProgressOrCompleted);

@@ -19,7 +19,7 @@ class LoginUserService {
   public function GetCurrentUser() {
     $token = $this->app['security.token_storage']->getToken();
 
-    if($token == null) {
+    if ($token == null) {
       //In public actions, this isn't an exception - we're just not logged in.
       return null;
       //throw new \Exception("Username not found.");
@@ -32,9 +32,9 @@ class LoginUserService {
 
   //This is a hack to make accessing logged in user info from anonymous routes possible:
   public function GetUserFromHeaderToken(Request $request) {
-    $request_token = $request->headers->get(AUTH_KEY_HEADER,'');
+    $request_token = $request->headers->get(AUTH_KEY_HEADER, '');
 
-    if(empty($request_token)) {
+    if (empty($request_token)) {
       return null;
     }
 
@@ -44,7 +44,7 @@ class LoginUserService {
       $email = $decoded->name;
 
       return $this->app['phpdraft.LoginUserRepository']->Load($email);
-    }catch(\Exception $ex) {
+    } catch (\Exception $ex) {
       return null;
     }
   }
@@ -55,7 +55,7 @@ class LoginUserService {
     try {
       $response->commissioners = $this->app['phpdraft.LoginUserRepository']->SearchCommissioners($searchTerm);
       $response->success = true;
-    } catch(\Exception $ex) {
+    } catch (\Exception $ex) {
       $message = $ex->getMessage();
       $response->success = false;
       $response->errors[] = $message;
@@ -70,7 +70,7 @@ class LoginUserService {
     try {
       $response->commissioner = $this->app['phpdraft.LoginUserRepository']->LoadPublicById($commish_id);
       $response->success = true;
-    } catch(\Exception $ex) {
+    } catch (\Exception $ex) {
       $message = $ex->getMessage();
       $response->success = false;
       $response->errors[] = $message;
@@ -86,7 +86,7 @@ class LoginUserService {
       $response->users = $this->app['phpdraft.LoginUserRepository']->LoadAll();
       $response->roles = $this->app['phpdraft.LoginUserRepository']->GetRoles();
       $response->success = true;
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $message = $e->getMessage();
       $response->success = false;
       $response->errors[] = $message;
@@ -109,7 +109,7 @@ class LoginUserService {
 
       $message = new MailMessage();
 
-      $message->to_addresses = array (
+      $message->to_addresses = array(
         $user->email => $user->name
       );
 
@@ -128,7 +128,7 @@ class LoginUserService {
       $this->app['phpdraft.EmailService']->SendMail($message);
 
       $response->success = true;
-    }catch(\Exception $e) {
+    } catch (\Exception $e) {
       //$this->app['db']->rollback();
 
       $response->success = false;
@@ -151,7 +151,7 @@ class LoginUserService {
     $user->verificationKey = $this->app['phpdraft.SaltService']->GenerateSalt();
 
     //Found out that forward slashes are no good for URLs. Go figure.
-    while(strpos($user->verificationKey, '/') != 0) {
+    while (strpos($user->verificationKey, '/') != 0) {
       $user->verificationKey = $this->app['phpdraft.SaltService']->GenerateSalt();
     }
 
@@ -164,7 +164,7 @@ class LoginUserService {
 
       $message = new MailMessage();
 
-      $message->to_addresses = array (
+      $message->to_addresses = array(
         $user->email => $user->name
       );
 
@@ -187,7 +187,7 @@ class LoginUserService {
       $response->success = true;
 
       $this->app['db']->commit();
-    }catch(\Exception $e) {
+    } catch (\Exception $e) {
       $this->app['db']->rollback();
 
       $response->success = false;
@@ -212,7 +212,7 @@ class LoginUserService {
       $response->success = true;
 
       $this->app['db']->commit();
-    }catch(\Exception $e) {
+    } catch (\Exception $e) {
       $this->app['db']->rollback();
 
       $response->success = false;
@@ -234,7 +234,7 @@ class LoginUserService {
     $user->name = $name;
 
     //Update user email, invalidate login
-    if(!empty($email) && !StringUtils::equals($email, $user->email)) {
+    if (!empty($email) && !StringUtils::equals($email, $user->email)) {
       $user->email = $email;
       $user->enabled = false;
       $invalidateLogin = true;
@@ -242,7 +242,7 @@ class LoginUserService {
       $sendEmail = true;
     }
 
-    if(!empty($newPassword)) {
+    if (!empty($newPassword)) {
       $invalidateLogin = true;
       $user->salt = $this->app['phpdraft.SaltService']->GenerateSalt();
       $user->password = $this->app['security.encoder.digest']->encodePassword($newPassword, $user->salt);
@@ -250,15 +250,15 @@ class LoginUserService {
 
     $response = new PhpDraftResponse();
 
-    try{
+    try {
       $this->app['db']->beginTransaction();
 
       $user = $this->app['phpdraft.LoginUserRepository']->Update($user);
 
-      if($sendEmail) {
+      if ($sendEmail) {
         $message = new MailMessage();
 
-        $message->to_addresses = array (
+        $message->to_addresses = array(
           $user->email => $user->name
         );
 
@@ -282,7 +282,7 @@ class LoginUserService {
       $response->sendEmail = $sendEmail;
 
       $this->app['db']->commit();
-    }catch(\Exception $e) {
+    } catch (\Exception $e) {
       $this->app['db']->rollback();
 
       $response->success = false;
@@ -298,16 +298,16 @@ class LoginUserService {
     try {
       //Find all drafts this user owns
       $drafts = $this->app['phpdraft.DraftRepository']->GetAllDraftsByCommish($user->id);
-      foreach($drafts as $draft) {
+      foreach ($drafts as $draft) {
         $response = $this->app['phpdraft.DraftService']->DeleteDraft($draft);
-        if(!$response->success) {
+        if (!$response->success) {
           throw new \Exception("Unable to recursively delete draft or one of its children.");
         }
       }
       $this->app['phpdraft.LoginUserRepository']->Delete($user);
 
       $response->success = true;
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $message = $e->getMessage();
       $response->success = false;
       $response->errors[] = $message;
