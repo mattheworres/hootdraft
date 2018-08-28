@@ -1,6 +1,7 @@
 nbproject/private/private.xml
 images/Thumbs.db
 .idea/*
+.vagrant/*
 images/icons/Thumbs.db
 api/config/logs
 vendor

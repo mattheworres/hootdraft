@@ -19,7 +19,7 @@ gulp.task('js-vendor', () => {
   const stream = gulp.src(cfg.paths.vendor.js)
     //.pipe($.if(cfg.options.sourceMaps, $.sourcemaps.init({loadMaps: true})))
     .pipe($.if(cfg.options.minify && isUnminified, $.uglify()))
-    //.on('error', function (err) {gutil.log(gutil.colors.red('[Error]'), err.toString());})
+    //.pipe($.debug({title: 'Vendor Source:'}))
     .pipe($.concat('vendor.js', {newLine: '\n'}))
     //.pipe($.if(cfg.options.sourceMaps, $.sourcemaps.write()))
     ;

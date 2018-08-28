@@ -1,0 +1,58 @@
+server {
+        listen 80;
+
+        #Change the absolute path below to the base directory that PHP Draft lives
+        root /vagrant;
+
+        index index.html;
+
+        #Change the domain below to the domain name or IP address the site will run off of
+        #NOTE: the "www" subdomain is purposefully left off. In the first server block, we are explicitly
+        #choosing to forward
+        #server_name phpdraft.local;
+
+        location /api/ {
+                try_files $uri /api/bootstrap.php$is_args$args;
+        }
+
+        #Ensure the path passed to fastcgi_pass below matches up with where php-fpm lives
+        location ~* \.php$ {
+                try_files $uri $uri/ /index.php?$query_string;
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                #include snippets/fastcgi-php.conf;
+                fastcgi_pass unix:/var/run/php/php7.1-fpm.sock;
+                include fastcgi_params;
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                fastcgi_param PATH_INFO $fastcgi_path_info;
+                fastcgi_param HTTP_PROXY "";
+                fastcgi_param HTTP_HOST localhost:3000;
+                fastcgi_param SERVER_NAME icoalert.truefit.vagrant;
+
+                fastcgi_intercept_errors off;
+                fastcgi_buffer_size 16k;
+                fastcgi_buffers 4 16k;
+                fastcgi_connect_timeout 300;
+                fastcgi_send_timeout 300;
+                fastcgi_read_timeout 300;
+        }
+
+        location / {
+                # First attempt to serve request as file, then
+                # as directory, then fall back to displaying a 404.
+                try_files $uri $uri/ /index.html;
+        }
+
+        error_page 404 /404.html;
+        error_page 500 502 503 504 /50x.html;
+        location = /50x.html {
+                root /usr/share/nginx/html;
+        }
+
+        location ~ /\.ht {
+                deny all;
+        }
+
+        # Disable sendfile - becuase of bug in VirtualBox
+        # https://www.vagrantup.com/docs/synced-folders/virtualbox.html
+        sendfile off;
+}
