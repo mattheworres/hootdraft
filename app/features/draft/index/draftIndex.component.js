@@ -20,6 +20,7 @@ class DraftIndexController {
     this.currentDraftCounter = 0;
 
     this.status = this.draftService.getStatus();
+
     this.draftService.getDraft().then(draft => {
       this.draft = draft;
       this._handleDraftUpdate(draft, this.status);
@@ -51,9 +52,7 @@ class DraftIndexController {
       this.$scope.pagerItemTally = draft.draft_rounds * 10;
       this._loadCompletedData(draft.draft_id);
       return;
-    }
-
-    if (draft.setting_up) {
+    } else if (draft.setting_up) {
       this._loadSettingUpData(draft, status);
     } else if (draft.in_progress) {
       this._loadInProgressData(draft, status);

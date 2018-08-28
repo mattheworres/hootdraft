@@ -1,14 +1,13 @@
-class AddManagersController {
-  constructor($uibModalInstance, messageService, subscriptionKeys,
-    $rootScope, $scope) {
-    this.$uibModalInstance = $uibModalInstance;
+class AddManagersModalController {
+  constructor(messageService, api, $rootScope, subscriptionKeys) {
     this.messageService = messageService;
-    this.subscriptionKeys = subscriptionKeys;
+    this.api = api;
     this.$rootScope = $rootScope;
-    this.$scope = $scope;
+    this.subscriptionKeys = subscriptionKeys;
   }
 
   $onInit() {
+    //this.draftId = this.resolve.draftId;
     this.editableManagers = [];
 
     this.addEmptyManager();
@@ -34,37 +33,39 @@ class AddManagersController {
 
     const addManagerSuccess = () => {
       this.messageService.showSuccess('Managers added');
+
       //Need to tell index controller to reload the managers since we added them. Can also call this when deleting managers
-      this.$rootScope.$broadcast(this.subscriptionKeys.updateCommishManagers, {draft: this.$rootScope.draft});
-      return this.$uibModalInstance.dismiss('closed');
+      this.$rootScope.$broadcast(this.subscriptionKeys.updateCommishManagers, {draft: this.draft});
+      this.close();
     };
 
     const addManagerError = () => this.messageService.showError('Unable to add managers');
 
     if (validManagers.length > 0) {
-      this.api.Manager.addMultiple({draft_id: this.draftId, managers: validManagers}, addManagerSuccess, addManagerError); // eslint-disable-line camelcase
+      this.api.Manager.addMultiple({draft_id: this.draft.draft_id, managers: validManagers}, addManagerSuccess, addManagerError); // eslint-disable-line camelcase
     } else {
-      this.cancel();
+      this.dismiss();
     }
   }
 
   cancel() {
-    this.$uibModalInstance.dismiss('closed');
+    this.close();
   }
 }
 
-AddManagersController.$inject = [
-  '$uibModalInstance',
+AddManagersModalController.$inject = [
   'messageService',
-  'subscriptionKeys',
+  'api',
   '$rootScope',
-  '$scope',
+  'subscriptionKeys',
 ];
 
 angular.module('phpdraft.modals').component('phpdAddManagersModal', {
-  controller: AddManagersController,
-  templateUrl: 'add/features/modals/addManagersModal.component.html',
+  controller: AddManagersModalController,
+  templateUrl: 'app/features/modals/addManagersModal.component.html',
   bindings: {
-    draftId: '<',
+    draft: '<',
+    close: '&',
+    dismiss: '&',
   },
 });

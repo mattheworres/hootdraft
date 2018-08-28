@@ -1,32 +1,26 @@
 class ConfirmActionModalController {
-  constructor($uibModalInstance) {
-    this.$uibModalInstance = $uibModalInstance;
-  }
-
   yesClicked() {
-    this.$uibModalInstance.close(true);
+    this.close();
   }
 
   noClicked() {
-    this.$uibModalInstance.close(false);
+    this.dismiss();
   }
 
   cancel() {
-    this.$uibModalInstance.dismiss('closed');
+    this.dismiss();
   }
 }
-
-ConfirmActionModalController.$inject = [
-  '$uibModalInstance',
-];
 
 angular.module('phpdraft.modals').component('phpdConfirmActionModal', {
   controller: ConfirmActionModalController,
   templateUrl: 'app/features/modals/confirmActionModal.component.html',
   bindings: {
-    title: '@',
-    message: '@',
-    iconClass: '@',
-    confirmButtonText: '@',
+    title: '<',
+    message: '<',
+    iconClass: '<',
+    confirmButtonText: '<',
+    close: '&',
+    dismiss: '&',
   },
 });

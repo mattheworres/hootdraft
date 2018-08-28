@@ -19,10 +19,21 @@ class DraftModalService {
     });
   }
 
-  showAddManagersModal(draftId) {
+  showAddManagersModal(draft) {
     this.modalInstance = this.$uibModal.open({
-      template: `<phpd-add-managers-modal draftId="${draftId}></phpd-add-managers-modal>`,
+      template: `
+        <phpd-add-managers-modal
+          draft="::$resolve.draft"
+          dismiss="$dismiss()"
+          close="$close()">
+        </phpd-add-managers-modal>`,
+      controller: angular.noop,
+      resolve: {
+        draft: () => draft,
+      },
     });
+
+    return this.modalInstance;
   }
 
   closeModal() {

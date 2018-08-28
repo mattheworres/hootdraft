@@ -13,6 +13,8 @@ class CommishManagersController {
     this.$loading = $loading;
     this.$timeout = $timeout;
     this.confirmActionService = confirmActionService;
+
+    this._randomizationProcess = this._randomizationProcess.bind(this);
   }
 
   $onInit() {
@@ -22,17 +24,23 @@ class CommishManagersController {
 
     this.deregisterUpdateManagers = this.$rootScope.$on(this.subscriptionKeys.updateCommishManagers, (event, args) => {
       const {draft} = args;
-      console.debug('We got word to update the commish');
       this._reloadEditableManagers(draft.draft_id, draft.commish_editable);
     });
 
     //TODO: is this necessary?
-    console.debug('Updating the commish on init');
     this._reloadEditableManagers();
   }
 
   $onDestroy() {
     this.deregisterUpdateManagers();
+  }
+
+  hasManagers() {
+    return this.editableManagers && this.editableManagers.length > 0;
+  }
+
+  hasNoManagers() {
+    return !this.editableManagers || this.editableManagers.length === 0;
   }
 
   //# Slip Events
@@ -59,7 +67,28 @@ class CommishManagersController {
   //# Event Handlers
   openAddManagerModal() {
     this._resetManagerEdits();
-    this.draftModalService.showAddManagersModal(this.$routeParams.draft_id);
+    this.addManagersModalInstance = this.draftModalService.showAddManagersModal(this.draft);
+  }
+
+  saveNewManagers(validManagers) {
+    const hasModalInstance = this.addManagersModalInstance && this.addManagersModalInstance !== null;
+
+    const addManagerSuccess = () => {
+      this.messageService.showSuccess('Managers added');
+      //TODO 2018: does this need rewritten?? Probably :(
+      //Need to tell index controller to reload the managers since we added them. Can also call this when deleting managers
+      this.$rootScope.$broadcast(this.subscriptionKeys.updateCommishManagers, {draft: this.draft});
+
+      if (hasModalInstance) this.addManagersModalInstance.dismiss('closed');
+    };
+
+    const addManagerError = () => this.messageService.showError('Unable to add managers');
+
+    if (validManagers.length > 0) {
+      this.api.Manager.addMultiple({draft_id: this.draftId, managers: validManagers}, addManagerSuccess, addManagerError); // eslint-disable-line camelcase
+    } else if (hasModalInstance) {
+      this.addManagersModalInstance.dismiss('closed');
+    }
   }
 
   deleteManager(index) {
@@ -159,6 +188,15 @@ class CommishManagersController {
       this.intervalMilliseconds = 1100;
       this.shouldContinue = true;
 
+      const presentationIntervalCalculator = currentManagerIndex => {
+        if (currentManagerIndex < 2) return 2500;
+        else if (currentManagerIndex === 2) return 1800;
+        else if (currentManagerIndex === 3 || currentManagerIndex === 4) return 1800;
+        else if (currentManagerIndex >= 5) return 400;
+
+        return null;
+      };
+
       this.timingLoop = () => {
         if (this.shouldContinue === false) {
           return;
@@ -167,7 +205,7 @@ class CommishManagersController {
         if (stepCount < 3) {
           this.countDown--;
           stepCount++;
-          this.$timeout(this.timingLoop, this.intervalMilliseconds);
+          this.$timeout(this.timingLoop, presentationIntervalCalculator(currentManagerIndex));
           return;
         }
 
@@ -176,16 +214,17 @@ class CommishManagersController {
         this.editableManagers[currentManagerIndex].shown = true;
 
         //Set the grading interval for the next loop
-        this.intervalMilliseconds = (() => {
-          switch (currentManagerIndex) {
-            case (currentManagerIndex < 2): return 2500;
-            case currentManagerIndex === 2: return 1800;
-            case (currentManagerIndex === 3) || (currentManagerIndex === 4): return 600;
-            case (currentManagerIndex >= 5): return 400;
-          }
+        // this.intervalMilliseconds = (() => {
+        //   console.log('Current idx is', currentManagerIndex);
+        //   switch (currentManagerIndex) {
+        //     case (currentManagerIndex < 2): return 2500;
+        //     case currentManagerIndex === 2: return 1800;
+        //     case (currentManagerIndex === 3) || (currentManagerIndex === 4): return 600;
+        //     case (currentManagerIndex >= 5): return 400;
+        //   }
 
-          return null;
-        })();
+        //   return null;
+        // })();
 
         if ((currentManagerIndex + 1) === totalManagers) {
           this.$timeout(() => {
@@ -197,11 +236,11 @@ class CommishManagersController {
         }
 
         if (this.shouldContinue) {
-          this.$timeout(this.timingLoop, this.intervalMilliseconds);
+          this.$timeout(this.timingLoop, presentationIntervalCalculator(currentManagerIndex));
         }
       };
 
-      this.$timeout(this.timingLoop, this.intervalMilliseconds);
+      this.$timeout(this.timingLoop, presentationIntervalCalculator(currentManagerIndex));
     };
 
     //Holding the loading display for a second or two so it looks like it's doing "heavy" lifting...
@@ -231,7 +270,7 @@ class CommishManagersController {
   }
 
   _reloadEditableManagers(draftId, draftCommishEditable) {
-    const commishManagersSuccess = data => {
+    const success = data => {
       this.commishManagersLoading = false;
       this.editableManagers = data;
 
@@ -241,7 +280,7 @@ class CommishManagersController {
       this._resetManagerEdits();
     };
 
-    const managersError = () => {
+    const error = () => {
       this.managersLoading = false;
       this.managersError = true;
       this.messageService.showError('Unable to load managers');
@@ -249,7 +288,7 @@ class CommishManagersController {
 
     if ((this.$routeParams.draft_id !== null) && draftCommishEditable) {
       this.editableManagers = [];
-      this.api.Manager.commishGet({draft_id: draftId}, commishManagersSuccess, managersError);
+      this.api.Manager.commishGet({draft_id: draftId}, success, error);// eslint-disable-line camelcase
     }
   }
 
@@ -270,8 +309,7 @@ class CommishManagersController {
 
     this.$loading.start('saving_order');
     const managerIds = [];
-    const draft_order = 1;
-    for (let manager of Array.from(this.editableManagers)) {
+    for (const manager of Array.from(this.editableManagers)) {
       managerIds.push(manager.manager_id);
     }
 
@@ -282,16 +320,16 @@ class CommishManagersController {
 
   _resetManagerEdits() {
     this.isEditActive = false;
-    if ((this._editedManagerOriginalName != null) && (this._editedManagerOriginalName.length > 0) && (this._editedManagerIndex != null) && (this._editedManagerIndex !== null)) {
-      return this.cancelManagerEdit(this._editedManagerIndex);
+    if (this._editedManagerOriginalName && this._editedManagerOriginalName.length > 0 && this._editedManagerIndex) {
+      this.cancelManagerEdit(this._editedManagerIndex);
     }
   }
 
   _reorderInMemoryManagers() {
-    let draft_order = 1;
-    for (let manager of Array.from(this.editableManagers)) {
-      manager.draft_order = draft_order;
-      draft_order++;
+    let draftOrder = 1;
+    for (const manager of Array.from(this.editableManagers)) {
+      manager.draft_order = draftOrder;// eslint-disable-line camelcase
+      draftOrder++;
     }
   }
 
@@ -304,24 +342,22 @@ class CommishManagersController {
     let m = this.editableManagers.length;
 
     //While there remain elements to shuffle
-    return (() => {
-      const result = [];
-      while (m) {
-        //Pick a remaining element…
-        const i = Math.floor(Math.random() * m--);
+    while (m) {
+      //Pick a remaining element…
+      const i = Math.floor(Math.random() * m--);
 
-        //And swap it with the current element.
-        const manager = this.editableManagers[m];
-        this.editableManagers.splice(m, 1);
-        result.push(this.editableManagers.splice(i, 0, manager));
-      }
-      return result;
-    })();
+      //And swap it with the current element.
+      const manager = this.editableManagers[m];
+      this.editableManagers.splice(m, 1);
+      this.editableManagers.splice(i, 0, manager);
+    }
   }
 
   _setViewPropertyOnManagers(viewSetting) {
     Array.from(this.editableManagers).map(manager => {
       manager.shown = viewSetting;
+
+      return viewSetting;
     });
   }
 }
@@ -340,14 +376,12 @@ CommishManagersController.$inject = [
   'confirmActionService',
 ];
 
-angular.module('phpdraft.draft').directive('phpdCommishManagers', () =>
-  ({
-    restrict: 'E',
-    controller: CommishManagersController,
-    templateUrl: 'app/features/draft/index/commishManagers.directive.html',
-    scope: {
-      editableManagers: '=',
-      draft: '=',
-    },
-  })
-);
+angular.module('phpdraft.draft').component('phpdCommishManagers', {
+  restrict: 'E',
+  controller: CommishManagersController,
+  templateUrl: 'app/features/draft/index/commishManagers.component.html',
+  bindings: {
+    editableManagers: '<',
+    draft: '<',
+  },
+});

@@ -3,7 +3,7 @@
   <h1 class="text-center">{{$ctrl.countDown}}&#8230;</h1>
 </div>
 <ul class="draft_order row" slip-list
-  ng-show="$ctrl.editableManagers.length > 0"
+  ng-show="$ctrl.hasManagers()"
   ng-class="$ctrl.randomizeInProgress ? 'randomization' : ''"
   slip-reorder="$ctrl.reorderManagers($event, $spliceIndex, $originalIndex)"
   slip-before-swipe="$ctrl.beforeSwipe($event)"
@@ -31,7 +31,7 @@
       </div>
   </li>
 </ul>
-<div class="row" ng-show="$ctrl.editableManagers.length > 0 && !$ctrl.showCountDown && !$ctrl.randomizeInProgress">
+<div class="row" ng-show="$ctrl.hasManagers() && !$ctrl.showCountDown && !$ctrl.randomizeInProgress">
   <div class="col-xs-6">
     <button class="btn btn-block btn-info" ng-click="$ctrl.randomizeDraftOrder()">
       <i class="fa fa-random"></i>&nbsp;&nbsp;
@@ -45,10 +45,10 @@
     </button>
   </div>
 </div>
-<div class="row" ng-show="$ctrl.editableManagers.length > 0 && !$ctrl.showCountDown && !$ctrl.randomizeInProgress">
+<div class="row" ng-show="$ctrl.hasManagers() && !$ctrl.showCountDown && !$ctrl.randomizeInProgress">
 
 </div>
-<div class="list-group-item" ng-show="$ctrl.editableManagers.length == 0">
+<div class="list-group-item" ng-show="$ctrl.hasNoManagers()">
   <h3>There are no managers in your league right now.</h3>
   <h4><strong><a href="#" ng-click="$ctrl.openAddManagerModal()">Go ahead and add some.</a></strong></h4>
 </div>
