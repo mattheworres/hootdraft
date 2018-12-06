@@ -9,6 +9,7 @@ angular.module('phpdraft.draft', [
   'ngLodash',
   'ordinal',
   'slip',
+  'toggle-switch',
   'ui.bootstrap',
   'phpdraft.shared',
   'phpdraft.pick',

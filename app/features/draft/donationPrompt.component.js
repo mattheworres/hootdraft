@@ -19,5 +19,5 @@ DonationPromptController.$inject = [
 
 angular.module('phpdraft.draft').component('phpdDonationPrompt', {
   controller: DonationPromptController,
-  templateUrl: 'app/features/draft/index/donationPrompt.component.html',
+  templateUrl: 'app/features/draft/donationPrompt.component.html',
 });

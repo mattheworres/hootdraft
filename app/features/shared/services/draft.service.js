@@ -132,6 +132,16 @@ class DraftService {
     return this.defer.promise;
   }
 
+  /**
+   * Method that commish-related components use in order to make updates to a draft in-memory, specifically after edit
+   * prior to a draft being started (as the update loop has not started)
+   */
+  updateDraftInMemory(updatedDraft) {
+    this.lodash.merge(this.draft, updatedDraft);
+
+    return this.draft;
+  }
+
   // Get the draft status object for loading, error and valid states
   getStatus() {
     return this.draftStatus;

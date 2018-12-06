@@ -188,6 +188,7 @@ class CommishManagersController {
       this.intervalMilliseconds = 1100;
       this.shouldContinue = true;
 
+      //Set the grading interval for the next loop
       const presentationIntervalCalculator = currentManagerIndex => {
         if (currentManagerIndex < 2) return 2500;
         else if (currentManagerIndex === 2) return 1800;
@@ -212,19 +213,6 @@ class CommishManagersController {
         this.showCountDown = false;
 
         this.editableManagers[currentManagerIndex].shown = true;
-
-        //Set the grading interval for the next loop
-        // this.intervalMilliseconds = (() => {
-        //   console.log('Current idx is', currentManagerIndex);
-        //   switch (currentManagerIndex) {
-        //     case (currentManagerIndex < 2): return 2500;
-        //     case currentManagerIndex === 2: return 1800;
-        //     case (currentManagerIndex === 3) || (currentManagerIndex === 4): return 600;
-        //     case (currentManagerIndex >= 5): return 400;
-        //   }
-
-        //   return null;
-        // })();
 
         if ((currentManagerIndex + 1) === totalManagers) {
           this.$timeout(() => {
