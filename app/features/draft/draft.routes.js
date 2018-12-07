@@ -14,4 +14,8 @@ angular.module('phpdraft.draft').config(($routeProvider, $locationProvider) => {
   $routeProvider.when('/commish/draft/:draft_id/edit', {
     template: '<phpd-draft-edit></phpd-draft-edit>',
   });
+
+  $routeProvider.when('/commish/draft/:draft_id/timers', {
+    template: '<phpd-pick-timers></phpd-pick-timers>',
+  });
 });
