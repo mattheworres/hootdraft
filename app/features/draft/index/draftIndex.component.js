@@ -10,13 +10,15 @@ class DraftIndexController {
     this.api = api;
     this.messageService = messageService;
     this.draftService = draftService;
+
+    this.onSelectedDraftRoundUpdated = this.onSelectedDraftRoundUpdated.bind(this);
   }
 
   $onInit() {
     this.settingUpLoaded = false;
     this.inProgressLoaded = false;
     this.completedLoaded = false;
-    this.$scope.selectedDraftRound = 1;
+    this.selectedDraftRound = 1;
     this.currentDraftCounter = 0;
 
     this.status = this.draftService.getStatus();
@@ -29,7 +31,7 @@ class DraftIndexController {
     });
 
     //Watch for changes on scope of the selected draft round from the pager
-    this.deregisterWatcher = this.$scope.$watch((() => this.$scope.selectedDraftRound), () => {
+    this.deregisterWatcher = this.$scope.$watch((() => this.selectedDraftRound), () => {
       if ((angular.isDefined(this.draft) &&
         this.draft.draft_id === this.$routeParams.draft_id) &&
         this.draft.complete &&
@@ -45,6 +47,10 @@ class DraftIndexController {
       this.deregisterDraftCounterSubscription();
     }
     this.deregisterWatcher();
+  }
+
+  onSelectedDraftRoundUpdated(selectedDraftRound) {
+    this.selectedDraftRound = selectedDraftRound;
   }
 
   _handleDraftUpdate(draft, status) {
@@ -72,20 +78,20 @@ class DraftIndexController {
   _loadSettingUpData(draft, status) {
     const managersSuccess = data => {
       this.settingUpLoaded = true;
-      this.$scope.managersLoading = false;
-      this.$scope.managers = data;
+      this.managersLoading = false;
+      this.managers = data;
     };
 
     const managersError = () => {
       this.settingUpLoaded = true;
-      this.$scope.managersLoading = false;
-      this.$scope.managersError = true;
+      this.managersLoading = false;
+      this.managersError = true;
       this.messageService.showError('Unable to load managers');
     };
 
-    this.$scope.managersLoading = this.settingUpLoaded;
-    this.$scope.commishManagersLoading = this.settingUpLoaded;
-    this.$scope.managersError = false;
+    this.managersLoading = this.settingUpLoaded;
+    this.commishManagersLoading = this.settingUpLoaded;
+    this.managersError = false;
 
     if (status.valid && !status.locked) {
       if ((draft.commish_editable !== null) && (draft.commish_editable === false)) {
@@ -98,50 +104,50 @@ class DraftIndexController {
     }
   }
 
-
   _loadInProgressData(draft, status) {
     const lastSuccess = data => {
       this.inProgressLoaded = true;
       this.$loading.finish('load_last_picks');
-      this.$scope.lastLoading = false;
-      this.$scope.lastFivePicks = data;
+      this.lastLoading = false;
+      this.lastFivePicks = data;
     };
 
     const nextSuccess = data => {
       this.inProgressLoaded = true;
       this.$loading.finish('load_next_picks');
-      this.$scope.nextLoading = false;
-      this.$scope.nextFivePicks = data;
+      this.nextLoading = false;
+      this.nextFivePicks = data;
     };
 
     const lastErrorHandler = () => {
       this.inProgressLoaded = true;
       this.$loading.finish('load_last_picks');
-      this.$scope.lastLoading = false;
-      this.$scope.lastError = true;
+      this.lastLoading = false;
+      this.lastError = true;
     };
 
     const nextErrorHandler = () => {
       this.inProgressLoaded = true;
       this.$loading.finish('load_next_picks');
-      this.$scope.nextLoading = false;
-      this.$scope.nextError = true;
+      this.nextLoading = false;
+      this.nextError = true;
     };
 
-    this.$scope.lastLoading = this.inProgressLoaded;
-    this.$scope.nextLoading = this.inProgressLoaded;
+    this.lastLoading = this.inProgressLoaded;
+    this.nextLoading = this.inProgressLoaded;
 
     if (this.inProgressLoaded === false) {
       this.$loading.start('load_last_picks');
       this.$loading.start('load_next_picks');
     }
 
-    this.$scope.lastError = false;
-    this.$scope.nextError = false;
+    this.lastError = false;
+    this.nextError = false;
 
+    //Check the API route matching, or maybe if the draft object even exists here...
     if (status.valid && !status.locked) {
-      this.api.Pick.getLast({draft_id: draft.draftId, amount: 5}, lastSuccess, lastErrorHandler); // eslint-disable-line camelcase
-      this.api.Pick.getNext({draft_id: draft.draftId, amount: 5}, nextSuccess, nextErrorHandler); // eslint-disable-line camelcase
+      this.api.Pick.getLast({draft_id: draft.draft_id, amount: 5}, lastSuccess, lastErrorHandler); // eslint-disable-line camelcase
+      this.api.Pick.getNext({draft_id: draft.draft_id, amount: 5}, nextSuccess, nextErrorHandler); // eslint-disable-line camelcase
     }
   }
 
@@ -160,7 +166,7 @@ class DraftIndexController {
     if (this.status.valid && !this.status.locked) {
       this.roundError = false;
       this.roundLoading = true;
-      this.api.Pick.getSelectedByRound({draft_id: draftId, round: this.$scope.selectedDraftRound, sort_ascending: true}, roundSuccess, errorHandler); // eslint-disable-line camelcase
+      this.api.Pick.getSelectedByRound({draft_id: draftId, round: this.selectedDraftRound, sort_ascending: true}, roundSuccess, errorHandler); // eslint-disable-line camelcase
     }
   }
 }

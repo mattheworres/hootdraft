@@ -7,8 +7,8 @@
       </div>
     </div>
     <div class="row text-center">
-      <section-loading show-loading=$ctrl.draftLoading></section-loading>
-      <section-error show-error=$ctrl.draftError section-name="draft for editing"></section-error>
+      <phpd-section-loading show-loading=$ctrl.draftLoading></phpd-section-loading>
+      <phpd-section-error show-error=$ctrl.draftError section-name="draft for editing"></phpd-section-error>
       <div
         ng-hide="$ctrl.draftLoading || $ctrl.draftError"
         class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3"

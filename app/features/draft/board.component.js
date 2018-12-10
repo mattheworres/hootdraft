@@ -25,36 +25,42 @@ class BoardController {
 
     this.draftService.getDraft().then(draft => {
       this.draft = draft;
+
+      this.draftStatus = this.draftService.getStatus();
+
+      this.onDraftCounterChanged(this.draft, this.draftStatus);
+
+      this.deregister = this.$scope.$on(this.subscriptionKeys.draftCounterHasChanged, (event, args) => {
+        const {draft, status} = args;
+
+        this.onDraftCounterChanged(draft, status);
+      }).bind(this);
     });
+  }
 
-    this.draftStatus = this.draftService.getStatus();
+  onDraftCounterChanged(draft, status) {
+    if (angular.isDefined(this.draft)) {
+      //Stash the current counter so we can run a diff to get updated picks
+      this.currentDraftCounter = this.draft.draft_counter;
+      this.lodash.merge(this.draft, draft);
+    } else {
+      this.draft = draft;
+    }
 
-    this.deregister = this.$scope.$on(this.subscriptionKeys.draftCounterHasChanged, (event, args) => {
-      const {draft, status} = args;
+    this.lodash.merge(this.draftStatus, status);
 
-      if (angular.isDefined(this.draft)) {
-        //Stash the current counter so we can run a diff to get updated picks
-        this.currentDraftCounter = this.draft.draft_counter;
-        this.lodash.merge(this.draft, draft);
+    if (this.draft.setting_up === true) {
+      this.pageError = true;
+      this.pathHelperService.sendToPreviousPath();
+      this.messageService.showWarning('Draft is still setting up');
+      this.deregister();
+    } else if (this.draft.in_progress === true || this.draft.complete === true) {
+      if (this.initialBoardLoaded) {
+        this.loadUpdatedData(this.draft.draft_id);
       } else {
-        this.draft = draft;
+        this.loadInitialBoard(this.draft.draft_id);
       }
-
-      this.lodash.merge(this.draftStatus, status);
-
-      if (this.draft.setting_up === true) {
-        this.pageError = true;
-        this.pathHelperService.sendToPreviousPath();
-        this.messageService.showWarning('Draft is still setting up');
-        this.deregister();
-      } else if (this.draft.in_progress === true || this.draft.complete === true) {
-        if (this.initialBoardLoaded) {
-          this.loadUpdatedData(this.draft.draft_id);
-        } else {
-          this.loadInitialBoard(this.draft.draft_id);
-        }
-      }
-    }).bind(this);
+    }
   }
 
   $onDestroy() {

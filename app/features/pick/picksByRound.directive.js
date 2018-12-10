@@ -8,6 +8,7 @@ angular.module('phpdraft.pick').directive('phpdPicksByRound', () =>
       picks: '=',
       pagerItemTally: '=',
       picksLoading: '=',
+      selectedDraftRoundUpdate: '&',
     },
   })
 );

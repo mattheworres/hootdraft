@@ -1,11 +1,12 @@
 const DRAFT_ERROR_MESSAGE = 'We seem to be having trouble loading this draft, possibly due to network connectivity issues';
 
 class DraftService {
-  constructor($uibModal, $sessionStorage, $routeParams, api, lodash,
+  constructor($uibModal, $sessionStorage, $routeParams, $location, api, lodash,
     $interval, messageService, subscriptionKeys, $rootScope, $q, errorService) {
     this.$uibModal = $uibModal;
     this.$sessionStorage = $sessionStorage;
     this.$routeParams = $routeParams;
+    this.$location = $location;
     this.api = api;
     this.lodash = lodash;
     this.$interval = $interval;
@@ -312,6 +313,7 @@ DraftService.$inject = [
   '$uibModal',
   '$sessionStorage',
   '$routeParams',
+  '$location',
   'api',
   'lodash',
   '$interval',
@@ -319,6 +321,7 @@ DraftService.$inject = [
   'subscriptionKeys',
   '$rootScope',
   '$q',
+  'errorService',
 ];
 
 angular.module('phpdraft.shared').service('draftService', DraftService);

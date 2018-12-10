@@ -18,6 +18,7 @@ class DraftController
     $draft->draft_style = 'serpentine';
     $draft->commish_id = $currentUser->id;
     $draft->commish_name = $currentUser->name;
+    $draft->draft_sport = 'NFL';
 
     $draft->sports = $app['phpdraft.DraftDataRepository']->GetSports();
     $draft->styles = $app['phpdraft.DraftDataRepository']->GetStyles();

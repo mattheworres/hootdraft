@@ -11,6 +11,10 @@ angular.module('phpdraft.draft').config(($routeProvider, $locationProvider) => {
     template: '<phpd-board></phpd-board>',
   });
 
+  $routeProvider.when('/commish/draft/create', {
+    template: '<phpd-draft-create></phpd-draft-create>',
+  });
+
   $routeProvider.when('/commish/draft/:draft_id/edit', {
     template: '<phpd-draft-edit></phpd-draft-edit>',
   });

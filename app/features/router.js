@@ -47,18 +47,6 @@ angular.module('phpdraft').config(($routeProvider, $locationProvider) => {
   //   templateUrl: 'app/templates/commish/draft_create.html'
   // });
 
-  // $routeProvider.when('/commish/draft/:draft_id/edit', {
-  //   controller: 'DraftEditController',
-  //   controllerAs: 'draftEditCtrl',
-  //   templateUrl: 'app/templates/commish/draft_edit.html'
-  // });
-
-  // $routeProvider.when('/commish/draft/:draft_id/timers', {
-  //   controller: 'PickTimersController',
-  //   controllerAs: 'pickTimerCtrl',
-  //   templateUrl: 'app/templates/commish/pick_timers.html'
-  // });
-
   // $routeProvider.when('/commish/draft/:draft_id/picks/add', {
   //   controller: 'AddPickController',
   //   controllerAs: 'addPickCtrl',

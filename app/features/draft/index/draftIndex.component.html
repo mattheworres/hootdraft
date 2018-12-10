@@ -5,7 +5,7 @@
     <phpd-draft-setting-up
       draft="$ctrl.draft"
       status="$ctrl.status"
-      managers="managers"
+      managers="$ctrl.managers"
 
       editable-managers="editableManagers"
       reorder-managers="$ctrl.reorderManagers"
@@ -21,20 +21,22 @@
       ng-hide="$ctrl.status.loading || !$ctrl.status.valid || $ctrl.status.Locked">
     </phpd-draft-setting-up>
 
-    <!--<draft-in-progress
+    <phpd-draft-in-progress
       draft="$ctrl.draft"
-      draft-valid="$ctrl.valid"
-      last-five-picks="lastFivePicks"
-      next-five-picks="nextFivePicks"
-      last-five-loading="lastLoading"
-      next-five-loading="nextLoading"
+      status="$ctrl.status"
+      last-five-picks="$ctrl.lastFivePicks"
+      next-five-picks="$ctrl.nextFivePicks"
+      last-five-loading="$ctrl.lastLoading"
+      next-five-loading="$ctrl.nextLoading"
       ng-hide="$ctrl.status.loading || !$ctrl.status.valid || $ctrl.status.Locked">
-    </draft-in-progress> -->
+    </phpd-draft-in-progress>
+
     <phpd-draft-completed
       draft="$ctrl.draft"
       status="$ctrl.status"
       round-picks="$ctrl.roundPicks"
-      selected-draft-round="selectedDraftRound"
+      selected-draft-round="$ctrl.selectedDraftRound"
+      selected-draft-round-update="$ctrl.selectedDraftRoundUpdate"
       pager-item-tally="pagerItemTally"
       round-error="$ctrl.roundError"
       round-loading="$ctrl.roundLoading"

@@ -21,7 +21,6 @@ class DraftEditController {
     this.depthChartPositionService = depthChartPositionService;
     this.draftService = draftService;
 
-    //TODO: see if these binds are necessary (passed as a param for instance)
     this.onDepthChartPositionChanged = this.onDepthChartPositionChanged.bind(this);
   }
 

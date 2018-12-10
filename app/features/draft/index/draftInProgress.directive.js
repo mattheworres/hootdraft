@@ -4,11 +4,12 @@ angular.module('phpdraft.draft').directive('phpdDraftInProgress', () =>
     templateUrl: 'app/features/draft/index/draftInProgress.directive.html',
     scope: {
       draft: '=',
-      draftValid: '=',
+      status: '=',
       lastFivePicks: '=',
       nextFivePicks: '=',
       lastFiveLoading: '=',
       nextFiveLoading: '=',
+      selectedDraftRoundUpdate: '&',
     },
   })
 );
