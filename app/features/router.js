@@ -3,12 +3,6 @@ angular.module('phpdraft').config(($routeProvider, $locationProvider) => {
     .html5Mode(true)
     .hashPrefix('!');
 
-  // $routeProvider.when('/draft/:draft_id/depth_chart', {
-  //   controller: 'DepthChartController',
-  //   controllerAs: 'depthChartCtrl',
-  //   templateUrl: 'app/templates/draft/depth_chart.html'
-  // });
-
   // $routeProvider.when('/draft/:draft_id/trades', {
   //   controller: 'TradesController',
   //   controllerAs: 'tradesCtrl',

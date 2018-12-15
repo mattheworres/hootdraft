@@ -22,4 +22,8 @@ angular.module('phpdraft.draft').config(($routeProvider, $locationProvider) => {
   $routeProvider.when('/commish/draft/:draft_id/timers', {
     template: '<phpd-pick-timers></phpd-pick-timers>',
   });
+
+  $routeProvider.when('/draft/:draft_id/depth_chart', {
+    template: '<phpd-depth-charts></phpd-depth-charts>',
+  });
 });
