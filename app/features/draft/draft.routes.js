@@ -26,4 +26,8 @@ angular.module('phpdraft.draft').config(($routeProvider, $locationProvider) => {
   $routeProvider.when('/draft/:draft_id/depth_chart', {
     template: '<phpd-depth-charts></phpd-depth-charts>',
   });
+
+  $routeProvider.when('/draft/:draft_id/trades', {
+    template: '<phpd-trades></phpd-trades>',
+  });
 });

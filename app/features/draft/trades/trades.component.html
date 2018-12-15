@@ -1,13 +1,11 @@
 <div data-ng-cloak>
   <div class="container-fluid v-offset-3">
-    <draft-state controller=tradesCtrl
-      commish-name=draft.commish_name
-      draft-error=draftError
-      draft-loading=draftLoading
-      draft-locked=draftLocked>
-    </draft-state>
+    <phpd-draft-state
+      commish-name="$ctrl.draft.commish_name"
+      draft-status="$ctrl.draftStatus">
+    </phpd-draft-state>
 
-    <div class="row" ng-show="draftValid && !draft.setting_up">
+    <div class="row" ng-show="$ctrl.draftStatus.valid && !draft.setting_up">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-offset-1 col-lg-10">
         <div class="panel panel-primary">
           <div class="panel-heading">
@@ -20,7 +18,7 @@
             <h3>No trades have been made.</h3>
           </div>
           <div class="panel-body trades-panel" ng-show="trades.length > 0">
-            <div class="row" ng-repeat="trade in trades">
+            <div class="row" ng-repeat="trade in $ctrl.trades">
               <div class="col-xs-12">
                 <div class="panel panel-default">
                   <div class="panel-heading">

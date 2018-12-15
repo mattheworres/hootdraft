@@ -81,8 +81,8 @@ class DepthChartsController {
 
   onDraftCounterChanged(draft, status) {
     if (angular.isDefined(this.draft)) {
-      this.currentDraftCounter = this.draft.draft_counter;
       this.lodash.merge(this.draft, draft);
+      this.currentDraftCounter = this.draft.draft_counter;
     } else {
       this.draft = draft;
     }
@@ -91,7 +91,6 @@ class DepthChartsController {
 
     if (this.managerChosen && !this.moveInProgress) {
       this._loadUpdatedData();
-      this.currentDraftCounter = draft.draft_counter;
     }
   }
 
@@ -240,11 +239,11 @@ class DepthChartsController {
   }
 
   //DND Event Handlers
-  dnd_dragstart() {
+  dndDragstart() {
     this.moveInProgress = true;
   }
 
-  dnd_dragend() {
+  dndDragend() {
     this.moveInProgress = false;
     this._updateDepthCharts();
   }
@@ -265,5 +264,5 @@ DepthChartsController.$inject = [
 
 angular.module('phpdraft.draft').component('phpdDepthCharts', {
   controller: DepthChartsController,
-  templateUrl: 'app/features/draft/depthCharts.component.html',
+  templateUrl: 'app/features/draft/depthCharts/depthCharts.component.html',
 });

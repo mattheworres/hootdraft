@@ -50,7 +50,7 @@ DepthChartPositionsController.$inject = [
 
 angular.module('phpdraft.draft').component('phpdDepthChartPositions', {
   controller: DepthChartPositionsController,
-  templateUrl: 'app/features/draft/depthChartPositions.component.html',
+  templateUrl: 'app/features/draft/depthCharts/depthChartPositions.component.html',
   bindings: {
     usingDepthCharts: '<',
     depthChartPositions: '<',
