@@ -2,6 +2,7 @@ class DraftCreateController {
   constructor($scope,
     $loading,
     $window,
+    $location,
     workingModalService,
     api,
     messageService,
@@ -10,6 +11,7 @@ class DraftCreateController {
     this.$scope = $scope;
     this.$loading = $loading;
     this.$window = $window;
+    this.$location = $location;
     this.workingModalService = workingModalService;
     this.api = api;
     this.messageService = messageService;
@@ -149,6 +151,7 @@ DraftCreateController.$inject = [
   '$scope',
   '$loading',
   '$window',
+  '$location',
   'workingModalService',
   'api',
   'messageService',

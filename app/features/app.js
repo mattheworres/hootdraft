@@ -24,6 +24,7 @@ angular.module('phpdraft', [
   // 'validation.match',
   // 'vcRecaptcha',
   //TODO: Begin showing app-level angular modules here
+  'phpdraft.admin',
   'phpdraft.authentication',
   'phpdraft.config',
   'phpdraft.draft',

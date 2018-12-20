@@ -9,6 +9,7 @@ class DraftEditController {
     messageService,
     depthChartPositionService,
     draftService,
+    errorService,
   ) {
     this.$scope = $scope;
     this.$loading = $loading;
@@ -20,6 +21,7 @@ class DraftEditController {
     this.messageService = messageService;
     this.depthChartPositionService = depthChartPositionService;
     this.draftService = draftService;
+    this.errorService = errorService;
 
     this.onDepthChartPositionChanged = this.onDepthChartPositionChanged.bind(this);
   }
@@ -158,24 +160,18 @@ class DraftEditController {
 
       this.draft = this.draftService.updateDraftInMemory(this.draftEdit);
 
-      return this.$location.path(`/draft/${this.draftEdit.draft_id}`);
+      this.$location.path(`/draft/${this.draftEdit.draft_id}`);
     };
 
     const editFailureHandler = response => {
-      let registerError;
       this.editInProgress = false;
       this.workingModalService.closeModal();
+      const registerError = this.errorService.parseValidationErrorsFromResponse(response);
 
-      if ((response === null ? 0 : response.status) === 400) {
-        registerError = (response.data === null ? '' : response.data.errors).join('\n');
-      } else {
-        registerError = `Whoops! We hit a snag - looks like it's on our end (${response.data.status})`;
-      }
-
-      return this.messageService.showError(`${registerError}`, 'Unable to edit draft');
+      this.messageService.showError(`${registerError}`, 'Unable to edit draft');
     };
 
-    return this.api.Draft.update(editModel, editSuccessHandler, editFailureHandler);
+    this.api.Draft.update(editModel, editSuccessHandler, editFailureHandler);
   }
 }
 
@@ -190,6 +186,7 @@ DraftEditController.$inject = [
   'messageService',
   'depthChartPositionService',
   'draftService',
+  'errorService',
 ];
 
 angular.module('phpdraft.draft').component('phpdDraftEdit', {

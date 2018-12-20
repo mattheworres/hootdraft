@@ -9,4 +9,5 @@ angular.module('phpdraft.shared', [
   'ui.bootstrap',
   'phpdraft.config',
   'phpdraft.modals',
+  'phpdraft.pick',
 ]);

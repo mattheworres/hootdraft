@@ -37,8 +37,8 @@
           <div class="picks-display"
             ng-repeat="pick in position.picks | orderBy: 'player_pick'"
             dnd-draggable="pick"
-            dnd-dragstart="$ctrl.dnd_dragstart(event)"
-            dnd-dragend="$ctrl.dnd_dragend(event)"
+            dnd-dragstart="$ctrl.dndDragstart(event)"
+            dnd-dragend="$ctrl.dndDragend(event)"
             dnd-moved="$ctrl.removePickFromPosition(position.picks, pick)"
             dnd-disable-if="!$ctrl.enableDragging()"
             draggable="true">

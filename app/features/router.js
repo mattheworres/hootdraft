@@ -3,12 +3,6 @@ angular.module('phpdraft').config(($routeProvider, $locationProvider) => {
     .html5Mode(true)
     .hashPrefix('!');
 
-  // $routeProvider.when('/draft/:draft_id/trades', {
-  //   controller: 'TradesController',
-  //   controllerAs: 'tradesCtrl',
-  //   templateUrl: 'app/templates/draft/trades.html'
-  // });
-
   // $routeProvider.when('/draft/:draft_id/stats', {
   //   controller: 'StatsController',
   //   controllerAs: 'statsCtrl',
@@ -41,12 +35,6 @@ angular.module('phpdraft').config(($routeProvider, $locationProvider) => {
   //   templateUrl: 'app/templates/commish/draft_create.html'
   // });
 
-  // $routeProvider.when('/commish/draft/:draft_id/picks/add', {
-  //   controller: 'AddPickController',
-  //   controllerAs: 'addPickCtrl',
-  //   templateUrl: 'app/templates/commish/add_pick.html'
-  // });
-
   // $routeProvider.when('/commish/draft/:draft_id/picks/edit', {
   //   controller: 'EditPickController',
   //   controllerAs: 'editPickCtrl',
@@ -64,13 +52,6 @@ angular.module('phpdraft').config(($routeProvider, $locationProvider) => {
   //   controller: 'UsersController',
   //   controllerAs: 'usersCtrl',
   //   templateUrl: 'app/templates/admin/users.html',
-  //   adminOnly: true
-  // });
-
-  // $routeProvider.when('/admin/proplayers', {
-  //   controller: 'ProPlayerManagementController',
-  //   controllerAs: 'proPlayerCtrl',
-  //   templateUrl: 'app/templates/admin/pro_player_management.html',
   //   adminOnly: true
   // });
 

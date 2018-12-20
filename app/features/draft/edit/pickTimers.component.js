@@ -159,15 +159,9 @@ class PickTimersController {
     };
 
     const saveFailureHandler = response => {
-      let saveError;
       this.saveInProgress = false;
       this.workingModalService.closeModal();
-
-      if ((response.status === 400) && ((angular.isDefined(response.data.errors) ? response.data.errors.length : 0) > 0)) {
-        saveError = angular.isDefined(response.data.errors) ? response.data.errors.join('\n') : '';
-      } else {
-        saveError = `Whoops! We hit a snag - looks like it's on our end (${response.data.status})`;
-      }
+      const saveError = this.errorService.parseValidationErrorsFromResponse(response);
 
       this.messageService.showError(`${saveError}`, 'Unable to save timers');
     };

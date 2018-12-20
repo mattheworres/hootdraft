@@ -20,3 +20,4 @@ phinx.yml.local
 deploy.php
 deploy.php.staging
 yarn-error.log
+devnotes.md

@@ -1,12 +1,12 @@
 const gulp = require('gulp');
 const cfg = require('../config');
-const browserSync = require('browser-sync');
+//const browserSync = require('browser-sync');
 
-gulp.task('watch-html', ['html'], browserSync.reload);
-gulp.task('watch-img', ['img'], browserSync.reload);
-gulp.task('watch-js-templates', ['js-templates'], browserSync.reload);
-gulp.task('watch-js-app', ['js'], browserSync.reload);
-gulp.task('watch-less', ['css'], browserSync.reload);
+gulp.task('watch-html', ['html'], () => gulp.start('build'));
+gulp.task('watch-img', ['img'], () => gulp.start('build'));
+gulp.task('watch-js-templates', ['js-templates'], () => gulp.start('build-js'));
+gulp.task('watch-js-app', ['js'], () => gulp.start('build-js'));
+gulp.task('watch-less', ['css'], () => gulp.start('build-css'));
 
 gulp.task('watch', () => {
   gulp.watch(cfg.paths.app.css, ['watch-less']);
