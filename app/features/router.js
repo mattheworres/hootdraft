@@ -29,18 +29,6 @@ angular.module('phpdraft').config(($routeProvider, $locationProvider) => {
   // });
 
 
-  // $routeProvider.when('/commish/draft/create', {
-  //   controller: 'DraftCreateController',
-  //   controllerAs: 'draftCreateCtrl',
-  //   templateUrl: 'app/templates/commish/draft_create.html'
-  // });
-
-  // $routeProvider.when('/commish/draft/:draft_id/picks/edit', {
-  //   controller: 'EditPickController',
-  //   controllerAs: 'editPickCtrl',
-  //   templateUrl: 'app/templates/commish/edit_pick.html'
-  // });
-
   // $routeProvider.when('/commish/draft/:draft_id/trades/add', {
   //   controller: 'AddTradeController',
   //   controllerAs: 'addTradeCtrl',

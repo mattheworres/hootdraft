@@ -60,10 +60,10 @@ class CommishPickEntryController {
   manualEntryChange() {
     if (this.manualEntry) {
       //If we have a first AND last name, go ahead and show this as a pick. May not have position coloring, but thats OK.
-      const hasFirst = (this.currentPick.first_name !== null) && (this.currentPick.first_name.length > 0);
-      const hasLast = (this.currentPick.last_name !== null) && (this.currentPick.last_name.length > 0);
-      const hasTeam = (this.currentPick.team !== null) && (this.currentPick.team.length > 0);
-      const hasPosition = (this.currentPick.position !== null) && (this.currentPick.position.length > 0);
+      const hasFirst = (angular.isDefined(this.currentPick.first_name)) && (this.currentPick.first_name.length > 0);
+      const hasLast = (angular.isDefined(this.currentPick.last_name)) && (this.currentPick.last_name.length > 0);
+      const hasTeam = (angular.isDefined(this.currentPick.team)) && (this.currentPick.team.length > 0);
+      const hasPosition = (angular.isDefined(this.currentPick.position)) && (this.currentPick.position.length > 0);
 
       this.currentPick.selected = hasFirst || hasLast || hasTeam || hasPosition;
     }
