@@ -12,9 +12,9 @@ DraftStateController.$inject = [
   'draftModalService',
 ];
 
-angular.module('phpdraft.draft').component('phpdDraftState', {
+angular.module('phpdraft.shared').component('phpdDraftState', {
   controller: DraftStateController,
-  templateUrl: 'app/features/draft/draftState.component.html',
+  templateUrl: 'app/features/shared/components/draftState.component.html',
   bindings: {
     commishName: '<',
     draftStatus: '<',

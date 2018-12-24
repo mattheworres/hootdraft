@@ -3,13 +3,6 @@ angular.module('phpdraft').config(($routeProvider, $locationProvider) => {
     .html5Mode(true)
     .hashPrefix('!');
 
-  // $routeProvider.when('/draft/:draft_id/stats', {
-  //   controller: 'StatsController',
-  //   controllerAs: 'statsCtrl',
-  //   templateUrl: 'app/templates/draft/stats.html'
-  // });
-
-
   // $routeProvider.when('/draft/:draft_id/picks/manager', {
   //   controller: 'ByManagerController',
   //   controllerAs: 'managerCtrl',
@@ -26,13 +19,6 @@ angular.module('phpdraft').config(($routeProvider, $locationProvider) => {
   //   controller: 'SearchController',
   //   controllerAs: 'searchCtrl',
   //   templateUrl: 'app/templates/picks/search.html'
-  // });
-
-
-  // $routeProvider.when('/commish/draft/:draft_id/trades/add', {
-  //   controller: 'AddTradeController',
-  //   controllerAs: 'addTradeCtrl',
-  //   templateUrl: 'app/templates/commish/add_trade.html'
   // });
 
 

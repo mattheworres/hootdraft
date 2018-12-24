@@ -1,9 +1,6 @@
 class EditPickController {
   constructor($scope,
-    $rootScope,
-    $q,
     $location,
-    subscriptionKeys,
     workingModalService,
     api,
     messageService,
@@ -12,10 +9,7 @@ class EditPickController {
     errorService,
     draftService) {
     this.$scope = $scope;
-    this.$rootScope = $rootScope;
-    this.$q = $q;
     this.$location = $location;
-    this.subscriptionKeys = subscriptionKeys;
     this.workingModalService = workingModalService;
     this.api = api;
     this.messageService = messageService;
@@ -117,10 +111,7 @@ class EditPickController {
 
 EditPickController.$inject = [
   '$scope',
-  '$rootScope',
-  '$q',
   '$location',
-  'subscriptionKeys',
   'workingModalService',
   'api',
   'messageService',

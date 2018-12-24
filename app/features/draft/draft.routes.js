@@ -30,4 +30,12 @@ angular.module('phpdraft.draft').config(($routeProvider, $locationProvider) => {
   $routeProvider.when('/draft/:draft_id/trades', {
     template: '<phpd-trades></phpd-trades>',
   });
+
+  $routeProvider.when('/commish/draft/:draft_id/trades/add', {
+    template: '<phpd-add-trade></phpd-add-trade>',
+  });
+
+  $routeProvider.when('/draft/:draft_id/stats', {
+    template: '<phpd-stats></phpd-stats>',
+  });
 });

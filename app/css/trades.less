@@ -8,4 +8,27 @@ div.panel-body.trades-panel {
     margin-top: 5px;
     margin-bottom: 0;
   }
+
+  div.manager-selection {
+    width: 100%;
+
+    button {
+      width: 100%;
+    }
+
+    ul.dropdown-menu li a {
+      &.disabled {
+        color: grey;
+        cursor: normal;
+        text-decoration: line-through;
+        &:hover, &:focus {
+          background-color: none;
+        }
+      }
+
+      &.selected {
+        font-weight: bold;
+      }
+    }
+  }
 }
