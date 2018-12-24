@@ -10,4 +10,8 @@ angular.module('phpdraft.pick').config(($routeProvider, $locationProvider) => {
   $routeProvider.when('/commish/draft/:draft_id/picks/edit', {
     template: '<phpd-edit-pick></phpd-edit-pick>',
   });
+
+  $routeProvider.when('/draft/:draft_id/picks/manager', {
+    template: '<phpd-picks-by-manager></phpd-picks-by-manager>',
+  });
 });

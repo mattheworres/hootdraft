@@ -25,7 +25,7 @@
             Last Pick
           </div>
           <div class="hidden-sm hidden-md col-lg-3 non-clock-content" ng-if="$ctrl.hasPreviousPick" dw-loading="load_previous_display" dw-loading-options="{text: 'Update current pick...'}">
-            <phpd-pick-display draft="$ctrl.draft" pick=$ctrl.previousPick></phpd-pick-display>
+            <phpd-pick-display draft="$ctrl.draft" pick="$ctrl.previousPick"></phpd-pick-display>
           </div>
         </div>
       </div>
@@ -51,7 +51,7 @@
             <span class="first-name">{{pick.first_name}}</span>
             <span class="last-name">{{pick.last_name}}</span>
             <span class="manager">{{pick.manager_name}}</span>
-            <span class="position">{{draft.positions[pick.position]}}</span>
+            <span class="position">{{$ctrl.draft.positions[pick.position]}}</span>
             <span class="team">{{pick.team}}</span>
           </div>
           <div class="pick unselected" ng-if="!pick.selected" ng-class="(pick.on_the_clock ? ' active' : '')">

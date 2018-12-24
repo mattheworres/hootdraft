@@ -3,12 +3,6 @@ angular.module('phpdraft').config(($routeProvider, $locationProvider) => {
     .html5Mode(true)
     .hashPrefix('!');
 
-  // $routeProvider.when('/draft/:draft_id/picks/manager', {
-  //   controller: 'ByManagerController',
-  //   controllerAs: 'managerCtrl',
-  //   templateUrl: 'app/templates/picks/by_manager.html'
-  // });
-
   // $routeProvider.when('/draft/:draft_id/picks/round', {
   //   controller: 'ByRoundController',
   //   controllerAs: 'roundCtrl',

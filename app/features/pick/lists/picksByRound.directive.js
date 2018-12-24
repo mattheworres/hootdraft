@@ -1,7 +1,7 @@
 angular.module('phpdraft.pick').directive('phpdPicksByRound', () =>
   ({
     restrict: 'E',
-    templateUrl: 'app/features/pick/picksByRound.directive.html',
+    templateUrl: 'app/features/pick/lists/picksByRound.directive.html',
     scope: {
       draft: '=',
       selectedDraftRound: '=',

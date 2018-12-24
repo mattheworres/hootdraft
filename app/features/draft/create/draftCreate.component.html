@@ -100,7 +100,7 @@
                   Password
                 </label>
                 <div class="col-xs-12 col-sm-8">
-                  <input name="password" ng-model="draft.draft_password" id="password" class="form-control" maxlength="255" placeholder="Optional - password protect your draft" />
+                  <input name="password" ng-model="$ctrl.draft.draft_password" id="password" class="form-control" maxlength="255" placeholder="Optional - password protect your draft" />
                   <div ng-show="$ctrl.form.$submitted || $ctrl.form.password.$touched">
                     <span ng-show="$ctrl.form.password.$error.maxlength" class="help-block">Password is too long</span>
                   </div>
