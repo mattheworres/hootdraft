@@ -12,17 +12,17 @@
           <div class="panel-heading">
             <h3 class="panel-title">
               <i class="fa fa-list"></i>&nbsp;&nbsp;
-              Round {{selectedDraftRound}} Picks
+              Round {{$ctrl.selectedDraftRound}} Picks
             </h3>
           </div>
           <div class="panel-body pick-list-display">
             <!-- Moved loading to inside picks-by-round directive -->
-            <phpd-section-error show-error="lastError" section-name="round {{selectedDraftRound}} picks"></phpd-section-error>
+            <phpd-section-error show-error="lastError" section-name="round {{$ctrl.selectedDraftRound}} picks"></phpd-section-error>
             <phpd-picks-by-round draft="$ctrl.draft"
-              selected-draft-round="selectedDraftRound"
-              picks="roundPicks"
-              pager-item-tally="pagerItemTally"
-              picks-loading="roundPicksLoading">
+              selected-draft-round="$ctrl.selectedDraftRound"
+              picks="$ctrl.roundPicks"
+              pager-item-tally="$ctrl.pagerItemTally"
+              picks-loading="$ctrl.roundPicksLoading">
             </phpd-picks-by-round>
           </div>
         </div>
@@ -31,9 +31,9 @@
         <div class="panel panel-primary panel-no-border">
           <phpd-upcoming-picks
             draft="$ctrl.draft"
-            next-picks="nextFivePicks"
-            next-loading="nextLoading"
-            next-error="nextError">
+            next-picks="$ctrl.nextFivePicks"
+            next-loading="$ctrl.nextLoading"
+            next-error="$ctrl.nextError">
           </phpd-upcoming-picks>
         </div>
       </div>

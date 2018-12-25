@@ -20,7 +20,7 @@ class ByRoundController {
   }
 
   $onInit() {
-    this.$scope.selectedDraftRound = 1;
+    this.selectedDraftRound = 1;
     this.currentDraftCounter = 0;
 
     this.draftService.getDraft().then(draft => {
@@ -29,14 +29,14 @@ class ByRoundController {
       this.draft = draft;
 
       if (draft !== null && draft.setting_up) {
-        this.$scope.pageError = true;
+        this.pageError = true;
         this.pathHelperService.sendToPreviousPath();
         this.messageService.showWarning('Draft is still setting up');
       } else if (draft.in_progress || draft.complete) {
-        this.$scope.pagerItemTally = draft.draft_rounds * 10;
+        this.pagerItemTally = draft.draft_rounds * 10;
 
         if (draft.in_progress) {
-          this.$scope.selectedDraftRound = draft.draft_current_round;
+          this.selectedDraftRound = draft.draft_current_round;
 
           this.deregister = this.$scope.$on(this.subscriptionKeys.draftCounterHasChanged, (event, args) => {
             const {draft, status} = args;
@@ -47,7 +47,7 @@ class ByRoundController {
           this._loadInProgressData(draft.draft_id, true);
         }
 
-        this.deregisterRoundWatcher = this.$scope.$watch('selectedDraftRound', () => {
+        this.deregisterRoundWatcher = this.$scope.$watch('$ctrl.selectedDraftRound', () => {
           this._loadRoundData(this.draft.draft_id, false);
         });
 
@@ -84,42 +84,42 @@ class ByRoundController {
 
   _loadRoundData(draft_id, onPageLoad) {
     const roundSuccess = data => {
-      this.$scope.roundPicks = data;
-      this.$scope.roundPicksLoading = false;
+      this.roundPicks = data;
+      this.roundPicksLoading = false;
       this.$loading.finish('roundPicksLoading');
     };
 
     const errorHandler = () => {
-      this.$scope.picksError = true;
-      this.$scope.roundPicksLoading = false;
+      this.picksError = true;
+      this.roundPicksLoading = false;
       this.$loading.finish('roundPicksLoading');
       this.messageService.showError('Unable to load picks');
     };
 
     if (this.draftStatus.valid && !this.draftStatus.locked) {
-      this.$scope.picksError = false;
-      this.$scope.roundPicksLoading = onPageLoad;
+      this.picksError = false;
+      this.roundPicksLoading = onPageLoad;
       this.$loading.start('roundPicksLoading');
 
-      this.api.Pick.getAllByRound({draft_id, round: this.$scope.selectedDraftRound, sort_ascending: true}, roundSuccess, errorHandler);
+      this.api.Pick.getAllByRound({draft_id, round: this.selectedDraftRound, sort_ascending: true}, roundSuccess, errorHandler);
     }
   }
 
   _loadInProgressData(draft_id, onPageLoad) {
     const nextSuccess = data => {
-      this.$scope.nextLoading = false;
-      this.$scope.nextFivePicks = data;
+      this.nextLoading = false;
+      this.nextFivePicks = data;
       this.$loading.finish('load_next_picks');
     };
 
     const nextErrorHandler = () => {
-      this.$scope.nextLoading = false;
-      this.$scope.nextError = true;
+      this.nextLoading = false;
+      this.nextError = true;
       this.$loading.finish('load_next_picks');
     };
 
-    this.$scope.nextLoading = onPageLoad;
-    this.$scope.nextError = false;
+    this.nextLoading = onPageLoad;
+    this.nextError = false;
 
     if (onPageLoad) {
       this.$loading.start('load_next_picks');

@@ -1,13 +1,11 @@
 <div data-ng-cloak>
   <div class="container-fluid v-offset-3">
-    <draft-state controller=roundCtrl
-      commish-name=draft.commish_name
-      draft-error=draftError
-      draft-loading=draftLoading
-      draft-locked=draftLocked>
-    </draft-state>
+    <phpd-draft-state
+      commish-name="$ctrl.draft.commish_name"
+      draft-status="$ctrl.draftStatus">
+    </phpd-draft-state>
 
-    <div class="row" ng-show="draftValid && !draft.setting_up && !draftLoading">
+    <div class="row" ng-show="$ctrl.draftStatus.valid && !$ctrl.draft.setting_up && !$ctrl.draftStatus.loading">
       <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
       <div class="col-xs-12 col-sm-6 col-md-5">
         <div class="panel panel-primary">
@@ -25,7 +23,14 @@
                 </label>
               </div>
               <div class="col-xs-9">
-                <input name="keywords" ng-model="keywords" ng-model-options="{ debounce: 500 }" class="form-control" maxlength="255" placeholder="First or last name" autofocus />
+                <input name="keywords"
+                  ng-model="$ctrl.keywords"
+                  ng-change="$ctrl.onSearchItemsChange()"
+                  ng-model-options="{ debounce: 500 }"
+                  class="form-control"
+                  maxlength="255"
+                  placeholder="First or last name"
+                  autofocus />
               </div>
             </div>
             <div class="form-group">
@@ -37,8 +42,9 @@
               <div class="col-xs-9">
                 <select class="form-control"
                   name="position"
-                  ng-options="abbreviation as position_name for (abbreviation, position_name) in draft.positions"
-                  ng-model="position">
+                  ng-options="abbreviation as position_name for (abbreviation, position_name) in $ctrl.draft.positions"
+                  ng-change="$ctrl.onSearchItemsChange()"
+                  ng-model="$ctrl.position">
                   <option value="">(all positions)</option>
                 </select>
               </div>
@@ -52,8 +58,9 @@
               <div class="col-xs-9">
                 <select class="form-control"
                   name="team"
-                  ng-options="abbreviation as team_name for (abbreviation, team_name) in draft.teams"
-                  ng-model="team">
+                  ng-options="abbreviation as team_name for (abbreviation, team_name) in $ctrl.draft.teams"
+                  ng-change="$ctrl.onSearchItemsChange()"
+                  ng-model="$ctrl.team">
                   <option value="">(all teams)</option>
                 </select>
               </div>
@@ -65,12 +72,12 @@
                 </label>
               </div>
               <div class="col-xs-9">
-                <button class="btn btn-default btn-block" ng-click="searchCtrl.toggleSort()">
-                  <span ng-show="sort == 'ASC'">
+                <button class="btn btn-default btn-block" ng-click="$ctrl.toggleSort()">
+                  <span ng-show="$ctrl.sort == 'ASC'">
                     <i class="fa fa-sort-numeric-asc"></i>&nbsp;&nbsp;
                     Highest picks first
                   </span>
-                  <span ng-hide="sort == 'ASC'">
+                  <span ng-hide="$ctrl.sort == 'ASC'">
                     <i class="fa fa-sort-numeric-desc"></i>&nbsp;&nbsp;
                     Most recent picks first
                   </span>
@@ -79,7 +86,7 @@
             </div>
             <div class="form-group">
               <div class="col-xs-9 col-xs-offset-3">
-                <button class="btn btn-default btn-block" ng-click="searchCtrl.clearSearchCriteria()">
+                <button class="btn btn-default btn-block" ng-click="$ctrl.clearSearchCriteria()">
                   Clear
                 </button>
               </div>
@@ -96,15 +103,14 @@
             </h3>
           </div>
           <div class="panel-body" dw-loading="load_search_picks" dw-loading-options="{text: 'Loading matching picks...'}">
-            <!-- <section-loading show-loading=searchLoading></section-loading> -->
-            <section-error show-error=searchError section-name="search picks"></section-error>
-            <div class="row pick-list-display" ng-repeat="pick in searchResults">
-              <pick-display draft=draft pick=pick></pick-display>
+            <phpd-section-error show-error="$ctrl.searchError" section-name="search picks"></phpd-section-error>
+            <div class="row pick-list-display" ng-repeat="pick in $ctrl.searchResults">
+              <phpd-pick-display draft="$ctrl.draft" pick="pick"></phpd-pick-display>
             </div>
-            <h4 ng-hide="searchCtrl.hasSearchItems()">
+            <h4 ng-hide="$ctrl.hasSearchItems()">
               Enter a few player name keywords, select a team or a position to search for picks in the search box to find picks.
             </h4>
-            <h4 ng-show="searchCtrl.hasSearchItems() && searchResults.length == 0">
+            <h4 ng-show="$ctrl.hasSearchItems() && $ctrl.searchResults.length == 0">
               No picks were found matching that criteria.
             </h4>
           </div>

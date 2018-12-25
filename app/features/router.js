@@ -3,13 +3,6 @@ angular.module('phpdraft').config(($routeProvider, $locationProvider) => {
     .html5Mode(true)
     .hashPrefix('!');
 
-  // $routeProvider.when('/draft/:draft_id/search', {
-  //   controller: 'SearchController',
-  //   controllerAs: 'searchCtrl',
-  //   templateUrl: 'app/templates/picks/search.html'
-  // });
-
-
   // $routeProvider.when('/admin/users', {
   //   controller: 'UsersController',
   //   controllerAs: 'usersCtrl',
