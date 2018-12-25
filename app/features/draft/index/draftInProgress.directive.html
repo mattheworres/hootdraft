@@ -23,8 +23,8 @@
         </h3>
       </div>
       <div class="panel-body pick-list-display" dw-loading="load_last_picks" dw-loading-options="{text: 'Loading last five picks...'}">
-        <phpd-section-loading show-loading=lastFiveLoading></phpd-section-loading>
-        <phpd-section-error show-error=lastError section-name="last 5 picks"></phpd-section-error>
+        <phpd-section-loading show-loading="lastFiveLoading"></phpd-section-loading>
+        <phpd-section-error show-error="lastError" section-name="last 5 picks"></phpd-section-error>
         <div class="row" ng-repeat="pick in lastFivePicks" ng-hide="lastError">
           <phpd-pick-display draft="draft" pick="pick"></phpd-pick-display>
         </div>

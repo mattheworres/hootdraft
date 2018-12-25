@@ -1,7 +1,7 @@
 class NavController {
   constructor($rootScope, $scope, $routeParams, $location, messageService,
     authenticationService, subscriptionKeys, confirmActionService,
-    $sessionStorage, api, errorService, draftService) {
+    $sessionStorage, api, errorService, draftService, lodash) {
     this.$rootScope = $rootScope;
     this.$scope = $scope;
     this.$routeParams = $routeParams;
@@ -14,6 +14,7 @@ class NavController {
     this.api = api;
     this.errorService = errorService;
     this.draftService = draftService;
+    this.lodash = lodash;
   }
 
   $onInit() {
@@ -24,8 +25,14 @@ class NavController {
     this.deregisterDraftUpdated = this.$rootScope.$on(this.subscriptionKeys.draftCounterHasChanged, (event, args) => {
       const {status, draft} = args;
 
-      this.status = status;
-      this.draft = draft;
+      if (angular.isDefined(this.draft)) {
+        this.lodash.merge(this.draft, draft);
+        this.currentDraftCounter = this.draft.draft_counter;
+      } else {
+        this.draft = draft;
+      }
+
+      this.lodash.merge(this.draftStatus, status);
 
       this.draftNavHidden = status.error || status.badConnection || !status.valid;
     });
@@ -67,6 +74,7 @@ NavController.$inject = [
   'api',
   'errorService',
   'draftService',
+  'lodash',
 ];
 
 angular.module('phpdraft.navigation').component('phpdNavBar', {

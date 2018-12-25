@@ -27,7 +27,6 @@ class CommishManagersController {
       this._reloadEditableManagers(draft.draft_id, draft.commish_editable);
     });
 
-    //TODO: is this necessary?
     this._reloadEditableManagers();
   }
 

@@ -1,6 +1,6 @@
 class DraftNavController {
   constructor(draftService, $rootScope, $scope, confirmActionService, messageService,
-    errorService, api, $location, draftModalService, subscriptionKeys) {
+    errorService, api, $location, draftModalService, subscriptionKeys, lodash) {
     this.draftService = draftService;
     this.$rootScope = $rootScope;
     this.$scope = $scope;
@@ -11,6 +11,7 @@ class DraftNavController {
     this.$location = $location;
     this.draftModalService = draftModalService;
     this.subscriptionKeys = subscriptionKeys;
+    this.lodash = lodash;
   }
 
   $onInit() {
@@ -25,8 +26,14 @@ class DraftNavController {
     this.deregisterDraftUpdated = this.$rootScope.$on(this.subscriptionKeys.draftCounterHasChanged, (event, args) => {
       const {draft, status} = args;
 
-      this.draft = draft;
-      this.status = status;
+      if (angular.isDefined(this.draft)) {
+        this.lodash.merge(this.draft, draft);
+        this.currentDraftCounter = this.draft.draft_counter;
+      } else {
+        this.draft = draft;
+      }
+
+      this.lodash.merge(this.draftStatus, status);
 
       //Note: this is an approximation of the logic from Coffeescript. May need to tweak
       this.showDraftMenu = !status.error;
@@ -82,6 +89,7 @@ DraftNavController.$inject = [
   '$location',
   'draftModalService',
   'subscriptionKeys',
+  'lodash',
 ];
 
 angular.module('phpdraft.navigation').component('phpdDraftNavBar', {

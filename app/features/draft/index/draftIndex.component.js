@@ -1,6 +1,7 @@
 class DraftIndexController {
   constructor($scope, $rootScope, $routeParams, $loading,
-    $timeout, subscriptionKeys, api, messageService, draftService) {
+    $timeout, subscriptionKeys, api, messageService, draftService,
+    lodash) {
     this.$scope = $scope;
     this.$rootScope = $rootScope;
     this.$routeParams = $routeParams;
@@ -10,6 +11,7 @@ class DraftIndexController {
     this.api = api;
     this.messageService = messageService;
     this.draftService = draftService;
+    this.lodash = lodash;
 
     this.onSelectedDraftRoundUpdated = this.onSelectedDraftRoundUpdated.bind(this);
   }
@@ -68,7 +70,13 @@ class DraftIndexController {
     this.deregisterDraftCounterSubscription = this.$scope.$on(this.subscriptionKeys.draftCounterHasChanged, (event, args) => {
       const {draft, status} = args;
 
-      this.draft = draft;
+      if (angular.isDefined(this.draft)) {
+        this.lodash.merge(this.draft, draft);
+        this.currentDraftCounter = this.draft.draft_counter;
+      } else {
+        this.draft = draft;
+      }
+
       this.status = status;
 
       this._handleDraftUpdate(draft, status);
@@ -180,6 +188,7 @@ DraftIndexController.$inject = [
   'api',
   'messageService',
   'draftService',
+  'lodash',
 ];
 
 angular.module('phpdraft.draft').component('phpdDraftIndex', {
