@@ -7,4 +7,9 @@ angular.module('phpdraft.admin').config(($routeProvider, $locationProvider) => {
     template: '<phpd-pro-player-management></phpd-pro-player-management>',
     adminOnly: true,
   });
+
+  $routeProvider.when('/admin/users', {
+    template: '<phpd-users></phpd-users>',
+    adminOnly: true,
+  });
 });

@@ -10,7 +10,7 @@
     <div class="row">
       <div class="hidden-xs hidden-sm col-md-1 col-lg-2">&nbsp;</div>
       <div class="col-xs-12 col-sm-12 col-md-10 col-lg-8">
-        <table datatable="ng" dt-options="usersCtrl.dtOptions" dt-column-defs="usersCtrl.dtColumnDefs" class="table table-striped table-bordered">
+        <table datatable="ng" dt-options="$ctrl.dtOptions" dt-column-defs="$ctrl.dtColumnDefs" class="table table-striped table-bordered">
           <thead>
             <tr>
               <th>Email</th>
@@ -20,13 +20,13 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="user in usersCtrl.users">
+            <tr ng-repeat="user in $ctrl.users">
               <td>{{::user.email}}</td>
               <td>{{::user.name}}</td>
               <td>{{::user.enabled == '1' ? 'Yes' : 'No'}}</td>
               <td>
-                <button class="btn btn-primary" ng-click="usersCtrl.editUser(user, $index)"><i class="fa fa-pencil"></i>&nbsp;Edit</button>
-                <button class="btn btn-danger" ng-click="usersCtrl.deleteUser(user, $index)"><i class="fa fa-trash"></i>&nbsp;Delete</button>
+                <button class="btn btn-primary" ng-click="$ctrl.editUser(user, $index)"><i class="fa fa-pencil"></i>&nbsp;Edit</button>
+                <button class="btn btn-danger" ng-click="$ctrl.deleteUser(user, $index)"><i class="fa fa-trash"></i>&nbsp;Delete</button>
               </td>
             </tr>
           </tbody>
