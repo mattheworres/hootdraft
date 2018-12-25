@@ -1,24 +1,20 @@
 class PicksByManagerController {
   constructor($scope,
     $routeParams,
-    $timeout,
     $loading,
     subscriptionKeys,
     messageService,
     api,
     draftService,
-    pathHelperService,
-    errorService) {
+    pathHelperService) {
     this.$scope = $scope;
     this.$routeParams = $routeParams;
-    this.$timeout = $timeout;
     this.$loading = $loading;
     this.subscriptionKeys = subscriptionKeys;
     this.messageService = messageService;
     this.api = api;
     this.draftService = draftService;
     this.pathHelperService = pathHelperService;
-    this.errorService = errorService;
     this._loadManagerPicks = this._loadManagerPicks.bind(this);
     this._loadInProgressPicks = this._loadInProgressPicks.bind(this);
   }
@@ -57,7 +53,7 @@ class PicksByManagerController {
       this.messageService.showError('Unable to load draft');
     });
 
-    this.$scope.$watch('$ctrl.selectedManager', () => {
+    this.deregisterManagerWatcher = this.$scope.$watch('$ctrl.selectedManager', () => {
       if (angular.isDefined(this.selectedManager)) {
         this._loadManagerPicks(this.draft.draft_id, this.selectedManager.manager_id, true);
       }
@@ -68,6 +64,8 @@ class PicksByManagerController {
     if (angular.isFunction(this.deregister)) {
       this.deregister();
     }
+
+    this.deregisterManagerWatcher();
   }
 
   onDraftCounterChanged(draft, status) {
@@ -149,14 +147,12 @@ class PicksByManagerController {
 PicksByManagerController.$inject = [
   '$scope',
   '$routeParams',
-  '$timeout',
   '$loading',
   'subscriptionKeys',
   'messageService',
   'api',
   'draftService',
   'pathHelperService',
-  'errorService',
 ];
 
 angular.module('phpdraft.pick').component('phpdPicksByManager', {

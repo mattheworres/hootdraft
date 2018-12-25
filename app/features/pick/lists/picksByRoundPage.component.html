@@ -1,0 +1,47 @@
+<div data-ng-cloak>
+  <div class="container-fluid v-offset-3">
+    <phpd-draft-state
+      commish-name="$ctrl.draft.commish_name"
+      draft-status="$ctrl.draftStatus">
+    </phpd-draft-state>
+
+    <div class="row" ng-show="$ctrl.draftStatus.valid && !$ctrl.draft.setting_up && !$ctrl.draftStatus.loading">
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+      <div class="col-xs-12 col-sm-6 col-md-5">
+        <div class="panel panel-primary panel-no-border" dw-loading="roundPicksLoading">
+          <div class="panel-heading">
+            <h3 class="panel-title">
+              <i class="fa fa-list"></i>&nbsp;&nbsp;
+              Round {{selectedDraftRound}} Picks
+            </h3>
+          </div>
+          <div class="panel-body pick-list-display">
+            <!-- Moved loading to inside picks-by-round directive -->
+            <phpd-section-error show-error="lastError" section-name="round {{selectedDraftRound}} picks"></phpd-section-error>
+            <phpd-picks-by-round draft="$ctrl.draft"
+              selected-draft-round="selectedDraftRound"
+              picks="roundPicks"
+              pager-item-tally="pagerItemTally"
+              picks-loading="roundPicksLoading">
+            </phpd-picks-by-round>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-5" ng-show="$ctrl.draft.in_progress">
+        <div class="panel panel-primary panel-no-border">
+          <phpd-upcoming-picks
+            draft="$ctrl.draft"
+            next-picks="nextFivePicks"
+            next-loading="nextLoading"
+            next-error="nextError">
+          </phpd-upcoming-picks>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-5" ng-hide="$ctrl.draft.in_progress">
+        <phpd-draft-information draft="$ctrl.draft" status="$ctrl.draftStatus"></phpd-draft-information>
+      </div>
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+    </div>
+  </div>
+</div>
+

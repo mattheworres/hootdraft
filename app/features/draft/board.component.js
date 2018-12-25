@@ -223,10 +223,12 @@ class BoardController {
     const errorHandler = () => this.messageService.showError('Unable to load remaining pick time');
 
     if (this.draftStatus.valid && !this.draftStatus.locked && (this.draft.in_progress === true)) {
-      return this.api.Draft.getTimeRemaining({draft_id: draftId}, timersSuccess, errorHandler); // eslint-disable-line camelcase
+      this.api.Draft.getTimeRemaining({draft_id: draftId}, timersSuccess, errorHandler); // eslint-disable-line camelcase
     }
 
-    return this.deregister();
+    if (angular.isFunction(this.deregister)) {
+      this.deregister();
+    }
   }
 }
 

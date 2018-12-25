@@ -14,4 +14,8 @@ angular.module('phpdraft.pick').config(($routeProvider, $locationProvider) => {
   $routeProvider.when('/draft/:draft_id/picks/manager', {
     template: '<phpd-picks-by-manager></phpd-picks-by-manager>',
   });
+
+  $routeProvider.when('/draft/:draft_id/picks/round', {
+    template: '<phpd-picks-by-round-page></phpd-picks-by-round-page>',
+  });
 });
