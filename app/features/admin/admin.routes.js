@@ -12,4 +12,9 @@ angular.module('phpdraft.admin').config(($routeProvider, $locationProvider) => {
     template: '<phpd-users></phpd-users>',
     adminOnly: true,
   });
+
+  $routeProvider.when('/admin/stats', {
+    template: '<phpd-regenerate-stats></phpd-regenerate-stats>',
+    adminOnly: true,
+  });
 });

@@ -16,6 +16,8 @@ class StatsController {
   }
 
   $onInit() {
+    this.statsGenerated = false;
+
     this.draftService.getDraft().then(draft => {
       this.draftStatus = this.draftService.getStatus();
 
@@ -37,7 +39,7 @@ class StatsController {
     const statsSuccess = data => {
       this.statsLoading = false;
       this.stats = data.draft_statistics;
-      this.stats_generated = data.draft_statistics !== null;
+      this.statsGenerated = data.draft_statistics !== null;
     };
 
     const errorHandler = () => {
@@ -48,7 +50,7 @@ class StatsController {
     this.statsLoading = true;
     this.statsError = false;
 
-    if (this.$scope.draftValid && !this.$scope.draftLocked) {
+    if (this.draftStatus.valid && !this.draftStatus.locked) {
       this.api.Draft.getStats({draft_id: draftId}, statsSuccess, errorHandler);
     }
   }

@@ -10,7 +10,7 @@
     <div class="row">
       <div class="hidden-xs hidden-sm col-md-1 col-lg-2">&nbsp;</div>
       <div class="col-xs-12 col-sm-12 col-md-10 col-lg-8">
-        <table datatable="ng" class="table table-striped table-bordered" dt-options="regenerateCtrl.dtOptions" dt-column-defs="regenerateCtrl.dtColumnDefs">
+        <table datatable="ng" class="table table-striped table-bordered" dt-options="$ctrl.dtOptions" dt-column-defs="$ctrl.dtColumnDefs">
           <thead>
             <tr>
               <th>League Name</th>
@@ -21,7 +21,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="draft in regenerateCtrl.drafts">
+            <tr ng-repeat="draft in $ctrl.drafts">
               <td>
                 <strong><a href="draft/{{::draft.draft_id}}">{{draft.draft_name}}</a></strong>
               </td>
@@ -37,7 +37,7 @@
                 </span>
               </td>
               <td>
-                <button class="btn btn-success" ng-click="regenerateCtrl.regenerateStats(draft.draft_id)"><i class="fa fa-bar-chart"></i>&nbsp;Generate Stats</button>
+                <button class="btn btn-success" ng-click="$ctrl.regenerateStats(draft.draft_id)"><i class="fa fa-bar-chart"></i>&nbsp;Generate Stats</button>
               </td>
             </tr>
           </tbody>
