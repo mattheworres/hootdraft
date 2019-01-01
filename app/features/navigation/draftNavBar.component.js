@@ -16,6 +16,7 @@ class DraftNavController {
 
   $onInit() {
     this.showDraftMenu = false;
+    this.status = {};
 
     //When we catch wind to collapse the menus (on xs screen sizes only), set those variables
     this.deregisterCollapseMenus = this.$rootScope.$on(this.subscriptionKeys.collapseMenus, () => {
@@ -33,7 +34,7 @@ class DraftNavController {
         this.draft = draft;
       }
 
-      this.lodash.merge(this.draftStatus, status);
+      this.lodash.merge(this.status, status);
 
       //Note: this is an approximation of the logic from Coffeescript. May need to tweak
       this.showDraftMenu = !status.error;
