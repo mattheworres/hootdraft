@@ -1,6 +1,8 @@
 <?php
 namespace Deployer;
 
+$backupTitle = 'PHP Draft: Offer to backup current settings for future upgrade imports';
+
 desc('PHP Draft: Use a wizard to set important variables');
 task('setup', [
     'phpdraft:setupconfirm',
@@ -11,14 +13,37 @@ task('setup', [
     'phpdraft:setupsuccess'
 ]);
 
-desc('PHP Draft: Offer to backup current settings for future upgrade imports');
+desc($backupTitle);
+task('export', ['backup']);
+
+desc('PHP Draft: Import settings before deploying');
+task('import', function() {
+  writeln("\n<info>Hello! Let's get those settings files imported for you, right quick!</info>\n");
+
+  writeln("\n<comment>Just a note: this will OVERWRITE anything and everything in appsettings.php, deploy.php and js/config.js. Hit CTRL+C to exit now if you don't want to do that!</comment>\n");
+
+  $settings_location = ask("What is the absolute (local) path of where your settings files are located?",
+      "~/phpdraft_settings");
+
+  runLocally("cp $settings_location/.htaccess .htaccess");
+  runLocally("cp $settings_location/appsettings.php appsettings.php");
+  runLocally("cp $settings_location/config.js js/config.js");
+  runLocally("cp $settings_location/deploy.php deploy.php");
+  runLocally("cp $settings_location/index.html index.html");
+  runLocally("cp $settings_location/phinx.yml phinx.yml");
+  runLocally("cp $settings_location/web.config web.config");
+
+  writeln("\n\n<info>Success! I imported those settings for you, you should be ready to deploy now.</info>\n");
+});
+
+desc($backupTitle);
 task('backup', function() {
-	if (file_exists("js/config.js") == false) {
-		writeln("<error>Looks like js/config.js doesn't exist - I can't back up your settings.</error>\n");
-		writeln("<comment>Ensure you have downloaded a compiled release from https://github.com/mattheworres/phpdraft/releases</comment>\n");
-		writeln("<comment>Or, if you are building from sourcecode, consult the wiki on how to properly prepare a release.</comment>\n");
-		throw new \Exception("PHP Draft is not in a exportable state (use downloads from Releases on Github)");
-	}
+  if (file_exists("js/config.js") == false) {
+    writeln("<error>Looks like js/config.js doesn't exist - I can't back up your settings.</error>\n");
+    writeln("<comment>Ensure you have downloaded a compiled release from https://github.com/mattheworres/phpdraft/releases</comment>\n");
+    writeln("<comment>Or, if you are building from sourcecode, consult the wiki on how to properly prepare a release.</comment>\n");
+    throw new \Exception("PHP Draft is not in a exportable state (use downloads from Releases on Github)");
+  }
 
   writeln("\n\n<info>Looking great! Hey, if you want I can back up these snazzy settings files "
     ."I just created for you. This will make it WAY easier to update PHP Draft in the future!</info>\n");
@@ -35,8 +60,8 @@ task('backup', function() {
     runLocally("cp js/config.js $backup_location/config.js");
     runLocally("cp phinx.yml $backup_location/phinx.yml");
     runLocally("cp deploy.php $backup_location/deploy.php");
-		runLocally("cp .htaccess $backup_location/.htaccess");
-		runLocally("cp index.html $backup_location/index.html");
+    runLocally("cp .htaccess $backup_location/.htaccess");
+    runLocally("cp index.html $backup_location/index.html");
     runLocally("cp web.config $backup_location/web.config");
   }
 });
@@ -131,9 +156,9 @@ task('phpdraft:asksetupquestions', function() {
 
 desc('Copy files from the deploy directory to their place.');
 task('phpdraft:copyfiles', function() {
-	if(file_exists('js') !== true) {
-		runLocally('mkdir js');
-	}
+  if(file_exists('js') !== true) {
+    runLocally('mkdir js');
+  }
 
   runLocally('cp deploy/config.js.ci js/config.js');
   runLocally('cp deploy/appsettings.php.ci appsettings.php');
