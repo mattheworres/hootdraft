@@ -139,6 +139,8 @@ task('phpdraft:asksetupquestions', function() {
     'authSeconds' => $authSeconds,
     'recaptchaPublicKey' => $recaptchaPublicKey,
     'recaptchaPrivateKey' => $recaptchaPrivateKey,
+    //TODO: Update with a question to enable this?
+    'mailDev' => false,
     'mailServer' => $mailServer,
     'mailPort' => $mailPort,
     'mailUser' => $mailUser,

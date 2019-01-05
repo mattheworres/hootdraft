@@ -1,7 +1,6 @@
 class DraftPasswordModalController {
-  constructor($uibModalInstance, $rootScope, $sessionStorage, $routeParams,
+  constructor($rootScope, $sessionStorage, $routeParams,
     authenticationService, subscriptionKeys, $location) {
-    this.$uibModalInstance = $uibModalInstance;
     this.$rootScope = $rootScope;
     this.$sessionStorage = $sessionStorage;
     this.$routeParams = $routeParams;
@@ -21,22 +20,16 @@ class DraftPasswordModalController {
   setPassword() {
     this.$sessionStorage.draft_password = this.form.password.$viewValue; // eslint-disable-line camelcase
 
-    this.$rootScope.$broadcast(this.subscriptionKeys.reloadDraft, {draft_id: this.$routeParams.draft_id, hasResetPassword: true}); // eslint-disable-line camelcase
-    this.cancel();
+    this.close();
   }
 
   gotoLogin() {
     this.$location.path('login');
-    this.cancel();
-  }
-
-  cancel() {
-    this.$uibModalInstance.dismiss('closed');
+    this.dismiss();
   }
 }
 
 DraftPasswordModalController.$inject = [
-  '$uibModalInstance',
   '$rootScope',
   '$sessionStorage',
   '$routeParams',
@@ -51,5 +44,7 @@ angular.module('phpdraft.modals').component('phpdDraftPasswordModal', {
   bindings: {
     draftName: '<',
     draftPassword: '<',
+    dismiss: '&',
+    close: '&',
   },
 });

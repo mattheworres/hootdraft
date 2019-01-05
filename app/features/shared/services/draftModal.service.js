@@ -1,11 +1,12 @@
 class DraftModalService {
   constructor($sessionStorage, $uibModal, confirmActionService, messageService,
-    draftService) {
+    draftService, $window) {
     this.$sessionStorage = $sessionStorage;
     this.$uibModal = $uibModal;
     this.confirmActionService = confirmActionService;
     this.messageService = messageService;
     this.draftService = draftService;
+    this.$window = $window;
   }
 
   showPasswordModal(draftName) {
@@ -14,8 +15,17 @@ class DraftModalService {
       : this.$sessionStorage.draft_password;
 
     this.modalInstance = this.$uibModal.open({
-      template: `<phpd-draft-password-modal draftName="${draftName}"
-        draftPassword="${cachedPassword}" /></phpd-draft-password-modal>`,
+      template: `<phpd-draft-password-modal
+        draftName="${draftName}"
+        draftPassword="${cachedPassword}"
+        dismiss="$dismiss()"
+        close="$close()" /></phpd-draft-password-modal>`,
+    });
+
+    this.modalInstance.result.then(() => {
+      this.$window.location.reload();
+    }, () => {
+      angular.noop();
     });
   }
 
@@ -88,6 +98,7 @@ DraftModalService.$inject = [
   'confirmActionService',
   'messageService',
   'draftService',
+  '$window',
 ];
 
 angular.module('phpdraft.shared').service('draftModalService', DraftModalService);
