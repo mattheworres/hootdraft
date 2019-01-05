@@ -49,7 +49,7 @@ ul.draft_order {
       &.edit {
         margin-top: 15px;
         margin-bottom: 10px;
-        
+
         input {
           height: 40px;
           font-size: 20px;
@@ -62,7 +62,7 @@ ul.draft_order {
     h3.action_items {
       padding-right: 0;
       font-size: 18px;
-      
+
       i.fa {
         margin-left: 10px;
         cursor: pointer;
@@ -100,8 +100,15 @@ ul.round-pager {
   margin-top: 3px;
   margin-bottom: 5px;
 
-  a {
-    .btn-primary;
+  li {
+    a {
+      .btn-primary;
+      width: 45%;
+    }
+
+    &.disabled {
+      display: none;
+    }
   }
 }
 

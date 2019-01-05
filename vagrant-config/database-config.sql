@@ -1,0 +1,3 @@
+GRANT ALL ON *.* TO 'root'@'10.0.0.0/255.0.0.0' IDENTIFIED BY 'root';
+CREATE DATABASE phpdraft;
+ALTER DATABASE phpdraft CHARACTER SET utf8 COLLATE utf8_general_ci;

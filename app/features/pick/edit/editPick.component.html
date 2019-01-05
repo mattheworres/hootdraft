@@ -1,0 +1,73 @@
+<div data-ng-cloak>
+  <div class="container-fluid v-offset-3">
+    <phpd-draft-state
+      commish-name="$ctrl.draft.commish_name"
+      draft-status="$ctrl.draftStatus">
+    </phpd-draft-state>
+
+    <div class="row" ng-show="$ctrl.draftStatus.valid && $ctrl.draft.in_progress && $ctrl.showPickSelection">
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+      <div class="col-xs-12 col-sm-9 col-sm-offset-2 col-md-7 col-md-offset-2">
+        <div class="panel panel-primary panel-no-border">
+          <div class="panel-heading">
+            <h3 class="panel-title">
+              <i class="fa fa-pencil"></i>&nbsp;&nbsp;
+              Edit Pick &ndash; Round {{$ctrl.selectedDraftRound}} Picks
+            </h3>
+          </div>
+          <div class="panel-body">
+            <h4>Select a round, then locate the pick you wish to edit and hit the pencil icon and make your changes.</h4>
+            <div class="row">
+              <u class="col-xs-12">
+                <div uib-pager
+                  total-items="$ctrl.pagerItemTally"
+                  max-size="5"
+                  class="round-pager"
+                  ng-model="$ctrl.selectedDraftRound"
+                  ng-change="$ctrl.onSelectedDraftRoundChange($ctrl.selectedDraftRound)"
+                  rotate="false">
+                </div>
+              </div>
+            </div>
+            <div class="row" ng-repeat="pick in $ctrl.roundPicks" ng-show="$ctrl.roundHasPicks">
+              <div class="col-xs-10 pick-list-display">
+                <phpd-pick-display draft="$ctrl.draft" pick="pick"></phpd-pick-display>
+              </div>
+              <div class="col-xs-2">
+                <div class="btn btn-block btn-primary v-offset-3" ng-click="$ctrl.selectEditPick(pick)">
+                  <i class="fa fa-pencil fa-2x"></i>
+                </div>
+              </div>
+            </div>
+            <div class="row" ng-hide="$ctrl.roundHasPicks">
+              <div class="col-xs-12 text-center">
+              <h3>Round {{$ctrl.selectedDraftRound}} currently doesn't have any Picks.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+    </div>
+
+    <div class="row" ng-show="$ctrl.draftStatus.valid && $ctrl.draft.in_progress && !$ctrl.showPickSelection">
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+      <div class="col-xs-12 col-sm-9 col-sm-offset-2 col-md-7 col-md-offset-2">
+        <div class="panel panel-primary panel-no-border">
+          <phpd-commish-pick-entry
+              draft="$ctrl.draft"
+              current-pick="$ctrl.currentPick"
+              pristine-pick="$ctrl.pristineCurrentPick"
+              positions="$ctrl.draft.positions"
+              teams="$ctrl.draft.teams"
+              edit-in-progress="$ctrl.editInProgress"
+              pick-action="$ctrl._savePick()"
+              pick-action-text="Update pick"
+              pick-icon="fa-floppy-o">
+            </phpd-commish-pick-entry>
+        </div>
+      </div>
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+    </div>
+  </div>
+</div>

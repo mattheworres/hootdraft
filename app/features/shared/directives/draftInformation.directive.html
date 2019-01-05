@@ -1,0 +1,102 @@
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      <i class="fa fa-info"></i>&nbsp;&nbsp;
+      League Details
+    </h3>
+  </div>
+  <div class="panel-body">
+    <div class="form-horizontal display-only-form">
+      <div class="form-group" ng-hide="!draft.setting_up || status.loading || !draft.commish_editable">
+        <div class="col-xs-5 control-label">
+          <strong>Edit</strong>:
+        </div>
+        <div class="col-xs-7">
+          <a href="commish/draft/{{draft.draft_id}}/edit">
+            <span class="fa-stack">
+              <i class="fa fa-circle fa-stack-2x"></i>
+              <i class="fa fa-pencil fa-stack-1x" alt="Edit this league"></i>
+            </span>
+          </a>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-xs-5 control-label">
+          <strong>League Name</strong>:
+        </div>
+        <div class="col-xs-7">
+          <div class="form-control-static">{{draft.draft_name}}</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-xs-5 control-label">
+          <strong>Commissioner</strong>:
+        </div>
+        <div class="col-xs-7">
+          <div class="form-control-static">{{draft.commish_name}}</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-xs-5 control-label">
+          <strong>Fantasy Sport</strong>:
+        </div>
+        <div class="col-xs-7">
+          <div class="form-control-static">{{draft.sports[draft.draft_sport]}}</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-xs-5 control-label">
+          <strong>Draft Status</strong>:
+        </div>
+        <div class="col-xs-7">
+          <div class="form-control-static">{{draft.statuses[draft.draft_status]}}</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-xs-5 control-label">
+          <strong>Draft Style</strong>:
+        </div>
+        <div class="col-xs-7">
+          <div class="form-control-static">{{draft.styles[draft.draft_style]}}</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-xs-5 control-label">
+          <strong>Positions</strong>:
+        </div>
+        <div class="col-xs-7" ng-show="draft.using_depth_charts">
+          <span ng-repeat="position in draft.depthChartPositions">
+            <span class="position-slots"><small>{{position.slots}}&times;</small></span>{{position.position}}<br/>
+          </span>
+        </div>
+        <div class="col-xs-7" ng-hide="draft.using_depth_charts">
+          <div class="form-control-static">Off</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-xs-5 control-label">
+          <strong># of Rounds</strong>:
+        </div>
+        <div class="col-xs-7">
+          <div class="form-control-static">{{draft.draft_rounds}}</div>
+        </div>
+      </div>
+      <div class="form-group" ng-show="draft.complete">
+        <div class="col-xs-5 control-label">
+          <strong>Started</strong>:
+        </div>
+        <div class="col-xs-7">
+          <div class="form-control-static">{{draft.draft_start_time | amParse: 'YYYY-MM-DD HH:mm:ss UTC' | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a'}}</div>
+        </div>
+      </div>
+      <div class="form-group" ng-show="draft.complete">
+        <div class="col-xs-5 control-label">
+          <strong>Ended</strong>:
+        </div>
+        <div class="col-xs-7">
+          <div class="form-control-static">{{draft.draft_end_time | amParse: 'YYYY-MM-DD HH:mm:ss UTC' | amDateFormat:'dddd, MMMM Do YYYY, h:mm a'}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

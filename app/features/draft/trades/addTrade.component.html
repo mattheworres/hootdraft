@@ -1,0 +1,117 @@
+<div data-ng-cloak>
+  <div class="container-fluid v-offset-3">
+    <phpd-draft-state
+      commish-name="$ctrl.draft.commish_name"
+      draft-status="$ctrl.draftStatus">
+    </phpd-draft-state>
+
+    <div class="row" ng-show="$ctrl.draftStatus.valid && $ctrl.draft.in_progress">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-10 col-lg-offset-1">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title">
+              <i class="fa fa-exchange"></i>&nbsp;&nbsp;
+              Enter a new Trade
+            </h3>
+          </div>
+          <div class="panel-body trades-panel">
+            <div class="row">
+              <div class="col-xs-12">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 ng-hide="$ctrl.twoManagersSelected()">Choose two managers to enter a trade for:</h3>
+                    <h3 ng-show="$ctrl.twoManagersSelected()">Choose at least one asset to trade:</h3>
+                  </div>
+                  <div class="panel-body">
+                    <div class="row">
+                      <div class="col-xs-12 col-sm-6">
+                        <div uib-dropdown class="btn-group manager-selection">
+                          <button type="button" class="form-control" uib-dropdown-toggle>
+                            <span ng-if="$ctrl.manager1.id === null">
+                              Choose one manager <span class="caret"></span>
+                            </span>
+                            <span ng-if="$ctrl.manager1.id !== null">
+                                <strong>{{$ctrl.manager1.name}}</strong> <span class="caret"></span>
+                            </span>
+                          </button>
+                          <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+                            <li role="menuitem" ng-repeat="manager in $ctrl.managers">
+                              <a href
+                                ng-click="$ctrl.selectFirstManager($index, manager.id, manager.name)"
+                                ng-disabled="$ctrl.manager2.index == $index"
+                                ng-class="{disabled: $ctrl.manager2.index == $index, selected: $ctrl.manager1.index == $index}">
+                                  {{manager.name}}
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                      <div class="col-xs-12 col-sm-6">
+                        <div uib-dropdown class="btn-group manager-selection">
+                          <button type="button" class="form-control block" uib-dropdown-toggle>
+                            <span ng-if="$ctrl.manager2.id === null">
+                              Choose another manager <span class="caret"></span>
+                            </span>
+                            <span ng-if="$ctrl.manager2.id !== null">
+                                <strong>{{$ctrl.manager2.name}}</strong> <span class="caret"></span>
+                            </span>
+                          </button>
+                          <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+                            <li role="menuitem" ng-repeat="manager in $ctrl.managers">
+                              <a href
+                                ng-click="$ctrl.selectSecondManager($index, manager.id, manager.name)"
+                                ng-disabled="$ctrl.manager1.index == $index"
+                                ng-class="{disabled: $ctrl.manager1.index == $index, selected: $ctrl.manager2.index == $index}">
+                                  {{manager.name}} {{$ctrl.manager1.index === $index ? 'GAAHH NO!' : ''}}
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-12 col-sm-6">
+                        <div class="row pick-list-display no-padding" ng-repeat="pick in $ctrl.firstManagerAssets">
+                          <div class="col-xs-10">
+                            <phpd-pick-display draft="$ctrl.draft" pick="pick"></phpd-pick-display>
+                          </div>
+                          <div class="col-xs-2">
+                            <div class="btn btn-block btn-lg" ng-class="{{pick.chosenAsset && 'btn-primary' || 'btn-default'}}" ng-click="$ctrl.toggleAsset(pick)">
+                              <i class="fa fa-check-circle fa-2x has-success" ng-show="pick.chosenAsset"></i>
+                              <i class="fa fa-circle-thin fa-2x" ng-hide="pick.chosenAsset"></i>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-xs-12 col-sm-6">
+                        <div class="row pick-list-display no-padding" ng-repeat="pick in $ctrl.secondManagerAssets">
+                          <div class="col-xs-2">
+                            <div class="btn btn-block btn-lg" ng-class="{{pick.chosenAsset && 'btn-primary' || 'btn-default'}}" ng-click="$ctrl.toggleAsset(pick)">
+                              <i class="fa fa-check-circle fa-2x has-success" ng-show="pick.chosenAsset"></i>
+                              <i class="fa fa-circle-thin fa-2x" ng-hide="pick.chosenAsset"></i>
+                            </div>
+                          </div>
+                          <div class="col-xs-10">
+                            <phpd-pick-display draft="$ctrl.draft" pick="pick"></phpd-pick-display>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-12 v-offset-2">
+                        <button type="submit" class="btn btn-success btn-large btn-block" ng-click="$ctrl.submitClicked()" ng-submit="$ctrl.submitClicked()" ng-disabled="$ctrl.tradeFormIsInvalid()">
+                          <i class="fa fa-user-plus"></i>&nbsp;&nbsp;Enter New Trade
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

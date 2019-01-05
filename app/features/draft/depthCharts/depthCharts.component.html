@@ -1,0 +1,64 @@
+<div data-ng-cloak>
+  <phpd-draft-state
+    commish-name="$ctrl.draft.commish_name"
+    draft-status="$ctrl.draftStatus">
+  </phpd-draft-state>
+
+  <section-loading show-loading=$ctrl.depthChartLoading></section-loading>
+
+  <div id="manager_dropdown" class="container-fluid" ng-if="!$ctrl.depthChartLoading">
+    <div class="row">
+      <h3 class="col-xs-3 col-sm-2 col-lg-1 v-offset-3 text-right">Team:</h3>
+      <div class="col-xs-9 col-sm-10 col-lg-11 v-offset-3">
+        <select class="form-control input-lg"
+          ng-options="manager as manager.manager_name for manager in $ctrl.managers track by manager.manager_id"
+          ng-model="$ctrl.selectedManager">
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div id="depth-chart-container" ng-if="!$ctrl.depthChartLoading && $ctrl.managerChosen">
+    <div id="depth-chart"
+      dw-loading="loading_depth_chart" dw-loading-options="{text: 'Loading depth chart...'}">
+      <div class="position"
+        ng-repeat="position in $ctrl.depthChartPositions"
+        dnd-list="position.picks"
+        dnd-disable-if="position.position == 'Unassigned' || !$ctrl.enableDragging()"
+        ng-hide="position.position == 'Unassigned' && position.picks.length == 0"
+        ng-class="{shown_dropzones: $ctrl.moveInProgress, unassigned: position.position == 'Unassigned'}"
+        ng-style="{width: $ctrl.positionStyle(position)}">
+        <div class="position-detail {{$ctrl.positionDetailClass(position)}}" ng-class="{unassigned: position.position == 'Unassigned'}">
+          <span class="position-name">{{position.position}}</span>
+          <span class="position-count" ng-if="position.position != 'Unassigned'">{{position.picks.length}}/{{position.slots}}</span>
+        </div>
+        <div class="position-display"
+          ng-hide="$ctrl.moveInProgress">
+          <div class="picks-display"
+            ng-repeat="pick in position.picks | orderBy: 'player_pick'"
+            dnd-draggable="pick"
+            dnd-dragstart="$ctrl.dndDragstart(event)"
+            dnd-dragend="$ctrl.dndDragend(event)"
+            dnd-moved="$ctrl.removePickFromPosition(position.picks, pick)"
+            dnd-disable-if="!$ctrl.enableDragging()"
+            draggable="true">
+            <div class="pick selected pick{{pick.position}}"
+              ng-class="{'dragging-disabled': !$ctrl.enableDragging()}"
+              uib-tooltip="These picks are unassigned - they weren't given a position on the depth chart yet. Drag and drop them to where they need to go!"
+              tooltip-enable="$ctrl.enableUnassignedTooltips(position)"
+              tooltip-placement="bottom"
+              draggable="true">
+              <span class="pick-number">{{pick.player_pick}}</span>
+              <span class="first-name">{{pick.first_name}}</span>
+              <span class="last-name">{{pick.last_name}}</span>
+              <span class="manager">{{pick.manager_name}}</span>
+              <span class="position">{{$ctrl.draft.positions[pick.position]}}</span>
+              <span class="team">{{pick.team}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

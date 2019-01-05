@@ -1,0 +1,59 @@
+<div class="form-group v-offset-5">
+  <label class="col-xs-12 col-sm-3 control-label" for="usingDepthCharts">
+    Depth Charts
+  </label>
+  <div class="col-xs-12 col-sm-3">
+    <toggle-switch name="usingDepthCharts"
+      ng-model="$ctrl.usingDepthCharts"
+      ng-change="$ctrl.onPositionChange()"
+      on-label="Use"
+      off-label="Off">
+    </toggle-switch>
+  </div>
+  <div class="hidden-xs col-sm-offset-5 col-sm-1 text-center text-info">
+    <i class="fa fa-info-circle"
+      uib-tooltip="Use depth charts to help teams see what positions they need to draft for next. Tell us what positions make up a fantasy team's active roster, and this will help determine how many rounds your draft will be."
+      tooltip-trigger="mouseenter"
+      tooltip-append-to-body="true">
+    </i>
+  </div>
+</div>
+<div class="form-group" ng-if="$ctrl.usingDepthCharts">
+  <label>Each team will need to draft:</label>
+</div>
+<ul class="depth_chart_positions col-sm-offset-3 col-sm-8 col-xs-12" ng-if="$ctrl.usingDepthCharts">
+  <li class="form-group" ng-repeat="position in $ctrl.depthChartPositions">
+    <input class="slots"
+      name="slots"
+      ng-model="$ctrl.depthChartPositions[$index].slots"
+      ng-change="$ctrl.onPositionChange()"
+      min="1"
+      max="30"
+      placeholder="Slots, 1-30"
+      ng-required="$ctrl.usingDepthCharts" />
+    &nbsp;&times;&nbsp;
+    <input class="position"
+      name="position"
+      ng-model="$ctrl.depthChartPositions[$index].position"
+      ng-change="$ctrl.onPositionChange()"
+      placeholder="Position abbreviation"
+      ng-required="$ctrl.usingDepthCharts" />
+    <a href ng-click="$ctrl.deleteDepthChartPosition($index)" ng-disabled="$ctrl.editInProgress">
+      <span class="fa-stack">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-trash-o fa-stack-1x" alt="Remove Position" title="Remove Position"></i>
+      </span>
+    </a>
+  </li>
+  <li ng-show="$ctrl.hasNonStandardPositions"><strong>*Note</strong>: IR, DL and NA positions generally don't count as active roster slots in most leagues, so you dont need to list them here.</li>
+  <li ng-hide="$ctrl.depthChartsUnique">
+    <span class="text-danger">One or more of the depth chart positions has a duplicate position.</span>
+  </li>
+</ul>
+<div class="form-group" ng-if="$ctrl.usingDepthCharts">
+  <div class="col-xs-12 col-sm-4 col-sm-offset-3">
+    <button class="btn btn-primary btn-block" ng-click="$ctrl.addDepthChartPosition()" ng-disabled="$ctrl.editInProgress">
+      <i class="fa fa-plus"></i>&nbsp;&nbsp;Add Roster Spot
+    </button>
+  </div>
+</div>
