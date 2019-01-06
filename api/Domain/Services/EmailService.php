@@ -5,6 +5,7 @@ namespace PhpDraft\Domain\Services;
 use \Silex\Application;
 use PhpDraft\Domain\Models\PhpDraftResponse;
 use PhpDraft\Domain\Models\MailMessage;
+use PHPMailer\PHPMailer\PHPMailer;
 
 class EmailService {
   private $app;
@@ -13,7 +14,7 @@ class EmailService {
   public function __construct(Application $app) {
     $this->app = $app;
 
-    $this->mailer = new \PHPMailer();
+    $this->mailer = new PHPMailer();
 
     //Uncomment this line to help debug issues with your SMTP server
     //Watch the response from the API when you register/start lost pwd to see the output.

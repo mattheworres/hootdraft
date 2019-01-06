@@ -1,22 +1,22 @@
 {
     "require": {
-        "php": ">=5.5.0",
+        "php": ">=7.0.0",
         "silex/silex": "~2.0.4",
         "monolog/monolog": "~1.22",
         "symfony/security": "~2.8.18",
         "cnam/security-jwt-service-provider" : "~2.1.1",
         "doctrine/dbal": "~2.5.12",
         "egulias/email-validator": "~1.2",
-        "phpmailer/phpmailer": "~5.2.26",
+        "phpmailer/phpmailer": "~6.0",
         "google/recaptcha": "~1.1",
         "phpfastcache/phpfastcache": "~5.0.15"
     },
     "require-dev": {
         "monolog/monolog": "~1.13",
-        "phpunit/phpunit": "5.5.*",
+        "phpunit/phpunit": "~6.5.0",
         "phpmd/phpmd" : "@stable",
-        "robmorgan/phinx": "^0.8.0",
-        "deployer/deployer": "~4.3.0",
+        "robmorgan/phinx": "^0.10.0",
+        "deployer/deployer": "~6.3.0",
         "squizlabs/php_codesniffer": "^3.2"
     },
     "autoload": {

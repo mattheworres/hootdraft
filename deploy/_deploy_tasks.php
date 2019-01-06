@@ -8,7 +8,6 @@ task('deploy', [
   'deploy:lock',
   'deploy:release',
   'phpdraft:upload_files',
-  'phpdraft:remote_yarn',
   'phpdraft:remote_composer',
   'phpdraft:breakpoint',
   'phpdraft:migrate',
@@ -50,19 +49,19 @@ task('phpdraft:verify_install', function() {
 desc('Upload app files');
 task('phpdraft:upload_files', function() {
   $phpdraft_files = [
-    'api',
-    'css',
-    'db',
-    'fonts',
-    'images',
-    'js',
+    'api/',
+    'css/',
+    'db/',
+    'fonts/',
+    'images/',
+    'js/',
     '.htaccess',
     'appsettings.php',
     'composer.json',
     'composer.lock',
     'package.json',
     'phinx.yml',
-    'deploy',
+    'deploy/',
     'index.html',
     'web.config'
   ];
@@ -80,13 +79,13 @@ task('phpdraft:remote_yarn', function() {
   run('yarn --production');
 
   cd('{{deploy_path}}');
-});
+})->setPrivate();
 
 desc('Install Composer dependencies remotely');
 task('phpdraft:remote_composer', function() {
   cd('{{release_path}}');
 
-  run('php deploy/composer.phar install --no-dev --prefer-dist -o --no-progress --no-suggest');
+  run('php {{release_path}}/deploy/composer.phar install --no-dev --prefer-dist -o --no-progress --no-suggest');
 
   cd('{{deploy_path}}');
 })->setPrivate();
