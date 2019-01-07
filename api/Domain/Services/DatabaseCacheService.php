@@ -3,7 +3,7 @@ namespace PhpDraft\Domain\Services;
 
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
-use phpFastCache\CacheManager;
+use Phpfastcache\CacheManager;
 
 //A wrapper service for the PHP-based caching to save on several MySQL reads
 class DatabaseCacheService {
