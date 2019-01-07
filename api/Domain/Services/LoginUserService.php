@@ -49,6 +49,19 @@ class LoginUserService {
     }
   }
 
+  public function SetAuthenticationObjectValuesOnLogin(PhpDraftResponse $response, $user) {
+    $now = new \DateTime("now", new \DateTimeZone('GMT'));
+    $interval = new \DateInterval('P0Y0M0DT0H0M' . AUTH_SECONDS . 'S');
+    $authTimeout = $now->add($interval);
+
+    $response->name = $user->getName();
+    $response->is_admin = $user->isAdmin();
+    $response->token = $this->app['security.jwt.encoder']->encode(['name' => $user->getUsername()]);
+    $response->auth_timeout = $authTimeout->format('Y-m-d H:i:s');
+
+    return $response;
+  }
+
   public function SearchCommissioners($searchTerm) {
     $response = new PhpDraftResponse();
 

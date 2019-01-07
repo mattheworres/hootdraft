@@ -31,15 +31,9 @@ class AuthenticationController
       if (!$user->isEnabled() || !$app['security.encoder.digest']->isPasswordValid($user->getPassword(), $password, $user->getSalt())) {
         throw new UsernameNotFoundException(sprintf('Email %s does not exist', $email));
       } else {
-        $now = new \DateTime("now", new \DateTimeZone('GMT'));
-        $interval = new \DateInterval('P0Y0M0DT0H0M' . AUTH_SECONDS . 'S');
-        $authTimeout = $now->add($interval);
-
         $response->success = true;
-        $response->name = $user->getName();
-        $response->is_admin = $user->isAdmin();
-        $response->token = $app['security.jwt.encoder']->encode(['name' => $user->getUsername()]);
-        $response->auth_timeout = $authTimeout->format('Y-m-d H:i:s');
+
+        $response = $app['phpdraft.LoginUserService']->SetAuthenticationObjectValuesOnLogin($response, $user);
 
         //If user is enabled, provided valid password and has a verification (pwd reset) key, wipe it (no longer needed)
         if ($user->hasVerificationKey()) {
@@ -87,7 +81,7 @@ class AuthenticationController
     $user->email = $request->get('_email');
     $user->password = $request->get('_password');
     $user->name = $request->get('_name');
-    
+
     $response = $app['phpdraft.LoginUserService']->CreateUnverifiedNewUser($user);
 
     return $app->json($response, $response->responseType());
@@ -170,6 +164,11 @@ class AuthenticationController
     $user->password = $password;
 
     $response = $app['phpdraft.LoginUserService']->ResetPassword($user);
+
+    if ($response->success) {
+      $loginUser = $app['users']->loadUserByUsername($email);
+      $response = $app['phpdraft.LoginUserService']->SetAuthenticationObjectValuesOnLogin($response, $loginUser);
+    }
 
     return $app->json($response, $response->responseType());
   }

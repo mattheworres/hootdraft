@@ -79,15 +79,17 @@ class ResetPasswordController {
 
     this.messageService.closeToasts();
 
-    const resetSuccessHandler = () => {
+    const resetSuccessHandler = data => {
       this.resetInProgress = false;
       this.workingModalService.closeModal();
 
       this.form.$setPristine();
 
-      this.$location.path('/login');
+      this.authenticationService.cacheSession(data.data);
 
-      this.messageService.showInfo('Your password has been set - you may log in now');
+      this.$location.path('/home');
+
+      this.messageService.showInfo('Your password has been set and you\'ve been logged in. Welcome!');
     };
 
     const resetFailureHandler = response => {
