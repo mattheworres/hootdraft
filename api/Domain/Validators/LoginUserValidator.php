@@ -6,6 +6,7 @@ use \Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use PhpDraft\Domain\Entities\LoginUser;
 use PhpDraft\Domain\Models\PhpDraftResponse;
+use Egulias\EmailValidator\Validation\RFCValidation;
 
 class LoginUserValidator {
   private $app;
@@ -280,7 +281,7 @@ class LoginUserValidator {
   }
 
   private function validateEmailAddress($emailAddress, &$errors, &$valid) {
-    if (!$this->app['phpdraft.EmailValidator']->isValid($emailAddress) || strlen($emailAddress) > 255) {
+    if (!$this->app['phpdraft.EmailValidator']->isValid($emailAddress, new RFCValidation()) || strlen($emailAddress) > 255) {
       $errors[] = "Email invalid.";
       $valid = false;
     }

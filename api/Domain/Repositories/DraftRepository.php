@@ -13,28 +13,15 @@ class DraftRepository {
     $this->app = $app;
   }
 
-  //TODO: Add server-side paging
-  public function GetPublicDrafts(Request $request/*$pageSize = 25, $page = 1*/, $password = '') {
-    /*$page = (int)$page;
-    $pageSize = (int)$pageSize;
-    $startIndex = ($page-1) * $pageSize;
-
-    if($startIndex < 0) {
-      throw new \Exception("Unable to get drafts: incorrect paging parameters.");
-    }*/
-
-    //$draft_stmt = $this->app['db']->prepare("SELECT * FROM draft ORDER BY draft_create_time LIMIT ?, ?");
-    $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d 
-      LEFT OUTER JOIN users u 
-      ON d.commish_id = u.id 
+  public function GetPublicDrafts(Request $request, $password = '') {
+    $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
+      LEFT OUTER JOIN users u
+      ON d.commish_id = u.id
       ORDER BY draft_create_time DESC");
 
     $draft_stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Draft');
 
-    $current_user = $this->app['phpdraft.LoginUserService']->GetUserFromHeaderToken($request);
-
-    /*$draft_stmt->bindParam(1, $startIndex, \PDO::PARAM_INT);
-    $draft_stmt->bindParam(2, $pageSize, \PDO::PARAM_INT);*/
+    $currentUser = $this->app['phpdraft.LoginUserService']->GetUserFromHeaderToken($request);
 
     if (!$draft_stmt->execute()) {
       throw new \Exception("Unable to load drafts.");
@@ -43,26 +30,8 @@ class DraftRepository {
     $drafts = array();
 
     while ($draft = $draft_stmt->fetch()) {
-      $currentUserOwnsIt = !empty($current_user) && $draft->commish_id == $current_user->id;
-      $currentUserIsAdmin = !empty($current_user) && $this->app['phpdraft.LoginUserService']->CurrentUserIsAdmin($current_user);
-
-      $draft->draft_visible = empty($draft->draft_password);
-      $draft->commish_editable = $currentUserOwnsIt || $currentUserIsAdmin;
-      $draft->setting_up = $this->app['phpdraft.DraftService']->DraftSettingUp($draft);
-      $draft->in_progress = $this->app['phpdraft.DraftService']->DraftInProgress($draft);
-      $draft->complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);
-      $draft->is_locked = false;
-
-      $draft->draft_create_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_create_time);
-      $draft->draft_start_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_start_time);
-      $draft->draft_end_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_end_time);
-
-      if (!$currentUserOwnsIt && !$currentUserIsAdmin && !$draft->draft_visible && $password != $draft->draft_password) {
-        $draft->is_locked = true;
-        $draft = $this->ProtectPrivateDraft($draft);
-      }
-
-      unset($draft->draft_password);
+      $draft = $this->NormalizeDraftTimesAndStatuses($draft);
+      $draft = $this->SetSecurityProperties($currentUser, $draft, $password);
 
       $drafts[] = $draft;
     }
@@ -73,44 +42,26 @@ class DraftRepository {
   public function GetPublicDraftsByCommish(Request $request, $commish_id, $password = '') {
     $commish_id = (int)$commish_id;
 
-    $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
+    $draftStatement = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
     LEFT OUTER JOIN users u
     ON d.commish_id = u.id
     WHERE commish_id = ?
     ORDER BY draft_create_time DESC");
 
-    $draft_stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Draft');
-    $draft_stmt->bindParam(1, $commish_id);
+    $draftStatement->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Draft');
+    $draftStatement->bindParam(1, $commish_id);
 
-    if (!$draft_stmt->execute()) {
+    if (!$draftStatement->execute()) {
       throw new \Exception("Unable to load drafts.");
     }
 
-    $current_user = $this->app['phpdraft.LoginUserService']->GetUserFromHeaderToken($request);
+    $currentUser = $this->app['phpdraft.LoginUserService']->GetUserFromHeaderToken($request);
 
     $drafts = array();
 
-    while ($draft = $draft_stmt->fetch()) {
-      $currentUserOwnsIt = !empty($current_user) && $draft->commish_id == $current_user->id;
-      $currentUserIsAdmin = !empty($current_user) && $this->app['phpdraft.LoginUserService']->CurrentUserIsAdmin($current_user);
-
-      $draft->draft_visible = empty($draft->draft_password);
-      $draft->commish_editable = $currentUserOwnsIt || $currentUserIsAdmin;
-      $draft->setting_up = $this->app['phpdraft.DraftService']->DraftSettingUp($draft);
-      $draft->in_progress = $this->app['phpdraft.DraftService']->DraftInProgress($draft);
-      $draft->complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);
-      $draft->is_locked = false;
-
-      $draft->draft_create_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_create_time);
-      $draft->draft_start_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_start_time);
-      $draft->draft_end_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_end_time);
-
-      if (!$currentUserOwnsIt && !$currentUserIsAdmin && !$draft->draft_visible && $password != $draft->draft_password) {
-        $draft->is_locked = true;
-        $draft = $this->ProtectPrivateDraft($draft);
-      }
-
-      unset($draft->draft_password);
+    while ($draft = $draftStatement->fetch()) {
+      $draft = $this->NormalizeDraftTimesAndStatuses($draft);
+      $draft = $this->SetSecurityProperties($currentUser, $draft, $password);
 
       $drafts[] = $draft;
     }
@@ -122,22 +73,22 @@ class DraftRepository {
   public function GetAllDraftsByCommish($commish_id) {
     $commish_id = (int)$commish_id;
 
-    $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
+    $draftStatement = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
     LEFT OUTER JOIN users u
     ON d.commish_id = u.id
     WHERE commish_id = ?
     ORDER BY draft_create_time DESC");
 
-    $draft_stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Draft');
-    $draft_stmt->bindParam(1, $commish_id);
+    $draftStatement->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Draft');
+    $draftStatement->bindParam(1, $commish_id);
 
-    if (!$draft_stmt->execute()) {
+    if (!$draftStatement->execute()) {
       throw new \Exception("Unable to load drafts.");
     }
 
     $drafts = array();
 
-    while ($draft = $draft_stmt->fetch()) {
+    while ($draft = $draftStatement->fetch()) {
       $draft->draft_create_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_create_time);
       $draft->draft_start_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_start_time);
       $draft->draft_end_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_end_time);
@@ -150,24 +101,23 @@ class DraftRepository {
 
   //Note: this method is to be used by admin section only
   public function GetAllCompletedDrafts() {
-    $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
+    $draftStatement = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
       LEFT OUTER JOIN users u
       ON d.commish_id = u.id
       WHERE d.draft_status = 'complete'
       ORDER BY draft_create_time DESC");
 
-    $draft_stmt->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Draft');
+    $draftStatement->setFetchMode(\PDO::FETCH_CLASS, '\PhpDraft\Domain\Entities\Draft');
 
-    if (!$draft_stmt->execute()) {
+    if (!$draftStatement->execute()) {
       throw new \Exception("Unable to load drafts.");
     }
 
     $drafts = array();
 
-    while ($draft = $draft_stmt->fetch()) {
-      $draft->draft_create_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_create_time);
-      $draft->draft_start_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_start_time);
-      $draft->draft_end_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_end_time);
+    while ($draft = $draftStatement->fetch()) {
+      $draft = $this->NormalizeDraftTimesAndStatuses($draft);
+      //Skipping security call here as we have not passed a request in (thus no currentUser) and this is only called by admin
 
       $drafts[] = $draft;
     }
@@ -176,45 +126,20 @@ class DraftRepository {
   }
 
   public function GetPublicDraft(Request $request, $id, $getDraftData = false, $password = '') {
-    $draft = new Draft();
-
     $cachedDraft = $this->GetCachedDraft($id);
 
     if ($cachedDraft != null) {
       $draft = $cachedDraft;
     } else {
-      $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
-        LEFT OUTER JOIN users u
-        ON d.commish_id = u.id
-        WHERE d.draft_id = ? LIMIT 1");
-      $draft_stmt->setFetchMode(\PDO::FETCH_INTO, $draft);
-
-      $draft_stmt->bindParam(1, $id, \PDO::PARAM_INT);
-
-      if (!$draft_stmt->execute() || !$draft_stmt->fetch()) {
-        throw new \Exception("Unable to load draft");
-      }
-
-      $draft->using_depth_charts = $draft->using_depth_charts == 1;
+      $draft = $this->FetchPublicDraftById($id);
 
       $this->SetCachedDraft($draft);
     }
 
-    $current_user = $this->app['phpdraft.LoginUserService']->GetUserFromHeaderToken($request);
+    $currentUser = $this->app['phpdraft.LoginUserService']->GetUserFromHeaderToken($request);
 
-    $currentUserOwnsIt = !empty($current_user) && $draft->commish_id == $current_user->id;
-    $currentUserIsAdmin = !empty($current_user) && $this->app['phpdraft.LoginUserService']->CurrentUserIsAdmin($current_user);
-
-    $draft->draft_visible = empty($draft->draft_password);
-    $draft->commish_editable = $currentUserOwnsIt || $currentUserIsAdmin;
-
-    $draft->draft_create_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_create_time);
-    $draft->draft_start_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_start_time);
-    $draft->draft_end_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_end_time);
-
-    $draft->setting_up = $this->app['phpdraft.DraftService']->DraftSettingUp($draft);
-    $draft->in_progress = $this->app['phpdraft.DraftService']->DraftInProgress($draft);
-    $draft->complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);
+    $draft = $this->NormalizeDraftTimesAndStatuses($draft);
+    $draft = $this->SetSecurityProperties($currentUser, $draft, $password);
 
     if ($getDraftData) {
       $draft->sports = $this->app['phpdraft.DraftDataRepository']->GetSports();
@@ -223,19 +148,11 @@ class DraftRepository {
       $draft->teams = $this->app['phpdraft.DraftDataRepository']->GetTeams($draft->draft_sport);
       $draft->historical_teams = $this->app['phpdraft.DraftDataRepository']->GetHistoricalTeams($draft->draft_sport);
       $draft->positions = $this->app['phpdraft.DraftDataRepository']->GetPositions($draft->draft_sport);
+
       if ($draft->using_depth_charts) {
         $draft->depthChartPositions = $this->app['phpdraft.DepthChartPositionRepository']->LoadAll($draft->draft_id);
       }
     }
-
-    $draft->is_locked = false;
-
-    if (!$currentUserOwnsIt && !$currentUserIsAdmin && !$draft->draft_visible && $password != $draft->draft_password) {
-      $draft->is_locked = true;
-      $draft = $this->ProtectPrivateDraft($draft);
-    }
-
-    unset($draft->draft_password);
 
     return $draft;
   }
@@ -245,25 +162,10 @@ class DraftRepository {
   * (in other words, don't call this then return the result as JSON!)
   */
   public function Load($id, $bustCache = false) {
-    $draft = new Draft();
-
     $cachedDraft = $this->GetCachedDraft($id);
 
     if ($bustCache || $cachedDraft == null) {
-      $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
-      LEFT OUTER JOIN users u
-      ON d.commish_id = u.id
-      WHERE draft_id = ? LIMIT 1");
-
-      $draft_stmt->setFetchMode(\PDO::FETCH_INTO, $draft);
-
-      $draft_stmt->bindParam(1, $id, \PDO::PARAM_INT);
-
-      if (!$draft_stmt->execute() || !$draft_stmt->fetch()) {
-        throw new \Exception("Unable to load draft");
-      }
-
-      $draft->using_depth_charts = $draft->using_depth_charts == 1;
+      $draft = $this->FetchPublicDraftById($id);
 
       if ($bustCache) {
         $this->UnsetCachedDraft($draft->draft_id);
@@ -504,6 +406,58 @@ class DraftRepository {
     $draft->positions = null;
     $draft->using_depth_charts = null;
     $draft->depthChartPositions = null;
+
+    return $draft;
+  }
+
+  private function FetchPublicDraftById($id) {
+    $draft = new Draft();
+
+    $draft_stmt = $this->app['db']->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
+      LEFT OUTER JOIN users u
+      ON d.commish_id = u.id
+      WHERE d.draft_id = ? LIMIT 1");
+
+    $draft_stmt->setFetchMode(\PDO::FETCH_INTO, $draft);
+
+    $draft_stmt->bindParam(1, $id, \PDO::PARAM_INT);
+
+    if (!$draft_stmt->execute() || !$draft_stmt->fetch()) {
+      throw new \Exception("Unable to load draft");
+    }
+
+    $draft->using_depth_charts = $draft->using_depth_charts == 1;
+
+    return $draft;
+  }
+
+  private function NormalizeDraftTimesAndStatuses($draft) {
+    $draft->setting_up = $this->app['phpdraft.DraftService']->DraftSettingUp($draft);
+    $draft->in_progress = $this->app['phpdraft.DraftService']->DraftInProgress($draft);
+    $draft->complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);
+
+    $draft->draft_create_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_create_time);
+    $draft->draft_start_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_start_time);
+    $draft->draft_end_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_end_time);
+
+    return $draft;
+  }
+
+  private function SetSecurityProperties($currentUser, $draft, $password) {
+    $currentUserOwnsIt = !empty($currentUser) && $draft->commish_id == $currentUser->id;
+    $currentUserIsAdmin = !empty($currentUser) && $this->app['phpdraft.LoginUserService']->CurrentUserIsAdmin($currentUser);
+
+    $draft->draft_visible = empty($draft->draft_password);
+    $draft->commish_editable = $currentUserOwnsIt || $currentUserIsAdmin;
+    $draft->is_locked = false;
+
+
+    if (!$currentUserOwnsIt && !$currentUserIsAdmin && !$draft->draft_visible && $password != $draft->draft_password) {
+      $draft->is_locked = true;
+      $draft = $this->ProtectPrivateDraft($draft);
+    }
+
+    unset($draft->draft_password);
 
     return $draft;
   }

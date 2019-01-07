@@ -7,7 +7,6 @@ use PhpDraft\Domain\Entities\LoginUser;
 use PhpDraft\Domain\Entities\Draft;
 use PhpDraft\Domain\Models\PhpDraftResponse;
 use Symfony\Component\Security\Core\Util\StringUtils;
-use Egulias\EmailValidator\EmailValidator;
 
 class DraftValidator {
   private $app;
