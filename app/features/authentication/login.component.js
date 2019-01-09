@@ -1,14 +1,20 @@
 class LoginController {
-  constructor($q, $scope, api, messageService, workingModalService,
-    authenticationService, pathHelperService, errorService) {
+  constructor($q, $scope, $routeParams, $rootScope, subscriptionKeys, api, messageService, workingModalService,
+    authenticationService, pathHelperService, errorService, draftService) {
     this.$q = $q;
     this.$scope = $scope;
+    this.$routeParams = $routeParams;
+    this.$rootScope = $rootScope;
+    this.subscriptionKeys = subscriptionKeys;
     this.api = api;
     this.messageService = messageService;
     this.workingModalService = workingModalService;
     this.authenticationService = authenticationService;
     this.pathHelperService = pathHelperService;
     this.errorService = errorService;
+    this.draftService = draftService;
+
+    this.setupOnetimeRouteChangeListener = this.setupOnetimeRouteChangeListener.bind(this);
   }
 
   $onInit() {
@@ -18,6 +24,8 @@ class LoginController {
       this.authenticationService.sendAuthenticatedUserToPreviousPath();
       return;
     }
+
+    this.setupOnetimeRouteChangeListener();
   }
 
   passwordInputType() {
@@ -66,17 +74,36 @@ class LoginController {
 
     loginResult.promise.then(loginSuccessHandler, loginFailureHandler);
   }
+
+  //Once we login, wait and see if the next route has a draft_id, if so, ask the draftService to get it from the server again
+  setupOnetimeRouteChangeListener() {
+    const deregister = this.$rootScope.$on(this.subscriptionKeys.routeChangeSuccess, () => {
+      const draftId = this.$routeParams.draft_id;
+      const routeHasDraft = angular.isDefined(draftId) && draftId !== null;
+
+      //In the weird instance we need to make sure a cached draft is reloaded BUT we weren't sent back to a draft-related page,
+      //we need the draft service to remember this just this once and force another trip back to the server for us.
+      this.draftService.setReloadFlag();
+
+      if (routeHasDraft) this.$rootScope.$broadcast(this.subscriptionKeys.routeHasDraft, {hasDraft: true, needsReloaded: true});
+      deregister();
+    });
+  }
 }
 
 LoginController.$inject = [
   '$q',
   '$scope',
+  '$routeParams',
+  '$rootScope',
+  'subscriptionKeys',
   'api',
   'messageService',
   'workingModalService',
   'authenticationService',
   'pathHelperService',
   'errorService',
+  'draftService',
 ];
 
 angular.module('phpdraft.authentication').component('phpdLogin', {

@@ -25,6 +25,7 @@ class DraftService {
     this.timerInstance = null;
     this.apiCallInProgress = false;
     this.pollingIntervalMs = 2750;
+    this.forcedReloadRequired = false;
     this.draftStatus = {
       loading: false,
       error: false,
@@ -38,10 +39,15 @@ class DraftService {
     this._draftErrorHandler = this._draftErrorHandler.bind(this);
 
     this.deregister = this.$rootScope.$on(this.subscriptionKeys.routeHasDraft, (event, args) => {
-      const {hasDraft} = args;
+      const {hasDraft, needsReloaded} = args;
       const draftIdChanged = this.draftId !== this.$routeParams.draft_id;
+      const forceReload = angular.isDefined(needsReloaded) && needsReloaded;
 
-      if (hasDraft === false || draftIdChanged) {
+      if (forceReload) {
+        this.getDraft(true).then(draft => {
+          this.$rootScope.$broadcast(this.subscriptionKeys.draftCounterHasChanged, {draft, status: this.draftStatus})
+        });
+      } else if (hasDraft === false || draftIdChanged) {
         this.activeComponents = 0;
         this._stopPollingForData();
       } else {
@@ -54,14 +60,22 @@ class DraftService {
   /**
    * Method components use in order to grab a reference to the current (by the route params) draft. Runs a single time (to completion once, short circuited for multiple component calls)
    */
-  getDraft() {
+  getDraft(forced) {
     this.activeComponents++;
     this.defer = this.$q.defer();
 
+    //On login (and when we are sent back)
+    const forcedReload = angular.isDefined(forced) && forced || this.forcedReloadRequired;
+
     //If we've already received the draft, we can stop here and pass back the draft reference for this component call
-    if (this.draft !== null && this.draft.draft_id === this.$routeParams.draft_id) {
+    if (forcedReload === false && this.draft !== null && this.draft.draft_id === this.$routeParams.draft_id) {
       this.defer.resolve(this.draft);
+      this.setupPollingAfterLoad();
       return this.defer.promise;
+    }
+
+    if (forcedReload) {
+      this.forcedReloadRequired = false;
     }
 
     //If there's already an api call in progress, lets re-check every second to see if the draft has been populated before giving up
@@ -113,24 +127,34 @@ class DraftService {
       this.lodash.merge(this.draft, draftInMemory);
       this.lastDraftCounter = this.draft.draft_counter;
 
-      //Complete drafts are the only kind of draft that do not poll for updates.
-      if (this.draft.complete === true) {
-        this._stopPollingForData();
-      } else {
-        this._startPollingForData();
-      }
-
-      if (this.draft.is_locked === true) {
-        this._stopPollingForData();
-        this.draftStatus.valid = false;
-        this.$rootScope.$broadcast(this.subscriptionKeys.showPasswordModal);
-      }
+      this.setupPollingAfterLoad();
 
       this.defer.resolve(this.draft);
 
     }, this._draftErrorHandler);
 
     return this.defer.promise;
+  }
+
+  setReloadFlag() {
+    this.forcedReloadRequired = true;
+  }
+
+  //When a user returns to a draft page after leaving, the short-circuit of the draft load prevents an
+  //unnecessary server call, but stops the polling from being set up again.
+  setupPollingAfterLoad() {
+    //Complete drafts are the only kind of draft that do not poll for updates.
+    if (this.draft.complete === true) {
+      this._stopPollingForData();
+    } else {
+      this._startPollingForData();
+    }
+
+    if (this.draft.is_locked === true) {
+      this._stopPollingForData();
+      this.draftStatus.valid = false;
+      this.$rootScope.$broadcast(this.subscriptionKeys.showPasswordModal);
+    }
   }
 
   /**
