@@ -1,7 +1,7 @@
 class EditProfileController {
   constructor($sessionStorage, $location,
     authenticationService, api, workingModalService, messageService,
-    subscriptionKeys, errorService, pathHelperService) {
+    subscriptionKeys, errorService, pathHelperService, lodash) {
     this.$sessionStorage = $sessionStorage;
     this.$location = $location;
     this.authenticationService = authenticationService;
@@ -11,6 +11,7 @@ class EditProfileController {
     this.subscriptionKeys = subscriptionKeys;
     this.errorService = errorService;
     this.pathHelperService = pathHelperService;
+    this.lodash = lodash;
   }
 
   $onInit() {
@@ -22,7 +23,7 @@ class EditProfileController {
 
   loadUserProfileData() {
     const loadSuccess = data => {
-      angular.merge(this.userProfile, data);
+      this.lodash.merge(this.userProfile, data);
     };
 
     const errorHandler = () => {
@@ -112,6 +113,7 @@ EditProfileController.$inject = [
   'subscriptionKeys',
   'errorService',
   'pathHelperService',
+  'lodash',
 ];
 
 angular.module('phpdraft.authentication').component('phpdEditProfile', {

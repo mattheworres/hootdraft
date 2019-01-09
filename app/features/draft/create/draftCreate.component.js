@@ -7,7 +7,8 @@ class DraftCreateController {
     api,
     messageService,
     depthChartPositionService,
-    errorService) {
+    errorService,
+    lodash) {
     this.$scope = $scope;
     this.$loading = $loading;
     this.$window = $window;
@@ -17,6 +18,7 @@ class DraftCreateController {
     this.messageService = messageService;
     this.depthChartPositionService = depthChartPositionService;
     this.errorService = errorService;
+    this.lodash = lodash;
 
     this.onDepthChartPositionChanged = this.onDepthChartPositionChanged.bind(this);
   }
@@ -35,7 +37,7 @@ class DraftCreateController {
     this.draftError = false;
 
     const draftInitializeSuccess = data => {
-      angular.merge(this.draft, data);
+      this.lodash.merge(this.draft, this.lodash.omit(data, ['$resolved', '$promise']));
       this.draftLoading = false;
     };
 
@@ -157,6 +159,7 @@ DraftCreateController.$inject = [
   'messageService',
   'depthChartPositionService',
   'errorService',
+  'lodash',
 ];
 
 angular.module('phpdraft.draft').component('phpdDraftCreate', {

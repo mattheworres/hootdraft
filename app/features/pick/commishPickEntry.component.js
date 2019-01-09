@@ -5,7 +5,8 @@ class CommishPickEntryController {
     pickService,
     api,
     limitToFilter,
-    subscriptionKeys) {
+    subscriptionKeys,
+    lodash) {
     this.$scope = $scope;
     this.$routeParams = $routeParams;
     this.messageService = messageService;
@@ -13,6 +14,7 @@ class CommishPickEntryController {
     this.api = api;
     this.limitToFilter = limitToFilter;
     this.subscriptionKeys = subscriptionKeys;
+    this.lodash = lodash;
 
     this.selectPlayer = this.selectPlayer.bind(this);
     this._add = this._add.bind(this);
@@ -37,7 +39,7 @@ class CommishPickEntryController {
     }
 
     if (currentPick && currentPick.isFirstChange()) {
-      this.currentPick = angular.merge({}, this.currentPick, currentPick.currentValue);
+      this.currentPick = this.lodash.merge({}, this.currentPick, currentPick.currentValue);
     }
 
     if (currentPick && currentPick.isFirstChange() === false) {
@@ -126,7 +128,7 @@ class CommishPickEntryController {
   selectPlayer(item) {
     item.selected = true;
     //Want to keep data about pick (round, pick #) as well as add player name, position, team, so merge not assignment:
-    this.currentPick = angular.merge({}, this.currentPick, item);
+    this.currentPick = this.lodash.merge({}, this.currentPick, item);
 
     delete this.playerSearch;
     this.playerSearch = '';
@@ -183,6 +185,7 @@ CommishPickEntryController.$inject = [
   'api',
   'limitToFilter',
   'subscriptionKeys',
+  'lodash',
 ];
 
 angular.module('phpdraft.pick').component('phpdCommishPickEntry', {
