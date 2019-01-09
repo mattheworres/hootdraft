@@ -1,7 +1,6 @@
 const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
 const cfg = require('../config');
-const webpack = require('webpack-stream');
 const streamqueue = require('streamqueue');
 const pump = require('pump');
 
