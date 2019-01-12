@@ -7,8 +7,8 @@
       <span class="icon-bar"></span>
     </button>
     <a class="navbar-brand main-brand" href="home">
-      <span class="hidden-sm hidden-md hidden-lg">PHP DRAFT</span>
-      <img class="hidden-xs" src="images/text_logo.png" alt="PHP Draft" />
+      <span class="hidden-sm hidden-md hidden-lg">HOOT DRAFT</span>
+      <img class="hidden-xs" src="images/text_logo.png" alt="Hoot Draft" />
     </a>
   </div>
   <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
@@ -44,6 +44,12 @@
         <a href="commish/draft/create" ng-click="navCollapsed = !navCollapsed">
           <i class="fa fa-plus"></i>&nbsp;&nbsp;
           New League
+        </a>
+      </li>
+      <li ng-show="$ctrl.isAuthenticated()">
+        <a href="#" ng-click="$ctrl.showInviteUserModal(); navCollapsed = !navCollapsed">
+          <i class="fa fa-envelope-o"></i>
+          &nbsp;Invite A Friend
         </a>
       </li>
       <li ng-show="$ctrl.isAdmin()" uib-dropdown>

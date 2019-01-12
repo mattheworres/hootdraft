@@ -6,6 +6,7 @@ use \Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use PhpDraft\Domain\Models\UserProfile;
+use PhpDraft\Domain\Entities\LoginUser;
 use PhpDraft\Domain\Models\PhpDraftResponse;
 
 class UserProfileController {
@@ -27,6 +28,26 @@ class UserProfileController {
     }
 
     $response = $app['phpdraft.LoginUserService']->UpdateUserProfile($request);
+
+    return $app->json($response, $response->responseType());
+  }
+
+  public function InviteNewCommissioner(Application $app, Request $request) {
+    $user = new LoginUser();
+
+    $user->enabled = 0;
+    $user->email = $request->get('email');
+    $user->name = $request->get('name');
+
+    $message = $request->get('message');
+
+    $validity = $app['phpdraft.LoginUserValidator']->isInviteNewUserValid($user, $message);
+
+    if (!$validity->success) {
+      return $app->json($validity, $validity->responseType());
+    }
+
+    $response = $app['phpdraft.UsersService']->InviteNewUser($user, $message);
 
     return $app->json($response, $response->responseType());
   }

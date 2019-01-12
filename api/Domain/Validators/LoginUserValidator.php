@@ -52,6 +52,38 @@ class LoginUserValidator {
     return $this->app['phpdraft.ResponseFactory']($valid, $errors);
   }
 
+  public function isInviteNewUserValid(LoginUser $user, $message) {
+    $valid = true;
+    $errors = array();
+
+    $emailAddress = $user->email;
+    $name = $user->name;
+
+    if (empty($emailAddress)
+      || empty($name)) {
+      $errors[] = "One or more missing fields.";
+      $valid = false;
+    }
+
+    $this->validateNameLength($name, $errors, $valid);
+
+    $this->validateEmailAddress($emailAddress, $errors, $valid);
+
+    if (strlen($message) > 255) {
+      $errors[] = "Message too long";
+      $valid = false;
+    }
+
+    if (!$this->app['phpdraft.LoginUserRepository']->NameIsUnique($name)) {
+      $errors[] = "Name already taken.";
+      $valid = false;
+    }
+
+    $this->validateUniqueEmail($emailAddress, $errors, $valid);
+
+    return $this->app['phpdraft.ResponseFactory']($valid, $errors);
+  }
+
   public function IsVerificationValid(Request $request) {
     $valid = true;
     $errors = array();

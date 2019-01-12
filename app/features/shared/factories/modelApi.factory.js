@@ -32,6 +32,8 @@ angular.module('phpdraft.shared').factory('api', ($resource, ENV) =>
         {method: 'GET', url: `${ENV.apiEndpoint}commish/profile`},
       'setProfile':
         {method: 'PUT', url: `${ENV.apiEndpoint}commish/profile`},
+      'invite':
+        {method: 'POST', url: `${ENV.apiEndpoint}commish/user/invite`},
     }),
     // TODO: Rename all snake_case variables here and in frontend to camelCase
     Commish: $resource(`${ENV.apiEndpoint}commissioners/:commish_id`, {commish_id: '@commish_id'}, {
@@ -57,7 +59,7 @@ angular.module('phpdraft.shared').factory('api', ($resource, ENV) =>
         {method: 'GET', url: `${ENV.apiEndpoint}drafts/:commish_id`, isArray: true},
       'getStats':
         {method: 'GET', url: `${ENV.apiEndpoint}draft/:draft_id/stats`},
-      'getTimeRemaining':///draft/{draft_id}/timer/remaining
+      'getTimeRemaining': ///draft/{draft_id}/timer/remaining
         {method: 'GET', url: `${ENV.apiEndpoint}draft/:draft_id/timer/remaining`},
 
       'getCreate':

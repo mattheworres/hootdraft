@@ -12,11 +12,14 @@ class EditProfileController {
     this.errorService = errorService;
     this.pathHelperService = pathHelperService;
     this.lodash = lodash;
+
+    this.loading = true;
   }
 
   $onInit() {
     this.showPassword = false;
     this.userProfile = {};
+    this.loading = true;
 
     this.loadUserProfileData();
   }
@@ -24,10 +27,12 @@ class EditProfileController {
   loadUserProfileData() {
     const loadSuccess = data => {
       this.lodash.merge(this.userProfile, data);
+      this.loading = false;
     };
 
     const errorHandler = () => {
       this.messageService.showError('Unable to load user profile');
+      this.loading = false;
     };
 
     this.api.Authentication.getProfile({}, loadSuccess, errorHandler);

@@ -55,3 +55,11 @@ $app['phpdraft.DepthChartPositionService'] = function() use ($app) {
 $app['phpdraft.DatabaseCacheService'] = function() use ($app) {
   return new \PhpDraft\Domain\Services\DatabaseCacheService($app);
 };
+
+$app['phpdraft.UsersService'] = function() use ($app) {
+  return new \PhpDraft\Domain\Services\UsersService($app);
+};
+
+$app['phpdraft.TemplateRenderService'] = function() {
+  return new \PhpDraft\Domain\Services\TemplateRenderService();
+};

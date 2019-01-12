@@ -35,12 +35,24 @@ class EmailService {
     }
 
     $this->mailer->From = MAIL_USER;
-    $this->mailer->FromName = 'PHPDraft System';
+    $this->mailer->FromName = 'Hoot Draft';
   }
 
   public function SendMail(MailMessage $message) {
     foreach ($message->to_addresses as $address => $name) {
       $this->mailer->addAddress($address, $name);
+    }
+
+    if (count($message->cc_addresses) > 0) {
+      foreach($message->cc_addresses as $address => $name) {
+        $this->mailer->addCC($address, $name);
+      }
+    }
+
+    if (count($message->bcc_addresses) > 0) {
+      foreach($message->bcc_addresses as $address => $name) {
+        $this->mailer->addBCC($address, $name);
+      }
     }
 
     $this->mailer->isHTML($message->is_html);

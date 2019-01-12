@@ -1,4 +1,4 @@
-class ResetPasswordController {
+class InviteSetupController {
   constructor($q, ENV, $routeParams, messageService,
     workingModalService, authenticationService, $location, errorService) {
     this.$q = $q;
@@ -59,16 +59,16 @@ class ResetPasswordController {
   }
 
   submitClicked() {
-    if (this.form.$valid) {
-      this.resetPassword();
+    if (this.setFormIsInvalid() === false) {
+      this.setPassword();
     }
   }
 
-  resetFormIsInvalid() {
-    return this.resetInProgress || !this.form.$valid;
+  setFormIsInvalid() {
+    return this.setInProgress || !this.form.$valid;
   }
 
-  resetPassword() {
+  setPassword() {
     this.workingModalService.openModal();
 
     const resetModel = {
@@ -78,14 +78,14 @@ class ResetPasswordController {
       _confirmPassword: this.form.confirmedPassword.$viewValue,
     };
 
-    this.resetInProgress = true;
+    this.setInProgress = true;
 
-    const resetResult = this.authenticationService.resetPassword(resetModel);
+    const setResult = this.authenticationService.resetPassword(resetModel);
 
     this.messageService.closeToasts();
 
-    const resetSuccessHandler = data => {
-      this.resetInProgress = false;
+    const setSuccessHandler = data => {
+      this.setInProgress = false;
       this.workingModalService.closeModal();
 
       this.form.$setPristine();
@@ -97,20 +97,20 @@ class ResetPasswordController {
       this.messageService.showInfo('Your password has been set and you\'ve been logged in. Welcome!');
     };
 
-    const resetFailureHandler = response => {
-      this.resetInProgress = false;
+    const setFailureHandler = response => {
+      this.setInProgress = false;
       this.workingModalService.closeModal();
 
-      const resetError = this.errorService.parseValidationErrorsFromResponse(response);
+      const setError = this.errorService.parseValidationErrorsFromResponse(response);
 
-      this.messageService.showError(`${resetError}`, 'Unable to Reset Password');
+      this.messageService.showError(`${setError}`, 'Unable to Set Password');
     };
 
-    resetResult.promise.then(resetSuccessHandler, resetFailureHandler);
+    setResult.promise.then(setSuccessHandler, setFailureHandler);
   }
 }
 
-ResetPasswordController.$inject = [
+InviteSetupController.$inject = [
   '$q',
   'ENV',
   '$routeParams',
@@ -121,7 +121,7 @@ ResetPasswordController.$inject = [
   'errorService',
 ];
 
-angular.module('phpdraft.authentication').component('phpdResetPassword', {
-  controller: ResetPasswordController,
-  templateUrl: 'app/features/authentication/resetPassword.component.html',
+angular.module('phpdraft.authentication').component('phpdInviteSetup', {
+  controller: InviteSetupController,
+  templateUrl: 'app/features/authentication/inviteSetup.component.html',
 });

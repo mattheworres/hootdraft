@@ -130,6 +130,7 @@ $app->put('/admin/user/{user_id}', "admin.users.controller:Update");
 $app->delete('/admin/user/{user_id}', "admin.users.controller:Delete");
 
 $app->get('/commish', "commish.index.controller:Index");
+$app->post('/commish/user/invite', "commish.profile.controller:InviteNewCommissioner");
 $app->get('/commish/profile', "commish.profile.controller:Get");
 $app->put('/commish/profile', "commish.profile.controller:Put");
 

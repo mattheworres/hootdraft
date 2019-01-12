@@ -9,7 +9,8 @@
         "egulias/email-validator": "~2.1.7",
         "phpmailer/phpmailer": "~6.0",
         "google/recaptcha": "~1.1",
-        "phpfastcache/phpfastcache": "~7.0"
+        "phpfastcache/phpfastcache": "~7.0",
+        "twig/twig": " ^2.0"
     },
     "require-dev": {
         "monolog/monolog": "~1.13",

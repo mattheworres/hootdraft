@@ -6,7 +6,7 @@
     <div class="row">
       <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
       <div class="col-xs-12 col-sm-12 col-md-10">
-        <h2 class="text-center">Reset Password</h2>
+        <h2 class="text-center">Set Your Password</h2>
       </div>
       <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
     </div>
@@ -18,14 +18,13 @@
             <div class="row">
               <div class="col-xs-12">
                 <p class="text-justify">
-                  Hey there <strong>{{$ctrl.email}}</strong>. Heard about your "password situation" there, sounds rough.
+                  Welcome to Hoot Draft, <strong>{{$ctrl.email}}</strong>!
                 </p>
                 <p>
-                  I'm here to help in your time of need. Go ahead and think up a new password, then prove to me you can type, and I'll let you set that one.
+                  We&apos;re pretty laid back here, but not so laid back as to not use passwords and be all willy nilly with our data. Come on now.
                 </p>
-                <p>
-                  Just don't forget your password this time, OK chief?
-                </p>
+                <p>Now, you need to think of a good password. Not <b>too</b> good that you can't remember it, but still good.</p>
+                <p>Ok... Got one? Great. Let's see how well you remembered it.</p>
               </div>
             </div>
             <div class="row">
@@ -106,8 +105,8 @@
             </div>
             <div class="row">
               <div class="col-xs-12 text-center v-offset-2">
-                <button type="submit" class="btn btn-success btn-large" ng-click="$ctrl.submitClicked()" ng-submit="$ctrl.submitClicked()" ng-disabled="$ctrl.registerFormIsInvalid()">
-                  Reset Password&nbsp;
+                <button type="submit" class="btn btn-success btn-lg" ng-click="$ctrl.submitClicked()" ng-submit="$ctrl.submitClicked()" ng-disabled="$ctrl.registerFormIsInvalid()">
+                  Set Your Password&nbsp;
                   <i class="fa fa-key"></i>
                 </button>
               </div>
@@ -122,7 +121,7 @@
     <div class="row">
       <div class="col-xs-1 col-sm-2 col-md-3">&nbsp;</div>
       <div class="col-xs-10 col-sm-8 col-md-6">
-        <h2 class="text-center">Bad Reset Token</h2>
+        <h2 class="text-center">Bad Setup Token</h2>
         <p>
           Whoops...
         </p>
@@ -130,14 +129,17 @@
           Looks like the email/token combo you have there is no good. No worries though - this can happen from time to time.
         </p>
         <p class="text-justify">
-          For user security, whenever a token is used to successfully reset a password, or whenever a user logs in successfully
-          (whichever comes first), we get rid of that token forever and ever so bad guys can't use it to steal your account.
+          For user security, whenever we use a token to let you set or change your password, we get rid of that token forever
+          and ever so bad guys can't use it to steal your account.
         </p>
         <p class="text-justify">
           Hitler was a bad guy. You don't want Hitler to steal your account, do you? We didn't think so.
         </p>
         <p class="text-justify">
-          If you still need to reset your password, though &ndash; <strong><a href="lostPassword">you can start the reset process over again</a></strong>.
+          Fear not, friend: you can &ndash; <strong><a href="lostPassword">request a password reset</a> to set your password</strong> (just enter <em>{{$ctrl.email}}</em> as your email).
+        </p>
+        <p class="text-justify">
+          If you keep hitting these issues, please <a href="mailto:support@phpdraft.com">reach out</a> or reach me on Twitter: <a href="https://twitter.com/mattheworres" class="alert-link">@mattheworres</a>
         </p>
       </div>
       <div class="col-xs-1 col-sm-2 col-md-3">&nbsp;</div>

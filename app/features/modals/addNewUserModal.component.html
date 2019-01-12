@@ -1,0 +1,102 @@
+<div class="modal-header">
+  <h2>Invite New User</h2>
+</div>
+<div class="modal-body form-horizontal">
+  <div class="row">
+    <div class="col-xs-12">
+      <h4>Have a pal that you want to start using Hoot Draft? Great, invite them to start drafting today!</h4>
+    </div>
+  </div>
+  <form class="v-offset-2" name="$ctrl.form">
+    <fieldset>
+      <div class="row">
+        <div class="col-xs-12 v-offset-2">
+          <div class="form-group" show-errors>
+            <div class="col-xs-3 text-right text-right">
+              <label class="control-label" for="email">
+                <span class="text-danger">*</span>&nbsp;Email
+              </label>
+            </div>
+            <div class="col-xs-8">
+              <input name="email"
+                ng-model="$ctrl.newUser.email"
+                autocomplete="username"
+                type="email"
+                class="form-control"
+                maxlength="255"
+                ng-required="true"
+                placeholder="Email" />
+              <div ng-show="$ctrl.form.$submitted || $ctrl.form.email.$touched">
+                <span ng-show="$ctrl.form.email.$error.required" class="help-block">Email is missing</span>
+                <span ng-show="$ctrl.form.email.$error.email" class="help-block">Email is invalid</span>
+                <span ng-show="$ctrl.form.email.$error.maxlength" class="help-block">Email is too long</span>
+              </div>
+            </div>
+            <div class="col-xs-1 text-center">
+              <i class="fa fa-info-circle" uib-tooltip="You must choose an email that hasn't been used for other commish accounts." tooltip-trigger="mouseenter"  tooltip-append-to-body="true"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 v-offset-2">
+          <div class="form-group" show-errors>
+            <div class="col-xs-3 text-right">
+              <label class="control-label" for="name">
+                <span class="text-danger">*</span>&nbsp;Name
+              </label>
+            </div>
+            <div class="col-xs-8">
+              <input name="name"
+                ng-model="$ctrl.newUser.name"
+                autocomplete="nickname"
+                class="form-control"
+                maxlength="255"
+                ng-required="true"
+                placeholder="Your friend's name" />
+              <div ng-show="$ctrl.form.$submitted || $ctrl.form.name.$touched">
+                <span ng-show="$ctrl.form.name.$error.required" class="help-block">Name is missing</span>
+                <span ng-show="$ctrl.form.name.$error.minlength" class="help-block">Name is too short</span>
+                <span ng-show="$ctrl.form.name.$error.maxlength" class="help-block">Name is too long</span>
+              </div>
+            </div>
+            <div class="col-xs-1 text-center">
+              <i class="fa fa-info-circle" uib-tooltip="Choose a nickname for your pal - don't worry they can change it once they finish the sign up process." tooltip-trigger="mouseenter" tooltip-append-to-body="true"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 v-offset-2">
+          <div class="form-group" show-errors>
+            <div class="col-xs-3 text-right">
+              <label class="control-label" for="name">
+                &nbsp;Message (optional)
+              </label>
+            </div>
+            <div class="col-xs-8">
+              <input name="message"
+                ng-model="$ctrl.newUser.message"
+                class="form-control"
+                maxlength="255"
+                placeholder="Let your pal know why you're inviting them here..." />
+            </div>
+            <div class="col-xs-1 text-center">
+              <i class="fa fa-info-circle" uib-tooltip="You don't want them to ignore the email - tell them why you're inviting them to use the app!" tooltip-trigger="mouseenter" tooltip-append-to-body="true"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button"
+    class="btn btn-success"
+    ng-click="$ctrl.inviteUser()"
+    ng-submit="$ctrl.inviteUser()"
+    ng-disabled="$ctrl.formIsInvalid()">Invite</button>
+  <button type="button"
+    class="btn btn-default"
+    ng-click="$parent.$close()">Cancel</button>
+</div>

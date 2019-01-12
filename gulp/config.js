@@ -67,7 +67,6 @@ module.exports = {//Is this here?
         'node_modules/angular-recaptcha/release/angular-recaptcha.js',
         'node_modules/angular-toggle-switch/angular-toggle-switch.js',
         'node_modules/angular-validation-match/dist/angular-validation-match.js',
-        'node_modules/@bower_components/ng-caps-lock/ng-caps-lock.js',
         'node_modules/moment/moment.js',
         'node_modules/angular-moment/angular-moment.js',
         'node_modules/angular-ordinal/ordinal-browser.js',
