@@ -30,15 +30,17 @@ class VerifyAccountController {
 
     this.workingModalService.openModal(3100, 100);
 
-    const successHandler = () => {
+    const successHandler = data => {
       this.$timeout(() => {
         this.workingModalService.closeModal();
 
         this.showErrorInformation = false;
 
-        this.$location.path('/login');
+        this.authenticationService.cacheSession(data.data);
 
-        this.messageService.showInfo('Your account has been enabled - you may log in now');
+        this.$location.path('/home');
+
+        this.messageService.showInfo('Your account has been verified, and you are now logged in. Welcome!');
       }, 3500);
     };
 

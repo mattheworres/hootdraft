@@ -80,11 +80,10 @@ class EditProfileController {
         if (response.sendEmail === true) {
           this.messageService.showInfo('Your email was updated. In order to login again you must verify your email address. An email has been sent to that account to activate it. You will be logged out for now. See you soon!');
           this.$location.path('/home');
+        } else {
+          this.messageService.showInfo('Since you changed your password, we had to log you out and log you back in again. But no biggie - just enter your new password now to login again.');
+          this.$location.path('/login');
         }
-
-        this.messageService.showInfo('Since you changed your password, we had to log you out and log you back in again. But no biggie - just enter your new password now to login again.');
-        this.$location.path('/login');
-
       }
 
       if (this.$sessionStorage.user_name !== this.userProfile.name) {

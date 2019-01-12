@@ -99,10 +99,6 @@
   version "2.2.0"
   resolved "https://codeload.github.com/machito/animate.less/tar.gz/76d59ab2726d92ed842dda35ae97a469cbc443e0"
 
-"@bower_components/ng-caps-lock@FabioMR/ng-caps-lock#~1.0.2":
-  version "0.0.0"
-  resolved "https://codeload.github.com/FabioMR/ng-caps-lock/tar.gz/366cd5a6fcca736df53f1b1b882ef34645d58f1e"
-
 "@bower_components/ng-lodash@rockabox/ng-lodash#~0.4.0":
   version "0.4.0"
   resolved "https://codeload.github.com/rockabox/ng-lodash/tar.gz/578ebcd5bb6ec0b3cafdd487efe7a865c6358eda"
@@ -424,13 +420,14 @@ angular-async-await@^1.1.2:
   resolved "https://registry.yarnpkg.com/angular-async-await/-/angular-async-await-1.1.2.tgz#e493da869c791ecb2a48fd27a5f4ec6366003cdf"
   integrity sha1-5JPahpx5HssqSP0npfTsY2YAPN8=
 
-angular-datatables@0.5.4:
-  version "0.5.4"
-  resolved "https://registry.yarnpkg.com/angular-datatables/-/angular-datatables-0.5.4.tgz#deb9023b09f1ecf630cf46937090b9f3cc3472bf"
-  integrity sha1-3rkCOwnx7PYwz0aTcJC588w0cr8=
+angular-datatables@0.6.4:
+  version "0.6.4"
+  resolved "https://registry.yarnpkg.com/angular-datatables/-/angular-datatables-0.6.4.tgz#370f3d000dc7f025bb10f4be13424123731d664f"
+  integrity sha512-c+pODkVd18ZKyJ1RJeu+uqV4IviEAG+a0OgXLDRdDRyqfREEGdi02wg0f3u79+CpjY8vYRGYv36MsAuQf6SQyA==
   dependencies:
-    angular ">=1.3.0"
-    datatables ">=1.10.0"
+    angular ">=1.7.0"
+    datatables.net "^1.10.11"
+    datatables.net-dt "^1.10.11"
     jquery ">=1.11.0"
 
 angular-drag-and-drop-lists@~1.4.0:
@@ -504,7 +501,7 @@ angular-validation-match@~1.7.1:
   dependencies:
     angular ">=1.3.0 <2.0.0"
 
-angular@>=1.3.0, "angular@>=1.3.0 <2.0.0", angular@~1.7.5:
+"angular@>=1.3.0 <2.0.0", angular@>=1.7.0, angular@~1.7.5:
   version "1.7.5"
   resolved "https://registry.yarnpkg.com/angular/-/angular-1.7.5.tgz#d1c1c01c6f5dc835638f3f9aa51012857bdac49e"
   integrity sha512-760183yxtGzni740IBTieNuWLtPNAoMqvmC0Z62UoU0I3nqk+VJuO3JbQAXOyvo3Oy/ZsdNQwrSTh/B0OQZjNw==
@@ -2336,7 +2333,22 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
-datatables@>=1.10.0, datatables@>=1.10.9:
+datatables.net-dt@^1.10.11:
+  version "1.10.19"
+  resolved "https://registry.yarnpkg.com/datatables.net-dt/-/datatables.net-dt-1.10.19.tgz#fc668e4942ac6e331be2707975d0f33e01afb60f"
+  integrity sha512-joFHYjLYvr9VnC9Fx3e+8jtXnQ/fP/mPFWt9p0NhZ3Zm5N0jlYyWhJQbnLkihOLuDcDFMaGdBQSvmIdTVdgGyw==
+  dependencies:
+    datatables.net "1.10.19"
+    jquery ">=1.7"
+
+datatables.net@1.10.19, datatables.net@^1.10.11:
+  version "1.10.19"
+  resolved "https://registry.yarnpkg.com/datatables.net/-/datatables.net-1.10.19.tgz#97a1ed41c85e62d61040603481b59790a172dd1f"
+  integrity sha512-+ljXcI6Pj3PTGy5pesp3E5Dr3x3AV45EZe0o1r0gKENN2gafBKXodVnk2ypKwl2tTmivjxbkiqoWnipTefyBTA==
+  dependencies:
+    jquery ">=1.7"
+
+datatables@>=1.10.9:
   version "1.10.18"
   resolved "https://registry.yarnpkg.com/datatables/-/datatables-1.10.18.tgz#fee16e82aa70b17c5faf1a6954ac68f404f33a70"
   integrity sha512-ntatMgS9NN6UMpwbmO+QkYJuKlVeMA2Mi0Gu/QxyIh+dW7ZjLSDhPT2tWlzjpIWEkDYgieDzS9Nu7bdQCW0sbQ==

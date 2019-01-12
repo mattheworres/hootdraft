@@ -41,7 +41,7 @@ class UsersService {
       );
 
       $mailMessage->subject = "$inviter->name invited you to use Hoot Draft!";
-      $mailMessage->body = $this->app['phpdraft.TemplateRenderService']->RenderTemplate('UserInvite.html', $emailParameters);;
+      $mailMessage->body = $this->app['phpdraft.TemplateRenderService']->RenderTemplate('UserInvite.html', $emailParameters);
       $mailMessage->is_html = true;
 
       $this->app['phpdraft.EmailService']->SendMail($mailMessage);

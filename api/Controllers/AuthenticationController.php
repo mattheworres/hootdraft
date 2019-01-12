@@ -100,6 +100,11 @@ class AuthenticationController
 
     $response = $app['phpdraft.LoginUserService']->VerifyUser($user);
 
+    if ($response->success) {
+      $loginUser = $app['users']->loadUserByUsername($email);
+      $response = $app['phpdraft.LoginUserService']->SetAuthenticationObjectValuesOnLogin($response, $loginUser);
+    }
+
     return $app->json($response, $response->responseType());
   }
 

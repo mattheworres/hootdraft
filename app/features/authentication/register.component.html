@@ -124,7 +124,7 @@
                       ng-required="true"
                       placeholder="Confirm your password"
                       match="user.password" />
-                    <div ng-show="$ctrl.form.$submitted || $ctrl.form.password.$touched">
+                    <div ng-show="$ctrl.form.$submitted || $ctrl.form.confirmedPassword.$touched">
                       <span ng-show="$ctrl.form.confirmedPassword.$error.required" class="help-block">You must confirm your password</span>
                       <span ng-show="$ctrl.form.confirmedPassword.$error.match" class="help-block">Passwords do not match.</span>
                     </div>
