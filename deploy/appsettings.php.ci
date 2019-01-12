@@ -1,5 +1,5 @@
 <?php
-//PHPDraft Application Settings
+//HootDraft Application Settings
 
 $configuration_variables = array(
   'DB_DRIVER' => 'pdo_mysql',

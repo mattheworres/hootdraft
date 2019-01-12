@@ -37,7 +37,7 @@ class ByCommishController {
   }
 
   getSingleCommish(commishId) {
-    this.api.Commish.get({commishId}).$promise
+    this.api.Commish.get({commish_id: commishId}).$promise
       .then(data => {
         this.$scope.commishName = data.commissioner.name;
       }).catch(() => {
@@ -71,7 +71,7 @@ class ByCommishController {
       this.messageService.showError('Unable to load drafts');
     };
 
-    this.api.Draft.getDraftsByCommish({commishId}, draftSuccessHandler, errorHandler);
+    this.api.Draft.getDraftsByCommish({commish_id: commishId}, draftSuccessHandler, errorHandler);
   }
 
   setupDatatable() {

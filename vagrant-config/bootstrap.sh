@@ -40,6 +40,9 @@ echo Set User Permissions
 sed -i 's/user = www-data/user = vagrant/g' /etc/php/7.2/fpm/pool.d/www.conf
 sed -i 's/group = www-data/group = vagrant/g' /etc/php/7.2/fpm/pool.d/www.conf
 
+echo Display PHP errors
+sed -i 's/display_errors = Off/display_errors = On/g' /etc/php/7.2/fpm/php.ini
+
 echo Remove apache2
 service apache2 stop  >/dev/null
 apt-get -y remove apache2  >/dev/null
@@ -70,7 +73,7 @@ quietRun systemctl restart mysql.service || echo "Restart MySQL"
 quietRun systemctl restart php7.1-fpm.service || echo "Restart PHP-FPM"
 quietRun systemctl restart nginx.service || echo "Restart Nginx"
 
-echo Creating PHPDraft database
+echo Creating HootDraft database
 #runuser -l vagrant -c 'mysqladmin -u root -ppassw0rd create phpdraft'
 quietRun mysqladmin -u root -ppassw0rd create phpdraft
 

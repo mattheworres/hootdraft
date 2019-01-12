@@ -1,7 +1,7 @@
 <?php
 namespace Deployer;
 
-desc('PHP Draft: Deploy to production');
+desc('Hoot Draft: Deploy to production');
 task('deploy', [
   'phpdraft:verify_install',
   'deploy:prepare',
@@ -22,7 +22,7 @@ before('deploy:release', 'phpdraft:set_rollback');
 after('deploy:failed', 'phpdraft:rollback');
 after('deploy:failed', 'phpdraft:failure');
 
-desc('Verify PHP Draft has been prepared for deployment');
+desc('Verify Hoot Draft has been prepared for deployment');
 task('phpdraft:verify_install', function() {
   writeln('');
 
@@ -39,11 +39,11 @@ task('phpdraft:verify_install', function() {
       writeln("<error>File or directory $file does not exist, cannot deploy.</error>\n");
       writeln("<comment>Ensure you have downloaded a compiled release from https://github.com/mattheworres/phpdraft/releases</comment>\n");
       writeln("<comment>Or, if you are building from sourcecode, consult the wiki on how to properly prepare a release.</comment>\n");
-      throw new \Exception("PHP Draft has not been properly prepared for deployment.");
+      throw new \Exception("Hoot Draft has not been properly prepared for deployment.");
     }
   }
 
-  writeln('<info>PHP Draft is ready for deployment!</info>');
+  writeln('<info>Hoot Draft is ready for deployment!</info>');
 })->setPrivate();
 
 desc('Upload app files');

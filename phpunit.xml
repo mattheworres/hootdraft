@@ -8,7 +8,7 @@
          processIsolation="false"
          stopOnFailure="false">
     <testsuites>
-        <testsuite name="PHPDraft Test Suite">
+        <testsuite name="HootDraft Test Suite">
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>

@@ -1,4 +1,4 @@
-![PHP Draft](/images/logo_xlarge.png?raw=true "PHP Draft")
+![Hoot Draft](/images/logo_xlarge.png?raw=true "Hoot Draft")
 
 <a href="https://codeclimate.com/github/mattheworres/phpdraft"><img src="https://codeclimate.com/github/mattheworres/phpdraft/badges/gpa.svg" /></a>
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/mattheworres/phpdraft/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/mattheworres/phpdraft/?branch=master)
@@ -6,7 +6,7 @@
 [![Join the chat at https://gitter.im/mattheworres/phpdraft](https://badges.gitter.im/mattheworres/phpdraft.svg)](https://gitter.im/mattheworres/phpdraft?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 
-PHP Draft allows commissioners to setup web-based real-time drafts for their fantasy sports leagues. If your leagues do **offline drafts** (instead of using your fantasy provider's online drafting tools), PHP Draft is just for you!
+Hoot Draft allows commissioners to setup web-based real-time drafts for their fantasy sports leagues. If your leagues do **offline drafts** (instead of using your fantasy provider's online drafting tools), Hoot Draft is just for you!
 
 The league commissioner creates an account, and then adds the fantasy league.
 
@@ -27,14 +27,14 @@ Don't know how to install a web app or run a web server? No problem:
 ##### Sign up for a free commissioner account on [phpdraft.com](https://phpdraft.com) and get drafting today!
 
 ### Minimum Server Requirements
-- PHP 5.5.9+ installed (with `mcrypt` and `pdo_mysql` extension installed; PHP 7.x recommended!)
-- MySQL 5.5+ database
+- PHP 7.0+ installed (with `mcrypt` and `pdo_mysql` extension installed; PHP 7.1+ recommended!)
+- MySQL 5.6+ database
 - Webserver that can perform URL rewrites (Apache, IIS, or NGINX currently, possibly more in the future)
 - SMTP mail account (for user registration/password resets)
 - Google reCAPTCHA 2 site key (public and private - used to verify new user registration)
 - OPTIONAL (but recommended): SSL certificate installed for your domain (for enhanced user privacy/security)
 
-## Installing PHP Draft
+## Installing Hoot Draft
 
 See [Installation instructions](https://github.com/mattheworres/phpdraft/wiki/Installing-PHP-Draft) for detailed installation instructions.
 
@@ -50,13 +50,13 @@ Or, just hit me up on [Twitter](https://twitter.com/mattheworres) and let me kno
 
 Check out the [Issues](https://github.com/mattheworres/phpdraft/issues) tab on the Github project. Search the issues (open and closed) for some help, or enter a new issue!
 
-You can also enter the project's [Gitter](https://gitter.im/mattheworres/phpdraft) chat room for help from me or other PHP Draft users!
+You can also enter the project's [Gitter](https://gitter.im/mattheworres/phpdraft) chat room for help from me or other Hoot Draft users!
 
 You can also hit me up on [Twitter](https://twitter.com/mattheworres) if you're having trouble. No promises on the return time.
 
 ## Contributing & custom development
 
-See the [Developing wiki page](https://github.com/mattheworres/phpdraft/wiki/Developing) if you are interested in developing or making custom changes to your PHP Draft.
+See the [Developing wiki page](https://github.com/mattheworres/phpdraft/wiki/Developing) if you are interested in developing or making custom changes to your Hoot Draft.
 
 If you come up with something that others may find worthwhile - please fork this repository and submit a pull request. I provide this code (and the hundreds of hours of my personal time I've poured into the project) free of charge under an open source license without any expectation of payment or even gratitude. I do it to help a few folks out, and to return the favor I ask that you help pass it on :)
 
