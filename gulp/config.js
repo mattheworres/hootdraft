@@ -52,6 +52,7 @@ module.exports = {//Is this here?
         'node_modules/angular/angular.js',
         'node_modules/slipjs/slip.js',
         'node_modules/FlipClock/compiled/flipclock.js',
+        'node_modules/angular-smart-table/dist/smart-table.js',
         'node_modules/datatables/media/js/jquery.dataTables.js',
         'node_modules/angular-datatables/dist/angular-datatables.js',
         'node_modules/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.js',

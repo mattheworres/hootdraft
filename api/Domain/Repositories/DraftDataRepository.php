@@ -109,8 +109,8 @@ class DraftDataRepository {
 
     $this->statuses = array(
       "undrafted" => "Setting Up",
-      "in_progress" => "Currently Drafting",
-      "complete" => "Draft Complete"
+      "in_progress" => "In Progress",
+      "complete" => "Completed"
     );
 
     //PHPD-70: FIX 3 INFIELD ISSUES WITH CSS CLASS NAMES:

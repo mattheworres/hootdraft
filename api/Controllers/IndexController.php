@@ -4,6 +4,7 @@ namespace PhpDraft\Controllers;
 
 use \Silex\Application;
 use Symfony\Component\HttpFoundation\Response;
+use PhpDraft\Domain\Models\PhpDraftResponse;
 
 class IndexController
 {
@@ -19,5 +20,16 @@ class IndexController
     return new Response($minified_css, 200, array(
         "Content-Type" => "text/css"
     ));
+  }
+
+  public function DraftOptions(Application $app) {
+    $sports = $app['phpdraft.DraftDataRepository']->GetSports();
+    $statuses = $app['phpdraft.DraftDataRepository']->GetStatuses();
+
+    $response = new PhpDraftResponse(true);
+    $response->sports = $sports;
+    $response->statuses = $statuses;
+
+    return $app->json($response, $response->responseType());
   }
 }

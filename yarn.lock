@@ -474,6 +474,11 @@ angular-sanitize@~1.7.5:
   resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.7.5.tgz#75d49e15071ca9c70581e76d20940f26372e24d2"
   integrity sha512-wjKCJOIwrkEvfD0keTnKGi6We13gtoCAQIHcdoqyoo3gwvcgNfYymVQIS3+iCGVcjfWz0jHuS3KgB4ysRWsTTA==
 
+angular-smart-table@^2.1.11:
+  version "2.1.11"
+  resolved "https://registry.yarnpkg.com/angular-smart-table/-/angular-smart-table-2.1.11.tgz#d0ca625f5bfb873bf3748ab861c82892e42ddfa2"
+  integrity sha512-8ZSGygQqVBkpPDzb0382ujK1eOr8fnePXpzq+sUBkUsvRaEgMeY6VoFpWmg106472mD6oMNXIW9+VDQKllXa0w==
+
 angular-strap@~2.3.12:
   version "2.3.12"
   resolved "https://registry.yarnpkg.com/angular-strap/-/angular-strap-2.3.12.tgz#fae21655cd77079671bf918ab7ed6227783062fa"

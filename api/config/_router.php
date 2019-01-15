@@ -120,6 +120,7 @@ $app->get('/draft/{draft_id}/trades', 'trade.controller:GetAll')->before($draftV
 $app->get('/draft/{draft_id}/timer/remaining', 'roundtime.controller:GetTimeRemaining')->before($draftViewable)->before($draftInProgress);
 
 $app->get('/style', "index.controller:Style");
+$app->get('/draftOptions', "index.controller:DraftOptions");
 
 $app->get('/admin/drafts', "admin.draftstats.controller:GetDrafts");
 $app->post('/admin/draft/{draft_id}/stats', "admin.draftstats.controller:Create");

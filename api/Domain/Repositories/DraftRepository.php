@@ -385,7 +385,6 @@ class DraftRepository {
 
   private function ProtectPrivateDraft(Draft $draft) {
     $draft->draft_sport = '';
-    $draft->draft_status = '';
     $draft->setting_up = '';
     $draft->in_progress = '';
     $draft->complete = '';
@@ -436,6 +435,8 @@ class DraftRepository {
     $draft->in_progress = $this->app['phpdraft.DraftService']->DraftInProgress($draft);
     $draft->complete = $this->app['phpdraft.DraftService']->DraftComplete($draft);
 
+    $draft->display_status = $this->app['phpdraft.DraftService']->GetDraftStatusDisplay($draft);
+
     $draft->draft_create_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_create_time);
     $draft->draft_start_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_start_time);
     $draft->draft_end_time = $this->app['phpdraft.UtilityService']->ConvertTimeForClientDisplay($draft->draft_end_time);
@@ -451,9 +452,10 @@ class DraftRepository {
     $draft->commish_editable = $currentUserOwnsIt || $currentUserIsAdmin;
     $draft->is_locked = false;
 
-
     if (!$currentUserOwnsIt && !$currentUserIsAdmin && !$draft->draft_visible && $password != $draft->draft_password) {
       $draft->is_locked = true;
+      $draft->draft_status = 'locked';
+      $draft->display_status = 'Locked';
       $draft = $this->ProtectPrivateDraft($draft);
     }
 

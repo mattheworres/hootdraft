@@ -1,6 +1,32 @@
-span.draft-status {
-  width: 70px;
+span.draft-sport {
+  min-width: 75px;
   display: inline-block;
+  font-size: 80%;
+  line-height: 16px;
+  color: #ffffff;
+  background-color: #767676;
+
+  &.label-NFL {background-color: #f2711c;}
+  &.label-NFLE {background-color: #a333c8;}
+  &.label-MLB {background-color: #2185d0;}
+  &.label-NBA {background-color: #21ba45;}
+  &.label-NHL {background-color: #e03997;}
+  &.label-S15 {background-color: #a5673f;}
+  &.label-remove {background-color: #db2828}
+}
+
+span.draft-status {
+  min-width: 75px;
+  display: inline-block;
+  font-size: 80%;
+  line-height: 16px;
+  color: #ffffff;
+  background-color: #767676;
+
+  &.label-complete {background-color: #5cb85c;}
+  &.label-in_progress {background-color: #5bc0de;}
+  &.label-undrafted {background-color: #f0ad4e;}
+  &.label-remove {background-color: #db2828;}
 }
 
 div.draft_order {

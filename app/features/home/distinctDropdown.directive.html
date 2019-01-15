@@ -1,0 +1,15 @@
+<div uib-dropdown class="btn-group label-select-distinct-filter">
+  <button type="button" class="form-control" uib-dropdown-toggle>
+    <span ng-if="selectedOption == null">
+      Filter
+    </span>
+    <span ng-if="selectedOption != null">
+        <phpd-draft-label label-type="{{labelType}}" label-identifier="{{selectedOption}}" label-display="{{useValueDisplay ? selectedValue : selectedOption}}"></phpd-draft-label>
+    </span>
+  </button>
+  <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+    <a href ng-click="labelSelectDistinctChanged(key, value)" ng-repeat="(key, value) in listItems">
+      <phpd-draft-label label-type="{{labelType}}" label-identifier="{{key}}" label-display="{{useValueDisplay ? value : key}}"></phpd-draft-label>
+    </a>
+  </ul>
+</div>

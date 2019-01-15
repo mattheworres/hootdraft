@@ -150,5 +150,10 @@ angular.module('phpdraft.shared').factory('api', ($resource, ENV) =>
       delete:
         {method: 'DELETE'},
     }),
+
+    Resources: $resource(`${ENV.apiEndpoint}`, {id: '@id'}, {
+      'draftOptions':
+        {method: 'GET', url: `${ENV.apiEndpoint}draftOptions`},
+    }),
   })
 );

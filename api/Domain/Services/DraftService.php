@@ -134,6 +134,12 @@ class DraftService {
     return $response;
   }
 
+  public function GetDraftStatusDisplay(Draft $draft) {
+    $statuses = $this->app['phpdraft.DraftDataRepository']->GetStatuses();
+
+    return $statuses[$draft->draft_status];
+  }
+
   public function DraftSettingUp(Draft $draft) {
     return $draft->draft_status == "undrafted";
   }

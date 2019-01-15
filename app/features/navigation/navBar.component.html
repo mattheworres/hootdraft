@@ -13,33 +13,6 @@
   </div>
   <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
     <ul class="nav navbar-nav">
-      <li uib-dropdown>
-        <a href="#" id="draftDropdown" class="dropdown-toggle" uib-dropdown-toggle role="button" aria-expanded="false">
-          <i class="fa fa-sitemap"></i>&nbsp;&nbsp;
-          Leagues
-          <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu" aria-labelledby="draftDropdown">
-          <li>
-            <a href="home" ng-click="navCollapsed = !navCollapsed">
-              <i class="fa fa-table"></i>
-              &nbsp;All Leagues
-            </a>
-          </li>
-          <li>
-            <a href="by-commish" ng-click="navCollapsed = !navCollapsed">
-              <i class="fa fa-users"></i>
-              &nbsp;Leagues by Commissioner
-            </a>
-          </li>
-          <li ng-show="$ctrl.isAuthenticated()">
-            <a href="#" ng-click="navCollapsed = !navCollapsed">
-              <i class="fa fa-plus"></i>
-              &nbsp;Add New League
-            </a>
-          </li>
-        </ul>
-      </li>
       <li ng-show="$ctrl.isAuthenticated()">
         <a href="commish/draft/create" ng-click="navCollapsed = !navCollapsed">
           <i class="fa fa-plus"></i>&nbsp;&nbsp;
