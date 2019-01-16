@@ -24,7 +24,6 @@ class DraftController {
   }
 
   public function GetAll(Application $app, Request $request) {
-    //TODO: Add paging for datatables
     $password = $request->headers->get(DRAFT_PASSWORD_HEADER, '');
     $drafts = $app['phpdraft.DraftRepository']->GetPublicDrafts($request, $password);
 

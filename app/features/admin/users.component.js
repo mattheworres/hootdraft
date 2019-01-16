@@ -15,7 +15,14 @@ class UsersController {
 
   $onInit() {
     this.users = [];
+    this.displayedUsers = [];
     this.roles = [];
+    this.itemsByPage = 15;
+    this.enabledStatuses = {
+      0: 'No',
+      1: 'Yes',
+      remove: ' remove ',
+    };
 
     this._loadUsers();
   }
@@ -24,6 +31,8 @@ class UsersController {
     const userInitSuccess = response => {
       this.users = response.users;
       this.roles = response.roles;
+
+      this.showPaging = response.users.length > this.itemsByPage;
     };
 
     const userInitError = () => {

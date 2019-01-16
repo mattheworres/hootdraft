@@ -39,7 +39,6 @@ class DraftTableController {
   $onChanges(chchchchanges) {
     const {drafts} = chchchchanges;
     if (drafts && drafts.currentValue.length > 0) {
-      this.originalDrafts = drafts;
       this.showPaging = drafts.currentValue.length > this.itemsByPage;
     }
   }

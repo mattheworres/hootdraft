@@ -10,7 +10,10 @@
           use-value-display="false">
         </phpd-distinct-dropdown>
       </th>
-      <th colspan="2">
+      <th colspan="2" class="hidden-xs hidden-sm visible-md visible-lg">
+        <phpd-distinct-typeahead></phpd-distinct-typeahead>
+      </th>
+      <th class="hidden-xs visible-sm hidden-md hidden-lg">
         <phpd-distinct-typeahead></phpd-distinct-typeahead>
       </th>
       <th>
@@ -31,7 +34,7 @@
         <phpd-sort-icons></phpd-sort-icons>
         Sport
       </th>
-      <th st-sort="commish_name" class="sortable col-xs-3">
+      <th st-sort="commish_name" class="sortable col-sm-3 hidden-xs">
         <phpd-sort-icons></phpd-sort-icons>
         Commissioner
       </th>
@@ -54,7 +57,7 @@
       <td>
         <phpd-draft-label label-type="sport" label-identifier="{{::draft.draft_sport}}" label-display="{{::draft.draft_sport}}"></phpd-draft-label>
       </td>
-      <td>{{::draft.commish_name}}</td>
+      <td class="hidden-xs">{{::draft.commish_name}}</td>
       <td class="hidden-xs hidden-sm">{{::draft.draft_create_time | amParse: 'YYYY-MM-DD HH:mm:ss UTC' | amDateFormat:'MMMM D, YYYY'}}</td>
       <td class="text-center">
         <phpd-draft-label label-type="status" label-identifier="{{::draft.draft_status}}" label-display="{{::draft.display_status}}"></phpd-draft-label>

@@ -53,9 +53,6 @@ module.exports = {//Is this here?
         'node_modules/slipjs/slip.js',
         'node_modules/FlipClock/compiled/flipclock.js',
         'node_modules/angular-smart-table/dist/smart-table.js',
-        'node_modules/datatables/media/js/jquery.dataTables.js',
-        'node_modules/angular-datatables/dist/angular-datatables.js',
-        'node_modules/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.js',
         'node_modules/angular-route/angular-route.js',
         'node_modules/angular-animate/angular-animate.js',
         'node_modules/angular-sanitize/angular-sanitize.js',
@@ -84,8 +81,6 @@ module.exports = {//Is this here?
       ],
       css: [
         'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css',
-        'node_modules/datatables/media/css/jquery.dataTables.css',
-        'node_modules/angular-datatables/dist/plugins/bootstrap/datatables.bootstrap.css',
         'node_modules/flipclock/compiled/flipclock.css',
         'node_modules/angular-toastr/dist/angular-toastr.css',
         'node_modules/angular-toggle-switch/angular-toggle-switch.css',
