@@ -28,6 +28,7 @@ module.exports = {//Is this here?
   paths: {
     app: {
       config: `app/config/${argv.env}.json`,
+      less: 'app/css/*.less',
       css: 'app/css/style.less',
       fonts: 'app/fonts/**/*',
       html: 'app/index.html',

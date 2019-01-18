@@ -9,7 +9,7 @@ gulp.task('watch-js-app', ['js'], () => gulp.start('build-js'));
 gulp.task('watch-less', ['css'], () => gulp.start('build-css'));
 
 gulp.task('watch', () => {
-  gulp.watch(cfg.paths.app.css, ['watch-less']);
+  gulp.watch(cfg.paths.app.less, ['watch-less']);
   gulp.watch(cfg.paths.app.html, ['watch-html']);
   gulp.watch(cfg.paths.app.img, ['watch-img']);
   gulp.watch(cfg.paths.app.templates, ['watch-js-templates']);

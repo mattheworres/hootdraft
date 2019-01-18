@@ -42,6 +42,21 @@ span.draft-user-enabled {
   &.label-remove {background-color: #db2828;}
 }
 
+phpd-commish-actions{
+  div.panel-body {
+    padding: 5px;
+
+    button, a {
+      margin-bottom: 15px;
+      margin-top: 10px;
+
+      &:hover {
+        box-shadow: 2px 3px 10px #666;
+      }
+    }
+  }
+}
+
 div.draft_order {
   h2.order_number {
     display: inline-block;
@@ -194,4 +209,12 @@ ul.depth_chart_positions {
 span.position-slots {
   display: inline-block;
   width: 30px;
+}
+
+.btn-warning {
+  border: 1px solid darken(@brand-warning, 25%);
+
+  &:hover {
+    border: 1px solid darken(@brand-warning, 25%);
+  }
 }

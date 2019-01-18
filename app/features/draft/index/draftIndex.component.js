@@ -23,10 +23,9 @@ class DraftIndexController {
     this.selectedDraftRound = 1;
     this.currentDraftCounter = 0;
 
-    this.status = this.draftService.getStatus();
-
     this.draftService.getDraft().then(draft => {
       this.draft = draft;
+      this.status = this.draftService.getStatus();
       this._handleDraftUpdate(draft, this.status);
     }, () => {
       this.messageService.showError('Unable to load draft');

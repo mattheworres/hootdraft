@@ -20,6 +20,14 @@
           </a>
         </div>
       </div>
+      <div class="form-group" ng-hide="!draft.in_progress || status.loading || !draft.commish_editable">
+        <div class="col-xs-5 control-label">
+          <strong>Edit</strong>:
+        </div>
+        <div class="col-xs-7">
+          Can't edit active draft &ndash; <strong>Reset</strong> draft if you need to change something
+        </div>
+      </div>
       <div class="form-group">
         <div class="col-xs-5 control-label">
           <strong>League Name</strong>:
