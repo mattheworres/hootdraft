@@ -28,6 +28,11 @@ class ProPlayerManagementController {
     this.uploadInProgress = false;
   }
 
+  changeSport(sport, sportName) {
+    this.sport = sport;
+    this.sportName = sportName;
+  }
+
   submitClicked() {
     if (!this.form.$valid || angular.isUndefined(this.sport)) {
       this.messageService.showWarning('You must select a sport AND a CSV file first!');

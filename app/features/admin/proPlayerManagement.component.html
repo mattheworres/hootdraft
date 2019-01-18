@@ -20,11 +20,20 @@
                   Sport
                 </label>
                 <div class="col-xs-12 col-sm-8">
-                  <div class="radio" ng-repeat="(key, value) in $ctrl.sports">
-                    <label>
-                      <input type="radio" ng-model="$ctrl.sport" value="{{key}}" name="{{key}}" />
-                      {{value}}
-                    </label>
+                  <div uib-dropdown class="btn-group label-select-distinct-filter">
+                    <button type="button" class="form-control" uib-dropdown-toggle>
+                      <span ng-if="$ctrl.sport == null">
+                        Pick a Sport, any sport
+                      </span>
+                      <span ng-if="$ctrl.sport != null">
+                          <phpd-draft-label label-type="sport" label-identifier="{{$ctrl.sport}}" label-display="{{$ctrl.sportName}}"></phpd-draft-label>
+                      </span>
+                    </button>
+                    <ul class="dropdown-menu label-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
+                      <a href ng-click="$ctrl.changeSport(key, value)" ng-repeat="(key, value) in $ctrl.sports">
+                        <phpd-draft-label label-type="sport" label-identifier="{{key}}" label-display="{{value}}"></phpd-draft-label>
+                      </a>
+                    </ul>
                   </div>
                   <div ng-show="$ctrl.form.$submitted || $ctrl.form.sport.$touched">
                     <span ng-show="$ctrl.form.sport.$error.required" class="help-block">Sport is missing</span>
@@ -59,7 +68,7 @@
           </div>
           <div class="row" ng-hide="$ctrl.uploadInProgress">
             <div class="col-xs-4 col-xs-offset-4 text-center v-offset-2">
-              <button type="submit" ng-disable="$ctrl.uploadInProgress" class="btn btn-primary btn-block" ng-click="$ctrl.submitClicked()" ng-submit="$ctrl.submitClicked()">
+              <button type="submit" ng-disable="$ctrl.uploadInProgress" class="btn btn-primary btn-block btn-lg" ng-click="$ctrl.submitClicked()" ng-submit="$ctrl.submitClicked()">
                 <i class="fa fa-upload"></i>&nbsp;&nbsp;
                 Upload Player Data
               </button>
