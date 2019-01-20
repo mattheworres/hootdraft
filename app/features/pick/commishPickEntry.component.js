@@ -49,12 +49,7 @@ class CommishPickEntryController {
       //If manual entry, we need to make sure to properly update "selected" on the current pick so the display acts accordingly
       if (this.manualEntry) {
         //If we have a first AND last name, go ahead and show this as a pick. May not have position coloring, but thats OK.
-        const hasFirst = (localCurrentPick.first_name !== null) && (localCurrentPick.first_name.length > 0);
-        const hasLast = (localCurrentPick.last_name !== null) && (localCurrentPick.last_name.length > 0);
-        const hasTeam = (localCurrentPick.team !== null) && (localCurrentPick.team.length > 0);
-        const hasPosition = (localCurrentPick.position !== null) && (localCurrentPick.position.length > 0);
-
-        this.currentPick.selected = hasFirst || hasLast || hasTeam || hasPosition;
+        this.currentPick.selected = this.pickService.determinePickSelected(localCurrentPick);
       }
     }
   }

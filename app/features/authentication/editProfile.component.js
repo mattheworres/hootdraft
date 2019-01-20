@@ -86,7 +86,7 @@ class EditProfileController {
         }
       }
 
-      if (this.$sessionStorage.user_name !== this.userProfile.name) {
+      if (this.$sessionStorage.userName !== this.userProfile.name) {
         this.authenticationService.cacheName(this.userProfile.name);
       }
 

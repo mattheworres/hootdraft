@@ -149,4 +149,4 @@ gulp.task('js-lint', () => {
 });
 
 // Do: add back lint step once snake_case to camelCase issues have been resolved
-gulp.task('js', ['js-vendor', /*'js-lint', */'js-app', 'js-config', 'js-templates']);
+gulp.task('js', ['js-vendor', 'js-lint', 'js-app', 'js-config', 'js-templates']);

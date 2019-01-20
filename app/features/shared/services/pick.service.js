@@ -82,6 +82,19 @@ class PickService {
       this.modalInstance.close();
     }
   }
+
+  determinePickSelected(pick) {
+    const hasFirst = this._pickPropertyExists(pick.first_name);
+    const hasLast = this._pickPropertyExists(pick.last_name);
+    const hasTeam = this._pickPropertyExists(pick.team);
+    const hasPosition = this._pickPropertyExists(pick.position);
+
+    return hasFirst || hasLast || hasTeam || hasPosition;
+  }
+
+  _pickPropertyExists(property) {
+    return property !== null && property.length > 0;
+  }
 }
 
 PickService.$inject = [

@@ -452,7 +452,7 @@ class DraftRepository {
     $draft->commish_editable = $currentUserOwnsIt || $currentUserIsAdmin;
     $draft->is_locked = false;
 
-    if (!$currentUserOwnsIt && !$currentUserIsAdmin && !$draft->draft_visible && $password != $draft->draft_password) {
+    if (!$draft->commish_editable && !$draft->draft_visible && $password != $draft->draft_password) {
       $draft->is_locked = true;
       $draft->draft_status = 'locked';
       $draft->display_status = 'Locked';

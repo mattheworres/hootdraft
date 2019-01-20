@@ -45,7 +45,7 @@ class DraftService {
 
       if (forceReload) {
         this.getDraft(true).then(draft => {
-          this.$rootScope.$broadcast(this.subscriptionKeys.draftCounterHasChanged, {draft, status: this.draftStatus})
+          this.$rootScope.$broadcast(this.subscriptionKeys.draftCounterHasChanged, {draft, status: this.draftStatus});
         });
       } else if (hasDraft === false || draftIdChanged) {
         this.activeComponents = 0;

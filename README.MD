@@ -27,7 +27,7 @@ Don't know how to install a web app or run a web server? No problem:
 ##### Sign up for a free commissioner account on [phpdraft.com](https://phpdraft.com) and get drafting today!
 
 ### Minimum Server Requirements
-- PHP 7.0+ installed (with `mcrypt` and `pdo_mysql` extension installed; PHP 7.1+ recommended!)
+- PHP 7.1+ installed (with `pdo_mysql` extension installed; PHP 7.2+ recommended!)
 - MySQL 5.6+ database
 - Webserver that can perform URL rewrites (Apache, IIS, or NGINX currently, possibly more in the future)
 - SMTP mail account (for user registration/password resets)

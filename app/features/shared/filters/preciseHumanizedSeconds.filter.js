@@ -6,58 +6,33 @@ const MINUTE_IN_SECONDS = 60;
 
 angular.module('phpdraft.shared').filter('preciseHumanizedSeconds', () =>
   function (startingSeconds) {
-    let label;
-    let seconds = startingSeconds;
-    let words = '';
+    let wordsContainer = {
+      words: '',
+      remainingSeconds: startingSeconds,
+    };
 
-    if (seconds > YEAR_IN_SECONDS) {
-      const years = parseInt(seconds / YEAR_IN_SECONDS, 10);
-      if (years > 0) {
-        seconds -= (years * YEAR_IN_SECONDS);
-        label = years > 1 ? 'years' : 'year';
-        words = `${words} ${years} ${label}, `;
+    const humanizeRemainingSeconds = (container, secondsBucketAmount, multipleLabel, singularLabel) => {
+      if (container.remainingSeconds > secondsBucketAmount) {
+        const secondsForBucket = parseInt(container.remainingSeconds / secondsBucketAmount, 10);
+
+        if (secondsForBucket > 0) {
+          container.remainingSeconds -= (secondsForBucket * secondsBucketAmount);
+          const label = secondsForBucket > 1 ? multipleLabel : singularLabel;
+          container.words = `${container.words} ${secondsForBucket} ${label}, `;
+        }
       }
-    }
 
-    if (seconds > WEEK_IN_SECONDS) {
-      const weeks = parseInt(seconds / WEEK_IN_SECONDS, 10);
-      if (weeks > 0) {
-        seconds -= (weeks * WEEK_IN_SECONDS);
-        label = weeks > 1 ? 'weeks' : 'week';
-        words = `${words} ${weeks} ${label}, `;
-      }
-    }
+      return container;
+    };
 
-    if (seconds > DAY_IN_SECONDS) {
-      const days = parseInt(seconds / DAY_IN_SECONDS, 10);
-      if (days > 0) {
-        seconds -= (days * DAY_IN_SECONDS);
-        label = days > 1 ? 'days' : 'day';
-        words = `${words} ${days} ${label}, `;
-      }
-    }
+    wordsContainer = humanizeRemainingSeconds(wordsContainer, YEAR_IN_SECONDS, 'years', 'year');
+    wordsContainer = humanizeRemainingSeconds(wordsContainer, WEEK_IN_SECONDS, 'weeks', 'week');
+    wordsContainer = humanizeRemainingSeconds(wordsContainer, DAY_IN_SECONDS, 'days', 'day');
+    wordsContainer = humanizeRemainingSeconds(wordsContainer, HOUR_IN_SECONDS, 'hours', 'hour');
+    wordsContainer = humanizeRemainingSeconds(wordsContainer, MINUTE_IN_SECONDS, 'minutes', 'minute');
 
-    if (seconds > HOUR_IN_SECONDS) {
-      const hours = parseInt(seconds / HOUR_IN_SECONDS, 10);
-      if (hours > 0) {
-        seconds -= (hours * HOUR_IN_SECONDS);
-        label = hours > 1 ? 'hours' : 'hour';
-        words = `${words} ${hours} ${label}, `;
-      }
-    }
+    const label = wordsContainer.remainingSeconds > 1 ? 'seconds' : 'second';
 
-    if (seconds > MINUTE_IN_SECONDS) {
-      const minutes = parseInt(seconds / MINUTE_IN_SECONDS, 10);
-      if (minutes > 0) {
-        seconds -= (minutes * MINUTE_IN_SECONDS);
-        label = minutes > 1 ? 'minutes' : 'minute';
-        words = `${words} ${minutes} ${label}, `;
-      }
-    }
-
-    label = seconds > 1 ? 'seconds' : 'second';
-    words = `${words}${seconds} ${label}`;
-
-    return words;
+    return `${wordsContainer.words}${wordsContainer.remainingSeconds} ${label}`;
   }
 );

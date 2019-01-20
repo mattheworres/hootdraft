@@ -1,30 +1,31 @@
 class AuthenticationService {
-  constructor(api, $q, $sessionStorage, messageService, pathHelperService) {
+  constructor(api, $q, $sessionStorage, $location, messageService, pathHelperService) {
     this.api = api;
     this.$q = $q;
     this.$sessionStorage = $sessionStorage;
+    this.$location = $location;
     this.messageService = messageService;
     this.pathHelperService = pathHelperService;
   }
 
   cacheSession(userData) {
     this.$sessionStorage.authenticated = true;
-    this.$sessionStorage.auth_token = userData.token;
-    this.$sessionStorage.user_name = userData.name;
-    this.$sessionStorage.auth_time = userData.auth_timeout;
-    this.$sessionStorage.user_admin = userData.is_admin;
+    this.$sessionStorage.authToken = userData.token;
+    this.$sessionStorage.userName = userData.name;
+    this.$sessionStorage.authTime = userData.auth_timeout;
+    this.$sessionStorage.userAdmin = userData.is_admin;
   }
 
   cacheName(userName) {
-    delete this.$sessionStorage.user_name;
-    this.$sessionStorage.user_name = userName;
+    delete this.$sessionStorage.userName;
+    this.$sessionStorage.userName = userName;
   }
 
   uncacheSession() {
     this.$sessionStorage.authenticated = false;
-    delete this.$sessionStorage.auth_token;
-    delete this.$sessionStorage.user_name;
-    delete this.$sessionStorage.auth_time;
+    delete this.$sessionStorage.authToken;
+    delete this.$sessionStorage.userName;
+    delete this.$sessionStorage.authTime;
   }
 
   cacheRoles(roles) {
@@ -38,16 +39,16 @@ class AuthenticationService {
 
   isAuthenticated() {
     return this.$sessionStorage.authenticated &&
-      (this.$sessionStorage.user_name !== null) &&
-      (this.$sessionStorage.auth_token !== null);
+      (this.$sessionStorage.userName !== null) &&
+      (this.$sessionStorage.authToken !== null);
   }
 
   currentUserName() {
-    return this.$sessionStorage.user_name;
+    return this.$sessionStorage.userName;
   }
 
   isAdmin() {
-    return this.$sessionStorage.user_admin;
+    return this.$sessionStorage.userAdmin;
   }
 
   login(model) {
@@ -79,58 +80,53 @@ class AuthenticationService {
       return false;
     }
 
-    const auth_time = new Date(this.$sessionStorage.auth_time);
+    const authTime = new Date(this.$sessionStorage.authTime);
     const now = new Date();
 
-    if (now > auth_time) {
+    if (now > authTime) {
       this.uncacheSession();
       return true;
     }
 
     return false;
   }
-  // TODO: Dry these methods up?
-  register(model) {
-    const result = this.$q.defer();
-    const successHandler = data => result.resolve({data, status: data.status});
-    const errorHandler = data => result.reject({data, status: data.status});
-    this.api.Authentication.register(model, successHandler, errorHandler);
 
-    return result;
+  register(model) {
+    return this._makeApiCall(model, this.api.Authentication.register);
   }
 
   verify(model) {
-    const result = this.$q.defer();
-    const successHandler = data => result.resolve({data, status: data.status});
-    const errorHandler = data => result.reject({data, status: data.status});
-    this.api.Authentication.verify(model, successHandler, errorHandler);
-
-    return result;
+    return this._makeApiCall(model, this.api.Authentication.verify);
   }
 
   lostPassword(model) {
-    const result = this.$q.defer();
-    const successHandler = data => result.resolve({data, status: data.status});
-    const errorHandler = data => result.reject({data, status: data.status});
-    this.api.Authentication.lostPassword(model, successHandler, errorHandler);
-
-    return result;
+    return this._makeApiCall(model, this.api.Authentication.lostPassword);
   }
 
   verifyResetToken(model) {
-    const result = this.$q.defer();
-    const successHandler = data => result.resolve({data, status: data.status});
-    const errorHandler = data => result.reject({data, status: data.status});
-    this.api.Authentication.verifyResetToken(model, successHandler, errorHandler);
-
-    return result;
+    return this._makeApiCall(model, this.api.Authentication.verifyResetToken);
   }
 
   resetPassword(model) {
+    return this._makeApiCall(model, this.api.Authentication.resetPassword);
+  }
+
+  handleUnauthorizedResponse(response) {
+    if ((angular.isDefined(response) ? response.status : 0) === 401) {
+      this.messageService.showError('Unauthorized: please log in.');
+      this.uncacheSession();
+      this.$location.path('/login');
+      return true;
+    }
+
+    return false;
+  }
+
+  _makeApiCall(model, methodCall) {
     const result = this.$q.defer();
     const successHandler = data => result.resolve({data, status: data.status});
     const errorHandler = data => result.reject({data, status: data.status});
-    this.api.Authentication.resetPassword(model, successHandler, errorHandler);
+    methodCall(model, successHandler, errorHandler);
 
     return result;
   }
@@ -140,6 +136,7 @@ AuthenticationService.$inject = [
   'api',
   '$q',
   '$sessionStorage',
+  '$location',
   'messageService',
   'pathHelperService',
 ];

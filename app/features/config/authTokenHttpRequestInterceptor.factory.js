@@ -3,7 +3,7 @@ angular.module('phpdraft.config').factory('authTokenHttpRequestInterceptor', $se
     request(config) {
       if ($sessionStorage.authenticated) {
         if (config.headers === null) config.headers = {};
-        config.headers['X-Access-Token'] = `${$sessionStorage.auth_token}`;
+        config.headers['X-Access-Token'] = `${$sessionStorage.authToken}`;
       }
 
       return config;

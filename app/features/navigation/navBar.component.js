@@ -58,7 +58,7 @@ class NavController {
   }
 
   authenticatedName() {
-    return this.$sessionStorage.user_name;
+    return this.$sessionStorage.userName;
   }
 
   logOut() {
