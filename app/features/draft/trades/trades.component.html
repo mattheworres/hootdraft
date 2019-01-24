@@ -30,13 +30,13 @@
                       <div class="col-xs-12 col-sm-6">
                         <h4><strong>{{trade.manager1.manager_name}}</strong> gets:</h4>
                         <div class="asset-display" ng-repeat="asset in trade.trade_assets | filter:{ newmanager_id: trade.manager1_id }">
-                          <phpd-trade-asset-display draft="draft" asset="asset"></phpd-trade-asset-display>
+                          <phpd-trade-asset-display draft="$ctrl.draft" asset="asset"></phpd-trade-asset-display>
                         </div>
                       </div>
                       <div class="col-xs-12 col-sm-6">
                         <h4><strong>{{trade.manager2.manager_name}}</strong> gets:</h4>
                         <div class="asset-display" ng-repeat="asset in trade.trade_assets | filter:{ newmanager_id: trade.manager2_id }">
-                          <phpd-trade-asset-display draft="draft" asset="asset"></phpd-trade-asset-display>
+                          <phpd-trade-asset-display draft="$ctrl.draft" asset="asset"></phpd-trade-asset-display>
                         </div>
                       </div>
                     </div>

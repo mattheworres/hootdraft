@@ -16,10 +16,10 @@ class SaltServiceTest extends TestCase {
   }
 
   public function testSaltForUrlGeneratedDoesntContainSlashes() {
-    for ($i = 0; $i < 15; $i++) {
+    for ($i = 0; $i < 30; $i++) {
       $result = $this->sut->GenerateSaltForUrl();
 
-      $this->assertFalse(strpos($result, '/'));
+      $this->assertTrue(strpos($result, '/') === false);
     }
   }
 }

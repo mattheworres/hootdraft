@@ -16,7 +16,7 @@ class SaltService {
   public function GenerateSaltForUrl() {
     $salt = $this->GenerateSalt();
 
-    while (strpos($salt, '/') != 0) {
+    while (strpos($salt, '/') !== false) {
       $salt = $this->GenerateSalt();
     }
 
