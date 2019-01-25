@@ -13,7 +13,7 @@ class ProPlayerService {
   public function __construct(Application $app) {
     $this->app = $app;
   }
-  
+
   public function SearchPlayersManual($league, $first, $last, $team, $position) {
     $response = new PhpDraftResponse();
 
@@ -68,12 +68,12 @@ class ProPlayerService {
     }
 
     if (SET_CSV_TIMEOUT) {
-          set_time_limit(0);
+      set_time_limit(0);
     }
 
     while (($data = fgetcsv($handle, 1000, ';')) !== FALSE) {
       if ($data[0] == "Player") {
-              continue;
+        continue;
       }
 
       $new_player = new ProPlayer();

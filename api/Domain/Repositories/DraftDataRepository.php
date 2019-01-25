@@ -149,9 +149,14 @@ class DraftDataRepository {
       "TAM" => "Tampa Bay Lightning",
       "TOR" => "Toronto Maple Leafs",
       "VAN" => "Vancouver Canucks",
+      "VGK" => "Vegas Golden Knights",
       "WAS" => "Washington Capitals",
       "WPG" => "Winnipeg Jets"
     );
+
+    $this->historical_nhl_teams = array_merge($this->mlb_teams, array(
+
+    ));
 
     $this->nhl_positions = array(
       "LW" => "Left Wing",
