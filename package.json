@@ -1,4 +1,7 @@
 {
+  "name": "hootdraft",
+  "author": "Matthew G Orres",
+  "version": "2.3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/mattheworres/phpdraft",
