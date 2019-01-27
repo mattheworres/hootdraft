@@ -26,12 +26,13 @@ class UsersService {
       $user = $this->app['phpdraft.LoginUserRepository']->Create($user);
       $inviter = $this->app['phpdraft.LoginUserService']->GetCurrentUser();
 
+      $setupLink = $this->GenerateNewInviteLink($user);
       $emailParameters = array(
         'imageBaseUrl' => sprintf("%s/images/email", APP_BASE_URL),
         'invitee' => $user->name,
         'inviter' => $inviter->name,
         'message' => $message,
-        'setupLink' => $this->GenerateNewInviteLink($user),
+        'setupLink' => $setupLink,
       );
 
       $mailMessage = new MailMessage();
@@ -42,6 +43,7 @@ class UsersService {
 
       $mailMessage->subject = "$inviter->name invited you to use Hoot Draft!";
       $mailMessage->body = $this->app['phpdraft.TemplateRenderService']->RenderTemplate('UserInvite.html', $emailParameters);
+      $mailMessage->altBody = "Hello partner! $inviter->name invited you to use Hoot Draft, a whizz banger of an app that makes offline fantasy drafts a real hoot! Setup your new account here: $setupLink";
       $mailMessage->is_html = true;
 
       $this->app['phpdraft.EmailService']->SendMail($mailMessage);

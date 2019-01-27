@@ -127,14 +127,16 @@ class LoginUserService {
         $user->email => $user->name
       );
 
+      $verifyLink = $this->_CreateEmailVerificationLink($user);
       $emailParameters = array(
         'imageBaseUrl' => sprintf("%s/images/email", APP_BASE_URL),
-        'verifyLink' => $this->_CreateEmailVerificationLink($user),
+        'verifyLink' => $verifyLink,
       );
 
       $message->subject = "HootDraft: Verify your email address";
       $message->is_html = true;
       $message->body = $this->app['phpdraft.TemplateRenderService']->RenderTemplate('VerifyEmail.html', $emailParameters);
+      $message->altBody = "Hey pal, we need you to verify your email address. Click this link to do so: $verifyLink";
 
       $this->app['phpdraft.EmailService']->SendMail($message);
 
@@ -174,14 +176,16 @@ class LoginUserService {
         $user->email => $user->name
       );
 
+      $resetLink = $this->_CreateForgottenPasswordLink($user);
       $emailParameters = array(
         'imageBaseUrl' => sprintf("%s/images/email", APP_BASE_URL),
-        'resetLink' => $this->_CreateForgottenPasswordLink($user),
+        'resetLink' => $resetLink,
       );
 
       $message->subject = "HootDraft: Reset Password Request";
       $message->is_html = true;
       $message->body = $this->app['phpdraft.TemplateRenderService']->RenderTemplate('ResetPassword.html', $emailParameters);
+      $message->altBody = "Hello, looks like you've requested to reset your password. To do so, click this link: $resetLink";
 
       $this->app['phpdraft.EmailService']->SendMail($message);
 
@@ -263,14 +267,16 @@ class LoginUserService {
           $user->email => $user->name
         );
 
+        $verifyLink = $this->_CreateEmailVerificationLink($user);
         $emailParameters = array(
           'imageBaseUrl' => sprintf("%s/images/email", APP_BASE_URL),
-          'verifyLink' => $this->_CreateEmailVerificationLink($user),
+          'verifyLink' => $verifyLink,
         );
 
         $message->subject = "HootDraft: Verify your email address";
         $message->is_html = true;
         $message->body = $this->app['phpdraft.TemplateRenderService']->RenderTemplate('ReverifyEmail.html', $emailParameters);
+        $message->altBody = "Hi, and welcome to Hoot Draft! Before we get started, can you click this link to verify that you are who you say you are? Thanks pal! $verifyLink";
 
         $this->app['phpdraft.EmailService']->SendMail($message);
       }

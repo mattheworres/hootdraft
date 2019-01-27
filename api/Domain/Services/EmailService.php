@@ -61,6 +61,10 @@ class EmailService {
 
     $this->mailer->Body = $message->body;
 
+    if (strlen($message->altBody) > 0) {
+      $this->mailer->AltBody = $message->altBody;
+    }
+
     if (!$this->mailer->send()) {
       throw new \Exception("Unable to send mail: " . $this->mailer->ErrorInfo);
     }

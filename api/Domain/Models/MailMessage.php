@@ -17,5 +17,6 @@ class MailMessage {
   public $bcc_addresses;
   public $subject;
   public $body;
+  public $altBody;
   public $is_html;
 }
