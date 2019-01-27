@@ -29,7 +29,7 @@ task('import', function() {
   runLocally("cp $settings_location/appsettings.php appsettings.php");
   runLocally("cp $settings_location/config.js js/config.js");
   runLocally("cp $settings_location/deploy.php deploy.php");
-  runLocally("cp $settings_location/index.html index.html");
+  //runLocally("cp $settings_location/index.html index.html");
   runLocally("cp $settings_location/phinx.yml phinx.yml");
   runLocally("cp $settings_location/web.config web.config");
 
@@ -61,7 +61,7 @@ task('backup', function() {
     runLocally("cp phinx.yml $backup_location/phinx.yml");
     runLocally("cp deploy.php $backup_location/deploy.php");
     runLocally("cp .htaccess $backup_location/.htaccess");
-    runLocally("cp index.html $backup_location/index.html");
+    //runLocally("cp index.html $backup_location/index.html");
     runLocally("cp web.config $backup_location/web.config");
   }
 });
