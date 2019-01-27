@@ -5,6 +5,7 @@ namespace PhpDraft\Domain\Services;
 use \Silex\Application;
 use PhpDraft\Domain\Models\PhpDraftResponse;
 use PhpDraft\Domain\Models\MailMessage;
+use PHPMailer\PHPMailer\PHPMailer;
 
 class EmailService {
   private $app;
@@ -13,7 +14,7 @@ class EmailService {
   public function __construct(Application $app) {
     $this->app = $app;
 
-    $this->mailer = new \PHPMailer();
+    $this->mailer = new PHPMailer();
 
     //Uncomment this line to help debug issues with your SMTP server
     //Watch the response from the API when you register/start lost pwd to see the output.
@@ -34,7 +35,7 @@ class EmailService {
     }
 
     $this->mailer->From = MAIL_USER;
-    $this->mailer->FromName = 'PHPDraft System';
+    $this->mailer->FromName = 'Hoot Draft';
   }
 
   public function SendMail(MailMessage $message) {
@@ -42,11 +43,27 @@ class EmailService {
       $this->mailer->addAddress($address, $name);
     }
 
+    if (count($message->cc_addresses) > 0) {
+      foreach($message->cc_addresses as $address => $name) {
+        $this->mailer->addCC($address, $name);
+      }
+    }
+
+    if (count($message->bcc_addresses) > 0) {
+      foreach($message->bcc_addresses as $address => $name) {
+        $this->mailer->addBCC($address, $name);
+      }
+    }
+
     $this->mailer->isHTML($message->is_html);
 
     $this->mailer->Subject = $message->subject;
 
     $this->mailer->Body = $message->body;
+
+    if (strlen($message->altBody) > 0) {
+      $this->mailer->AltBody = $message->altBody;
+    }
 
     if (!$this->mailer->send()) {
       throw new \Exception("Unable to send mail: " . $this->mailer->ErrorInfo);

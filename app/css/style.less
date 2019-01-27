@@ -1,5 +1,5 @@
-@import "../../node_modules/@bower_components/bootstrap/less/bootstrap.less";
-@import "../../node_modules/@bower_components/font-awesome/less/font-awesome.less";
+@import "../../node_modules/bootstrap/less/bootstrap.less";
+@import "../../node_modules/font-awesome/less/font-awesome.less";
 @import "../../node_modules/@bower_components/animate.less/animate.less";
 @import "variable_overrides.less";
 @import "shared/nav.less";
@@ -8,6 +8,7 @@
 @import "board.less";
 @import "depth_chart.less";
 @import "picks.less";
+@import "tables.less";
 @import "trades.less";
 
 html, body {
@@ -24,6 +25,10 @@ html, body {
 
 .dw-loading.dw-loading-overlay {
   z-index: 9996 !important;
+}
+
+.alert a {
+  text-decoration: underline;
 }
 
 .clickable {
@@ -72,7 +77,8 @@ i.has-success {
 .v-offset-9 { margin-top: 150px; }
 
 .panel-no-border {
-  border: 0;
+  border: none;
+  box-shadow: none;
 
   .panel-body {
     padding-top: 5px;

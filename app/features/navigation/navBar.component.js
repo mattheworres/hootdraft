@@ -1,7 +1,7 @@
 class NavController {
   constructor($rootScope, $scope, $routeParams, $location, messageService,
     authenticationService, subscriptionKeys, confirmActionService,
-    $sessionStorage, api, errorService, draftService, lodash) {
+    $sessionStorage, api, errorService, draftService, lodash, userModalService) {
     this.$rootScope = $rootScope;
     this.$scope = $scope;
     this.$routeParams = $routeParams;
@@ -15,6 +15,7 @@ class NavController {
     this.errorService = errorService;
     this.draftService = draftService;
     this.lodash = lodash;
+    this.userModalService = userModalService;
   }
 
   $onInit() {
@@ -42,6 +43,12 @@ class NavController {
     this.deregisterDraftUpdated();
   }
 
+  showInviteUserModal() {
+    if (!this.isAuthenticated()) return;
+
+    this.userModalService.showInviteModal();
+  }
+
   isAuthenticated() {
     return this.authenticationService.isAuthenticated();
   }
@@ -51,7 +58,7 @@ class NavController {
   }
 
   authenticatedName() {
-    return this.$sessionStorage.user_name;
+    return this.$sessionStorage.userName;
   }
 
   logOut() {
@@ -75,6 +82,7 @@ NavController.$inject = [
   'errorService',
   'draftService',
   'lodash',
+  'userModalService',
 ];
 
 angular.module('phpdraft.navigation').component('phpdNavBar', {

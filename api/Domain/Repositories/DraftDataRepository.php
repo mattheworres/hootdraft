@@ -50,47 +50,47 @@ class DraftDataRepository {
     );
 
     $this->position_colors = array(
-        //Hockey/NHL
-        "LW" => $this->colors['light_orange'], //LT ORANGE    *
-        "C" => $this->colors['light_blue'], //LT BLUE   *
-        "RW" => $this->colors['light_yellow'], //LT YELLOW  *
-        "D" => $this->colors['light_red'], //LT RED   *
-        "G" => $this->colors['dark_green'], //DK GREEN    *
-        //Football/NFL
-        "QB" => $this->colors['light_blue'], //LT BLUE
-        "RB" => $this->colors['light_orange'], //LT ORANGE
-        "WR" => $this->colors['light_yellow'], //LT YELLOW
-        "TE" => $this->colors['light_red'], //LT RED
-        "DEF" => $this->colors['dark_green'], //DK GREEN
-        "K" => $this->colors['light_purple'], //LT PURPLE   *
-        "DL" => $this->colors['light_green'],
-        "LB" => $this->colors['light_pink'],
-        "DB" => $this->colors['seafoam'],
-        "OL" => $this->colors['switchgrass'],
-        //Baseball/MLB
-        //CATCHER ALREADY DONE: LT BLUE
-        "1B" => $this->colors['light_orange'], //LT ORANGE
-        "2B" => $this->colors['light_yellow'], //LT YELLOW
-        "3B" => $this->colors['light_red'], //LT RED
-        "SS" => $this->colors['dark_green'], //DK GREEN
-        "OF" => $this->colors['light_green'], //LT GREEN    *
-        "UTIL" => $this->colors['light_pink'], //LT PINK    *
-        "SP" => $this->colors['light_purple'], //LT PURPLE
-        "RP" => $this->colors['seafoam'], //SEAFOAM       *
-        //Basketball/NBA
-        "PG" => $this->colors['light_orange'], //LT ORANGE
-        "SG" => $this->colors['dark_green'], //DK GREEN
-        "SF" => $this->colors['light_yellow'], //LT YELLOW
-        "PF" => $this->colors['light_red'], //LT RED
-        //CENTER ALREADY DONE: LT BLUE
-        //Rugby/Super Rugby
-        "FR" => $this->colors['light_orange'],
-        "HB" => $this->colors['light_yellow'],
-        "LF" => $this->colors['light_red'],
-        "OB" => $this->colors['dark_green'],
-        "M" => $this->colors['light_green'],
-        "L" => $this->colors['light_pink'],
-        "FH" => $this->colors['light_purple']
+      //Hockey/NHL
+      "LW" => $this->colors['light_orange'], //LT ORANGE    *
+      "C" => $this->colors['light_blue'], //LT BLUE   *
+      "RW" => $this->colors['light_yellow'], //LT YELLOW  *
+      "D" => $this->colors['light_red'], //LT RED   *
+      "G" => $this->colors['dark_green'], //DK GREEN    *
+      //Football/NFL
+      "QB" => $this->colors['light_blue'], //LT BLUE
+      "RB" => $this->colors['light_orange'], //LT ORANGE
+      "WR" => $this->colors['light_yellow'], //LT YELLOW
+      "TE" => $this->colors['light_red'], //LT RED
+      "DEF" => $this->colors['dark_green'], //DK GREEN
+      "K" => $this->colors['light_purple'], //LT PURPLE   *
+      "DL" => $this->colors['light_green'],
+      "LB" => $this->colors['light_pink'],
+      "DB" => $this->colors['seafoam'],
+      "OL" => $this->colors['switchgrass'],
+      //Baseball/MLB
+      //CATCHER ALREADY DONE: LT BLUE
+      "1B" => $this->colors['light_orange'], //LT ORANGE
+      "2B" => $this->colors['light_yellow'], //LT YELLOW
+      "3B" => $this->colors['light_red'], //LT RED
+      "SS" => $this->colors['dark_green'], //DK GREEN
+      "OF" => $this->colors['light_green'], //LT GREEN    *
+      "UTIL" => $this->colors['light_pink'], //LT PINK    *
+      "SP" => $this->colors['light_purple'], //LT PURPLE
+      "RP" => $this->colors['seafoam'], //SEAFOAM       *
+      //Basketball/NBA
+      "PG" => $this->colors['light_orange'], //LT ORANGE
+      "SG" => $this->colors['dark_green'], //DK GREEN
+      "SF" => $this->colors['light_yellow'], //LT YELLOW
+      "PF" => $this->colors['light_red'], //LT RED
+      //CENTER ALREADY DONE: LT BLUE
+      //Rugby/Super Rugby
+      "FR" => $this->colors['light_orange'],
+      "HB" => $this->colors['light_yellow'],
+      "LF" => $this->colors['light_red'],
+      "OB" => $this->colors['dark_green'],
+      "M" => $this->colors['light_green'],
+      "L" => $this->colors['light_pink'],
+      "FH" => $this->colors['light_purple']
     );
 
     $this->sports = array(
@@ -109,91 +109,96 @@ class DraftDataRepository {
 
     $this->statuses = array(
       "undrafted" => "Setting Up",
-      "in_progress" => "Currently Drafting",
-      "complete" => "Draft Complete"
+      "in_progress" => "In Progress",
+      "complete" => "Completed"
     );
-    
+
     //PHPD-70: FIX 3 INFIELD ISSUES WITH CSS CLASS NAMES:
     $this->position_colors = array_merge($this->position_colors, array(
       "x1B" => $this->position_colors['1B'],
       "x2B" => $this->position_colors['2B'],
       "x3B" => $this->position_colors['3B'],
     ));
-    
+
     $this->nhl_teams = array(
-        "ANA" => "Anaheim Ducks",
-        "BOS" => "Boston Bruins",
-        "BUF" => "Buffalo Sabres",
-        "CGY" => "Calgary Flames",
-        "CAR" => "Carolina Hurricanes",
-        "CHI" => "Chicago Blackhawks",
-        "COL" => "Colorado Avalanche",
-        "CBS" => "Columbus Blue Jackets",
-        "DAL" => "Dallas Stars",
-        "DET" => "Detroit Red Wings",
-        "EDM" => "Edmonton Oilers",
-        "FLA" => "Florida Panthers",
-        "LAK" => "Los Angeles Kings",
-        "MIN" => "Minnesota Wild",
-        "MTL" => "Montreal Canadiens",
-        "NSH" => "Nashville Predators",
-        "NJD" => "New Jersey Devils",
-        "NYI" => "New York Islanders",
-        "NYR" => "New York Rangers",
-        "OTT" => "Ottawa Senators",
-        "PHI" => "Philadelphia Flyers",
-        "ARI" => "Arizona Coyotes",
-        "PIT" => "Pittsburgh Penguins",
-        "SJS" => "San Jose Sharks",
-        "STL" => "St Louis Blues",
-        "TAM" => "Tampa Bay Lightning",
-        "TOR" => "Toronto Maple Leafs",
-        "VAN" => "Vancouver Canucks",
-        "WAS" => "Washington Capitals",
-        "WPG" => "Winnipeg Jets"
+      "ANA" => "Anaheim Ducks",
+      "BOS" => "Boston Bruins",
+      "BUF" => "Buffalo Sabres",
+      "CGY" => "Calgary Flames",
+      "CAR" => "Carolina Hurricanes",
+      "CHI" => "Chicago Blackhawks",
+      "COL" => "Colorado Avalanche",
+      "CBS" => "Columbus Blue Jackets",
+      "DAL" => "Dallas Stars",
+      "DET" => "Detroit Red Wings",
+      "EDM" => "Edmonton Oilers",
+      "FLA" => "Florida Panthers",
+      "LAK" => "Los Angeles Kings",
+      "MIN" => "Minnesota Wild",
+      "MTL" => "Montreal Canadiens",
+      "NSH" => "Nashville Predators",
+      "NJD" => "New Jersey Devils",
+      "NYI" => "New York Islanders",
+      "NYR" => "New York Rangers",
+      "OTT" => "Ottawa Senators",
+      "PHI" => "Philadelphia Flyers",
+      "ARI" => "Arizona Coyotes",
+      "PIT" => "Pittsburgh Penguins",
+      "SJS" => "San Jose Sharks",
+      "STL" => "St Louis Blues",
+      "TAM" => "Tampa Bay Lightning",
+      "TOR" => "Toronto Maple Leafs",
+      "VAN" => "Vancouver Canucks",
+      "VGK" => "Vegas Golden Knights",
+      "WAS" => "Washington Capitals",
+      "WPG" => "Winnipeg Jets"
     );
 
+    $this->historical_nhl_teams = array_merge($this->mlb_teams, array(
+
+    ));
+
     $this->nhl_positions = array(
-        "LW" => "Left Wing",
-        "RW" => "Right Wing",
-        "C" => "Center",
-        "D" => "Defenseman",
-        "G" => "Goaltender"
+      "LW" => "Left Wing",
+      "RW" => "Right Wing",
+      "C" => "Center",
+      "D" => "Defenseman",
+      "G" => "Goaltender"
     );
 
     $this->nfl_teams = array(
-        "ARI" => "Arizona Cardinals",
-        "ATL" => "Atlanta Falcons",
-        "BAL" => "Baltimore Ravens",
-        "BUF" => "Buffalo Bills",
-        "CAR" => "Carolina Panthers",
-        "CHI" => "Chicago Bears",
-        "CIN" => "Cincinnati Bengals",
-        "CLE" => "Cleveland Browns",
-        "DAL" => "Dallas Cowboys",
-        "DEN" => "Denver Broncos",
-        "DET" => "Detroit Lions",
-        "GNB" => "Green Bay Packers",
-        "HOU" => "Houston Texans",
-        "IND" => "Indianapolis Colts",
-        "JAC" => "Jacksonville Jaguars",
-        "K.C" => "Kansas City Chiefs",
-        "LAC" => "Los Angeles Chargers",
-        "LAR" => "Los Angeles Rams",
-        "MIA" => "Miami Dolphins",
-        "MIN" => "Minnesota Vikings",
-        "NWE" => "New England Patriots",
-        "NOR" => "New Orleans Saints",
-        "NYG" => "New York Giants",
-        "NYJ" => "New York Jets",
-        "OAK" => "Oakland Raiders",
-        "PHI" => "Philadelphia Eagles",
-        "PIT" => "Pittsburgh Steelers",
-        "SFO" => "San Francisco 49ers",
-        "SEA" => "Seattle Seahawks",
-        "TAM" => "Tampa Bay Buccaneers",
-        "TEN" => "Tennessee Titans",
-        "WAS" => "Washington Redskins"
+      "ARI" => "Arizona Cardinals",
+      "ATL" => "Atlanta Falcons",
+      "BAL" => "Baltimore Ravens",
+      "BUF" => "Buffalo Bills",
+      "CAR" => "Carolina Panthers",
+      "CHI" => "Chicago Bears",
+      "CIN" => "Cincinnati Bengals",
+      "CLE" => "Cleveland Browns",
+      "DAL" => "Dallas Cowboys",
+      "DEN" => "Denver Broncos",
+      "DET" => "Detroit Lions",
+      "GNB" => "Green Bay Packers",
+      "HOU" => "Houston Texans",
+      "IND" => "Indianapolis Colts",
+      "JAC" => "Jacksonville Jaguars",
+      "K.C" => "Kansas City Chiefs",
+      "LAC" => "Los Angeles Chargers",
+      "LAR" => "Los Angeles Rams",
+      "MIA" => "Miami Dolphins",
+      "MIN" => "Minnesota Vikings",
+      "NWE" => "New England Patriots",
+      "NOR" => "New Orleans Saints",
+      "NYG" => "New York Giants",
+      "NYJ" => "New York Jets",
+      "OAK" => "Oakland Raiders",
+      "PHI" => "Philadelphia Eagles",
+      "PIT" => "Pittsburgh Steelers",
+      "SFO" => "San Francisco 49ers",
+      "SEA" => "Seattle Seahawks",
+      "TAM" => "Tampa Bay Buccaneers",
+      "TEN" => "Tennessee Titans",
+      "WAS" => "Washington Redskins"
     );
 
     $this->historical_nfl_teams = array_merge($this->nfl_teams, array(
@@ -322,24 +327,24 @@ class DraftDataRepository {
     );
 
     $this->super_rugby_teams = array(
-        "BLU" => "Blues",
-        "BRU" => "Brumbies",
-        "BUL" => "Bulls",
-        "CHE" => "Cheetahs",
-        "CHI" => "Chiefs",
-        "CRU" => "Crusaders",
-        "FOR" => "Force",
-        "HIG" => "Highlanders",
-        "HUR" => "Hurricanes",
-        "JAG" => "Jaguars",
-        "KIN" => "Kings",
-        "LIO" => "Lions",
-        "REB" => "Rebels",
-        "RED" => "Reds",
-        "SHA" => "Sharks",
-        "STO" => "Stormers",
-        "SUN" => "Sunwolves",
-        "WAR" => "Waratahs"
+      "BLU" => "Blues",
+      "BRU" => "Brumbies",
+      "BUL" => "Bulls",
+      "CHE" => "Cheetahs",
+      "CHI" => "Chiefs",
+      "CRU" => "Crusaders",
+      "FOR" => "Force",
+      "HIG" => "Highlanders",
+      "HUR" => "Hurricanes",
+      "JAG" => "Jaguars",
+      "KIN" => "Kings",
+      "LIO" => "Lions",
+      "REB" => "Rebels",
+      "RED" => "Reds",
+      "SHA" => "Sharks",
+      "STO" => "Stormers",
+      "SUN" => "Sunwolves",
+      "WAR" => "Waratahs"
     );
 
     $this->historical_super_rugby_teams = array_merge($this->super_rugby_teams, array(
@@ -368,48 +373,38 @@ class DraftDataRepository {
       case 'nhl':
       case'hockey':
         return $this->nhl_teams;
-        break;
       case 'nfl':
       case 'nfle':
       case 'football':
         return $this->nfl_teams;
-        break;
       case 'mlb':
       case 'baseball':
         return $this->mlb_teams;
-        break;
       case 'nba':
       case 'basketball':
         return $this->nba_teams;
-        break;
       case 's15':
         return $this->super_rugby_teams;
-        break;
     }
   }
 
   public function GetHistoricalTeams($pro_league) {
     switch (strtolower($pro_league)) {
       case 'nhl':
-      case'hockey':
+      case 'hockey':
         return $this->historical_nhl_teams;
-        break;
       case 'nfl':
       case 'nfle':
       case 'football':
         return $this->historical_nfl_teams;
-        break;
       case 'mlb':
       case 'baseball':
         return $this->historical_mlb_teams;
-        break;
       case 'nba':
       case 'basketball':
         return $this->historical_nba_teams;
-        break;
       case 's15':
         return $this->historical_super_rugby_teams;
-        break;
     }
   }
 
@@ -418,25 +413,19 @@ class DraftDataRepository {
       case 'nhl':
       case 'hockey':
         return $this->nhl_positions;
-        break;
       case 'nfl':
       case 'football':
         return $this->nfl_positions;
-        break;
       case 'nfle':
         return $this->extended_nfl_positions;
-        break;
       case 'mlb':
       case 'baseball':
         return $this->mlb_positions;
-        break;
       case 'nba':
       case 'basketball':
         return $this->nba_positions;
-        break;
       case 's15':
         return $this->super_rugby_positions;
-        break;
     }
   }
 }

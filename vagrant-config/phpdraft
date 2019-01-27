@@ -1,7 +1,7 @@
 server {
         listen 80;
 
-        #Change the absolute path below to the base directory that PHP Draft lives
+        #Change the absolute path below to the base directory that Hoot Draft lives
         root /vagrant;
 
         index index.html;

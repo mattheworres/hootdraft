@@ -1,6 +1,7 @@
 <div class="row" ng-show="status.valid && draft.setting_up">
   <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
   <div class="col-xs-12 col-sm-6 col-md-5">
+    <phpd-commish-actions ng-if="draft.commish_editable"></phpd-commish-actions>
     <phpd-draft-information draft="draft" status="status"></phpd-draft-information>
   </div>
   <div class="col-xs-12 col-sm-6 col-md-5">

@@ -2,7 +2,7 @@
 namespace PhpDraft\Domain\Entities;
 
 /**
- * Represents a PHPDraft "draft" object, which is the parent object.
+ * Represents a HootDraft "draft" object, which is the parent object.
  *
  * A draft has many managers, and managers have many players (picks).
  * @property bool $is_locked True if the draft is locked for the current user, false if it's accessible

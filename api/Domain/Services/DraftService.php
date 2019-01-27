@@ -28,13 +28,13 @@ class DraftService {
     try {
       $draft = $this->app['phpdraft.DraftRepository']->Create($draft);
 
-      if($draft->using_depth_charts) {
+      if ($draft->using_depth_charts) {
         $depth_charts = $this->app['phpdraft.DepthChartPositionRepository']->Save($depthChartModel, $draft->draft_id);
       }
 
       $response->success = true;
       $response->draft = $draft;
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response->success = false;
       $response->errors = array($e->getMessage());
     }
@@ -48,14 +48,14 @@ class DraftService {
     try {
       $draft = $this->app['phpdraft.DraftRepository']->Update($draft);
 
-      if($draft->using_depth_charts == 1) {
+      if ($draft->using_depth_charts == 1) {
         $this->app['phpdraft.DepthChartPositionRepository']->DeleteAllDepthChartPositions($draft->draft_id);
         $depth_charts = $this->app['phpdraft.DepthChartPositionRepository']->Save($depthChartModel, $draft->draft_id);
       }
 
       $response->success = true;
       $response->draft = $draft;
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response->success = false;
       $response->errors = array($e->getMessage());
     }
@@ -85,7 +85,7 @@ class DraftService {
 
       $response->success = true;
       $response->draft = $draft;
-    } catch(\Exception $e) {
+    } catch (\Exception $e) {
       $response->success = false;
       $response->errors = array($e->getMessage());
     }
@@ -132,6 +132,12 @@ class DraftService {
     }
 
     return $response;
+  }
+
+  public function GetDraftStatusDisplay(Draft $draft) {
+    $statuses = $this->app['phpdraft.DraftDataRepository']->GetStatuses();
+
+    return $statuses[$draft->draft_status];
   }
 
   public function DraftSettingUp(Draft $draft) {

@@ -26,4 +26,8 @@ angular.module('phpdraft.authentication').config(($routeProvider, $locationProvi
   $routeProvider.when('/profile', {
     template: '<phpd-edit-profile></phpd-edit-profile>',
   });
+
+  $routeProvider.when('/inviteSetup/:email?/:token?', {
+    template: '<phpd-invite-setup></phpd-invite-setup>',
+  });
 });

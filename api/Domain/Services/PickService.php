@@ -150,7 +150,7 @@ class PickService {
     $response = new PhpDraftResponse();
 
     try {
-      $response->matches = $this->app['phpdraft.PickRepository']->SearchAlreadyDrafted($draft_id, $first_name, $last_name);
+      $response->matches = $this->app['phpdraft.PickSearchRepository']->SearchAlreadyDrafted($draft_id, $first_name, $last_name);
       $response->possibleMatchExists = count($response->matches) > 0;
       $response->success = true;
     } catch (\Exception $e) {
@@ -172,9 +172,9 @@ class PickService {
         $response->updated_picks = $this->app['phpdraft.PickRepository']->LoadUpdatedPicks($draft_id, $pick_counter);
         $response->current_pick = $this->app['phpdraft.PickRepository']->GetCurrentPick($draft);
         $response->previous_pick = $this->app['phpdraft.PickRepository']->GetPreviousPick($draft);
-        
+
         $timer_response = $this->app['phpdraft.RoundTimeService']->GetCurrentPickTimeRemaining($draft);
-        
+
         $response->timer_enabled = $timer_response->timer_enabled;
         $response->seconds_remaining = $timer_response->seconds_remaining;
       }

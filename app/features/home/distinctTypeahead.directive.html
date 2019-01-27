@@ -1,0 +1,19 @@
+<form autocomplete="off">
+  <input name="nameSearch"
+    ng-hide="commishSelected"
+    ng-model="nameSearch"
+    class="form-control"
+    maxlength="255"
+    placeholder="Search Commissioners..."
+    uib-typeahead="commish as commish.name for commish in searchCommisioners($viewValue)"
+    typeahead-loading="commishSearchLoading"
+    typeahead-on-select="selectCommissioner($item, $model, $label)"
+    typeahead-editable="false"
+    typeahead-wait-ms="250" />
+  <div class="selected-commish-display" ng-show="commishSelected">
+    Commish:
+    <span class="label label-primary label-commish" ng-click="wipeCommissioner()">
+      {{commishName}}&nbsp;<i class="fa fa-times"></i>
+    </span>
+  </div>
+</form>

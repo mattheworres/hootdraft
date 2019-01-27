@@ -7,43 +7,22 @@
       <span class="icon-bar"></span>
     </button>
     <a class="navbar-brand main-brand" href="home">
-      <span class="hidden-sm hidden-md hidden-lg">PHP DRAFT</span>
-      <img class="hidden-xs" src="images/text_logo.png" alt="PHP Draft" />
+      <span class="hidden-sm hidden-md hidden-lg">HOOT DRAFT</span>
+      <img class="hidden-xs" src="images/text_logo.png" alt="Hoot Draft" />
     </a>
   </div>
   <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
     <ul class="nav navbar-nav">
-      <li uib-dropdown>
-        <a href="#" id="draftDropdown" class="dropdown-toggle" uib-dropdown-toggle role="button" aria-expanded="false">
-          <i class="fa fa-sitemap"></i>&nbsp;&nbsp;
-          Leagues
-          <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu" aria-labelledby="draftDropdown">
-          <li>
-            <a href="home" ng-click="navCollapsed = !navCollapsed">
-              <i class="fa fa-table"></i>
-              &nbsp;All Leagues
-            </a>
-          </li>
-          <li>
-            <a href="by-commish" ng-click="navCollapsed = !navCollapsed">
-              <i class="fa fa-users"></i>
-              &nbsp;Leagues by Commissioner
-            </a>
-          </li>
-          <li ng-show="$ctrl.isAuthenticated()">
-            <a href="#" ng-click="navCollapsed = !navCollapsed">
-              <i class="fa fa-plus"></i>
-              &nbsp;Add New League
-            </a>
-          </li>
-        </ul>
-      </li>
       <li ng-show="$ctrl.isAuthenticated()">
         <a href="commish/draft/create" ng-click="navCollapsed = !navCollapsed">
           <i class="fa fa-plus"></i>&nbsp;&nbsp;
           New League
+        </a>
+      </li>
+      <li ng-show="$ctrl.isAuthenticated()">
+        <a href="#" ng-click="$ctrl.showInviteUserModal(); navCollapsed = !navCollapsed">
+          <i class="fa fa-envelope-o"></i>
+          &nbsp;Invite A Friend
         </a>
       </li>
       <li ng-show="$ctrl.isAdmin()" uib-dropdown>

@@ -49,6 +49,19 @@ class LoginUserService {
     }
   }
 
+  public function SetAuthenticationObjectValuesOnLogin(PhpDraftResponse $response, $user) {
+    $now = new \DateTime("now", new \DateTimeZone('GMT'));
+    $interval = new \DateInterval('P0Y0M0DT0H0M' . AUTH_SECONDS . 'S');
+    $authTimeout = $now->add($interval);
+
+    $response->name = $user->getName();
+    $response->is_admin = $user->isAdmin();
+    $response->token = $this->app['security.jwt.encoder']->encode(['name' => $user->getUsername()]);
+    $response->auth_timeout = $authTimeout->format('Y-m-d H:i:s');
+
+    return $response;
+  }
+
   public function SearchCommissioners($searchTerm) {
     $response = new PhpDraftResponse();
 
@@ -114,17 +127,16 @@ class LoginUserService {
         $user->email => $user->name
       );
 
-      $message->subject = "PHPDraft: Verify your email address";
+      $verifyLink = $this->_CreateEmailVerificationLink($user);
+      $emailParameters = array(
+        'imageBaseUrl' => sprintf("%s/images/email", APP_BASE_URL),
+        'verifyLink' => $verifyLink,
+      );
+
+      $message->subject = "HootDraft: Verify your email address";
       $message->is_html = true;
-      $verificationLink = $this->_CreateEmailVerificationLink($user);
-      $message->body = sprintf("The account for the email <strong>%s</strong> was created but the email address must be verified before the account can be activated.<br/><br/>\n\n
-
-        Visit this address in your web browser to activate the user:<br/><br/>\n\n
-
-        <a href=\"%s\">%s</a><br/>\n\n
-        (For non-HTML enabled email:)<br/>\n
-        %s
-      ", $user->email, $verificationLink, $verificationLink, $verificationLink);
+      $message->body = $this->app['phpdraft.TemplateRenderService']->RenderTemplate('VerifyEmail.html', $emailParameters);
+      $message->altBody = "Hey pal, we need you to verify your email address. Click this link to do so: $verifyLink";
 
       $this->app['phpdraft.EmailService']->SendMail($message);
 
@@ -164,19 +176,16 @@ class LoginUserService {
         $user->email => $user->name
       );
 
-      $message->subject = "PHPDraft: Reset Password Request";
+      $resetLink = $this->_CreateForgottenPasswordLink($user);
+      $emailParameters = array(
+        'imageBaseUrl' => sprintf("%s/images/email", APP_BASE_URL),
+        'resetLink' => $resetLink,
+      );
+
+      $message->subject = "HootDraft: Reset Password Request";
       $message->is_html = true;
-      $verificationLink = $this->_CreateForgottenPasswordLink($user);
-      $message->body = sprintf("A password recovery request has been made for the account <strong>%s</strong><br/><br/>\n\n
-
-        To reset your password, visit the following address in your web browser:<br/><br/>\n\n
-
-        <a href=\"%s\">%s</a><br/>\n
-        (For non-HTML enabled email:)<br/>\n
-        %s<br/><br/>\n\n
-
-        If you remember your old password, no longer want to change it, or didn't request a password reset - you can ignore this email.
-      ", $user->email, $verificationLink, $verificationLink, $verificationLink);
+      $message->body = $this->app['phpdraft.TemplateRenderService']->RenderTemplate('ResetPassword.html', $emailParameters);
+      $message->altBody = "Hello, looks like you've requested to reset your password. To do so, click this link: $resetLink";
 
       $this->app['phpdraft.EmailService']->SendMail($message);
 
@@ -232,7 +241,7 @@ class LoginUserService {
     //Update user email, invalidate login
     if (!empty($email) && !StringUtils::equals($email, $user->email)) {
       $user->email = $email;
-      $user->enabled = false;
+      $user->enabled = 0;
       $invalidateLogin = true;
       $user->verificationKey = $this->app['phpdraft.SaltService']->GenerateSalt();
       $sendEmail = true;
@@ -258,17 +267,16 @@ class LoginUserService {
           $user->email => $user->name
         );
 
-        $message->subject = "PHPDraft: Verify your email address";
+        $verifyLink = $this->_CreateEmailVerificationLink($user);
+        $emailParameters = array(
+          'imageBaseUrl' => sprintf("%s/images/email", APP_BASE_URL),
+          'verifyLink' => $verifyLink,
+        );
+
+        $message->subject = "HootDraft: Verify your email address";
         $message->is_html = true;
-        $verificationLink = $this->_CreateEmailVerificationLink($user);
-        $message->body = sprintf("The account <strong>%s</strong> was updated but the email address must be verified before the account can be re-activated.<br/><br/>\n\n
-
-          Visit this address in your web browser to re-activate the user:<br/><br/>\n\n
-
-          <a href=\"%s\">%s</a><br/>\n
-          (For non-HTML enabled email:)<br/>\n
-          %s
-        ", $user->email, $user->email, $verificationLink, $verificationLink, $verificationLink);
+        $message->body = $this->app['phpdraft.TemplateRenderService']->RenderTemplate('ReverifyEmail.html', $emailParameters);
+        $message->altBody = "Hi, and welcome to Hoot Draft! Before we get started, can you click this link to verify that you are who you say you are? Thanks pal! $verifyLink";
 
         $this->app['phpdraft.EmailService']->SendMail($message);
       }

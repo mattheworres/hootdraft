@@ -63,6 +63,7 @@ class AddPickController {
     this.currentLoading = true;
 
     const currentPickSuccess = data => {
+      this.$scope.$broadcast(this.subscriptionKeys.focusPlayerAutocomplete);
       this.$loading.finish('load_current');
       this.currentLoading = false;
       this.currentPick = data.pick;

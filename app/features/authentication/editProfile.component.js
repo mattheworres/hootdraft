@@ -1,7 +1,7 @@
 class EditProfileController {
   constructor($sessionStorage, $location,
     authenticationService, api, workingModalService, messageService,
-    subscriptionKeys, errorService, pathHelperService) {
+    subscriptionKeys, errorService, pathHelperService, lodash) {
     this.$sessionStorage = $sessionStorage;
     this.$location = $location;
     this.authenticationService = authenticationService;
@@ -11,22 +11,28 @@ class EditProfileController {
     this.subscriptionKeys = subscriptionKeys;
     this.errorService = errorService;
     this.pathHelperService = pathHelperService;
+    this.lodash = lodash;
+
+    this.loading = true;
   }
 
   $onInit() {
     this.showPassword = false;
     this.userProfile = {};
+    this.loading = true;
 
     this.loadUserProfileData();
   }
 
   loadUserProfileData() {
     const loadSuccess = data => {
-      angular.merge(this.userProfile, data);
+      this.lodash.merge(this.userProfile, data);
+      this.loading = false;
     };
 
     const errorHandler = () => {
       this.messageService.showError('Unable to load user profile');
+      this.loading = false;
     };
 
     this.api.Authentication.getProfile({}, loadSuccess, errorHandler);
@@ -74,14 +80,13 @@ class EditProfileController {
         if (response.sendEmail === true) {
           this.messageService.showInfo('Your email was updated. In order to login again you must verify your email address. An email has been sent to that account to activate it. You will be logged out for now. See you soon!');
           this.$location.path('/home');
+        } else {
+          this.messageService.showInfo('Since you changed your password, we had to log you out and log you back in again. But no biggie - just enter your new password now to login again.');
+          this.$location.path('/login');
         }
-
-        this.messageService.showInfo('Since you changed your password, we had to log you out and log you back in again. But no biggie - just enter your new password now to login again.');
-        this.$location.path('/login');
-
       }
 
-      if (this.$sessionStorage.user_name !== this.userProfile.name) {
+      if (this.$sessionStorage.userName !== this.userProfile.name) {
         this.authenticationService.cacheName(this.userProfile.name);
       }
 
@@ -112,6 +117,7 @@ EditProfileController.$inject = [
   'subscriptionKeys',
   'errorService',
   'pathHelperService',
+  'lodash',
 ];
 
 angular.module('phpdraft.authentication').component('phpdEditProfile', {

@@ -1,6 +1,7 @@
 angular.module('phpdraft.draft', [
   'ngRoute',
   'angular-flipclock',
+  'angularMoment',
   'darthwade.loading',
   'dndLists',
   'mgcrea.ngStrap.affix',

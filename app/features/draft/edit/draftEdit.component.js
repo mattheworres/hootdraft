@@ -10,6 +10,7 @@ class DraftEditController {
     depthChartPositionService,
     draftService,
     errorService,
+    lodash,
   ) {
     this.$scope = $scope;
     this.$loading = $loading;
@@ -22,6 +23,7 @@ class DraftEditController {
     this.depthChartPositionService = depthChartPositionService;
     this.draftService = draftService;
     this.errorService = errorService;
+    this.lodash = lodash;
 
     this.onDepthChartPositionChanged = this.onDepthChartPositionChanged.bind(this);
   }
@@ -38,10 +40,9 @@ class DraftEditController {
     this.sportChangeListenerRegistered = false;
     this.draftError = false;
 
-    this.status = this.draftService.getStatus();
-
     this.draftService.getDraft().then(draft => {
       this.draft = draft;
+      this.status = this.draftService.getStatus();
       //this._handleDraftUpdate(draft, this.status);
       this._loadCommishDraft(this.draft.draft_id);
     }, () => {
@@ -57,7 +58,7 @@ class DraftEditController {
     this.draftLoaded = true;
 
     const draftInitializeSuccess = data => {
-      angular.merge(this.draftEdit, data);
+      this.lodash.merge(this.draftEdit, this.lodash.omit(data, ['$promise', '$resolved']));
       this.draftLoading = false;
       this._bindDraftSpecificListeners();
     };
@@ -187,6 +188,7 @@ DraftEditController.$inject = [
   'depthChartPositionService',
   'draftService',
   'errorService',
+  'lodash',
 ];
 
 angular.module('phpdraft.draft').component('phpdDraftEdit', {

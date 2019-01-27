@@ -10,9 +10,4 @@ angular.module('phpdraft.home').config(($routeProvider, $locationProvider) => {
   $routeProvider.when('/home', {
     template: '<phpd-home></phpd-home>',
   });
-
-  $routeProvider.when('/by-commish', {
-    template: '<phpd-by-commish></phpd-by-commish>',
-    reloadOnSearch: false,
-  });
 });

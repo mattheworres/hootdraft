@@ -6,7 +6,7 @@ class SaltService {
   public function GenerateSalt() {
     //Special thanks: http://stackoverflow.com/a/18899561/324527
     $length = 16;
-    return substr(base64_encode(mcrypt_create_iv(ceil(0.75*$length), MCRYPT_DEV_URANDOM)), 0, $length);
+    return substr(base64_encode(openssl_random_pseudo_bytes($length)), 0, $length);
   }
 
   public function UrlDecodeSalt($encoded_salt_value) {
@@ -16,7 +16,7 @@ class SaltService {
   public function GenerateSaltForUrl() {
     $salt = $this->GenerateSalt();
 
-    while(strpos($salt, '/') != 0) {
+    while (strpos($salt, '/') !== false) {
       $salt = $this->GenerateSalt();
     }
 

@@ -32,13 +32,16 @@ install NPM npm
 mkdir ~/.npm-global
 npm config set prefix '~/.npm-global'
 install Yarn yarn
-install PHP_7.1 php7.1
-install PHP_Modules php7.1-mbstring php7.1-mcrypt php7.1-mysql php7.1-xdebug php7.1-xml
-install PHP_FPM php7.1-fpm
+install PHP_7.2 php7.2
+install PHP_Modules php7.2-mbstring php7.2-mysql php7.2-xdebug php7.2-xml
+install PHP_FPM php7.2-fpm
 
 echo Set User Permissions
-sed -i 's/user = www-data/user = vagrant/g' /etc/php/7.1/fpm/pool.d/www.conf
-sed -i 's/group = www-data/group = vagrant/g' /etc/php/7.1/fpm/pool.d/www.conf
+sed -i 's/user = www-data/user = vagrant/g' /etc/php/7.2/fpm/pool.d/www.conf
+sed -i 's/group = www-data/group = vagrant/g' /etc/php/7.2/fpm/pool.d/www.conf
+
+echo Display PHP errors
+sed -i 's/display_errors = Off/display_errors = On/g' /etc/php/7.2/fpm/php.ini
 
 echo Remove apache2
 service apache2 stop  >/dev/null
@@ -70,7 +73,7 @@ quietRun systemctl restart mysql.service || echo "Restart MySQL"
 quietRun systemctl restart php7.1-fpm.service || echo "Restart PHP-FPM"
 quietRun systemctl restart nginx.service || echo "Restart Nginx"
 
-echo Creating PHPDraft database
+echo Creating HootDraft database
 #runuser -l vagrant -c 'mysqladmin -u root -ppassw0rd create phpdraft'
 quietRun mysqladmin -u root -ppassw0rd create phpdraft
 

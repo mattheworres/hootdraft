@@ -1,6 +1,60 @@
-span.draft-status {
-  width: 70px;
+span.draft-sport {
+  min-width: 75px;
   display: inline-block;
+  font-size: 80%;
+  line-height: 16px;
+  color: #ffffff;
+  background-color: #767676;
+
+  &.label-NFL {background-color: #f2711c;}
+  &.label-NFLE {background-color: #a333c8;}
+  &.label-MLB {background-color: #2185d0;}
+  &.label-NBA {background-color: #21ba45;}
+  &.label-NHL {background-color: #e03997;}
+  &.label-S15 {background-color: #a5673f;}
+  &.label-remove {background-color: #db2828;}
+}
+
+span.draft-status {
+  min-width: 75px;
+  display: inline-block;
+  font-size: 80%;
+  line-height: 16px;
+  color: #ffffff;
+  background-color: #767676;
+
+  &.label-complete {background-color: #5cb85c;}
+  &.label-in_progress {background-color: #5bc0de;}
+  &.label-undrafted {background-color: #f0ad4e;}
+  &.label-remove {background-color: #db2828;}
+}
+
+span.draft-user-enabled {
+  min-width: 75px;
+  display: inline-block;
+  font-size: 80%;
+  line-height: 16px;
+  color: #FFFFFF;
+  background-color: #767676;
+
+  &.label-0 {background-color: #f2711c;}
+  &.label-1 {background-color: #21ba45;}
+  &.label-remove {background-color: #db2828;}
+}
+
+phpd-commish-actions{
+  div.panel-body {
+    padding: 5px;
+
+    button, a {
+      margin-bottom: 15px;
+      margin-top: 10px;
+
+      &:hover {
+        box-shadow: 2px 3px 10px #666;
+      }
+    }
+  }
 }
 
 div.draft_order {
@@ -155,4 +209,21 @@ ul.depth_chart_positions {
 span.position-slots {
   display: inline-block;
   width: 30px;
+}
+
+.btn-warning {
+  border: 1px solid darken(@brand-warning, 25%);
+
+  &:hover {
+    border: 1px solid darken(@brand-warning, 25%);
+  }
+}
+
+ul.dropdown-menu.label-menu {
+  min-width: 250px;
+
+  a {
+    margin: 3px;
+    display: inline-block;
+  }
 }

@@ -6,13 +6,14 @@
 <IfModule mod_rewrite.c>
     Options -MultiViews
 
-    RewriteEngine On
-    RewriteBase /
+    # Enable the next two lines if your install lives in a subfolder from the domain base directory
+    #RewriteEngine On
+    #RewriteBase /
 
     # Comment next line to disable forcing of HTTPS for all pages:
     # (it is strongly recommended you *keep* this setting enabled!)
-    RewriteCond %{HTTPS} off
-    RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    #RewriteCond %{HTTPS} off
+    #RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
     #H/T to anubhava http://stackoverflow.com/a/29874382/324527
     DirectoryIndex bootstrap.php index.html

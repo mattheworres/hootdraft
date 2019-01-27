@@ -1,49 +1,21 @@
 <div data-ng-cloak>
   <div class="container-fluid">
     <div class="row">
-      <div class="hidden-xs hidden-sm col-md-1 col-lg-2">&nbsp;</div>
-      <div class="col-xs-12 col-sm-12 col-md-10 col-lg-8">
-        <h2>Welcome to PHP Draft!</h2>
-        <p>Find a league below, or select "Leagues by Commissioner" to find your league through your commissioner.</p>
+      <div class="hidden-xs hidden-sm hidden-md col-lg-2">&nbsp;</div>
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-8">
+        <h2 class="text-center">Welcome to Hoot Draft!</h2>
+        <p class="text-center"><strong>Aw yeah!</strong> Time to draft a real beauty of a team (or see what kinda clunker Kevin put together. No one takes a kicker that early, Kevin!)</p>
+        <p class="text-center">Use the filters along the top to help find the league you&apos;re looking for. Or just start randomly hitting keys, maybe you&apos;ll get lucky?</p>
       </div>
-      <div class="hidden-xs hidden-sm col-md-1 col-lg-2">&nbsp;</div>
+      <div class="hidden-xs hidden-sm hidden-md col-lg-2">&nbsp;</div>
     </div>
     <div class="row">
-      <div class="hidden-xs hidden-sm col-md-1 col-lg-2">&nbsp;</div>
-      <div class="col-xs-12 col-sm-12 col-md-10 col-lg-8">
+      <div class="hidden-xs hidden-sm hidden-md col-lg-2">&nbsp;</div>
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-8">
         <section-loading show-loading=draftTableLoading></section-loading>
-        <table datatable="ng" ng-hide="draftTableLoading" dt-options="$ctrl.dtOptions" dt-column-defs="$ctrl.dtColumnDefs" class="table table-striped table-bordered">
-          <thead>
-            <tr>
-              <th>League Name</th>
-              <th>Sport</th>
-              <th>Commissioner</th>
-              <th class="hidden-xs hidden-sm">Rounds</th>
-              <th class="hidden-xs">Created</th>
-              <th style="width: 50px;">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr ng-repeat="draft in $ctrl.drafts">
-              <td>
-                <i ng-hide="::draft.draft_visible" class="fa fa-lock" alt="Locked" title="This draft is password protected!"></i>&nbsp;
-                <strong><a href="draft/{{::draft.draft_id}}">{{::draft.draft_name}}</a></strong>
-              </td>
-              <td>{{::draft.draft_sport}}</td>
-              <td>{{::draft.commish_name}}</td>
-              <td class="hidden-xs hidden-sm">{{::draft.draft_rounds}}</td>
-              <td class="hidden-xs">{{::draft.draft_create_time | amParse: 'YYYY-MM-DD HH:mm:ss UTC' | amDateFormat:'MMMM D, YYYY'}}</td>
-              <td class="text-center">
-                <span class="draft-status label label-warning" ng-show="::draft.setting_up == true">Setting Up</span>
-                <span class="draft-status label label-info" ng-show="::draft.in_progress == true">In Progress</span>
-                <span class="draft-status label label-success" ng-show="::draft.complete == true">Completed</span>
-                <span class="draft-status label label-default" ng-show="::draft.is_locked">Locked</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <phpd-draft-table drafts="$ctrl.drafts" items-by-page="15"></phpd-draft-table>
       </div>
-      <div class="hidden-xs hidden-sm col-md-1 col-lg-2">&nbsp;</div>
+      <div class="hidden-xs hidden-sm hidden-md col-lg-2">&nbsp;</div>
     </div>
   </div>
 </div>

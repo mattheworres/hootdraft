@@ -1,6 +1,6 @@
 angular.module('phpdraft.home', [
   'ngRoute',
-  'datatables',
+  'smart-table',
   'ui.bootstrap',
   'phpdraft.config',
   'phpdraft.shared',

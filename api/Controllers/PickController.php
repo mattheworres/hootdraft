@@ -97,8 +97,8 @@ class PickController {
 
     $pickSearchModel = new PickSearchModel($draftId, $keywords, $team, $position, $sort);
 
-    $pickSearchModel = $app['phpdraft.PickRepository']->SearchStrict($pickSearchModel);
-    $pickSearchModel = $app['phpdraft.PickRepository']->SearchLoose($pickSearchModel);
+    $pickSearchModel = $app['phpdraft.PickSearchRepository']->SearchStrict($pickSearchModel);
+    $pickSearchModel = $app['phpdraft.PickSearchRepository']->SearchLoose($pickSearchModel);
 
     #If there's a space and no matches so far, create another searches where we manually split them firstname/lastname by sace automatically
     $splitNameAutomatically = count($pickSearchModel->player_results) == 0 && strpos($keywords, " ") != false;
@@ -106,7 +106,7 @@ class PickController {
     if ($splitNameAutomatically) {
       $pickSearchModel = new PickSearchModel($draftId, $keywords, $team, $position, $sort);
       $names = explode(" ", $keywords, 2);
-      $pickSearchModel = $app['phpdraft.PickRepository']->SearchSplit($pickSearchModel, $names[0], $names[1]);
+      $pickSearchModel = $app['phpdraft.PickSearchRepository']->SearchSplit($pickSearchModel, $names[0], $names[1]);
     }
 
     return $app->json($pickSearchModel);

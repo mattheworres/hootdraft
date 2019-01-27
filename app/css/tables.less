@@ -1,0 +1,95 @@
+table.table {
+  thead {
+    tr th {
+      div.selected-commish-display span.label.label-commish {
+        min-width: 150px;
+        line-height: 24px;
+        font-size: 120%;
+        height: 28px;
+        display: inline-block;
+        margin-bottom: 3px;
+        cursor: pointer;
+
+        i.fa {
+          float: right;
+          margin-top: 2px;
+        }
+      }
+
+      div.dropdown.label-select-distinct-filter {
+        width: 100%;
+
+        ul.dropdown-menu {
+          min-width: 170px;
+
+          a {
+            margin: 3px;
+            display: inline-block;
+          }
+        }
+      }
+    }
+
+    th.sortable {
+      cursor: pointer;
+    }
+
+    i.fa.fa-sort-desc, i.fa.fa-sort-asc {
+      display: none;
+    }
+
+    i.fa.fa-sort {
+      display: inline-block;
+      color: #CCC;
+    }
+
+    th phpd-sort-icons {
+      margin-right: 3px;
+    }
+
+    th.st-sort-descent {
+      i.fa.fa-sort, i.fa.fa-sort-asc {
+        display: none;
+      }
+      i.fa.fa-sort-desc {
+        display: inline-block;
+      }
+    }
+
+    th.st-sort-ascent {
+      i.fa.fa-sort, i.fa.fa-sort-desc {
+        display: none;
+      }
+
+      i.fa.fa-sort-asc {
+        display: inline-block;
+      }
+    }
+
+    div.league-filter ul.dropdown-menu {
+      min-width: 112px;
+
+      li {
+        min-width: 0;
+      }
+    }
+  }
+
+  tfoot tr td div div.pagination {
+    margin: 0;
+
+    ul.pagination {
+      margin: 5px 0;
+
+      li a {
+        cursor: pointer;
+        user-select: none;
+        width: 45px;
+      }
+
+      li.previous a, li.next a {
+        width: 60px;
+      }
+    }
+  }
+}

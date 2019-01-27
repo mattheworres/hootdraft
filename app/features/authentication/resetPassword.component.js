@@ -9,11 +9,13 @@ class ResetPasswordController {
     this.authenticationService = authenticationService;
     this.$location = $location;
     this.errorService = errorService;
+    this.showLoading = true;
   }
 
   $onInit() {
     this.showPassword = false;
     this.showResetForm = false;
+    this.showLoading = true;
 
     if (this.authenticationService.isAuthenticated()) {
       this.authenticationService.sendAuthenticatedUserToPreviousPath();
@@ -26,6 +28,7 @@ class ResetPasswordController {
     if ((this.email === null) || (this.resetToken === null)) {
       this.messageService.showError('Invalid token or email');
       this.showResetForm = false;
+      this.showLoading = false;
       return;
     }
 
@@ -38,10 +41,12 @@ class ResetPasswordController {
 
     const verificationSuccess = () => {
       this.showResetForm = true;
+      this.showLoading = false;
     };
 
     const verificationFailure = () => {
       this.showResetForm = false;
+      this.showLoading = false;
     };
 
     verifyResult.promise.then(verificationSuccess, verificationFailure);
@@ -79,15 +84,17 @@ class ResetPasswordController {
 
     this.messageService.closeToasts();
 
-    const resetSuccessHandler = () => {
+    const resetSuccessHandler = data => {
       this.resetInProgress = false;
       this.workingModalService.closeModal();
 
       this.form.$setPristine();
 
-      this.$location.path('/login');
+      this.authenticationService.cacheSession(data.data);
 
-      this.messageService.showInfo('Your password has been set - you may log in now');
+      this.$location.path('/home');
+
+      this.messageService.showInfo('Your password has been set and you\'ve been logged in. Welcome!');
     };
 
     const resetFailureHandler = response => {

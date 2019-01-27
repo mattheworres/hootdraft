@@ -1,7 +1,7 @@
 <?php
 namespace Deployer;
 
-desc('PHP Draft: Build & Package from source (for Github Releases)');
+desc('Hoot Draft: Build & Package from source (for Github Releases)');
 task('package_release', [
   'phpdraft:get_release_details',
   'phpdraft:verify_package',
@@ -26,7 +26,7 @@ task('phpdraft:verify_package', function() {
     if(file_exists($directory) !== true) {
       writeln("<error>Directory $directory does not exist, cannot package.</error>\n");
       writeln("<error>In order to package a release, you must start with sourcecode from the Github repository, not from a prepackaged release from the Github Releases (you've apparently done it backwards :) )</error>\n");
-      throw new \Exception("PHP Draft cannot be packaged for release.");
+      throw new \Exception("Hoot Draft cannot be packaged for release.");
     }
   }
 
@@ -34,14 +34,14 @@ task('phpdraft:verify_package', function() {
 
   if(strpos($yarn_output, '.') == false) {
     writeln('<error>Yarn not found on path. Install Yarn globally for commandline use</error>');
-    throw new \Exception("PHP Draft cannot be packaged for release");
+    throw new \Exception("Hoot Draft cannot be packaged for release");
   }
 
   $sevenZip_output = runLocally('7z');
 
   if(strpos($sevenZip_output, 'Igor Pavlov') == false) {
     writeln('<error>7-Zip not found on path. Install 7-Zip for commandline use</error>');
-    throw new \Exception("PHP Draft cannot be packaged for release");
+    throw new \Exception("Hoot Draft cannot be packaged for release");
   }
 
   $releaseFileName = get('phpdraft')['releaseFile'];
@@ -76,9 +76,9 @@ desc('Ask the user for release details');
 task('phpdraft:get_release_details', function() {
   $phpdraftReleasePath = ask('Where should the release package be stored (provide an absolute path, no trailing slash)?', '~/phpdraft_releases');
 
-  $phpdraftReleaseFile = ask('Name for the main archive (.zip will be appended)', 'PHPDraft_2.x.x_Official');
+  $phpdraftReleaseFile = ask('Name for the main archive (.zip will be appended)', 'HootDraft_2.x.x_Official');
 
-  $phpdraftResourcesFile = ask('Name for the resources archive (.zip will be appended)', 'PHPDraft_2.x.x_Player_CSV_Data');
+  $phpdraftResourcesFile = ask('Name for the resources archive (.zip will be appended)', 'HootDraft_2.x.x_Player_CSV_Data');
 
   set('phpdraft', [
     'releasePath' => $phpdraftReleasePath,
@@ -155,7 +155,7 @@ task('phpdraft:package_success', function() {
   $resourceFileName = get('phpdraft')['resourceFile'];
   $archivePath = get('phpdraft')['releasePath'];
 
-  writeln("<info>PHP Draft successfully packaged!");
+  writeln("<info>Hoot Draft successfully packaged!");
   writeln("<info>Main archive here: $archivePath/$releaseFileName");
   writeln("<info>Resources archive here: $archivePath/$resourceFileName");
 })->setPrivate();

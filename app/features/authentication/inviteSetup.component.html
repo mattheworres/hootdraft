@@ -1,0 +1,149 @@
+<div data-ng-cloak>
+  <div class="container-fluid" ng-show="$ctrl.showLoading">
+    <phpd-section-loading show-loading="$ctrl.showLoading" loading-text="Verifying your token, one sec..." />
+  </div>
+  <div class="container-fluid ng-hide" ng-show="$ctrl.showResetForm">
+    <div class="row">
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+      <div class="col-xs-12 col-sm-12 col-md-10">
+        <h2 class="text-center">Set Your Password</h2>
+      </div>
+      <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+    </div>
+    <div class="row">
+      <div class="col-xs-1 col-sm-2 col-md-3">&nbsp;</div>
+      <div class="col-xs-10 col-sm-8 col-md-6">
+        <form class="form-horizontal" name="$ctrl.form">
+          <fieldset>
+            <div class="row">
+              <div class="col-xs-12">
+                <p class="text-justify">
+                  Welcome to Hoot Draft, <strong>{{$ctrl.email}}</strong>!
+                </p>
+                <p>
+                  We&apos;re pretty laid back here, but not so laid back as to not use passwords and be all willy nilly with our data. Come on now.
+                </p>
+                <p>Now, you need to think of a good password. Not <b>too</b> good that you can't remember it, but still good.</p>
+                <p>Ok... Got one? Great. Let's see how well you remembered it.</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12 v-offset-2">
+                <div class="form-group" show-errors>
+                  <div class="col-xs-3 text-right text-right">
+                    <label class="control-label" for="email">
+                      Email
+                    </label>
+                  </div>
+                  <div class="col-xs-9">
+                    <strong>{{$ctrl.email}}</strong>
+                    <input
+                      name="email"
+                      autocomplete="username"
+                      ng-model="$ctrl.email"
+                      hidden="true" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12 v-offset-1">
+                <div class="form-group" show-errors>
+                  <div class="col-xs-3 text-right">
+                    <label class="control-label" for="password">
+                      <span class="text-danger">*</span>&nbsp;Password
+                    </label>
+                  </div>
+                  <div class="col-xs-6">
+                    <input name="password"
+                      autocomplete="new-password"
+                      ng-model="user.password"
+                      class="form-control"
+                      minlength="8"
+                      maxlength="255"
+                      type="{{$ctrl.passwordInputType()}}"
+                      ng-required="true"
+                      placeholder="Password" />
+                    <div ng-show="$ctrl.form.$submitted || $ctrl.form.password.$touched">
+                      <span ng-show="$ctrl.form.password.$error.required" class="help-block">Password is missing</span>
+                      <span ng-show="!$ctrl.form.password.$error.required && $ctrl.form.password.$error.minlength" class="help-block">Password is too short - 8 characters minimum</span>
+                      <span ng-show="$ctrl.form.password.$error.maxlength" class="help-block">Password is too long</span>
+                    </div>
+                  </div>
+                  <div class="col-xs-3 text-right">
+                    <toggle-switch name="showPassword" ng-model="$ctrl.showPassword" knob-label="Show"></toggle-switch>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12 v-offset-1">
+                <div class="form-group" show-errors>
+                  <div class="col-xs-3 text-right">
+                    <label class="control-label" for="confirmedPassword">
+                      <span class="text-danger">*</span>&nbsp;Confirm
+                    </label>
+                  </div>
+                  <div class="col-xs-6">
+                    <input name="confirmedPassword"
+                      autocomplete="new-password"
+                      ng-model="user.confirmedPassword"
+                      class="form-control"
+                      minlength="8"
+                      maxlength="255"
+                      type="{{$ctrl.passwordInputType()}}"
+                      ng-required="true"
+                      placeholder="Confirm your password"
+                      match="user.password" />
+                    <div ng-show="$ctrl.form.$submitted || $ctrl.form.confirmedPassword.$touched">
+                      <span ng-show="$ctrl.form.confirmedPassword.$error.required" class="help-block">You must confirm your password</span>
+                      <span ng-show="$ctrl.form.confirmedPassword.$error.match" class="help-block">Passwords do not match.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12 text-center v-offset-2">
+                <button type="submit" class="btn btn-success btn-lg" ng-click="$ctrl.submitClicked()" ng-submit="$ctrl.submitClicked()" ng-disabled="$ctrl.registerFormIsInvalid()">
+                  Set Your Password&nbsp;
+                  <i class="fa fa-key"></i>
+                </button>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+      <div class="col-xs-1 col-sm-2 col-md-3">&nbsp;</div>
+    </div>
+  </div>
+  <div class="container-fluid ng-hide" ng-show="!$ctrl.showLoading && !$ctrl.showResetForm">
+    <div class="row">
+      <div class="col-xs-1 col-sm-2 col-md-3">&nbsp;</div>
+      <div class="col-xs-10 col-sm-8 col-md-6">
+        <h2 class="text-center">Bad Setup Token</h2>
+        <p>
+          Whoops...
+        </p>
+        <p class="text-justify">
+          Looks like the email/token combo you have there is no good. No worries though - this can happen from time to time.
+        </p>
+        <p class="text-justify">
+          For user security, whenever we use a token to let you set or change your password, we get rid of that token forever
+          and ever so bad guys can't use it to steal your account.
+        </p>
+        <p class="text-justify">
+          Hitler was a bad guy. You don't want Hitler to steal your account, do you? We didn't think so.
+        </p>
+        <p class="text-justify">
+          Fear not, friend: you can &ndash; <strong><a href="lostPassword">request a password reset</a> to set your password</strong> (just enter <em>{{$ctrl.email}}</em> as your email).
+        </p>
+        <p class="text-justify">
+          If you keep hitting these issues, please <a href="mailto:support@phpdraft.com">reach out</a> or reach me on Twitter: <a href="https://twitter.com/mattheworres" class="alert-link">@mattheworres</a>
+        </p>
+      </div>
+      <div class="col-xs-1 col-sm-2 col-md-3">&nbsp;</div>
+    </div>
+  </div>
+</div>
+

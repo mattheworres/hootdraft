@@ -1,7 +1,6 @@
 const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
 const cfg = require('../config');
-const webpack = require('webpack-stream');
 const streamqueue = require('streamqueue');
 const pump = require('pump');
 
@@ -150,4 +149,4 @@ gulp.task('js-lint', () => {
 });
 
 // Do: add back lint step once snake_case to camelCase issues have been resolved
-gulp.task('js', ['js-vendor', /*'js-lint', */'js-app', 'js-config', 'js-templates']);
+gulp.task('js', ['js-vendor', 'js-lint', 'js-app', 'js-config', 'js-templates']);

@@ -18,7 +18,7 @@ class PickSearchModel {
   /** @var string Sorting by player pick, ASC or DESC */
   public $sort;
 
-  /** @var string */
+  /** @var array */
   public $player_results;
 
   public function __construct($draft_id, $keywords, $team, $position, $sort) {

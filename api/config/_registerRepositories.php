@@ -22,6 +22,10 @@ $app['phpdraft.PickRepository'] = function() use ($app) {
   return new \PhpDraft\Domain\Repositories\PickRepository($app);
 };
 
+$app['phpdraft.PickSearchRepository'] = function() use ($app) {
+  return new \PhpDraft\Domain\Repositories\PickSearchRepository($app);
+};
+
 $app['phpdraft.TradeRepository'] = function() use ($app) {
   return new \PhpDraft\Domain\Repositories\TradeRepository($app);
 };

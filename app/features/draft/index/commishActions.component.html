@@ -1,0 +1,61 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        <i class="fa fa-dashboard"></i>&nbsp;&nbsp;
+        Commish Actions
+      </h3>
+    </div>
+    <div class="panel-body">
+        <div class="form-group">
+          <div class="col-xs-12 col-sm-6 control-label" ng-if="$ctrl.draft.in_progress">
+            <a type="button" class="btn btn-success btn-lg btn-block" href="commish/draft/{{$ctrl.draft.draft_id}}/picks/add">
+              <i class="fa fa-plus"></i>&nbsp;
+              Enter Pick
+            </a>
+          </div>
+          <div class="col-xs-12 col-sm-6 control-label" ng-if="$ctrl.draft.in_progress">
+            <a type="button" class="btn btn-primary btn-lg btn-block" href="commish/draft/{{$ctrl.draft.draft_id}}/picks/edit">
+              <i class="fa fa-pencil"></i>&nbsp;
+              Change Pick
+            </a>
+          </div>
+          <div class="col-xs-12 col-sm-6 control-label" ng-if="$ctrl.draft.in_progress">
+            <a type="button" class="btn btn-success btn-lg btn-block" href="commish/draft/{{$ctrl.draft.draft_id}}/trades/add">
+              <i class="fa fa-exchange"></i>&nbsp;
+              Enter Trade
+            </a>
+          </div>
+          <div class="col-xs-12 col-sm-6 control-label" ng-if="$ctrl.draft.in_progress">
+            <button type="button" class="btn btn-warning btn-lg btn-block" ng-click="$ctrl.showResetDraftModal()">
+              <i class="fa fa-warning"></i>&nbsp;
+              Reset
+            </button>
+          </div>
+          <div class="col-xs-12 col-sm-6 control-label" ng-if="$ctrl.draft.setting_up">
+            <button type="button" class="btn btn-success btn-lg btn-block" ng-click="$ctrl.showStartDraftModal()">
+              <i class="fa fa-play"></i>&nbsp;
+              Start!
+            </button>
+          </div>
+          <div class="col-xs-12 col-sm-6" ng-if="$ctrl.draft.setting_up || $ctrl.draft.in_progress">
+            <a type="button" class="btn btn-primary btn-lg btn-block" href="commish/draft/{{$ctrl.draft.draft_id}}/timers">
+              <i class="fa fa-clock-o"></i>&nbsp;
+              Timers
+            </a>
+          </div>
+          <div class="col-xs-12 col-sm-6 control-label" ng-if="$ctrl.draft.setting_up">
+            <a type="button" class="btn btn-primary btn-lg btn-block" href="commish/draft/{{$ctrl.draft.draft_id}}/edit">
+              <i class="fa fa-pencil"></i>&nbsp;
+              Edit
+            </a>
+          </div>
+          <div class="col-xs-12 col-sm-6" ng-if="$ctrl.draft.setting_up || $ctrl.draft.in_progress">
+            <button type="button" class="btn btn-danger btn-lg btn-block" ng-click="$ctrl.showDeleteDraftModal()">
+              <i class="fa fa-trash"></i>&nbsp;
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

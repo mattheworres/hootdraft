@@ -5,7 +5,8 @@ class CommishPickEntryController {
     pickService,
     api,
     limitToFilter,
-    subscriptionKeys) {
+    subscriptionKeys,
+    lodash) {
     this.$scope = $scope;
     this.$routeParams = $routeParams;
     this.messageService = messageService;
@@ -13,6 +14,7 @@ class CommishPickEntryController {
     this.api = api;
     this.limitToFilter = limitToFilter;
     this.subscriptionKeys = subscriptionKeys;
+    this.lodash = lodash;
 
     this.selectPlayer = this.selectPlayer.bind(this);
     this._add = this._add.bind(this);
@@ -37,7 +39,7 @@ class CommishPickEntryController {
     }
 
     if (currentPick && currentPick.isFirstChange()) {
-      this.currentPick = angular.merge({}, this.currentPick, currentPick.currentValue);
+      this.currentPick = this.lodash.merge({}, this.currentPick, currentPick.currentValue);
     }
 
     if (currentPick && currentPick.isFirstChange() === false) {
@@ -47,12 +49,7 @@ class CommishPickEntryController {
       //If manual entry, we need to make sure to properly update "selected" on the current pick so the display acts accordingly
       if (this.manualEntry) {
         //If we have a first AND last name, go ahead and show this as a pick. May not have position coloring, but thats OK.
-        const hasFirst = (localCurrentPick.first_name !== null) && (localCurrentPick.first_name.length > 0);
-        const hasLast = (localCurrentPick.last_name !== null) && (localCurrentPick.last_name.length > 0);
-        const hasTeam = (localCurrentPick.team !== null) && (localCurrentPick.team.length > 0);
-        const hasPosition = (localCurrentPick.position !== null) && (localCurrentPick.position.length > 0);
-
-        this.currentPick.selected = hasFirst || hasLast || hasTeam || hasPosition;
+        this.currentPick.selected = this.pickService.determinePickSelected(localCurrentPick);
       }
     }
   }
@@ -126,7 +123,7 @@ class CommishPickEntryController {
   selectPlayer(item) {
     item.selected = true;
     //Want to keep data about pick (round, pick #) as well as add player name, position, team, so merge not assignment:
-    this.currentPick = angular.merge({}, this.currentPick, item);
+    this.currentPick = this.lodash.merge({}, this.currentPick, item);
 
     delete this.playerSearch;
     this.playerSearch = '';
@@ -183,6 +180,7 @@ CommishPickEntryController.$inject = [
   'api',
   'limitToFilter',
   'subscriptionKeys',
+  'lodash',
 ];
 
 angular.module('phpdraft.pick').component('phpdCommishPickEntry', {

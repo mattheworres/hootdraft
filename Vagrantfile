@@ -10,7 +10,6 @@ Vagrant.configure("2") do |config|
     group: "vagrant",
     mount_options: ["dmode=775,fmode=664"]
 
-  #NOTE FOR MATT: UPDATE THIS TO BE GENERIC, THEN LOCK DOWN IN GITIGNORE
   #NOTE: For app-specific settings:
   config.vm.synced_folder "../../phpdraft_settings", "/phpdraft-settings",
     id: "settings",
@@ -19,7 +18,7 @@ Vagrant.configure("2") do |config|
     mount_options: ["dmode=775,fmode=6775"]
 
   config.vm.provider "virtualbox" do |vb|
-    vb.name = "PHPDraft Dev"
+    vb.name = "HootDraft Dev"
     vb.cpus = 1
     vb.memory = 1024
     # Disable the generation of the console log file

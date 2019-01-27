@@ -3,22 +3,24 @@ class RegenerateStatsController {
     api,
     ENV,
     messageService,
-    workingModalService,
-    DTOptionsBuilder,
-    DTColumnDefBuilder) {
+    workingModalService) {
     this.$timeout = $timeout;
     this.api = api;
     this.ENV = ENV;
     this.messageService = messageService;
     this.workingModalService = workingModalService;
-    this.DTOptionsBuilder = DTOptionsBuilder;
-    this.DTColumnDefBuilder = DTColumnDefBuilder;
   }
 
   $onInit() {
+    this.displayedDrafts = [];
     this.drafts = [];
+    this.itemsByPage = 15;
 
     this._loadDrafts();
+
+    this.getters = {
+      whenGenerated: row => new Date(row.draft_stats_generated),
+    };
   }
 
   _loadDrafts() {
@@ -27,6 +29,7 @@ class RegenerateStatsController {
     const draftsSuccess = response => {
       this.workingModalService.closeModal();
       this.drafts = response;
+      this.showPaging = response.length > this.itemsByPage;
     };
 
     const draftsError = () => {
@@ -72,8 +75,6 @@ RegenerateStatsController.$inject = [
   'ENV',
   'messageService',
   'workingModalService',
-  'DTOptionsBuilder',
-  'DTColumnDefBuilder',
 ];
 
 angular.module('phpdraft.admin').component('phpdRegenerateStats', {

@@ -1,5 +1,5 @@
 # Example NGINX Configuration
-# This is an example of what is required in order to get PHPDraft to run on NGINX.
+# This is an example of what is required in order to get HootDraft to run on NGINX.
 # This config also uses PHP-FPM 7.0 so paths may very there.
 # Mileage may vary.
 
@@ -37,7 +37,7 @@ server {
 server {
         listen 443 ssl http2;
 
-        #Change the absolute path below to the base directory that PHP Draft lives
+        #Change the absolute path below to the base directory that Hoot Draft lives
         root /var/www/example.com/current;
 
         index index.html;

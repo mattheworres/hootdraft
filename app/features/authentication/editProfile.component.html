@@ -1,5 +1,8 @@
 <div data-ng-cloak>
-  <div class="container-fluid">
+  <div class="container-fluid" ng-show="$ctrl.loading">
+    <phpd-section-loading show-loading="$ctrl.loading" />
+  </div>
+  <div class="container-fluid ng-hide" ng-show="!$ctrl.loading">
     <div class="row">
       <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
       <div class="col-xs-12 col-sm-12 col-md-10">
@@ -75,22 +78,19 @@
                 <div class="form-group" show-errors>
                   <div class="col-xs-3 text-right">
                     <label class="control-label" for="password">
-                      <span class="text-danger">*</span>&nbsp;Password
+                      <span class="text-danger">*</span>&nbsp;Current Password
                     </label>
                   </div>
                   <div class="col-xs-6">
                     <input name="password"
                       ng-model="$ctrl.userProfile.password"
                       autocomplete="current-password"
-                      uib-tooltip="Capslock is on"
-                      tooltip-trigger="focus"
-                      tooltip-enable="isCapsLockOn"
                       class="form-control"
                       minlength="8"
                       maxlength="255"
                       type="{{$ctrl.passwordInputType()}}"
                       ng-required="true"
-                      placeholder="Password" />
+                      placeholder="Current password (for security, you know)" />
                     <div ng-show="$ctrl.form.$submitted || $ctrl.form.password.$touched">
                       <span ng-show="$ctrl.form.password.$error.required" class="help-block">Password is missing</span>
                       <span ng-show="!$ctrl.form.password.$error.required && $ctrl.form.password.$error.minlength" class="help-block">Password is too short - 8 characters minimum</span>
@@ -116,9 +116,6 @@
                       name="newPassword"
                       ng-model="$ctrl.userProfile.newPassword"
                       autocomplete="new-password"
-                      uib-tooltip="Capslock is on"
-                      tooltip-trigger="focus"
-                      tooltip-enable="isCapsLockOn"
                       class="form-control"
                       minlength="8"
                       maxlength="255"
@@ -146,10 +143,7 @@
                   <div class="col-xs-6">
                     <input id="newConfirmedPassword"
                       name="newConfirmedPassword"
-                      uib-tooltip="Capslock is on"
                       autocomplete="new-password"
-                      tooltip-trigger="focus"
-                      tooltip-enable="isCapsLockOn"
                       ng-model="$ctrl.userProfile.newConfirmedPassword"
                       class="form-control"
                       minlength="8"

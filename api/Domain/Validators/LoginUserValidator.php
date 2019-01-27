@@ -6,6 +6,7 @@ use \Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use PhpDraft\Domain\Entities\LoginUser;
 use PhpDraft\Domain\Models\PhpDraftResponse;
+use Egulias\EmailValidator\Validation\RFCValidation;
 
 class LoginUserValidator {
   private $app;
@@ -40,6 +41,38 @@ class LoginUserValidator {
     $this->validateNameLength($name, $errors, $valid);
 
     $this->validateEmailAddress($emailAddress, $errors, $valid);
+
+    if (!$this->app['phpdraft.LoginUserRepository']->NameIsUnique($name)) {
+      $errors[] = "Name already taken.";
+      $valid = false;
+    }
+
+    $this->validateUniqueEmail($emailAddress, $errors, $valid);
+
+    return $this->app['phpdraft.ResponseFactory']($valid, $errors);
+  }
+
+  public function isInviteNewUserValid(LoginUser $user, $message) {
+    $valid = true;
+    $errors = array();
+
+    $emailAddress = $user->email;
+    $name = $user->name;
+
+    if (empty($emailAddress)
+      || empty($name)) {
+      $errors[] = "One or more missing fields.";
+      $valid = false;
+    }
+
+    $this->validateNameLength($name, $errors, $valid);
+
+    $this->validateEmailAddress($emailAddress, $errors, $valid);
+
+    if (strlen($message) > 255) {
+      $errors[] = "Message too long";
+      $valid = false;
+    }
 
     if (!$this->app['phpdraft.LoginUserRepository']->NameIsUnique($name)) {
       $errors[] = "Name already taken.";
@@ -280,7 +313,7 @@ class LoginUserValidator {
   }
 
   private function validateEmailAddress($emailAddress, &$errors, &$valid) {
-    if (!$this->app['phpdraft.EmailValidator']->isValid($emailAddress) || strlen($emailAddress) > 255) {
+    if (!$this->app['phpdraft.EmailValidator']->isValid($emailAddress, new RFCValidation()) || strlen($emailAddress) > 255) {
       $errors[] = "Email invalid.";
       $valid = false;
     }
