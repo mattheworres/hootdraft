@@ -2,31 +2,53 @@
 
 <a href="https://codeclimate.com/github/mattheworres/phpdraft"><img src="https://codeclimate.com/github/mattheworres/phpdraft/badges/gpa.svg" /></a>
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/mattheworres/phpdraft/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/mattheworres/phpdraft/?branch=master)
-<a href="https://codeclimate.com/github/mattheworres/phpdraft/coverage"><img src="https://codeclimate.com/github/mattheworres/phpdraft/badges/coverage.svg" /></a>
 [![Join the chat at https://gitter.im/mattheworres/phpdraft](https://badges.gitter.im/mattheworres/phpdraft.svg)](https://gitter.im/mattheworres/phpdraft?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 
-Hoot Draft allows commissioners to setup web-based real-time drafts for their fantasy sports leagues. If your leagues do **offline drafts** (instead of using your fantasy provider's online drafting tools), Hoot Draft is just for you!
+Hoot Draft makes running drafts for fantasy sports **a real hoot**! (dad jokes sold separately)
 
-The league commissioner creates an account, and then adds the fantasy league.
+<br />
 
-Pick the draft sport and style, specify the number of rounds the draft will last. Add the league managers (teams), and specify pick timers (some managers slower than others? Give them a timer!)
+<img align="left" alt="The color coded draft board with each pick being shown with a unique color background according to the player's position" src="/images/github/draft_board.png?raw=true" />
+<br /><br /><br /><br />
+<b>Large color-coded draft board updates live during the draft and is made with large screens and projectors in mind!</b>
+<br /><br /><br /><br /><br /><br /><br />
 
-The commissioner hits the start button.
 
-#### **BOOM**. Your fantasy draft is underway.
+<img align="right" alt="The pick entry screen with LeBron James appearing in the dropdown after L E B R was typed in" src="/images/github/pick_entry.png?raw=true" /> 
+<br /><br />
+<b>Player autocomplete - don't waste time spelling names or picking teams and positions. Select a suggestion and get on with it!</b>
+<br /><br /><br /><br /><br />
 
-Leave a laptop running on a podium and make each team enter their selections as their pick comes up, or be a gatekeeper commissioner and make every pick go through you - it's your choice!
+<img align="left" alt="The depth chart screen showing a fantasy team with each roster spot per row, the players assigned to that spot as well as green color coding suggesting all positions have been filled" src="/images/github/depth_charts.png?raw=true" /> 
+<br /><br /><br /><br />
+<b>Drag and drop depth charts for each team helps managers answer <em>"What does my team need?"</em> in a pinch!</b>
+<br /><br /><br /><br /><br /><br /><br /><br />
 
-The large color-coded draft board is perfect for displaying on large screen televisions (compatible with Google Chromecast screen casting!) and will display all pertinent info on-screen as it automatically updates.
+<img align="right" alt="A flip clock-style timer showing 3 minutes 31 seconds counting down" src="/images/github/pick_timer.png?raw=true" /> 
+<br />
+<b>Every league has "that one" manager who spends way too much time choosing a kicker (<em>come on, Kevin!</em>) Keep it fair with customizable pick timers!</b>
+<br /><br /><br /><br /><br />
 
-NFL, NBA, MLB, NHL and even Rugby are supported, along with trades. Watch your draft unfold or run the whole thing from your smartphone with a **Bootstrap**-powered responsive web app!
+<img align="left" alt="The trade entry screen showing two teams selected and one asset selected for each" src="/images/github/trade_entry.png?raw=true" />
+<br /><br /><br />
+<b>Managers can wheel and deal their picks and their unselected future picks at any point while the draft is still ongoing!</b>
+<br /><br /><br /><br /><br />
 
-Don't know how to install a web app or run a web server? No problem:
+### Thats cool! What else does it do?
+- Support for: NFL (normal *and* extended rosters) NBA, MLB, NHL, and Super 15 (Rugby) sports!
+- Real time updates across all devices
+- Responsive design to enable mobile device support
+- Google Chromecast support
 
-##### Sign up for a free commissioner account on [phpdraft.com](https://phpdraft.com) and get drafting today!
+### Ah crud, I don't know how to run a web server or anything like that!
+I was thinking you'd say that...
 
-### Minimum Server Requirements
+### No problem! Sign up for a free commissioner account on [hootdraft.com](https://hootdraft.com) and get drafting today! :-)
+
+<br />
+
+## Minimum Server Requirements
 - PHP 7.1+ installed (with `pdo_mysql` extension installed; PHP 7.2+ recommended!)
 - MySQL 5.6+ database
 - Webserver that can perform URL rewrites (Apache, IIS, or NGINX currently, possibly more in the future)
@@ -87,4 +109,4 @@ See the [Changelog](https://github.com/mattheworres/phpdraft/wiki/Changelog) for
 
 ## Copyright and license
 
-Code and documentation copyright 2010-2018 Matthew Orres. Code released under the GNU v3 license.
+Code and documentation copyright 2010-2019 Matthew Orres. Code released under the GNU v3 license.
