@@ -70,7 +70,7 @@ quietRun cp $CONFIG_SRC/xdebug.ini $PHP/mods-available/xdebug.ini || echo "Copy 
 
 echo Restarting Services
 quietRun systemctl restart mysql.service || echo "Restart MySQL"
-quietRun systemctl restart php7.1-fpm.service || echo "Restart PHP-FPM"
+quietRun systemctl restart php7.2-fpm.service || echo "Restart PHP-FPM"
 quietRun systemctl restart nginx.service || echo "Restart Nginx"
 
 echo Creating HootDraft database

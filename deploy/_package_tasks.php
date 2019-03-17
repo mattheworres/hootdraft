@@ -107,7 +107,8 @@ task('phpdraft:zip_package', function() {
     'README.MD',
     'package.json',
     'index.html',
-    'web.config'
+    'web.config',
+    'favicon.ico',
   ];
 
   $releaseFileName = get('phpdraft')['releaseFile'];

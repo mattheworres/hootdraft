@@ -63,7 +63,8 @@ task('phpdraft:upload_files', function() {
     'phinx.yml',
     'deploy/',
     'index.html',
-    'web.config'
+    'web.config',
+    'favicon.ico',
   ];
 
   foreach ($phpdraft_files as $file)
