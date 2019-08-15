@@ -35,6 +35,7 @@ install Yarn yarn
 install PHP_7.2 php7.2
 install PHP_Modules php7.2-mbstring php7.2-mysql php7.2-xdebug php7.2-xml
 install PHP_FPM php7.2-fpm
+install 7Zip p7zip-full
 
 echo Set User Permissions
 sed -i 's/user = www-data/user = vagrant/g' /etc/php/7.2/fpm/pool.d/www.conf

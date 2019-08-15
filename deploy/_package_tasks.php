@@ -5,7 +5,7 @@ desc('Hoot Draft: Build & Package from source (for Github Releases)');
 task('package_release', [
   'phpdraft:get_release_details',
   'phpdraft:verify_package',
-  'phpdraft:yarn_install',
+  //'phpdraft:yarn_install', //Issues here with symlinks in VMs, should use Yarn on your native machine anyways
   'phpdraft:composer_install',
   'phpdraft:build_app',
   'phpdraft:zip_package',

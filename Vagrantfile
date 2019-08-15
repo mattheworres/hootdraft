@@ -2,9 +2,9 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.hostname = 'phpdraft-dev'
-  config.vm.box = "ubuntu/xenial64"
-  config.vm.synced_folder "./", "/vagrant",
+  config.vm.hostname = 'hootdraft-dev'
+  config.vm.box = "ubuntu/bionic64"
+  config.vm.synced_folder "./", "/hootdraft",
     id: "app",
     owner: "vagrant",
     group: "vagrant",

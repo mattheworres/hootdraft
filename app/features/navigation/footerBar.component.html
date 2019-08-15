@@ -1,13 +1,22 @@
-<nav class="navbar navbar-default navbar-fixed-bottom hidden-xs" ng-hide="$ctrl.hideFooter()">
+<nav
+  class="navbar navbar-default navbar-fixed-bottom hidden-xs"
+  ng-hide="$ctrl.hideFooter()"
+>
   <div class="container-fluid">
     <div class="col-xs-4">
-      <p class="navbar-text"><a href="https://github.com/mattheworres/phpdraft">HootDraft v2.3.0</a></p>
+      <p class="navbar-text">
+        <a href="https://github.com/mattheworres/phpdraft">HootDraft v2.3.2</a>
+      </p>
     </div>
     <div class="col-xs-4 navbar-header-middle">
-      <p class="navbar-text"><a href="http://gplv3.fsf.org/" target="_blank">GNU GPL3 License</a></p>
+      <p class="navbar-text">
+        <a href="http://gplv3.fsf.org/" target="_blank">GNU GPL3 License</a>
+      </p>
     </div>
     <div class="col-xs-4">
-      <p class="navbar-text navbar-right">2010 &ndash; {{$ctrl.date | date:'yyyy'}} by Matthew Orres</p>
+      <p class="navbar-text navbar-right">
+        2010 &ndash; {{ $ctrl.date | date: "yyyy" }} by Matthew Orres
+      </p>
     </div>
   </div>
 </nav>
