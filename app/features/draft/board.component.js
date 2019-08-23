@@ -260,8 +260,7 @@ class BoardController {
         timersSuccess,
         errorHandler
       ); // eslint-disable-line camelcase
-    } else {
-      //TODO: See if this actually required, was in place pre ES6 rewrite
+    } else if (angular.isFunction(this.deregister)) {
       this.deregister();
     }
   }
