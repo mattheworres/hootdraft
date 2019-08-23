@@ -12,7 +12,7 @@ yargs.option('templates', {type: 'boolean'});
 
 const {argv} = yargs;
 
-module.exports = {//Is this here?
+module.exports = {
   options: {
     browser: argv.browser,
     concat: argv.concat,
@@ -61,7 +61,7 @@ module.exports = {//Is this here?
         'node_modules/angular-animate/angular-animate.js',
         'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
         'node_modules/angular-resource/angular-resource.js',
-        'node_modules/@bower_components/ng-lodash/build/ng-lodash.js',
+        'node_modules/lodash/lodash.js',
         'node_modules/angular-toastr/dist/angular-toastr.tpls.js',
         'node_modules/angular-recaptcha/release/angular-recaptcha.js',
         'node_modules/angular-toggle-switch/angular-toggle-switch.js',

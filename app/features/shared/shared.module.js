@@ -3,7 +3,6 @@ angular.module('phpdraft.shared', [
   'ngRoute',
   'angularMoment',
   'darthwade.loading',
-  'ngLodash',
   'ngStorage',
   'toastr',
   'ui.bootstrap',

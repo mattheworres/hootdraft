@@ -7,7 +7,6 @@ angular.module('phpdraft.draft', [
   'mgcrea.ngStrap.affix',
   'mgcrea.ngStrap.helpers.debounce',
   'mgcrea.ngStrap.helpers.dimensions',
-  'ngLodash',
   'ordinal',
   'slip',
   'toggle-switch',

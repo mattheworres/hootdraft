@@ -1,9 +1,7 @@
 {
   "root": true,
   "parser": "babel-eslint",
-  "extends": [
-    "eslint:recommended"
-  ],
+  "extends": ["eslint:recommended", "prettier"],
   "env": {
     "es6": true,
     "browser": true,
@@ -20,28 +18,17 @@
   "globals": {
     "angular": true
   },
-  "plugins": [
-    "angular"
-  ],
+  "plugins": ["angular"],
   "rules": {
     "no-extra-parens": "off",
     "accessor-pairs": "off",
     "array-callback-return": "error",
     "block-scoped-var": "error",
-    "complexity": [
-      "off",
-      5
-    ],
+    "complexity": ["off", 5],
     "consistent-return": "error",
-    "curly": [
-      "error",
-      "multi-line"
-    ],
+    "curly": ["error", "multi-line"],
     "default-case": "off",
-    "dot-location": [
-      "error",
-      "property"
-    ],
+    "dot-location": ["error", "property"],
     "dot-notation": "error",
     "eqeqeq": "error",
     "guard-for-in": "error",
@@ -87,19 +74,10 @@
     "no-with": "error",
     "radix": "error",
     "vars-on-top": "error",
-    "wrap-iife": [
-      "error",
-      "inside"
-    ],
-    "yoda": [
-      "error",
-      "never"
-    ],
+    "wrap-iife": ["error", "inside"],
+    "yoda": ["error", "never"],
     "strict": "error",
-    "init-declarations": [
-      "off",
-      "always"
-    ],
+    "init-declarations": ["off", "always"],
     "no-catch-shadow": "error",
     "no-label-var": "error",
     "no-restricted-globals": "error",
@@ -113,22 +91,13 @@
     "block-spacing": "error",
     "brace-style": "error",
     "camelcase": 0,
-    "comma-dangle": [
-      "error",
-      "always-multiline"
-    ],
+    "comma-dangle": ["error", "always-multiline"],
     "comma-spacing": "error",
     "comma-style": "error",
     "computed-property-spacing": "error",
     "consistent-this": "error",
-    "eol-last": [
-      "error",
-      "always"
-    ],
-    "func-names": [
-      "error",
-      "never"
-    ],
+    "eol-last": ["error", "always"],
+    "func-names": ["error", "never"],
     "func-style": [
       "error",
       "declaration",
@@ -146,10 +115,7 @@
         "SwitchCase": 1
       }
     ],
-    "jsx-quotes": [
-      "error",
-      "prefer-double"
-    ],
+    "jsx-quotes": ["error", "prefer-double"],
     "key-spacing": "error",
     "keyword-spacing": "error",
     "linebreak-style": "off",
@@ -202,10 +168,7 @@
     "operator-linebreak": "error",
     "padded-blocks": "off",
     "quote-props": "off",
-    "quotes": [
-      "error",
-      "single"
-    ],
+    "quotes": ["error", "single"],
     "require-jsdoc": "off",
     "semi": "error",
     "semi-spacing": "error",
@@ -214,12 +177,7 @@
       {
         "ignoreCase": true,
         "ignoreMemberSort": false,
-        "memberSyntaxSortOrder": [
-          "none",
-          "single",
-          "multiple",
-          "all"
-        ]
+        "memberSyntaxSortOrder": ["none", "single", "multiple", "all"]
       }
     ],
     "sort-vars": "off",
@@ -238,10 +196,7 @@
     "spaced-comment": "off",
     "wrap-regex": "off",
     "arrow-body-style": "error",
-    "arrow-parens": [
-      "error",
-      "as-needed"
-    ],
+    "arrow-parens": ["error", "as-needed"],
     "arrow-spacing": "error",
     "constructor-super": "error",
     "generator-star-spacing": "error",
@@ -276,19 +231,25 @@
     "angular/deferred": "error",
     "angular/definedundefined": "error",
     "angular/di": "off",
-    "angular/directive-restrict": ["off", {"restrict": "AE", "explicit": "always"}],
+    "angular/directive-restrict": [
+      "off",
+      { "restrict": "AE", "explicit": "always" }
+    ],
     "angular/document-service": "error",
     "angular/function-type": "off",
     "angular/interval-service": "error",
     "angular/json-functions": "error",
     "angular/log": "error",
-    "angular/module-dependency-order": ["error", {"grouped": true, "prefix": "phpdraft"}],
+    "angular/module-dependency-order": [
+      "error",
+      { "grouped": true, "prefix": "phpdraft" }
+    ],
     "angular/module-getter": "error",
     "angular/module-name": ["error", "phpdraft"],
     "angular/module-setter": "error",
     "angular/no-cookiestore": "error",
     "angular/no-http-callback": "error",
-    "angular/no-inline-template": ["off", {"allowSimple": true}],
+    "angular/no-inline-template": ["off", { "allowSimple": true }],
     "angular/no-jquery-angularelement": "error",
     "angular/no-private-call": "error",
     "angular/no-run-logic": "off",

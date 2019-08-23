@@ -18,7 +18,7 @@ class ProPlayerController {
     $last = $request->get('last');
     $team = $request->get('team');
     $position = $request->get('position');
-    
+
     $first = strlen($first) == 0 ? "NA" : $first;
     $last = strlen($last) == 0 ? "NA" : $last;
     $team = strlen($team) == 0 ? "NA" : $team;
@@ -26,7 +26,7 @@ class ProPlayerController {
 
     $response = new PhpDraftResponse();
 
-    if (count($searchTerm) > 0) {
+    if (strlen($searchTerm) > 0) {
       $response = $app['phpdraft.ProPlayerService']->SearchPlayers($league, $searchTerm);
     } else {
       $response = $app['phpdraft.ProPlayerService']->SearchPlayersManual($league, $first, $last, $team, $position);

@@ -11,11 +11,11 @@ Vagrant.configure("2") do |config|
     mount_options: ["dmode=775,fmode=664"]
 
   #NOTE: For app-specific settings:
-  config.vm.synced_folder "../../phpdraft_settings", "/phpdraft-settings",
-    id: "settings",
-    owner: "vagrant",
-    group: "vagrant",
-    mount_options: ["dmode=775,fmode=6775"]
+  #config.vm.synced_folder "../../phpdraft_settings", "/phpdraft-settings",
+  #  id: "settings",
+  #  owner: "vagrant",
+  #  group: "vagrant",
+  #  mount_options: ["dmode=775,fmode=6775"]
 
   config.vm.provider "virtualbox" do |vb|
     vb.name = "HootDraft Dev"

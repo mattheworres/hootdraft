@@ -176,7 +176,7 @@ class PickService {
         $timer_response = $this->app['phpdraft.RoundTimeService']->GetCurrentPickTimeRemaining($draft);
 
         $response->timer_enabled = $timer_response->timer_enabled;
-        $response->seconds_remaining = $timer_response->seconds_remaining;
+        $response->seconds_remaining = $timer_response->timer_enabled ? $timer_response->seconds_remaining : NULL;
       }
 
       $response->draft_counter = $draft->draft_counter;

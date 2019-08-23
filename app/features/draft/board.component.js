@@ -2,8 +2,17 @@ const LOAD_PREVIOUS_DISPLAY = 'load_previous_display';
 const LOAD_CURRENT_DISPLAY = 'load_current_display';
 
 class BoardController {
-  constructor($scope, $routeParams, $loading, subscriptionKeys,
-    api, messageService, draftService, pathHelperService, lodash) {
+  constructor(
+    $scope,
+    $routeParams,
+    $loading,
+    subscriptionKeys,
+    api,
+    messageService,
+    draftService,
+    pathHelperService,
+    lodash
+  ) {
     this.$scope = $scope;
     this.$routeParams = $routeParams;
     this.$loading = $loading;
@@ -30,11 +39,13 @@ class BoardController {
 
       this.onDraftCounterChanged(this.draft, this.draftStatus);
 
-      this.deregister = this.$scope.$on(this.subscriptionKeys.draftCounterHasChanged, (event, args) => {
-        const {draft, status} = args;
+      this.deregister = this.$scope
+        .$on(this.subscriptionKeys.draftCounterHasChanged, (event, args) => {
+          const {draft, status} = args;
 
-        this.onDraftCounterChanged(draft, status);
-      }).bind(this);
+          this.onDraftCounterChanged(draft, status);
+        })
+        .bind(this);
     });
   }
 
@@ -54,7 +65,10 @@ class BoardController {
       this.pathHelperService.sendToPreviousPath();
       this.messageService.showWarning('Draft is still setting up');
       this.deregister();
-    } else if (this.draft.in_progress === true || this.draft.complete === true) {
+    } else if (
+      this.draft.in_progress === true ||
+      this.draft.complete === true
+    ) {
       if (this.initialBoardLoaded) {
         this.loadUpdatedData(this.draft.draft_id);
       } else {
@@ -70,7 +84,7 @@ class BoardController {
   calculateBoardWidth(numberOfManagers) {
     //See width in board.less for the magic numbers below
     //managers * pick width + round number width + left and right borders
-    const numberOfPixels = (numberOfManagers * 175) + 50 + 4;
+    const numberOfPixels = numberOfManagers * 175 + 50 + 4;
 
     this.calculatedBoardWidth = `${numberOfPixels}px`;
   }
@@ -112,12 +126,13 @@ class BoardController {
       //@loadCurrentAndNextPicks(draftId)
       this.currentPick = data.current_pick;
       this.previousPick = data.previous_pick;
-      this.hasPreviousPick = (this.previousPick !== null) && (angular.isDefined(this.previousPick));
+      this.hasPreviousPick =
+        this.previousPick !== null && angular.isDefined(this.previousPick);
 
       this.updateBoardPick(data.current_pick);
       this.updateBoardPick(data.previous_pick);
 
-      if ((data.updated_picks === null) || (data.updated_picks.length === 0)) {
+      if (data.updated_picks === null || data.updated_picks.length === 0) {
         return;
       }
 
@@ -138,11 +153,14 @@ class BoardController {
       this.messageService.showError('Unable to get up to date draft picks');
     };
 
-
     if (this.draftStatus.valid && !this.draftStatus.locked) {
       this.$loading.start(LOAD_CURRENT_DISPLAY);
       this.$loading.start(LOAD_PREVIOUS_DISPLAY);
-      this.api.Pick.getUpdated({draft_id: draftId, pick_counter: this.currentDraftCounter}, updatedSuccess, errorHandler); // eslint-disable-line camelcase
+      this.api.Pick.getUpdated(
+        {draft_id: draftId, pick_counter: this.currentDraftCounter},
+        updatedSuccess,
+        errorHandler
+      ); // eslint-disable-line camelcase
       this.loadTimeRemaining(draftId);
     }
   }
@@ -175,7 +193,8 @@ class BoardController {
     const lastSuccess = data => {
       this.$loading.finish(LOAD_PREVIOUS_DISPLAY);
       this.previousPick = data[0];
-      this.hasPreviousPick = (this.previousPick !== null) && (angular.isDefined(this.previousPick));
+      this.hasPreviousPick =
+        this.previousPick !== null && angular.isDefined(this.previousPick);
     };
 
     const errorHandler = () => {
@@ -188,8 +207,16 @@ class BoardController {
       this.$loading.start(LOAD_CURRENT_DISPLAY);
       this.$loading.start(LOAD_PREVIOUS_DISPLAY);
 
-      this.api.Pick.getNext({draft_id: draftId, amount: 1}, currentSuccess, errorHandler); // eslint-disable-line camelcase
-      this.api.Pick.getLast({draft_id: draftId, amount: 1}, lastSuccess, errorHandler); // eslint-disable-line camelcase
+      this.api.Pick.getNext(
+        {draft_id: draftId, amount: 1},
+        currentSuccess,
+        errorHandler
+      ); // eslint-disable-line camelcase
+      this.api.Pick.getLast(
+        {draft_id: draftId, amount: 1},
+        lastSuccess,
+        errorHandler
+      ); // eslint-disable-line camelcase
     }
   }
 
@@ -220,13 +247,21 @@ class BoardController {
       }
     };
 
-    const errorHandler = () => this.messageService.showError('Unable to load remaining pick time');
+    const errorHandler = () =>
+      this.messageService.showError('Unable to load remaining pick time');
 
-    if (this.draftStatus.valid && !this.draftStatus.locked && (this.draft.in_progress === true)) {
-      this.api.Draft.getTimeRemaining({draft_id: draftId}, timersSuccess, errorHandler); // eslint-disable-line camelcase
-    }
-
-    if (angular.isFunction(this.deregister)) {
+    if (
+      this.draftStatus.valid &&
+      !this.draftStatus.locked &&
+      this.draft.in_progress === true
+    ) {
+      this.api.Draft.getTimeRemaining(
+        {draft_id: draftId},
+        timersSuccess,
+        errorHandler
+      ); // eslint-disable-line camelcase
+    } else {
+      //TODO: See if this actually required, was in place pre ES6 rewrite
       this.deregister();
     }
   }

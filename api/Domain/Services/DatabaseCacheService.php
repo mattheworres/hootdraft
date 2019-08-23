@@ -4,6 +4,7 @@ namespace PhpDraft\Domain\Services;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Phpfastcache\CacheManager;
+use Phpfastcache\Config\Config;
 
 //A wrapper service for the PHP-based caching to save on several MySQL reads
 class DatabaseCacheService {
@@ -12,11 +13,10 @@ class DatabaseCacheService {
   public function __construct(Application $app) {
     $this->app = $app;
 
-    $cacheConfig = [
-      'path' => CACHE_PATH
-    ];
+    $config = new Config();
+    $config->setPath(CACHE_PATH);
 
-    $this->cacheInstance = CacheManager::Files($cacheConfig);
+    $this->cacheInstance = CacheManager::getInstance('Files', $config);
   }
 
   /*

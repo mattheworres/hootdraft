@@ -154,7 +154,7 @@ class DraftDataRepository {
       "WPG" => "Winnipeg Jets"
     );
 
-    $this->historical_nhl_teams = array_merge($this->mlb_teams, array(
+    $this->historical_nhl_teams = array_merge($this->nhl_teams, array(
 
     ));
 

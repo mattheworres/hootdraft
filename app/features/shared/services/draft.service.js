@@ -1,8 +1,21 @@
-const DRAFT_ERROR_MESSAGE = 'We seem to be having trouble loading this draft, possibly due to network connectivity issues';
+const DRAFT_ERROR_MESSAGE =
+  'We seem to be having trouble loading this draft, possibly due to network connectivity issues';
 
 class DraftService {
-  constructor($uibModal, $sessionStorage, $routeParams, $location, api, lodash,
-    $interval, messageService, subscriptionKeys, $rootScope, $q, errorService) {
+  constructor(
+    $uibModal,
+    $sessionStorage,
+    $routeParams,
+    $location,
+    api,
+    lodash,
+    $interval,
+    messageService,
+    subscriptionKeys,
+    $rootScope,
+    $q,
+    errorService
+  ) {
     this.$uibModal = $uibModal;
     this.$sessionStorage = $sessionStorage;
     this.$routeParams = $routeParams;
@@ -38,22 +51,31 @@ class DraftService {
     this._draftIntervalHandler = this._draftIntervalHandler.bind(this);
     this._draftErrorHandler = this._draftErrorHandler.bind(this);
 
-    this.deregister = this.$rootScope.$on(this.subscriptionKeys.routeHasDraft, (event, args) => {
-      const {hasDraft, needsReloaded} = args;
-      const draftIdChanged = this.draftId !== this.$routeParams.draft_id;
-      const forceReload = angular.isDefined(needsReloaded) && needsReloaded;
+    this.deregister = this.$rootScope.$on(
+      this.subscriptionKeys.routeHasDraft,
+      (event, args) => {
+        const {hasDraft, needsReloaded} = args;
+        const draftIdChanged = this.draftId !== this.$routeParams.draft_id;
+        const forceReload = angular.isDefined(needsReloaded) && needsReloaded;
 
-      if (forceReload) {
-        this.getDraft(true).then(draft => {
-          this.$rootScope.$broadcast(this.subscriptionKeys.draftCounterHasChanged, {draft, status: this.draftStatus});
-        });
-      } else if (hasDraft === false || draftIdChanged) {
-        this.activeComponents = 0;
-        this._stopPollingForData();
-      } else {
-        this.$rootScope.$broadcast(this.subscriptionKeys.draftCounterHasChanged, {draft: this.draft, status: this.draftStatus});
+        if (forceReload) {
+          this.getDraft(true).then(draft => {
+            this.$rootScope.$broadcast(
+              this.subscriptionKeys.draftCounterHasChanged,
+              {draft, status: this.draftStatus}
+            );
+          });
+        } else if (hasDraft === false || draftIdChanged) {
+          this.activeComponents = 0;
+          this._stopPollingForData();
+        } else {
+          this.$rootScope.$broadcast(
+            this.subscriptionKeys.draftCounterHasChanged,
+            {draft: this.draft, status: this.draftStatus}
+          );
+        }
       }
-    });
+    );
   }
 
   //Method components use in order to grab a reference to the current (by the route params) draft
@@ -65,10 +87,15 @@ class DraftService {
     this.defer = this.$q.defer();
 
     //On login (and when we are sent back)
-    const forcedReload = angular.isDefined(forced) && forced || this.forcedReloadRequired;
+    const forcedReload =
+      (angular.isDefined(forced) && forced) || this.forcedReloadRequired;
 
     //If we've already received the draft, we can stop here and pass back the draft reference for this component call
-    if (forcedReload === false && this.draft !== null && this.draft.draft_id === this.$routeParams.draft_id) {
+    if (
+      forcedReload === false &&
+      this.draft !== null &&
+      this.draft.draft_id === this.$routeParams.draft_id
+    ) {
       this.defer.resolve(this.draft);
       this.setupPollingAfterLoad();
       return this.defer.promise;
@@ -107,7 +134,8 @@ class DraftService {
     this.apiCallInProgress = true;
     this.draftStatus.loading = true;
     //Get heavy draft info from API if this is the first call to the API
-    const getDraftData = this.draft === null || this.draftId !== this.$routeParams.draft_id;
+    const getDraftData =
+      this.draft === null || this.draftId !== this.$routeParams.draft_id;
     //Ensure the draft ID we're using is correct
     this.draftId = this.$routeParams.draft_id;
 
@@ -117,7 +145,10 @@ class DraftService {
       this.draftStatus.error = false;
       this.draftStatus.valid = true;
       this.draftStatus.locked = draftInMemory.is_locked;
-      this.$rootScope.$broadcast(this.subscriptionKeys.draftCounterHasChanged, {draft: draftInMemory, status: this.draftStatus});
+      this.$rootScope.$broadcast(this.subscriptionKeys.draftCounterHasChanged, {
+        draft: draftInMemory,
+        status: this.draftStatus,
+      });
 
       if (this.draft === null) {
         this.draft = {};
@@ -130,7 +161,6 @@ class DraftService {
       this.setupPollingAfterLoad();
 
       this.defer.resolve(this.draft);
-
     }, this._draftErrorHandler);
 
     return this.defer.promise;
@@ -192,19 +222,28 @@ class DraftService {
       this.messageService.showSuccess('Draft started');
       this.draft.setting_up = false; // eslint-disable-line camelcase
       this.draft.in_progress = true; // eslint-disable-line camelcase
-      this.$rootScope.$broadcast(this.subscriptionKeys.draftCounterHasChanged, {draft: this.draft, status: this.draftStatus});
+      this.$rootScope.$broadcast(this.subscriptionKeys.draftCounterHasChanged, {
+        draft: this.draft,
+        status: this.draftStatus,
+      });
     };
 
     const startError = response => {
       let startErrors = '';
       if ((response.data === null ? null : response.data.errors) !== null) {
-        startErrors = this.errorService.joinErrorsForToastDisplay(response.data.errors);
+        startErrors = this.errorService.joinErrorsForToastDisplay(
+          response.data.errors
+        );
       }
 
       this.messageService.showError(`Unable to start draft    ${startErrors}`);
     };
 
-    return this.api.Draft.updateStatus({draft_id: draftId, status: 'in_progress'}, startSuccess, startError); // eslint-disable-line camelcase
+    return this.api.Draft.updateStatus(
+      {draft_id: draftId, status: 'in_progress'},
+      startSuccess,
+      startError
+    ); // eslint-disable-line camelcase
   }
 
   resetDraft(draftId) {
@@ -216,20 +255,31 @@ class DraftService {
       this.messageService.showSuccess('Draft reset');
       this.draft.setting_up = true; // eslint-disable-line camelcase
       this.draft.in_progress = false; // eslint-disable-line camelcase
-      this.$rootScope.$broadcast(this.subscriptionKeys.draftCounterHasChanged, {draft: this.draft, status: this.draftStatus});
+      this.$rootScope.$broadcast(this.subscriptionKeys.draftCounterHasChanged, {
+        draft: this.draft,
+        status: this.draftStatus,
+      });
       this.$location.path(`/draft/${draftId}`);
     };
 
     const resetError = response => {
       let restartErrors = '';
       if ((response.data === null ? null : response.data.errors) !== null) {
-        restartErrors = this.errorService.joinErrorsForToastDisplay(response.data.errors);
+        restartErrors = this.errorService.joinErrorsForToastDisplay(
+          response.data.errors
+        );
       }
 
-      this.messageService.showError(`Unable to reset draft    ${restartErrors}`);
+      this.messageService.showError(
+        `Unable to reset draft    ${restartErrors}`
+      );
     };
 
-    return this.api.Draft.updateStatus({draft_id: draftId, status: 'undrafted'}, resetSuccess, resetError); // eslint-disable-line camelcase
+    return this.api.Draft.updateStatus(
+      {draft_id: draftId, status: 'undrafted'},
+      resetSuccess,
+      resetError
+    ); // eslint-disable-line camelcase
   }
 
   deleteDraft(draftId) {
@@ -246,25 +296,37 @@ class DraftService {
       this.messageService.showError('Unable to delete draft');
     };
 
-    return this.api.Draft.delete({draft_id: draftId}, deleteSuccess, deleteError); // eslint-disable-line camelcase
+    return this.api.Draft.delete(
+      {draft_id: draftId},
+      deleteSuccess,
+      deleteError
+    ); // eslint-disable-line camelcase
   }
 
   /*
-  * Private Methods
-  */
+   * Private Methods
+   */
 
   //Private method to call the API
   _loadDraftFromApi(draftId, getDraftData = false) {
-    return this.api.Draft.get({id: draftId, get_draft_data: getDraftData}).$promise; // eslint-disable-line camelcase
+    return this.api.Draft.get({id: draftId, get_draft_data: getDraftData})
+      .$promise; // eslint-disable-line camelcase
   }
 
   //Private method that begins interval to call for draft updates
   _startPollingForData() {
-    if (this.timerInstance !== null || !this.draft.in_progress || this.draft.is_locked) {
+    if (
+      this.timerInstance !== null ||
+      !this.draft.in_progress ||
+      this.draft.is_locked
+    ) {
       return;
     }
 
-    this.timerInstance = this.$interval(this._draftIntervalHandler, this.pollingIntervalMs);
+    this.timerInstance = this.$interval(
+      this._draftIntervalHandler,
+      this.pollingIntervalMs
+    );
   }
 
   //Private method to stop the interval for draft updates
@@ -282,6 +344,7 @@ class DraftService {
     if (angular.isDefined(this.defer)) {
       this.defer = null;
     }
+
     //If the draftId has changed, we need to get all draft data, which is a heavy call
     const getDraftData = this.draftId !== this.$routeParams.draft_id;
 
@@ -293,8 +356,14 @@ class DraftService {
       this.draftStatus.locked = draftInMemory.is_locked;
 
       //Either the current one has changed or we need to get a new draft, so notify subscribers that the counter has changed
-      if (this.lastDraftCounter !== draftInMemory.draft_counter || getDraftData) {
-        this.$rootScope.$broadcast(this.subscriptionKeys.draftCounterHasChanged, {draft: draftInMemory, status: this.draftStatus});
+      if (
+        this.lastDraftCounter !== draftInMemory.draft_counter ||
+        getDraftData
+      ) {
+        this.$rootScope.$broadcast(
+          this.subscriptionKeys.draftCounterHasChanged,
+          {draft: draftInMemory, status: this.draftStatus}
+        );
       }
 
       this.lastDraftCounter = draftInMemory.draft_counter;
