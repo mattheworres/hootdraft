@@ -1,5 +1,5 @@
 (function(angular, undefined) {
-  angular.module("config", [])
+  angular.module("phpdraft.env", [])
 
 .constant("ENV", {
   "apiEndpoint": "{phpdraft.apiBaseUrl}",
