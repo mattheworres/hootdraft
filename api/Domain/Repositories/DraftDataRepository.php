@@ -185,25 +185,26 @@ class DraftDataRepository {
       "K.C" => "Kansas City Chiefs",
       "LAC" => "Los Angeles Chargers",
       "LAR" => "Los Angeles Rams",
+      "L.V" => "Las Vegas Raiders",
       "MIA" => "Miami Dolphins",
       "MIN" => "Minnesota Vikings",
       "NWE" => "New England Patriots",
       "NOR" => "New Orleans Saints",
       "NYG" => "New York Giants",
       "NYJ" => "New York Jets",
-      "OAK" => "Oakland Raiders",
       "PHI" => "Philadelphia Eagles",
       "PIT" => "Pittsburgh Steelers",
       "SFO" => "San Francisco 49ers",
       "SEA" => "Seattle Seahawks",
       "TAM" => "Tampa Bay Buccaneers",
       "TEN" => "Tennessee Titans",
-      "WAS" => "Washington Redskins"
+      "WAS" => "Washington Football Team"
     );
 
     $this->historical_nfl_teams = array_merge($this->nfl_teams, array(
       "STL" => "St. Louis Rams",
-      "SDG" => "San Diego Chargers"
+      "SDG" => "San Diego Chargers",
+      "OAK" => "Oakland Raiders"
     ));
 
     $this->nfl_positions = array(
