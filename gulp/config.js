@@ -49,7 +49,7 @@ module.exports = {
         'node_modules/font-awesome/fonts/**/*',
       ],
       js: [
-        'node_modules/jquery/jquery.js',
+        'node_modules/jquery/dist/jquery.slim.js',
         'node_modules/angular/angular.js',
         'node_modules/slipjs/slip.js',
         'node_modules/FlipClock/compiled/flipclock.js',
