@@ -99,7 +99,7 @@ class DraftDataRepository {
       "MLB" => "Baseball (MLB)",
       "NBA" => "Basketball (NBA)",
       "NHL" => "Hockey (NHL)",
-      "S15" => "Rugby (Super 15)"
+      "S15" => "Rugby (Super Rugby)"
     );
 
     $this->styles = array(
@@ -330,21 +330,13 @@ class DraftDataRepository {
     $this->super_rugby_teams = array(
       "BLU" => "Blues",
       "BRU" => "Brumbies",
-      "BUL" => "Bulls",
-      "CHE" => "Cheetahs",
       "CHI" => "Chiefs",
       "CRU" => "Crusaders",
       "FOR" => "Force",
       "HIG" => "Highlanders",
       "HUR" => "Hurricanes",
-      "JAG" => "Jaguars",
-      "KIN" => "Kings",
-      "LIO" => "Lions",
       "REB" => "Rebels",
       "RED" => "Reds",
-      "SHA" => "Sharks",
-      "STO" => "Stormers",
-      "SUN" => "Sunwolves",
       "WAR" => "Waratahs"
     );
 
