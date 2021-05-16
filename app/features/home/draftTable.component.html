@@ -2,7 +2,9 @@
   phpd-persist-table-state="draftTableState" class="table table-striped table-bordered">
   <thead>
     <tr>
-      <th><input st-search="draft_name" class="form-control" placeholder="Search Leagues..." type="text" /></th>
+      <th>
+        <input st-search="{{$ctrl.draft_name}}" class="form-control" placeholder="Search Leagues..." type="text" />
+      </th>
       <th>
         <phpd-distinct-dropdown list-items="$ctrl.sports" row-property-name="draft_sport" label-type="sport"
           use-value-display="false" table-state-handle="draftTableState">
@@ -35,7 +37,7 @@
         <phpd-sort-icons></phpd-sort-icons>
         Commissioner
       </th>
-      <th st-sort="$ctrl.getters.createdDate" st-sort-default="true" class="hidden-xs hidden-sm col-sm-2 sortable"
+      <th st-sort-default="true" class="hidden-xs hidden-sm col-sm-2 sortable"
         class="sortable">
         <phpd-sort-icons></phpd-sort-icons>
         Created
@@ -70,8 +72,7 @@
         <h3>No drafts here, chief.</h3>
         <p ng-if="$ctrl.isAuthenticated"><strong>Maybe reset some search filters, or better yet... <a
               href="commish/draft/create">Create your own draft!</a></strong></p>
-        <p ng-if="!$ctrl.isAuthenticated"><strong>Try loosening up your search filters if you put any on, that might
-            help.</p>
+        <p><phpd-table-sort-reset-button table-state-handle="draftTableState"></phpd-table-sort-reset-button></p>
       </td>
     </tr>
   </tbody>

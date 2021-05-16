@@ -1,14 +1,15 @@
 //From Smart Table docs: http://plnkr.co/edit/ekwiNt?p=preview
-angular
-  .module('phpdraft.home')
-  .directive('phpdPersistTableState', $sessionStorage => ({
+angular.module('phpdraft.home').directive('phpdPersistTableState', [
+  '$sessionStorage',
+  'subscriptionKeys',
+  ($sessionStorage, subscriptionKeys) => ({
     restrict: 'A',
     require: '^stTable',
-    link: (scope, elment, attrs, smartTableCtrl) => {
+    link: (scope, element, attrs, smartTableCtrl) => {
       const namespace = attrs.phpdPersistTableState;
 
       //Save table state every time it changes
-      scope.$watch(
+      scope.deregisterPersistTableState = scope.$watch(
         () => smartTableCtrl.tableState(),
         (newValue, oldValue) => {
           if (newValue !== oldValue) {
@@ -19,7 +20,7 @@ angular
       );
 
       //Load table state when the directive loads
-      const savedState = $sessionStorage[namespace]; //TODO: redo with ngStorage
+      const savedState = $sessionStorage[namespace];
       if (savedState) {
         const parsedSaveState = angular.fromJson(savedState);
         const tableState = smartTableCtrl.tableState();
@@ -27,5 +28,10 @@ angular
         angular.extend(tableState, parsedSaveState);
         smartTableCtrl.pipe();
       }
+
+      scope.$on(subscriptionKeys.scopeDestroy, () => {
+        scope.deregisterPersistTableState();
+      });
     },
-  }));
+  }),
+]);

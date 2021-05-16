@@ -209,7 +209,7 @@
     ],
     "require-jsdoc": "off",
     "semi": "error",
-    "semi-spacing": "error",
+    "semi-spacing": "off",
     "sort-imports": [
       "off",
       {
@@ -264,7 +264,7 @@
     "prefer-reflect": "off",
     "prefer-rest-params": "error",
     "prefer-spread": "error",
-    "prefer-template": "error",
+    "prefer-template": "warn",
     "require-yield": "error",
     "template-curly-spacing": "error",
     "yield-star-spacing": "error",
