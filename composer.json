@@ -3,7 +3,7 @@
         "php": ">=7.0.0",
         "silex/silex": "~2.1",
         "monolog/monolog": "~1.22",
-        "symfony/security": "~2.8.18",
+        "symfony/security": "~3.4.48",
         "cnam/security-jwt-service-provider" : "~2.1.1",
         "doctrine/dbal": "~2.5.12",
         "egulias/email-validator": "~2.1.7",
