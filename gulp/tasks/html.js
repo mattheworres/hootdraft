@@ -4,7 +4,7 @@ const cfg = require('../config');
 
 const html = () => {
   const injectionFiles = gulp.src([
-    'css/style.css',
+    'css/style*.css',
     'css/style-*.css',
     'js/vendor.js',
     'js/vendor-*.js',
