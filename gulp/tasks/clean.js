@@ -1,8 +1,7 @@
-const gulp = require('gulp');
 const del = require('del');
 
-gulp.task('clean', callback =>
-  del([
+function clean(done) {
+  return del([
     'css/**/*',
     'fonts/**/*',
     'img/**/*',
@@ -10,5 +9,7 @@ gulp.task('clean', callback =>
     'index.html',
   ],
   {force: true},
-  callback)
-);
+  done);
+}
+
+module.exports = clean;

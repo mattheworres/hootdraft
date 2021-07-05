@@ -11,4 +11,6 @@ gulp.task('fonts-app', () =>
     .pipe(gulp.dest('fonts'))
 );
 
-gulp.task('fonts', ['fonts-vendor', 'fonts-app']);
+const fonts = gulp.series('fonts-vendor', 'fonts-app');
+gulp.task('fonts', fonts);
+module.exports = fonts;

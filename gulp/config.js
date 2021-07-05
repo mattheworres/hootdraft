@@ -63,7 +63,7 @@ module.exports = {
         'node_modules/angular-resource/angular-resource.js',
         'node_modules/lodash/lodash.js',
         'node_modules/angular-toastr/dist/angular-toastr.tpls.js',
-        'node_modules/angular-recaptcha/release/angular-recaptcha.js',
+        'node_modules/angular-recaptcha/release/angular-recaptcha.min.js',
         'node_modules/angular-toggle-switch/angular-toggle-switch.js',
         'node_modules/angular-validation-match/dist/angular-validation-match.js',
         'node_modules/moment/moment.js',
