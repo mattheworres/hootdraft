@@ -2,7 +2,7 @@ const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
 const cfg = require('../config');
 
-gulp.task('html', () => {
+const html = () => {
   const injectionFiles = gulp.src([
     'css/style.css',
     'css/style-*.css',
@@ -31,5 +31,8 @@ gulp.task('html', () => {
     removeScriptTypeAttributes: true,
     removeStyleLinkTypeAttributes: true,
     useShortDoctype: true,
-  }))).pipe(gulp.dest(''));
-});
+  }))).pipe(gulp.dest('.'));
+};
+
+gulp.task('html', html);
+module.exports = html;

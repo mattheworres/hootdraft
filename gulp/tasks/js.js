@@ -148,5 +148,8 @@ gulp.task('js-lint', () => {
     .pipe($.eslint.failAfterError());
 });
 
+const js = gulp.parallel('js-vendor', 'js-lint', 'js-app', 'js-config', 'js-templates');
 // Do: add back lint step once snake_case to camelCase issues have been resolved
-gulp.task('js', ['js-vendor', 'js-lint', 'js-app', 'js-config', 'js-templates']);
+gulp.task('js', js);
+
+module.exports = js;

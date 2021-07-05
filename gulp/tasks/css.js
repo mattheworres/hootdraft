@@ -31,4 +31,6 @@ gulp.task('css-app', () =>
     .pipe(browserSync.stream())
 );
 
-gulp.task('css', ['css-vendor', 'css-app']);
+const css = gulp.parallel('css-vendor', 'css-app');
+gulp.task('css', css);
+module.exports = css;

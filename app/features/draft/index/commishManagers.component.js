@@ -184,14 +184,14 @@ class CommishManagersController {
       let stepCount = 1;
       const totalManagers = this.editableManagers.length;
       let currentManagerIndex = 0;
-      this.intervalMilliseconds = 1100;
+      this.intervalMilliseconds = 800;
       this.shouldContinue = true;
 
       //Set the grading interval for the next loop
       const presentationIntervalCalculator = currentManagerIndex => {
-        if (currentManagerIndex < 2) return 2500;
-        else if (currentManagerIndex === 2) return 1800;
-        else if (currentManagerIndex === 3 || currentManagerIndex === 4) return 1800;
+        if (currentManagerIndex < 2) return 1800;
+        else if (currentManagerIndex === 2) return 1400;
+        else if (currentManagerIndex === 3 || currentManagerIndex === 4) return 1000;
         else if (currentManagerIndex >= 5) return 400;
 
         return null;

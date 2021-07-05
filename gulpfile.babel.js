@@ -1,12 +1,9 @@
+const watch = require('./gulp/tasks/watch');
 const gulp = require('gulp');
-const runSequence = require('run-sequence');
-const fs = require('fs');
+const {build, buildJs, buildCss} = require('./gulp/tasks/build');
 
-fs.readdirSync('./gulp/tasks')
-  .filter(file => /\.(js)$/i.test(file))
-  .map(file => require(`./gulp/tasks/${file}`));
-
-gulp.task('build', cb => runSequence('clean', ['js', 'css', 'images', 'fonts'], 'html', cb));
-gulp.task('build-js', cb => runSequence('js', cb));
-gulp.task('build-css', cb => runSequence('css', cb));
-gulp.task('default', cb => runSequence('build', 'watch', cb));
+gulp.task('default', gulp.series(build, watch, done => done()));
+gulp.task('build', build);
+gulp.task('buildJs', buildJs);
+gulp.task('buildCss', buildCss);
+gulp.task('watch', watch);
