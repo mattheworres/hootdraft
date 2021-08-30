@@ -839,16 +839,16 @@
         },
         {
             "name": "phpfastcache/phpfastcache",
-            "version": "7.0.4",
+            "version": "7.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPSocialNetwork/phpfastcache.git",
-                "reference": "2bc552d849c846a3741aff57e02c9b23319ae1b1"
+                "reference": "ee5e7fc730aeef7b0e0970adc038168b4087601c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPSocialNetwork/phpfastcache/zipball/2bc552d849c846a3741aff57e02c9b23319ae1b1",
-                "reference": "2bc552d849c846a3741aff57e02c9b23319ae1b1",
+                "url": "https://api.github.com/repos/PHPSocialNetwork/phpfastcache/zipball/ee5e7fc730aeef7b0e0970adc038168b4087601c",
+                "reference": "ee5e7fc730aeef7b0e0970adc038168b4087601c",
                 "shasum": ""
             },
             "require": {
@@ -935,7 +935,21 @@
                 "zend memory cache",
                 "zend server"
             ],
-            "time": "2018-12-21T23:31:09+00:00"
+            "support": {
+                "issues": "https://github.com/PHPSocialNetwork/phpfastcache/issues",
+                "source": "https://github.com/PHPSocialNetwork/phpfastcache/tree/7.1.2"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/geolim4",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/geolim4",
+                    "type": "patreon"
+                }
+            ],
+            "time": "2021-08-12T11:55:02+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
@@ -1089,6 +1103,9 @@
                 "psr",
                 "psr-6"
             ],
+            "support": {
+                "source": "https://github.com/php-fig/cache/tree/master"
+            },
             "time": "2016-08-06T20:24:11+00:00"
         },
         {
@@ -1184,6 +1201,9 @@
                 "psr-16",
                 "simple-cache"
             ],
+            "support": {
+                "source": "https://github.com/php-fig/simple-cache/tree/master"
+            },
             "time": "2017-10-23T01:57:42+00:00"
         },
         {
@@ -4802,5 +4822,6 @@
     "platform": {
         "php": ">=7.0.0"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "2.1.0"
 }
