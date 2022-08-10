@@ -25,7 +25,7 @@ task('import', function() {
   $settings_location = ask("What is the absolute (local) path of where your settings files are located?",
       "~/phpdraft_settings");
 
-  runLocally("cp $settings_location/.htaccess .htaccess");
+  // runLocally("cp $settings_location/.htaccess .htaccess");
   runLocally("cp $settings_location/appsettings.php appsettings.php");
   runLocally("cp $settings_location/config.js js/config.js");
   runLocally("cp $settings_location/deploy.php deploy.php");

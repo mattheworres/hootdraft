@@ -7,6 +7,7 @@ task('package_release', [
   'phpdraft:verify_package',
   //'phpdraft:yarn_install', //Issues here with symlinks in VMs, should use Yarn on your native machine anyways
   'phpdraft:composer_install',
+  'phpdraft:slim_composer',
   'phpdraft:build_app',
   'phpdraft:zip_package',
   'phpdraft:zip_resources',
@@ -65,6 +66,24 @@ task('phpdraft:yarn_install', function() {
 desc('Install Composer packages (locally)');
 task('phpdraft:composer_install', function() {
   runLocally('composer install --prefer-dist -o --no-progress --no-suggest');
+})->setPrivate();
+
+//Releases are 800MB without this, but moving Deployer to dev deps
+//would unnecessarily bloat production install
+desc('Remove spurious Composer packages');
+task('phpdraft:slim_composer', function() {
+  $spurious_vendor_folders = [
+    'squizlabs',
+    'phpunit',
+    'robmorgan',
+    'sebastian',
+    'cakephp'
+  ];
+
+  foreach ($spurious_vendor_folders as $folder) {
+    writeln("Removing vendor/$folder");
+    runLocally("rm -rf vendor/$folder/");
+  }
 })->setPrivate();
 
 desc('Build Angular App');
