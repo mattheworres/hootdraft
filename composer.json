@@ -4,7 +4,7 @@
         "silex/silex": "~2.1",
         "monolog/monolog": "~1.22",
         "symfony/security": "~2.8.18",
-        "cnam/security-jwt-service-provider" : "~2.1.1",
+        "cnam/security-jwt-service-provider": "~2.1.1",
         "doctrine/dbal": "~2.5.12",
         "egulias/email-validator": "~2.1.7",
         "phpmailer/phpmailer": "~6.0",
@@ -15,9 +15,9 @@
     "require-dev": {
         "monolog/monolog": "~1.13",
         "phpunit/phpunit": "~7.0",
-        "phpmd/phpmd" : "@stable",
+        "phpmd/phpmd": "@stable",
         "robmorgan/phinx": "^0.10.0",
-        "deployer/deployer": "~6.3.0",
+        "deployer/deployer": "~6.2.0",
         "squizlabs/php_codesniffer": "^3.2"
     },
     "autoload": {
