@@ -77,6 +77,10 @@ class RegisterController {
       this.registerInProgress = false;
       this.workingModalService.closeModal();
 
+      // The server checks the captcha before anything else, so a failed attempt has used this one up
+      this.form._recaptcha = null;
+      this.vcRecaptchaService.reload();
+
       const registerError = this.errorService.parseValidationErrorsFromResponse(response);
 
       this.messageService.showError(`${registerError}`, 'Unable to register');

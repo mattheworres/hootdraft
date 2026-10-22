@@ -1,15 +1,38 @@
-# TODO(step 3): this is a deny-by-default STUB, not the real authentication. No authenticator exists
-# yet, so nobody can reach /admin or /commish. Step 3 replaces this with cookie-based auth.
+# Cookie-session authentication. The json_login firewall checks email + password on POST /login and the
+# session cookie (HttpOnly, SameSite=Lax, see framework.yaml) carries the login from then on: no token is
+# ever readable by JavaScript. Public routes stay public (the firewall is lazy), /commish and /admin need roles.
 security:
+  password_hashers:
+    # Verify-only: the hashes written by the Silex-era app (Symfony 2.8's default digest encoder:
+    # sha512 over "password{salt}", stretched 5000 times, base64). Symfony still ships exactly that hasher.
+    legacy_digest:
+      algorithm: sha512
+      iterations: 5000
+      encode_as_base64: true
+    HootDraft\Security\User:
+      algorithm: auto
+      # Users still on the old hash log in once with it, then get rehashed with the modern algorithm
+      migrate_from:
+        - legacy_digest
+
   providers:
-    users_in_memory:
-      memory: ~
+    users:
+      id: HootDraft\Security\UserProvider
 
   firewalls:
     main:
-      stateless: true
       lazy: true
-      provider: users_in_memory
+      provider: users
+      user_checker: HootDraft\Security\UserChecker
+      entry_point: HootDraft\Security\UnauthorizedEntryPoint
+      json_login:
+        check_path: login
+        username_path: _email
+        password_path: _password
+        success_handler: HootDraft\Security\LoginSuccessHandler
+        failure_handler: HootDraft\Security\LoginFailureHandler
+      logout:
+        path: logout
 
   role_hierarchy:
     ROLE_ADMIN: [ROLE_COMMISH]
@@ -17,3 +40,4 @@ security:
   access_control:
     - { path: ^/admin, roles: ROLE_ADMIN }
     - { path: ^/commish, roles: ROLE_COMMISH }
+    - { path: ^/me$, roles: IS_AUTHENTICATED_FULLY }

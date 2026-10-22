@@ -5,3 +5,10 @@ controllers:
     path: ../src/Controller/
     namespace: HootDraft\Controller
   type: attribute
+
+when@test:
+  test_probes:
+    resource:
+      path: ../tests/Support/Controller/
+      namespace: HootDraft\Tests\Support\Controller
+    type: attribute

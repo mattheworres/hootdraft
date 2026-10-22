@@ -1,6 +1,6 @@
 # Docker developer box
 
-nginx + PHP 8.5-FPM + MariaDB 12.3. The repo root is mounted into the containers, so edits are live.
+nginx + PHP 8.5-FPM + MariaDB 12.3 + Mailpit. The repo root is mounted into the containers, so edits are live.
 
 ```sh
 docker compose up -d --build   # start (http://localhost:8000)
@@ -13,6 +13,7 @@ docker compose down            # stop (add -v to also wipe the database)
 | Site | http://localhost:8000 |
 | MariaDB from host | `127.0.0.1:3307`, db `phpdraft`; user `phpdraft` (app) or `root` (admin), passwords in `docker/.env` |
 | MariaDB from PHP container | host `db`, port `3306`. `docker/.env` sets `DB_*` so the app and Phinx use it automatically |
+| Email inbox (Mailpit) | http://localhost:8025. The `php` container sends all mail to `mailpit:1025` (set in `docker-compose.yml`, so no `.env` changes needed) |
 | Composer / PHP CLI | `docker compose exec php composer ...` / `docker compose exec php php ...` |
 | Symfony console | `docker compose exec php php bin/console ...` |
 | Migrations | `docker compose exec php vendor/bin/phinx migrate -e production` |

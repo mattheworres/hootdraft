@@ -8,7 +8,9 @@ yargs.option('open', {default: 'http://phpdraft.local', type: 'string'});
 yargs.option('revAssets', {type: 'boolean'});
 yargs.option('serve', {default: true, type: 'boolean'});
 yargs.option('sourceMaps', {default: false, type: 'boolean'});
-yargs.option('templates', {type: 'boolean'});
+// On by default: the Docker nginx only serves /api, /css, /js, /fonts and /images as files, so component templates
+// must be bundled into js/templates.js. Pass --no-templates to fetch them from app/features/ instead.
+yargs.option('templates', {default: true, type: 'boolean'});
 
 const {argv} = yargs;
 

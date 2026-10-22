@@ -4,9 +4,20 @@ framework:
   handle_all_throwables: true
   php_errors:
     log: true
-  # Stateless JSON API: no PHP sessions
-  session: false
+  # The session only holds the login. The cookie is invisible to JavaScript and not sent on cross-site
+  # POSTs. `auto` marks it Secure whenever the request came in over HTTPS (behind a TLS-terminating proxy,
+  # configure framework.trusted_proxies so Symfony can tell).
+  session:
+    name: hootdraft_session
+    cookie_secure: auto
+    cookie_httponly: true
+    cookie_samesite: lax
+    cookie_lifetime: 86400 # a day, matching gc_maxlifetime
+    gc_maxlifetime: 86400
+    save_path: '%kernel.project_dir%/var/sessions/%kernel.environment%'
 
 when@test:
   framework:
     test: true
+    session:
+      storage_factory_id: session.storage.factory.mock_file

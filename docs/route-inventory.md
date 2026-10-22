@@ -9,12 +9,12 @@ by a route's `_checks` default (see `src/EventListener/RouteCheckListener.php`).
 
 | Done | Method | Path | Old controller::action | Access | Checks |
 | --- | --- | --- | --- | --- | --- |
-| [ ] | POST | `/login` | AuthenticationController::Login | public (login firewall) | - |
-| [ ] | POST | `/register` | AuthenticationController::Register | public (login firewall) | - |
-| [ ] | POST | `/verify` | AuthenticationController::VerifyAccount | public (login firewall) | - |
-| [ ] | POST | `/lostPassword` | AuthenticationController::LostPassword | public (login firewall) | - |
-| [ ] | GET | `/verifyToken` | AuthenticationController::VerifyResetPasswordToken | public (login firewall) | - |
-| [ ] | POST | `/resetPassword` | AuthenticationController::ResetPassword | public (login firewall) | - |
+| [x] | POST | `/login` | AuthenticationController::Login | public (json_login authenticator) | - |
+| [x] | POST | `/register` | AuthenticationController::Register | public (login firewall) | - |
+| [x] | POST | `/verify` | AuthenticationController::VerifyAccount | public (login firewall) | - |
+| [x] | POST | `/lostPassword` | AuthenticationController::LostPassword | public (login firewall) | - |
+| [x] | GET | `/verifyToken` | AuthenticationController::VerifyResetPasswordToken | public (login firewall) | - |
+| [x] | POST | `/resetPassword` | AuthenticationController::ResetPassword | public (login firewall) | - |
 | [ ] | GET | `/drafts` | DraftController::GetAll | public | - |
 | [ ] | GET | `/drafts/{commish_id}` | DraftController::GetAllByCommish | public | - |
 | [ ] | GET | `/draft/{id}` | DraftController::Get | public | - |
@@ -74,3 +74,5 @@ by a route's `_checks` default (see `src/EventListener/RouteCheckListener.php`).
 | [ ] | GET | `/commish/draft/{draft_id}/picks/alreadyDrafted` | Commish\PickController::AlreadyDrafted | commish (ROLE_COMMISH) | commishEditableDraft, draftInProgress |
 
 63 routes.
+
+New in step 3 (no Silex equivalent): `POST /logout` (ends the session) and `GET /me` (who the session cookie belongs to).

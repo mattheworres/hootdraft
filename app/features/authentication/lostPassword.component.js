@@ -68,6 +68,10 @@ class LostPasswordController {
       this.lostInProgress = false;
       this.workingModalService.closeModal();
 
+      // The server checks the captcha before anything else, so a failed attempt has used this one up
+      this.form._recaptcha = null;
+      this.vcRecaptchaService.reload();
+
       const lostError = this.errorService.parseValidationErrorsFromResponse(response);
 
       return this.messageService.showError(`${lostError}`, 'Unable to Request New Password');

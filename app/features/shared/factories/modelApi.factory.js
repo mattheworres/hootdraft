@@ -18,6 +18,10 @@ angular.module('phpdraft.shared').factory('api', ($resource, ENV) =>
     Authentication: $resource(`${ENV.apiEndpoint}authentication`, {}, {
       'login':
         {method: 'POST', url: `${ENV.apiEndpoint}login`},
+      'logout':
+        {method: 'POST', url: `${ENV.apiEndpoint}logout`},
+      'me':
+        {method: 'GET', url: `${ENV.apiEndpoint}me`},
       'register':
         {method: 'POST', url: `${ENV.apiEndpoint}register`},
       'verify':

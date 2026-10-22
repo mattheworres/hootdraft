@@ -51,3 +51,11 @@ services:
   _instanceof:
     HootDraft\Http\Check\RouteCheck:
       tags: ['hootdraft.route_check']
+
+when@test:
+  services:
+    # No SMTP in tests; the functional tests read the sent messages back
+    HootDraft\Domain\Services\EmailService:
+      class: HootDraft\Tests\Support\CapturingEmailService
+      autowire: true
+      public: true

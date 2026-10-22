@@ -21,7 +21,8 @@ task('deploy', [
 ]);
 
 // Logs survive between releases. Settings (.env.local) are uploaded with every release.
-set('shared_dirs', ['var/log']);
+// var/sessions is shared so a deploy doesn't log everybody out
+set('shared_dirs', ['var/log', 'var/sessions']);
 set('shared_files', []);
 // vendor/ ships inside the release package (no composer needed on the host); Phinx is a regular dependency.
 
@@ -62,6 +63,7 @@ task('phpdraft:upload_files', function() {
     'bin',
     'config',
     'src',
+    'templates',
     'vendor',
     'css',
     'db',

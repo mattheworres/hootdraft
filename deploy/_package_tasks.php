@@ -113,6 +113,7 @@ task('phpdraft:zip_package', function() {
     'bin',
     'config',
     'src',
+    'templates',
     'css',
     'db',
     'deploy',

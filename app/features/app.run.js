@@ -1,6 +1,6 @@
 angular.module('phpdraft').run((
   $rootScope, subscriptionKeys, $templateCache,
-  $routeParams, authenticationService, messageService,
+  $routeParams, authenticationService,
   $location, $sessionStorage) => {
   $rootScope.$on(subscriptionKeys.viewContentLoaded, () => { //eslint-disable-line angular/on-watch
     if (angular.isDefined($routeParams.draft_id) && $routeParams.draft_id !== null) {
@@ -17,15 +17,11 @@ angular.module('phpdraft').run((
     }
   });
 
+  // The login is a session cookie, so ask the server once at startup whether it is still good
+  authenticationService.verifySession();
+
   //TODO: may need to refactor using the private Angular
   $rootScope.$on(subscriptionKeys.routeChangeSuccess, () => { //eslint-disable-line angular/on-watch
-    if (authenticationService.isAuthenticationExpired()) {
-      messageService.showInfo('Your login has expired. You must log back in if you wish to continue.');
-      if (($location.$$path !== null) && ($location.$$path !== '/login')) { //eslint-disable-line angular/no-private-call
-        $location.path('/login');
-      }
-    }
-
     if ($location.$$path !== null) { //eslint-disable-line angular/no-private-call
       //Issue with values being reset here... Find a better way to default previousRoutes?
       /*$sessionStorage.$default(
