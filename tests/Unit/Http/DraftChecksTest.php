@@ -26,7 +26,7 @@ class DraftChecksTest extends TestCase
   public function testAliasesMatchTheNamesRoutesUse(): void
   {
     $this->assertSame('draftViewable', DraftViewableCheck::alias());
-    $this->assertSame('draftSettingUp', DraftSettingUpOrInProgressCheck::alias());
+    $this->assertSame('draftSettingUpOrInProgress', DraftSettingUpOrInProgressCheck::alias());
     $this->assertSame('draftInProgress', DraftInProgressCheck::alias());
     $this->assertSame('draftInProgressOrCompleted', DraftInProgressOrCompletedCheck::alias());
     $this->assertSame('draftInProgressOrCompletedTenMinutes', DraftInProgressOrCompletedTenMinutesCheck::alias());

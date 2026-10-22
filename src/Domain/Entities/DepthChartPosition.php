@@ -26,6 +26,6 @@ class DepthChartPosition {
 
   //For purposes of validation, we implement toString to define equality by the lowercase position
   public function __toString() {
-    return strtolower($this->position);
+    return strtolower((string) $this->position);
   }
 }

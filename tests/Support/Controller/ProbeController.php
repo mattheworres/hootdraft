@@ -29,7 +29,7 @@ class ProbeController
     return new JsonResponse(['probe' => 'passed']);
   }
 
-  #[Route('/_probe/draft/{draft_id}/setting-up', methods: ['GET'], defaults: ['_checks' => ['draftSettingUp']])]
+  #[Route('/_probe/draft/{draft_id}/setting-up', methods: ['GET'], defaults: ['_checks' => ['draftSettingUpOrInProgress']])]
   public function settingUp(): JsonResponse
   {
     return new JsonResponse(['probe' => 'passed']);

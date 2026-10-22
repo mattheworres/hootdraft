@@ -21,7 +21,7 @@ by a route's `_checks` default (see `src/EventListener/RouteCheckListener.php`).
 | [ ] | GET | `/draft/{draft_id}/stats` | DraftController::GetStats | public | draftViewable |
 | [x] | GET | `/commissioners/search` | CommishController::SearchPublicCommissioners | public | - |
 | [x] | GET | `/commissioners/{commish_id}` | CommishController::GetPublicCommissioner | public | - |
-| [ ] | GET | `/draft/{draft_id}/managers` | ManagerController::GetAll | public | draftViewable |
+| [x] | GET | `/draft/{draft_id}/managers` | ManagerController::GetAll | public | draftViewable |
 | [ ] | GET | `/draft/{draft_id}/manager/{manager_id}/depth_chart` | ManagerController::GetManagerDepthChart | public | draftViewable, draftInProgressOrCompleted |
 | [ ] | GET | `/draft/{draft_id}/picks` | PickController::GetAll | public | draftViewable, draftInProgressOrCompleted |
 | [ ] | GET | `/draft/{draft_id}/picks/updated` | PickController::GetUpdated | public | draftViewable, draftInProgressOrCompleted |
@@ -49,20 +49,20 @@ by a route's `_checks` default (see `src/EventListener/RouteCheckListener.php`).
 | [ ] | GET | `/commish/profile` | Commish\UserProfileController::Get | commish (ROLE_COMMISH) | - |
 | [ ] | PUT | `/commish/profile` | Commish\UserProfileController::Put | commish (ROLE_COMMISH) | - |
 | [ ] | GET | `/commish/draft/create` | Commish\DraftController::GetCreate | commish (ROLE_COMMISH) | - |
-| [ ] | GET | `/commish/depthchartposition/positions` | Commish\DepthChartPositionController::GetPositions | commish (ROLE_COMMISH) | - |
+| [x] | GET | `/commish/depthchartposition/positions` | Commish\DepthChartPositionController::GetPositions | commish (ROLE_COMMISH) | - |
 | [ ] | GET | `/commish/draft/{draft_id}` | Commish\DraftController::Get | commish (ROLE_COMMISH) | commishEditableDraft |
 | [ ] | GET | `/commish/draft/{draft_id}/timers` | Commish\DraftController::GetTimers | commish (ROLE_COMMISH) | commishEditableDraft |
 | [ ] | POST | `/commish/draft` | Commish\DraftController::Create | commish (ROLE_COMMISH) | - |
-| [ ] | PUT | `/commish/draft/{draft_id}` | Commish\DraftController::Update | commish (ROLE_COMMISH) | commishEditableDraft, draftSettingUp |
+| [ ] | PUT | `/commish/draft/{draft_id}` | Commish\DraftController::Update | commish (ROLE_COMMISH) | commishEditableDraft, draftSettingUpOrInProgress |
 | [ ] | PUT | `/commish/draft/{draft_id}/status` | Commish\DraftController::UpdateStatus | commish (ROLE_COMMISH) | commishEditableDraft |
 | [ ] | DELETE | `/commish/draft/{draft_id}` | Commish\DraftController::Delete | commish (ROLE_COMMISH) | commishEditableDraft |
-| [ ] | POST | `/commish/draft/{draft_id}/timers` | Commish\DraftController::SetTimers | commish (ROLE_COMMISH) | commishEditableDraft, draftSettingUp |
-| [ ] | GET | `/commish/draft/{draft_id}/managers` | Commish\ManagerController::Get | commish (ROLE_COMMISH) | commishEditableDraft |
-| [ ] | POST | `/commish/draft/{draft_id}/manager` | Commish\ManagerController::Create | commish (ROLE_COMMISH) | commishEditableDraft, draftSettingUp |
-| [ ] | POST | `/commish/draft/{draft_id}/managers` | Commish\ManagerController::CreateMany | commish (ROLE_COMMISH) | commishEditableDraft, draftSettingUp |
-| [ ] | PUT | `/commish/draft/{draft_id}/managers/reorder` | Commish\ManagerController::Reorder | commish (ROLE_COMMISH) | commishEditableDraft, draftSettingUp |
-| [ ] | PUT | `/commish/draft/{draft_id}/manager/{manager_id}` | Commish\ManagerController::Update | commish (ROLE_COMMISH) | commishEditableDraft, draftSettingUp |
-| [ ] | DELETE | `/commish/draft/{draft_id}/manager/{manager_id}` | Commish\ManagerController::Delete | commish (ROLE_COMMISH) | commishEditableDraft, draftSettingUp |
+| [ ] | POST | `/commish/draft/{draft_id}/timers` | Commish\DraftController::SetTimers | commish (ROLE_COMMISH) | commishEditableDraft, draftSettingUpOrInProgress |
+| [x] | GET | `/commish/draft/{draft_id}/managers` | Commish\ManagerController::Get | commish (ROLE_COMMISH) | commishEditableDraft |
+| [x] | POST | `/commish/draft/{draft_id}/manager` | Commish\ManagerController::Create | commish (ROLE_COMMISH) | commishEditableDraft, draftSettingUpOrInProgress |
+| [x] | POST | `/commish/draft/{draft_id}/managers` | Commish\ManagerController::CreateMany | commish (ROLE_COMMISH) | commishEditableDraft, draftSettingUpOrInProgress |
+| [x] | PUT | `/commish/draft/{draft_id}/managers/reorder` | Commish\ManagerController::Reorder | commish (ROLE_COMMISH) | commishEditableDraft, draftSettingUpOrInProgress |
+| [x] | PUT | `/commish/draft/{draft_id}/manager/{manager_id}` | Commish\ManagerController::Update | commish (ROLE_COMMISH) | commishEditableDraft, draftSettingUpOrInProgress |
+| [x] | DELETE | `/commish/draft/{draft_id}/manager/{manager_id}` | Commish\ManagerController::Delete | commish (ROLE_COMMISH) | commishEditableDraft, draftSettingUpOrInProgress |
 | [ ] | GET | `/commish/proplayers/search` | Commish\ProPlayerController::Search | commish (ROLE_COMMISH) | - |
 | [ ] | GET | `/commish/draft/{draft_id}/manager/{manager_id}/assets` | Commish\TradeController::GetAssets | commish (ROLE_COMMISH) | commishEditableDraft, draftInProgress |
 | [ ] | POST | `/commish/draft/{draft_id}/trade` | Commish\TradeController::Create | commish (ROLE_COMMISH) | commishEditableDraft, draftInProgress |

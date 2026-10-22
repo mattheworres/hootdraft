@@ -239,13 +239,15 @@ class DraftReadTest extends KernelTestCase
     $setup = $this->createDraft($alice, 'Setup draft');
     $running = $this->createDraft($alice, 'Running draft', 'in_progress');
     $done = $this->createDraft($alice, 'Done draft', 'complete', null, ['draft_end_time' => gmdate('Y-m-d H:i:s', time() - 3600)]);
+    $justDone = $this->createDraft($alice, 'Just done draft', 'complete', null, ['draft_end_time' => gmdate('Y-m-d H:i:s', time() - 120)]);
 
     $expect = [
       // route => [draft => status]
-      'setting-up' => [$setup => 200, $running => 200, $done => 400],
-      'in-progress' => [$setup => 400, $running => 200, $done => 400],
-      'in-progress-or-completed' => [$setup => 400, $running => 200, $done => 200],
-      'ten-minutes' => [$setup => 400, $running => 200, $done => 200],
+      'setting-up' => [$setup => 200, $running => 200, $done => 400, $justDone => 400],
+      'in-progress' => [$setup => 400, $running => 200, $done => 400, $justDone => 400],
+      'in-progress-or-completed' => [$setup => 400, $running => 200, $done => 200, $justDone => 200],
+      // Completed drafts stay editable for ten minutes after they end, then the grace period is over
+      'ten-minutes' => [$setup => 400, $running => 200, $done => 400, $justDone => 200],
     ];
 
     foreach ($expect as $route => $statuses) {
