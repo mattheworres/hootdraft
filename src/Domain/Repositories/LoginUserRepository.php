@@ -4,8 +4,8 @@ namespace HootDraft\Domain\Repositories;
 
 use HootDraft\Domain\Entities\LoginUser;
 
-// Only the methods the authentication flows need are ported so far; the rest (LoadAll, Search, Delete,
-// public lookups, ...) arrive with their controllers in step 4. See old-api for the originals.
+// The authentication flows and the public commissioner lookups are ported so far; the rest (LoadAll, Delete,
+// profile, ...) arrive with their controllers in step 4. See old-api for the originals.
 class LoginUserRepository {
   public function __construct(private \PDO $pdo) {
   }
@@ -20,6 +20,63 @@ class LoginUserRepository {
     if (!$load_stmt->execute([$email]) || !$load_stmt->fetch()) {
       throw new \Exception(sprintf('Email "%s" does not exist.', $email));
     }
+
+    return $user;
+  }
+
+  /** Public view of a commissioner: id and name only. */
+  public function LoadPublicById($id) {
+    $user = new LoginUser();
+
+    $id = (int)$id;
+
+    $load_stmt = $this->pdo->prepare("SELECT id, name FROM users WHERE id = ? LIMIT 1");
+    $load_stmt->setFetchMode(\PDO::FETCH_INTO, $user);
+    $load_stmt->bindParam(1, $id);
+
+    if (!$load_stmt->execute() || !$load_stmt->fetch()) {
+      throw new \Exception(sprintf('User #%s does not exist.', $id));
+    }
+
+    return $this->_ScrubPublicUser($user);
+  }
+
+  public function SearchCommissioners($searchTerm) {
+    $searchTerm = trim((string) $searchTerm);
+
+    if ($searchTerm === '') {
+      return array();
+    }
+
+    $searchTerm = '%' . addcslashes($searchTerm, '\\%_') . '%';
+    $search_stmt = $this->pdo->prepare("SELECT id, name FROM users WHERE name LIKE ?");
+
+    $search_stmt->setFetchMode(\PDO::FETCH_CLASS, LoginUser::class);
+    $search_stmt->bindParam(1, $searchTerm);
+
+    $users = array();
+
+    if (!$search_stmt->execute()) {
+      throw new \Exception("Unable to load users");
+    }
+
+    while ($user = $search_stmt->fetch()) {
+      $users[] = $this->_ScrubPublicUser($user);
+    }
+
+    return $users;
+  }
+
+  /** Leaves only what was selected (id, name) so nothing else serializes into the public JSON. */
+  private function _ScrubPublicUser(LoginUser $user) {
+    unset($user->enabled);
+    unset($user->email);
+    unset($user->password);
+    unset($user->salt);
+    unset($user->roles);
+    unset($user->verificationKey);
+    unset($user->verificationKeyCreated);
+    unset($user->creationTime);
 
     return $user;
   }

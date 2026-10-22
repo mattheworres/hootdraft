@@ -26,6 +26,34 @@ class LoginUserService {
   ) {
   }
 
+  public function SearchCommissioners($searchTerm) {
+    $response = new HootDraftResponse();
+
+    try {
+      $response->commissioners = $this->repository->SearchCommissioners($searchTerm);
+      $response->success = true;
+    } catch (\Exception $ex) {
+      $response->success = false;
+      $response->errors[] = $ex->getMessage();
+    }
+
+    return $response;
+  }
+
+  public function GetCommissioner($commish_id) {
+    $response = new HootDraftResponse();
+
+    try {
+      $response->commissioner = $this->repository->LoadPublicById($commish_id);
+      $response->success = true;
+    } catch (\Exception $ex) {
+      $response->success = false;
+      $response->errors[] = $ex->getMessage();
+    }
+
+    return $response;
+  }
+
   public function CreateUnverifiedNewUser(LoginUser $user) {
     $user->enabled = false;
 

@@ -15,12 +15,12 @@ by a route's `_checks` default (see `src/EventListener/RouteCheckListener.php`).
 | [x] | POST | `/lostPassword` | AuthenticationController::LostPassword | public (login firewall) | - |
 | [x] | GET | `/verifyToken` | AuthenticationController::VerifyResetPasswordToken | public (login firewall) | - |
 | [x] | POST | `/resetPassword` | AuthenticationController::ResetPassword | public (login firewall) | - |
-| [ ] | GET | `/drafts` | DraftController::GetAll | public | - |
-| [ ] | GET | `/drafts/{commish_id}` | DraftController::GetAllByCommish | public | - |
-| [ ] | GET | `/draft/{id}` | DraftController::Get | public | - |
+| [x] | GET | `/drafts` | DraftController::GetAll | public | - |
+| [x] | GET | `/drafts/{commish_id}` | DraftController::GetAllByCommish | public | - |
+| [x] | GET | `/draft/{id}` | DraftController::Get | public | - |
 | [ ] | GET | `/draft/{draft_id}/stats` | DraftController::GetStats | public | draftViewable |
-| [ ] | GET | `/commissioners/search` | CommishController::SearchPublicCommissioners | public | - |
-| [ ] | GET | `/commissioners/{commish_id}` | CommishController::GetPublicCommissioner | public | - |
+| [x] | GET | `/commissioners/search` | CommishController::SearchPublicCommissioners | public | - |
+| [x] | GET | `/commissioners/{commish_id}` | CommishController::GetPublicCommissioner | public | - |
 | [ ] | GET | `/draft/{draft_id}/managers` | ManagerController::GetAll | public | draftViewable |
 | [ ] | GET | `/draft/{draft_id}/manager/{manager_id}/depth_chart` | ManagerController::GetManagerDepthChart | public | draftViewable, draftInProgressOrCompleted |
 | [ ] | GET | `/draft/{draft_id}/picks` | PickController::GetAll | public | draftViewable, draftInProgressOrCompleted |
@@ -35,8 +35,8 @@ by a route's `_checks` default (see `src/EventListener/RouteCheckListener.php`).
 | [ ] | GET | `/draft/{draft_id}/picks/search` | PickController::SearchPicks | public | draftViewable, draftInProgressOrCompleted |
 | [ ] | GET | `/draft/{draft_id}/trades` | TradeController::GetAll | public | draftViewable, draftInProgressOrCompleted |
 | [ ] | GET | `/draft/{draft_id}/timer/remaining` | RoundTimeController::GetTimeRemaining | public | draftViewable, draftInProgress |
-| [ ] | GET | `/style` | IndexController::Style | public | - |
-| [ ] | GET | `/draftOptions` | IndexController::DraftOptions | public | - |
+| [x] | GET | `/style` | IndexController::Style | public | - |
+| [x] | GET | `/draftOptions` | IndexController::DraftOptions | public | - |
 | [ ] | GET | `/admin/drafts` | Admin\DraftStatsController::GetDrafts | admin (ROLE_ADMIN) | - |
 | [ ] | POST | `/admin/draft/{draft_id}/stats` | Admin\DraftStatsController::Create | admin (ROLE_ADMIN) | - |
 | [ ] | GET | `/admin/sports` | Admin\ProPlayerController::GetSports | admin (ROLE_ADMIN) | - |
