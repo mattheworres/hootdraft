@@ -1,0 +1,19 @@
+# TODO(step 3): this is a deny-by-default STUB, not the real authentication. No authenticator exists
+# yet, so nobody can reach /admin or /commish. Step 3 replaces this with cookie-based auth.
+security:
+  providers:
+    users_in_memory:
+      memory: ~
+
+  firewalls:
+    main:
+      stateless: true
+      lazy: true
+      provider: users_in_memory
+
+  role_hierarchy:
+    ROLE_ADMIN: [ROLE_COMMISH]
+
+  access_control:
+    - { path: ^/admin, roles: ROLE_ADMIN }
+    - { path: ^/commish, roles: ROLE_COMMISH }

@@ -56,17 +56,17 @@ task('phpdraft:verify_package', function() {
   if(file_exists("$archivePath/$resourceFileName")) {
     throw new \Exception("File $archivePath/$resourceFileName already exists.");
   }
-})->setPrivate();
+})->hidden();
 
 desc('Install NPM packages (for building)');
 task('phpdraft:yarn_install', function() {
   runLocally('yarn install');
-})->setPrivate();
+})->hidden();
 
 desc('Install Composer packages (locally)');
 task('phpdraft:composer_install', function() {
-  runLocally('composer install --prefer-dist -o --no-progress --no-suggest');
-})->setPrivate();
+  runLocally('composer install --prefer-dist -o --no-progress');
+})->hidden();
 
 //Releases are 800MB without this, but moving Deployer to dev deps
 //would unnecessarily bloat production install
@@ -75,21 +75,21 @@ task('phpdraft:slim_composer', function() {
   $spurious_vendor_folders = [
     'squizlabs',
     'phpunit',
-    'robmorgan',
     'sebastian',
-    'cakephp'
+    'phar-io',
+    'theseer'
   ];
 
   foreach ($spurious_vendor_folders as $folder) {
     writeln("Removing vendor/$folder");
     runLocally("rm -rf vendor/$folder/");
   }
-})->setPrivate();
+})->hidden();
 
 desc('Build Angular App');
 task('phpdraft:build_app', function() {
   runLocally('gulp build --minify --concat --templates --revAssets --env=dist');
-})->setPrivate();
+})->hidden();
 
 desc('Ask the user for release details');
 task('phpdraft:get_release_details', function() {
@@ -104,12 +104,15 @@ task('phpdraft:get_release_details', function() {
     'releaseFile' => "$phpdraftReleaseFile.zip",
     'resourceFile' => "$phpdraftResourcesFile.zip"
   ]);
-})->setPrivate();
+})->hidden();
 
 desc('Package release with 7zip');
 task('phpdraft:zip_package', function() {
   $phpdraft_release_dirs = [
     'api',
+    'bin',
+    'config',
+    'src',
     'css',
     'db',
     'deploy',
@@ -120,7 +123,9 @@ task('phpdraft:zip_package', function() {
   ];
 
   $phpdraft_release_files = [
+    '.env',
     '.htaccess',
+    'phinx.php',
     'composer.json',
     'composer.lock',
     'README.MD',
@@ -143,16 +148,13 @@ task('phpdraft:zip_package', function() {
 
   //Hard-coded so we copy a working deploy.php so no one technically needs to edit a single file
   runLocally("7z a $archivePath/$releaseFileName deploy/deploy.php.release");
-  runLocally("7z a $archivePath/$releaseFileName deploy/appsettings.php.ci");
-  runLocally("7z a $archivePath/$releaseFileName deploy/phinx.yml.ci");
+  runLocally("7z a $archivePath/$releaseFileName deploy/env.local.ci");
   runLocally("7z rn $archivePath/$releaseFileName deploy/deploy.php.release deploy.php");
-  runLocally("7z rn $archivePath/$releaseFileName deploy/appsettings.php.ci appsettings.php");
-  runLocally("7z rn $archivePath/$releaseFileName deploy/phinx.yml.ci phinx.yml");
+  runLocally("7z rn $archivePath/$releaseFileName deploy/env.local.ci .env.local");
 
-  //Re-include them in case anyone using this packaged release needs CI versions of these!
-  runLocally("7z a $archivePath/$releaseFileName deploy/appsettings.php.ci");
-  runLocally("7z a $archivePath/$releaseFileName deploy/phinx.yml.ci");
-})->setPrivate();
+  //Re-include it in case anyone using this packaged release needs the CI version!
+  runLocally("7z a $archivePath/$releaseFileName deploy/env.local.ci");
+})->hidden();
 
 desc('Package resources with 7zip');
 task('phpdraft:zip_resources', function() {
@@ -167,7 +169,7 @@ task('phpdraft:zip_resources', function() {
   foreach($goodResources as $resourceFile) {
     runLocally("7z a $archivePath/$resourceFileName $phpdraft_resource_dir/$resourceFile");
   }
-})->setPrivate();
+})->hidden();
 
 desc('Tell user the package was successfully created');
 task('phpdraft:package_success', function() {
@@ -178,4 +180,4 @@ task('phpdraft:package_success', function() {
   writeln("<info>Hoot Draft successfully packaged!");
   writeln("<info>Main archive here: $archivePath/$releaseFileName");
   writeln("<info>Resources archive here: $archivePath/$resourceFileName");
-})->setPrivate();
+})->hidden();

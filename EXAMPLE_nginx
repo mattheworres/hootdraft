@@ -1,6 +1,6 @@
 # Example NGINX Configuration
 # This is an example of what is required in order to get HootDraft to run on NGINX.
-# This config also uses PHP-FPM 7.0 so paths may very there.
+# PHP-FPM 8.4+ is required (the socket path below may vary).
 # Mileage may vary.
 
 #Server block #1: forward any non-HTTPS requests to the third server block.
@@ -33,7 +33,7 @@ server {
         return 301 https://example.com$request_uri;
 }
 
-#Server block #3: serve the Angular app via index.html, Silex API thru /api, files/media as-is
+#Server block #3: serve the Angular app via index.html, Symfony API thru /api, files/media as-is
 server {
         listen 443 ssl http2;
 
@@ -51,20 +51,37 @@ server {
         ssl_certificate /etc/nginx/ssl/your_ssl_certificate.crt;
         ssl_certificate_key /etc/nginx/ssl/your_ssl_private.key;
 
-        location /api/ {
-                try_files $uri /api/bootstrap.php$is_args$args;
+        #Never serve dotfiles (.git, .env, .env.local, .htaccess, ...) except /.well-known/ (Let's Encrypt etc.)
+        location ~ /\.(?!well-known/) {
+                deny all;
         }
 
+        #Only the Angular app, its built assets and the API are reachable. Source, vendor/, config/,
+        #var/, db/, tests/ etc. live under the same root but no location maps to them.
+        location = /api {
+                return 301 /api/;
+        }
+
+        #Every /api/ request goes to the Symfony front controller; Symfony strips the /api base itself.
         #Ensure the path passed to fastcgi_pass below matches up with where php-fpm lives
-        location ~* \.php$ {
-                include snippets/fastcgi-php.conf;
-                fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+        location ^~ /api/ {
+                include fastcgi_params;
+                fastcgi_param SCRIPT_FILENAME $document_root/api/index.php;
+                fastcgi_param SCRIPT_NAME /api/index.php;
+                fastcgi_pass unix:/var/run/php/php8.4-fpm.sock;
         }
 
+        location ~ ^/(css|js|fonts|images)/ {
+                try_files $uri =404;
+        }
+
+        location = /favicon.ico {
+                try_files $uri =404;
+        }
+
+        #Everything else is the Angular app
         location / {
-                # First attempt to serve request as file, then
-                # as directory, then fall back to displaying a 404.
-                try_files $uri $uri/ /index.html;
+                try_files /index.html =404;
         }
 
         error_page 404 /404.html;
@@ -73,7 +90,4 @@ server {
                 root /usr/share/nginx/html;
         }
 
-        location ~ /\.ht {
-                deny all;
-        }
 }

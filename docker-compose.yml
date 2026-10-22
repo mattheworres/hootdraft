@@ -1,0 +1,44 @@
+# HootDraft developer box: nginx + PHP 8.5-FPM + MariaDB 12.3
+# Usage: docker compose up -d --build   (see docker/README.md)
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - php
+
+  php:
+    build:
+      context: ./docker/php
+      args:
+        APP_UID: ${APP_UID:-1000}
+    env_file: ./docker/.env
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mariadb:12.3
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "127.0.0.1:3307:3306"
+    env_file: ./docker/.env
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  db_data:

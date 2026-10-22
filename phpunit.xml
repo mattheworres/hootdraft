@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit backupGlobals="false"
-         backupStaticAttributes="false"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
          colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="false"
-         stopOnFailure="false">
+         failOnWarning="true"
+         failOnDeprecation="true"
+         cacheDirectory="var/.phpunit.cache">
+    <php>
+        <env name="APP_ENV" value="test" force="true"/>
+        <env name="APP_DEBUG" value="0" force="true"/>
+        <env name="KERNEL_CLASS" value="HootDraft\Kernel" force="true"/>
+    </php>
     <testsuites>
-        <testsuite name="HootDraft Test Suite">
-            <directory>./tests/</directory>
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
         </testsuite>
+        <testsuite name="Functional">
+            <directory>tests/Functional</directory>
+        </testsuite>
+        <!-- tests/legacy holds the Silex-era tests. They target classes that are still in old-api/ and
+             get ported (namespace, constructors, PHPUnit 13 syntax) alongside their classes in step 4. -->
     </testsuites>
 </phpunit>

@@ -1,0 +1,53 @@
+parameters:
+  # Application settings that used to be constants in appsettings.php. See .env for descriptions.
+  hootdraft.app_base_url: '%env(APP_BASE_URL)%'
+  hootdraft.api_base_url: '%env(API_BASE_URL)%'
+  hootdraft.draft_password_header: '%env(DRAFT_PASSWORD_HEADER)%'
+  hootdraft.recaptcha_secret: '%env(RECAPTCHA_SECRET)%'
+  hootdraft.cache_seconds: '%env(int:CACHE_SECONDS)%'
+  hootdraft.cache_path: '%env(CACHE_PATH)%'
+  hootdraft.set_csv_timeout: '%env(bool:SET_CSV_TIMEOUT)%'
+  hootdraft.mail.development: '%env(bool:MAIL_DEVELOPMENT)%'
+  hootdraft.mail.server: '%env(MAIL_SERVER)%'
+  hootdraft.mail.port: '%env(int:MAIL_PORT)%'
+  hootdraft.mail.user: '%env(MAIL_USER)%'
+  hootdraft.mail.pass: '%env(MAIL_PASS)%'
+  hootdraft.mail.use_encryption: '%env(bool:MAIL_USE_ENCRYPTION)%'
+  hootdraft.mail.encryption: '%env(MAIL_ENCRYPTION)%'
+
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  HootDraft\:
+    resource: '../src/'
+    exclude:
+      - '../src/Kernel.php'
+
+  # Database connection, built from the DB_* env vars (replaces Silex DoctrineServiceProvider)
+  Doctrine\DBAL\Connection:
+    class: Doctrine\DBAL\Connection
+    public: true # fetched directly by tests
+    factory: ['Doctrine\DBAL\DriverManager', 'getConnection']
+    arguments:
+      - driver: '%env(DB_DRIVER)%'
+        host: '%env(DB_HOST)%'
+        port: '%env(int:DB_PORT)%'
+        dbname: '%env(DB_NAME)%'
+        user: '%env(DB_USER)%'
+        password: '%env(DB_PASS)%'
+        charset: 'utf8mb4'
+
+  # The legacy repositories use native PDO (prepare + FETCH_CLASS into entities), which DBAL 4 no longer
+  # wraps. They share DBAL's connection through its underlying PDO handle. See Known Compromises.
+  PDO:
+    class: PDO
+    public: true
+    factory: ['@Doctrine\DBAL\Connection', 'getNativeConnection']
+
+  # Route guards (the old Silex ->before() closures). Tagged services are looked up by alias
+  # from a route's `_checks` default. See HootDraft\EventListener\RouteCheckListener.
+  _instanceof:
+    HootDraft\Http\Check\RouteCheck:
+      tags: ['hootdraft.route_check']

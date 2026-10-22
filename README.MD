@@ -51,8 +51,8 @@ I was thinking you'd say that...
 <br />
 
 ## Minimum Server Requirements
-- PHP 7.1+ installed (with `pdo_mysql` extension installed; PHP 7.2+ recommended!)
-- MySQL 5.6+ database
+- PHP 8.4+ installed (with the `pdo_mysql`, `ctype` and `iconv` extensions). **Note:** the API is mid-rewrite to Symfony; see PHP8Rewrite.md
+- MariaDB 12 (what the developer box runs) or a compatible MySQL database
 - Webserver that can perform URL rewrites (Apache, IIS, or NGINX currently, possibly more in the future)
 - SMTP mail account (for user registration/password resets)
 - Google reCAPTCHA 2 site key (public and private - used to verify new user registration)
@@ -60,7 +60,7 @@ I was thinking you'd say that...
 
 ## Installing Hoot Draft
 
-See [Installation instructions](https://github.com/mattheworres/phpdraft/wiki/Installing-PHP-Draft) for detailed installation instructions.
+See [Installation instructions](https://github.com/mattheworres/hootdraft/wiki/Installing-PHP-Draft) for detailed installation instructions.
 
 ## Feature Requests
 
@@ -72,7 +72,7 @@ Or, just hit me up on [Twitter](https://twitter.com/mattheworres) and let me kno
 
 ## Bugs
 
-Check out the [Issues](https://github.com/mattheworres/phpdraft/issues) tab on the Github project. Search the issues (open and closed) for some help, or enter a new issue!
+Check out the [Issues](https://github.com/mattheworres/hootdraft/issues) tab on the Github project. Search the issues (open and closed) for some help, or enter a new issue!
 
 You can also enter the project's [Gitter](https://gitter.im/mattheworres/phpdraft) chat room for help from me or other Hoot Draft users!
 
@@ -80,13 +80,13 @@ You can also hit me up on [Twitter](https://twitter.com/mattheworres) if you're 
 
 ## Contributing & custom development
 
-See the [Developing wiki page](https://github.com/mattheworres/phpdraft/wiki/Developing) if you are interested in developing or making custom changes to your Hoot Draft.
+See the [Developing wiki page](https://github.com/mattheworres/hootdraft/wiki/Developing) if you are interested in developing or making custom changes to your Hoot Draft.
 
 If you come up with something that others may find worthwhile - please fork this repository and submit a pull request. I provide this code (and the hundreds of hours of my personal time I've poured into the project) free of charge under an open source license without any expectation of payment or even gratitude. I do it to help a few folks out, and to return the favor I ask that you help pass it on :)
 
 ## Changelog
 
-See the [Changelog](https://github.com/mattheworres/phpdraft/wiki/Changelog) for the most up to date version info.
+See the [Changelog](https://github.com/mattheworres/hootdraft/wiki/Changelog) for the most up to date version info.
 
 ## Creators
 

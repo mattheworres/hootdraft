@@ -1,6 +1,6 @@
-<FilesMatch appsettings.php>
-    Order Allow,Deny
-    Deny from all
+# Never serve env, settings, dependency or deploy files
+<FilesMatch "^(\.env.*|appsettings\.php.*|phinx\.(php|yml).*|composer\.(json|lock)|deploy\.php.*|docker-compose\.yml|.*\.md)$">
+    Require all denied
 </FilesMatch>
 
 <IfModule mod_rewrite.c>
@@ -16,12 +16,15 @@
     #RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
     #H/T to anubhava http://stackoverflow.com/a/29874382/324527
-    DirectoryIndex bootstrap.php index.html
+    DirectoryIndex index.html
     Options +FollowSymLinks
     RewriteEngine on
 
-    # redirect all api calls to /api/bootstrap.php
-    RewriteRule ^api/((?!bootstrap\.php$).+)$ api/bootstrap.php [L,NC]
+    # Source, config and dependency directories are never reachable (403)
+    RewriteRule ^(vendor|src|config|var|db|tests|old-api|docker|deploy|docs|bin|node_modules)(/|$) - [F,L,NC]
+
+    # redirect all api calls to the Symfony front controller, /api/index.php
+    RewriteRule ^api(/.*)?$ api/index.php [L,NC]
 
     # If the request is a file, folder or symlink that exists, or is for the mail server, serve it up
     RewriteCond %{REQUEST_FILENAME} -f [OR]

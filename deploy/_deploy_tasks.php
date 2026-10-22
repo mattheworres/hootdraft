@@ -4,23 +4,30 @@ namespace Deployer;
 desc('Hoot Draft: Deploy to production');
 task('deploy', [
   'phpdraft:verify_install',
-  'deploy:prepare',
+  'deploy:info',
+  'deploy:setup',
   'deploy:lock',
   'deploy:release',
   'phpdraft:upload_files',
-  'phpdraft:remote_composer',
+  'deploy:shared',
+  'phpdraft:warm_cache',
   'phpdraft:breakpoint',
   'phpdraft:migrate',
   'deploy:symlink',
   //'phpdraft:restart_fpm',
   'deploy:unlock',
-  'cleanup',
-  'success'
+  'deploy:cleanup',
+  'deploy:success'
 ]);
 
+// Logs survive between releases. Settings (.env.local) are uploaded with every release.
+set('shared_dirs', ['var/log']);
+set('shared_files', []);
+// vendor/ ships inside the release package (no composer needed on the host); Phinx is a regular dependency.
+
 before('deploy:release', 'phpdraft:set_rollback');
-after('deploy:failed', 'phpdraft:rollback');
-after('deploy:failed', 'phpdraft:failure');
+fail('deploy', 'phpdraft:rollback');
+fail('deploy', 'phpdraft:failure');
 
 desc('Verify Hoot Draft has been prepared for deployment');
 task('phpdraft:verify_install', function() {
@@ -28,119 +35,111 @@ task('phpdraft:verify_install', function() {
 
   $items_required_for_deploy = [
     'js',
-    'appsettings.php',
-    'phinx.yml',
+    'vendor',
+    '.env.local',
     'css',
-    'vendor'
+    'index.html'
   ];
 
   foreach($items_required_for_deploy as $file) {
     if(file_exists($file) !== true) {
       writeln("<error>File or directory $file does not exist, cannot deploy.</error>\n");
-      writeln("<comment>Ensure you have downloaded a compiled release from https://github.com/mattheworres/phpdraft/releases</comment>\n");
+      writeln("<comment>Ensure you have downloaded a compiled release from https://github.com/mattheworres/hootdraft/releases</comment>\n");
       writeln("<comment>Or, if you are building from sourcecode, consult the wiki on how to properly prepare a release.</comment>\n");
       throw new \Exception("Hoot Draft has not been properly prepared for deployment.");
     }
   }
 
   writeln('<info>Hoot Draft is ready for deployment!</info>');
-})->setPrivate();
+})->hidden();
 
 desc('Upload app files');
 task('phpdraft:upload_files', function() {
+  // Directories are uploaded as their contents (trailing slash), files one by one.
+  // Only what the running app needs: no tests/, docs/, docker/, old-api/ or node_modules.
+  $phpdraft_dirs = [
+    'api',
+    'bin',
+    'config',
+    'src',
+    'vendor',
+    'css',
+    'db',
+    'fonts',
+    'images',
+    'js',
+  ];
+
   $phpdraft_files = [
-    'api/',
-    'css/',
-    'db/',
-    'fonts/',
-    'images/',
-    'js/',
+    '.env',
+    '.env.local',
     '.htaccess',
-    'appsettings.php',
     'composer.json',
     'composer.lock',
-    'package.json',
-    'phinx.yml',
-    'deploy/',
+    'phinx.php',
     'index.html',
     'web.config',
     'favicon.ico',
   ];
 
-  foreach ($phpdraft_files as $file)
-  {
-    upload($file, "{{release_path}}/{$file}");
+  foreach ($phpdraft_dirs as $dir) {
+    upload("$dir/", "{{release_path}}/$dir/");
   }
-})->setPrivate();
+
+  foreach ($phpdraft_files as $file) {
+    upload($file, "{{release_path}}/$file");
+  }
+})->hidden();
 
 desc('Install NPM dependencies remotely');
 task('phpdraft:remote_yarn', function() {
   cd('{{release_path}}');
 
   run('yarn --production');
+})->hidden();
 
-  cd('{{deploy_path}}');
-})->setPrivate();
-
-desc('Install Composer dependencies remotely');
-task('phpdraft:remote_composer', function() {
-  cd('{{release_path}}');
-
-  run('php {{release_path}}/deploy/composer.phar install --no-dev --prefer-dist -o --no-progress --no-suggest');
-
-  cd('{{deploy_path}}');
-})->setPrivate();
+desc('Build the production Symfony cache');
+task('phpdraft:warm_cache', function() {
+  run('mkdir -p {{release_path}}/var/cache');
+  run('cd {{release_path}} && APP_ENV=prod APP_DEBUG=0 {{bin/php}} bin/console cache:warmup');
+})->hidden();
 
 //TODO: SSH user needs elevated via the sudoers file in order to do this in Deployer
 // desc('Restart the PHP FPM service');
 // task('phpdraft:restart_fpm', function() {
-// 	cd('{{release_path}}');
-
 // 	if(get("restart_fpm") == true) {
-// 		writeln("<comment>Restarting the php7.0-fpm service...</comment>");
-// 		run('sudo service php7.0-fpm restart');
+// 		writeln("<comment>Restarting the php-fpm service...</comment>");
+// 		run('sudo service php8.4-fpm restart');
 // 	} else {
-// 		writeln("<comment>Skipping restart of php7.0-fpm service.</comment>");
+// 		writeln("<comment>Skipping restart of php-fpm service.</comment>");
 // 	}
-
-//     cd('{{deploy_path}}');
-// })->setPrivate();
+// })->hidden();
 
 desc('Set Phinx breakpoint');
 task('phpdraft:breakpoint', function() {
-  cd('{{release_path}}');
-
-  run('php deploy/phinx.phar breakpoint -e production --remove-all');
-  run('php deploy/phinx.phar breakpoint -e production');
-
-  cd('{{deploy_path}}');
-})->setPrivate();
+  run('cd {{release_path}} && {{bin/php}} vendor/bin/phinx breakpoint -e production --remove-all');
+  run('cd {{release_path}} && {{bin/php}} vendor/bin/phinx breakpoint -e production');
+})->hidden();
 
 desc('Set rollback var to false in case of error');
 task('phpdraft:set_rollback', function() {
   set('phpdraft_rollback_required', false);
-})->setPrivate();
+})->hidden();
 
 desc('Run Phinx migrations');
 task('phpdraft:migrate', function() {
-  cd('{{release_path}}');
-
   set('phpdraft_rollback_required', true);
 
-  run('php deploy/phinx.phar migrate -e production');
-
-  cd('{{deploy_path}}');
-})->setPrivate();
+  run('cd {{release_path}} && {{bin/php}} vendor/bin/phinx migrate -e production');
+})->hidden();
 
 desc('Rollback migrations on failure');
 task('phpdraft:rollback', function() {
   writeln('<comment>Rolling back database migrations...</comment>');
   if(get("phpdraft_rollback_required") == true) {
-    cd('{{release_path}}');
-    run('php deploy/phinx.phar rollback -e production');
-    cd('{{deploy_path}}');
+    run('cd {{release_path}} && {{bin/php}} vendor/bin/phinx rollback -e production');
   }
-})->setPrivate();
+})->hidden();
 
 desc('Inform user of failed deploy');
 task('phpdraft:failure', function() {
@@ -149,4 +148,4 @@ task('phpdraft:failure', function() {
     need to verify the integrity of your install. See {{deploy_path}} releases and create a new
     symlink to the last \"good\" release in order to go back to working code, or restore any
     working backups you have to go back in time.</error>");
-})->setPrivate();
+})->hidden();

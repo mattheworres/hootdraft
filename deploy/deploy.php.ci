@@ -6,17 +6,16 @@ require dirname(__FILE__).'/deploy/_package_tasks.php';
 require dirname(__FILE__).'/deploy/_setup_tasks.php';
 
 // Configuration
-set('ssh_type', 'native');
 set('ssh_multiplexing', false);
 set('keep_releases', {phpdraft.deployReleasesKept});
 set('restart_fpm', false);
 
 // Servers
 host('{phpdraft.deployLocation}')
-    ->stage('production')
-    ->user('{phpdraft.deployUser}')
-    ->identityFile('~/.ssh/id_rsa')
-    //->password(NULL)  //To provide password at terminal prompt, pass NULL here instead
+    ->set('labels', ['stage' => 'production'])
+    ->set('remote_user', '{phpdraft.deployUser}')
+    ->set('identity_file', '~/.ssh/id_rsa')
+    //Password logins are not handled by Deployer 7+; use SSH keys (or ssh-agent)
     ->set('deploy_path', '{phpdraft.deployPath}') //Is abs path to the base directory of the site
     ->set('phpdraft_rollback_required', false);
 

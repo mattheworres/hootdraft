@@ -170,7 +170,7 @@ class CommishPickEntryController {
     this.playerSearch = '';
 
     //For edit contexts, if its the same player, just let it go thru.
-    //Potentially fixes #12: https://github.com/mattheworres/phpdraft/issues/12
+    //Potentially fixes #12: https://github.com/mattheworres/hootdraft/issues/12
     //Ensure that the current pick is not in the process of being loaded.
     //Select player may be getting erroneously fired while the current pick is being reloaded.
     if (!this._pickIsTheSame()) {

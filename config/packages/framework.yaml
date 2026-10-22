@@ -1,0 +1,12 @@
+framework:
+  secret: '%env(APP_SECRET)%'
+  http_method_override: false
+  handle_all_throwables: true
+  php_errors:
+    log: true
+  # Stateless JSON API: no PHP sessions
+  session: false
+
+when@test:
+  framework:
+    test: true

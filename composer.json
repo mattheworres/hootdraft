@@ -1,37 +1,46 @@
 {
+    "type": "project",
     "require": {
-        "php": ">=7.0.0",
-        "silex/silex": "~2.1",
-        "monolog/monolog": "~1.22",
-        "symfony/security": "~2.8.18",
-        "cnam/security-jwt-service-provider": "~2.1.1",
-        "doctrine/dbal": "~2.5.12",
-        "egulias/email-validator": "~2.1.7",
-        "phpmailer/phpmailer": "~6.0",
-        "google/recaptcha": "~1.1",
-        "phpfastcache/phpfastcache": "~7.0",
-        "twig/twig": " ^2.0"
+        "php": ">=8.4",
+        "ext-ctype": "*",
+        "ext-iconv": "*",
+        "doctrine/dbal": "^4.4",
+        "egulias/email-validator": "^4.0",
+        "google/recaptcha": "^1.5",
+        "phpfastcache/phpfastcache": "^9.2",
+        "phpmailer/phpmailer": "^7.0",
+        "robmorgan/phinx": "^0.16",
+        "symfony/dotenv": "8.1.*",
+        "symfony/framework-bundle": "8.1.*",
+        "symfony/monolog-bundle": "^4.0",
+        "symfony/runtime": "8.1.*",
+        "symfony/security-bundle": "8.1.*",
+        "twig/twig": "^3.30"
     },
     "require-dev": {
-        "monolog/monolog": "~1.13",
-        "phpunit/phpunit": "~7.0",
-        "phpmd/phpmd": "@stable",
-        "robmorgan/phinx": "^0.10.0",
-        "deployer/deployer": "~6.2.0",
+        "phpunit/phpunit": "^13.4",
+        "deployer/deployer": "^8.0",
         "squizlabs/php_codesniffer": "^3.2"
     },
     "autoload": {
         "psr-4": {
-            "PhpDraft\\": "api",
-            "PhpDraft\\Config\\": "api/config",
-            "PhpDraft\\Config\\Security\\": "api/config/Security",
-            "PhpDraft\\Controllers\\": "api/Controllers",
-            "PhpDraft\\Controllers\\Admin\\": "api/Controllers/Admin",
-            "PhpDraft\\Controllers\\Commish\\": "api/Controllers/Commish",
-            "PhpDraft\\Domain\\Entities\\": "api/Domain/Entities",
-            "PhpDraft\\Domain\\Repositories\\": "api/Domain/Repositories",
-            "PhpDraft\\Domain\\Services\\": "api/Domain/Services",
-            "PhpDraft\\Domain\\Validators\\": "api/Domain/Validators"
+            "HootDraft\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HootDraft\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "symfony/runtime": true
+        },
+        "sort-packages": true
+    },
+    "extra": {
+        "symfony": {
+            "require": "8.1.*"
         }
     }
 }

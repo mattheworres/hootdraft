@@ -1,0 +1,7 @@
+# Routes are declared as attributes on controllers in src/Controller. URLs are kept identical to the
+# old Silex router (no /api prefix: the front controller lives at /api/index.php so Symfony strips it).
+controllers:
+  resource:
+    path: ../src/Controller/
+    namespace: HootDraft\Controller
+  type: attribute
