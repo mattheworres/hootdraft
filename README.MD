@@ -1,3 +1,5 @@
+<!-- lint warnings were far too broad for this file, since its partially HTML for presentation purposes. -->
+<!-- markdownlint-disable -->
 ![Hoot Draft](/images/logo_xlarge.png?raw=true "Hoot Draft")
 
 <a href="https://codeclimate.com/github/mattheworres/phpdraft"><img src="https://codeclimate.com/github/mattheworres/phpdraft/badges/gpa.svg" /></a>
@@ -15,17 +17,17 @@ Hoot Draft makes running drafts for fantasy sports **a real hoot**! (dad jokes s
 <br /><br /><br /><br /><br /><br /><br />
 
 
-<img align="right" alt="The pick entry screen with LeBron James appearing in the dropdown after L E B R was typed in" src="/images/github/pick_entry.png?raw=true" /> 
+<img align="right" alt="The pick entry screen with LeBron James appearing in the dropdown after L E B R was typed in" src="/images/github/pick_entry.png?raw=true" />
 <br /><br />
 <b>Player autocomplete - don't waste time spelling names or picking teams and positions. Select a suggestion and get on with it!</b>
 <br /><br /><br /><br /><br />
 
-<img align="left" alt="The depth chart screen showing a fantasy team with each roster spot per row, the players assigned to that spot as well as green color coding suggesting all positions have been filled" src="/images/github/depth_charts.png?raw=true" /> 
+<img align="left" alt="The depth chart screen showing a fantasy team with each roster spot per row, the players assigned to that spot as well as green color coding suggesting all positions have been filled" src="/images/github/depth_charts.png?raw=true" />
 <br /><br /><br /><br />
 <b>Drag and drop depth charts for each team helps managers answer <em>"What does my team need?"</em> in a pinch!</b>
 <br /><br /><br /><br /><br /><br /><br /><br />
 
-<img align="right" alt="A flip clock-style timer showing 3 minutes 31 seconds counting down" src="/images/github/pick_timer.png?raw=true" /> 
+<img align="right" alt="A flip clock-style timer showing 3 minutes 31 seconds counting down" src="/images/github/pick_timer.png?raw=true" />
 <br />
 <b>Every league has "that one" manager who spends way too much time choosing a kicker (<em>come on, Kevin!</em>) Keep it fair with customizable pick timers!</b>
 <br /><br /><br /><br /><br />
@@ -110,3 +112,4 @@ See the [Changelog](https://github.com/mattheworres/phpdraft/wiki/Changelog) for
 ## Copyright and license
 
 Code and documentation copyright 2010-2019 Matthew Orres. Code released under the GNU v3 license.
+<!-- markdownlint-enable -->
