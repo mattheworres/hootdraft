@@ -4,8 +4,8 @@ namespace HootDraft\Domain\Repositories;
 
 use HootDraft\Domain\Entities\LoginUser;
 
-// The authentication flows and the public commissioner lookups are ported so far; the rest (LoadAll, Delete,
-// profile, ...) arrive with their controllers in step 4. See old-api for the originals.
+// The authentication flows, the public commissioner lookups and what the profile and invite routes need are
+// ported so far; the rest (LoadAll, Delete, ...) arrive with their controllers in step 4. See old-api for the originals.
 class LoginUserRepository {
   public function __construct(private \PDO $pdo) {
   }
@@ -83,9 +83,9 @@ class LoginUserRepository {
 
   public function Create(LoginUser $user) {
     $insert_stmt = $this->pdo->prepare("INSERT INTO users
-        (id, email, password, salt, name, roles, verificationKey, verificationKeyCreated, creationTime)
+        (id, email, password, salt, name, roles, verificationKey, verificationKeyCreated, enabled, creationTime)
         VALUES
-        (NULL, ?, ?, ?, ?, ?, ?, ?, UTC_TIMESTAMP())");
+        (NULL, ?, ?, ?, ?, ?, ?, ?, ?, UTC_TIMESTAMP())");
 
     $ok = $insert_stmt->execute([
       strtolower($user->email),
@@ -95,6 +95,7 @@ class LoginUserRepository {
       implode(',', $user->roles),
       $user->verificationKey,
       $user->verificationKeyCreated,
+      (int) $user->enabled,
     ]);
 
     if (!$ok) {

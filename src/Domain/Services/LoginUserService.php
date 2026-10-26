@@ -11,8 +11,8 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
-// Only the account lifecycle needed by authentication is ported so far (create, verify, forgotten password,
-// reset). Token minting is gone: the session cookie replaced the JWT. The rest arrives in step 4.
+// Only the account lifecycle is ported so far (create, verify, forgotten password, reset, profile update).
+// Token minting is gone: the session cookie replaced the JWT. The admin parts arrive in 4.6.
 class LoginUserService {
   public function __construct(
     private LoginUserRepository $repository,
@@ -173,6 +173,76 @@ class LoginUserService {
 
       $response->success = false;
       $response->errors = array("Unable to reset the password.");
+    }
+
+    return $response;
+  }
+
+  /**
+   * Saves the signed-in commissioner's profile. A new email address or password ends their login: the session is
+   * dropped on the next request because the user no longer matches the database. A new address also has to be
+   * verified again, so the account is disabled until the emailed link is followed.
+   */
+  public function UpdateUserProfile(LoginUser $user, string $email, string $name, string $newPassword) {
+    $email = strtolower($email);
+    $sendEmail = false;
+    $invalidateLogin = false;
+
+    $user->name = $name;
+
+    //Update user email, invalidate login
+    if (!empty($email) && !hash_equals($email, strtolower((string) $user->email))) {
+      $user->email = $email;
+      $user->enabled = 0;
+      $invalidateLogin = true;
+      $this->issueVerificationKey($user);
+      $sendEmail = true;
+    }
+
+    if (!empty($newPassword)) {
+      $invalidateLogin = true;
+      $user->salt = '';
+      $user->password = $this->hash($newPassword);
+    }
+
+    $response = new HootDraftResponse();
+
+    try {
+      $this->pdo->beginTransaction();
+
+      $user = $this->repository->Update($user);
+
+      if ($sendEmail) {
+        $message = new MailMessage();
+
+        $message->to_addresses = array(
+          $user->email => $user->name
+        );
+
+        $verifyLink = $this->createEmailVerificationLink($user);
+
+        $message->subject = "HootDraft: Verify your email address";
+        $message->is_html = true;
+        $message->body = $this->templates->RenderTemplate('ReverifyEmail.html', array(
+          'imageBaseUrl' => sprintf("%s/images/email", $this->appBaseUrl),
+          'verifyLink' => $verifyLink,
+        ));
+        $message->altBody = "Hi, and welcome to Hoot Draft! Before we get started, can you click this link to verify that you are who you say you are? Thanks pal! $verifyLink";
+
+        $this->emailService->SendMail($message);
+      }
+
+      $this->pdo->commit();
+
+      $response->success = true;
+      $response->invalidateLogin = $invalidateLogin;
+      $response->sendEmail = $sendEmail;
+    } catch (\Exception $e) {
+      $this->rollBack();
+      $this->logger->error('Unable to update user profile: ' . $e->getMessage(), ['exception' => $e]);
+
+      $response->success = false;
+      $response->errors = array("Unable to update the profile.");
     }
 
     return $response;

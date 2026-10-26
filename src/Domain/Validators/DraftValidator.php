@@ -5,19 +5,19 @@ use HootDraft\Domain\Entities\Draft;
 use HootDraft\Domain\Models\HootDraftResponse;
 use HootDraft\Domain\Repositories\DraftDataRepository;
 use HootDraft\Domain\Repositories\DraftRepository;
+use HootDraft\Domain\Repositories\ManagerRepository;
 use HootDraft\Domain\Services\DraftService;
 use HootDraft\Security\CurrentUser;
 use HootDraft\Security\User;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 
-// IsDraftStatusValid is not ported yet: it needs ManagerRepository::DraftHasManagers (4.2) and is only
-// called by the commissioner status route (4.3).
 class DraftValidator {
   public function __construct(
     private DraftRepository $draftRepository,
     private DraftDataRepository $draftData,
     private DraftService $draftService,
+    private ManagerRepository $managers,
     private CurrentUser $currentUser,
     #[Autowire('%hootdraft.draft_password_header%')] private string $draftPasswordHeader,
   ) {
@@ -94,6 +94,39 @@ class DraftValidator {
     if ($draft->draft_rounds < 1 || $draft->draft_rounds > 30) {
       $errors[] = "Invalid number of draft rounds.";
       $valid = false;
+    }
+
+    return new HootDraftResponse($valid, $errors);
+  }
+
+  public function IsDraftStatusValid(Draft $draft, $old_status) {
+    $valid = true;
+    $errors = array();
+    $draft_statuses = $this->draftData->GetStatuses();
+
+    if ($old_status == "complete") {
+      $valid = false;
+      $errors[] = "The draft is completed, therefore its status cannot be changed.";
+    }
+
+    if ($draft->draft_status == "complete") {
+      $valid = false;
+      $errors[] = "You cannot set the draft as completed manually.";
+    }
+
+    if (empty($draft->draft_status)) {
+      $errors[] = "One or more missing fields.";
+      $valid = false;
+    }
+
+    if (!array_key_exists((string) $draft->draft_status, $draft_statuses)) {
+      $errors[] = "Draft status is an invalid value.";
+      $valid = false;
+    }
+
+    if ($draft->draft_status == "in_progress" && !$this->managers->DraftHasManagers($draft->draft_id)) {
+      $valid = false;
+      $errors[] = "A draft must have at least 2 managers before it can begin.";
     }
 
     return new HootDraftResponse($valid, $errors);

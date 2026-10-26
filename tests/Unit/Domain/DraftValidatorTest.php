@@ -3,8 +3,12 @@
 namespace HootDraft\Tests\Unit\Domain;
 
 use HootDraft\Domain\Entities\Draft;
+use HootDraft\Domain\Repositories\DepthChartPositionRepository;
 use HootDraft\Domain\Repositories\DraftDataRepository;
 use HootDraft\Domain\Repositories\DraftRepository;
+use HootDraft\Domain\Repositories\ManagerRepository;
+use HootDraft\Domain\Repositories\PickRepository;
+use HootDraft\Domain\Repositories\RoundTimeRepository;
 use HootDraft\Domain\Services\DraftService;
 use HootDraft\Domain\Validators\DraftValidator;
 use HootDraft\Security\CurrentUser;
@@ -25,7 +29,15 @@ class DraftValidatorTest extends TestCase
     $data = new DraftDataRepository();
     $this->repository = $this->createStub(DraftRepository::class);
     $this->currentUser = $this->createStub(CurrentUser::class);
-    $this->sut = new DraftValidator($this->repository, $data, new DraftService($data, $this->repository), $this->currentUser, self::HEADER);
+    $this->sut = $this->validator($this->repository, $data, $this->currentUser);
+  }
+
+  private function validator(DraftRepository $repository, DraftDataRepository $data, CurrentUser $currentUser, ?ManagerRepository $managers = null): DraftValidator
+  {
+    $managers ??= $this->createStub(ManagerRepository::class);
+    $service = new DraftService($data, $repository, $this->createStub(DepthChartPositionRepository::class), $managers, $this->createStub(RoundTimeRepository::class), $this->createStub(PickRepository::class), $this->createStub(\PDO::class));
+
+    return new DraftValidator($repository, $data, $service, $managers, $currentUser, self::HEADER);
   }
 
   private function draft(array $props = []): Draft
@@ -59,7 +71,7 @@ class DraftValidatorTest extends TestCase
     $currentUser = $this->createStub(CurrentUser::class);
     $currentUser->method('get')->willReturn($user);
     $data = new DraftDataRepository();
-    $sut = new DraftValidator($repository, $data, new DraftService($data, $repository), $currentUser, self::HEADER);
+    $sut = $this->validator($repository, $data, $currentUser);
     $request = new Request();
     if ($password !== null) {
       $request->headers->set(self::HEADER, $password);
@@ -144,5 +156,34 @@ class DraftValidatorTest extends TestCase
     $result = $this->sut->IsDraftValidForCreateAndUpdate($this->draft());
 
     $this->assertSame(['Draft name is already taken, please choose a different name.'], $result->errors);
+  }
+
+  public function testStatusChangeNeedsAKnownStatusThatIsNotComplete(): void
+  {
+    $this->assertTrue($this->sut->IsDraftStatusValid($this->draft(['draft_status' => 'undrafted']), 'in_progress')->success);
+
+    $result = $this->sut->IsDraftStatusValid($this->draft(['draft_status' => 'bogus']), 'undrafted');
+    $this->assertContains('Draft status is an invalid value.', $result->errors);
+
+    $result = $this->sut->IsDraftStatusValid($this->draft(['draft_status' => '']), 'undrafted');
+    $this->assertContains('One or more missing fields.', $result->errors);
+
+    $result = $this->sut->IsDraftStatusValid($this->draft(['draft_status' => 'complete']), 'in_progress');
+    $this->assertContains('You cannot set the draft as completed manually.', $result->errors);
+
+    $result = $this->sut->IsDraftStatusValid($this->draft(['draft_status' => 'undrafted']), 'complete');
+    $this->assertContains('The draft is completed, therefore its status cannot be changed.', $result->errors);
+  }
+
+  public function testAnInProgressDraftNeedsAtLeastTwoManagers(): void
+  {
+    $managers = $this->createStub(ManagerRepository::class);
+    $managers->method('DraftHasManagers')->willReturn(false);
+    $sut = $this->validator($this->repository, new DraftDataRepository(), $this->currentUser, $managers);
+
+    $result = $sut->IsDraftStatusValid($this->draft(['draft_status' => 'in_progress']), 'undrafted');
+
+    $this->assertFalse($result->success);
+    $this->assertContains('A draft must have at least 2 managers before it can begin.', $result->errors);
   }
 }

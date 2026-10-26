@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpDraft\Domain\Models;
+namespace HootDraft\Domain\Models;
 
 class UserProfile {
   public function __construct($id, $email, $name) {

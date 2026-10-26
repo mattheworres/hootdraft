@@ -4,12 +4,15 @@ namespace HootDraft\Domain\Validators;
 
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
+use HootDraft\Domain\Entities\LoginUser;
 use HootDraft\Domain\Models\HootDraftResponse;
 use HootDraft\Domain\Repositories\LoginUserRepository;
 use HootDraft\Domain\Services\SaltService;
+use HootDraft\Security\User;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
-// Only the unauthenticated flows are ported so far (registration, verification, password reset). The
-// invite, profile and admin update validators arrive with their controllers in step 4.
+// The unauthenticated flows (registration, verification, password reset) plus invite and profile update are
+// ported so far. The admin update validator arrives with its controller in 4.6.
 class LoginUserValidator {
   /** How long the emailed links stay good. Both kinds share the users.verificationKey column. */
   public const VERIFY_LINK_TTL_SECONDS = 172800; // 48 hours
@@ -18,6 +21,7 @@ class LoginUserValidator {
   public function __construct(
     private LoginUserRepository $repository,
     private SaltService $saltService,
+    private PasswordHasherFactoryInterface $hasherFactory,
   ) {
   }
 
@@ -45,6 +49,95 @@ class LoginUserValidator {
     }
 
     $this->validateUniqueEmail($emailAddress, $errors, $valid);
+
+    return new HootDraftResponse($valid, $errors);
+  }
+
+  public function IsInviteNewUserValid(LoginUser $user, string $message) {
+    $valid = true;
+    $errors = array();
+
+    $emailAddress = (string) $user->email;
+    $name = (string) $user->name;
+
+    if (empty($emailAddress)
+      || empty($name)) {
+      $errors[] = "One or more missing fields.";
+      $valid = false;
+    }
+
+    $this->validateNameLength($name, $errors, $valid);
+
+    $this->validateEmailAddress($emailAddress, $errors, $valid);
+
+    if (strlen($message) > 255) {
+      $errors[] = "Message too long";
+      $valid = false;
+    }
+
+    if (!$this->repository->NameIsUnique($name)) {
+      $errors[] = "Name already taken.";
+      $valid = false;
+    }
+
+    $this->validateUniqueEmail($emailAddress, $errors, $valid);
+
+    return new HootDraftResponse($valid, $errors);
+  }
+
+  /** @param ?LoginUser $currentUser The signed-in user as stored in the database (hash and salt included) */
+  public function IsUserProfileUpdateValid(?LoginUser $currentUser, string $emailAddress, string $name, string $password, string $newPassword, string $newConfirmedPassword) {
+    $valid = true;
+    $errors = array();
+
+    $emailAddress = strtolower($emailAddress);
+
+    if (empty($currentUser)) {
+      $valid = false;
+      $errors[] = "Invalid user.";
+
+      //Because we need to compare new & old values, we need a valid user record to proceed with validation.
+      return new HootDraftResponse($valid, $errors);
+    }
+
+    //Password required to make any changes
+    if (empty($password) || !$this->passwordMatches($currentUser, $password)) {
+      $errors[] = "Incorrect password entered.";
+      $valid = false;
+    }
+
+    //Need to verify new email
+    if (empty($emailAddress)) {
+      $errors[] = "Email address is missing.";
+      $valid = false;
+    } else if (!hash_equals($emailAddress, strtolower((string) $currentUser->email))) {
+      $this->validateEmailAddress($emailAddress, $errors, $valid);
+
+      $this->validateUniqueEmail($emailAddress, $errors, $valid);
+    }
+
+    //Need to verify new password, ensure old password is correct
+    if (!empty($newPassword)) {
+      $this->validatePasswordLength($newPassword, $errors, $valid);
+
+      $this->validatePasswordsMatch($newPassword, $newConfirmedPassword, $errors, $valid);
+    }
+
+    //If the name has changed, ensure the new one is valid and unique
+    if ($currentUser->name != $name) {
+      if (empty($name)) {
+        $errors[] = "Name is required.";
+        $valid = false;
+      }
+
+      $this->validateNameLength($name, $errors, $valid);
+
+      // Names compare case-insensitively, so leave this user's own row out or a change of capitalization conflicts with itself
+      if (!$this->repository->NameIsUnique($name, $currentUser->id)) {
+        $errors[] = "Name already taken.";
+        $valid = false;
+      }
+    }
 
     return new HootDraftResponse($valid, $errors);
   }
@@ -139,6 +232,12 @@ class LoginUserValidator {
     $this->validateResetAllowed($emailAddress, $errors, $valid);
 
     return new HootDraftResponse($valid, $errors);
+  }
+
+  /** True when the plain password matches the one stored for this user, whichever hash it is still on. */
+  private function passwordMatches(LoginUser $user, string $plainPassword): bool {
+    return $this->hasherFactory->getPasswordHasher(User::class)
+      ->verify((string) $user->password, $plainPassword, $user->salt === '' ? null : $user->salt);
   }
 
   private function validatePasswordsMatch($password1, $password2, &$errors, &$valid) {

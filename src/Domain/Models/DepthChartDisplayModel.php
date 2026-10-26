@@ -1,5 +1,5 @@
 <?php
-namespace PhpDraft\Domain\Models;
+namespace HootDraft\Domain\Models;
 
 class DepthChartDisplayModel {
   public function __construct($depth_chart_position_id, $position, $slots, $picks) {

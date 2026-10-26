@@ -1,24 +1,24 @@
 <?php
-namespace PhpDraft\Domain\Services;
+namespace HootDraft\Domain\Services;
 
-use Silex\Application;
-use Symfony\Component\HttpFoundation\Request;
-use PhpDraft\Domain\Entities\Draft;
-use PhpDraft\Domain\Models\PhpDraftResponse;
-use PhpDraft\Domain\Models\DepthChartDisplayModel;
+use HootDraft\Domain\Entities\Draft;
+use HootDraft\Domain\Models\DepthChartDisplayModel;
+use HootDraft\Domain\Models\HootDraftResponse;
+use HootDraft\Domain\Repositories\DepthChartPositionRepository;
+use HootDraft\Domain\Repositories\PickRepository;
 
 class DepthChartPositionService {
-  private $app;
-
-  public function __construct(Application $app) {
-    $this->app = $app;
+  public function __construct(
+    private DepthChartPositionRepository $depthChartPositions,
+    private PickRepository $pickRepository,
+  ) {
   }
 
   public function GetManagerDepthChart(Draft $draft, $manager_id) {
-    $response = $this->app['phpdraft.ResponseFactory'](true, array());
+    $response = new HootDraftResponse(true, array());
 
     try {
-      $depthChartPositions = $this->app['phpdraft.DepthChartPositionRepository']->LoadAll($draft->draft_id);
+      $depthChartPositions = $this->depthChartPositions->LoadAll($draft->draft_id);
 
       $response->manager_id = $manager_id;
       $response->depthChartPositions = array();
@@ -26,7 +26,7 @@ class DepthChartPositionService {
       //Rather than hit the DB with 5 separate queries each depth chart request, hit it once and we cycle
       //through the PHP array in-memory five times performing either is_null checks or integer equality
       //checks:
-      $allManagerPicks = $this->app['phpdraft.PickRepository']->LoadManagerPicks($manager_id, $draft, true);
+      $allManagerPicks = $this->pickRepository->LoadManagerPicks($manager_id, $draft->draft_id, $draft, true);
 
       $unassignedPicks = array();
 
