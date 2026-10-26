@@ -36,12 +36,22 @@ class PickValidatorTest extends TestCase
     $this->pick->last_name = "Brown";
     $this->pick->team = "PIT";
     $this->pick->position = "WR";
+    $this->pick->pick_time = "2024-09-01 12:00:00";
   }
 
   public function testAValidPickPassesAddAndUpdate(): void
   {
     $this->assertTrue($this->sut->IsPickValidForAdd($this->draft, $this->pick)->success);
     $this->assertTrue($this->sut->IsPickValidForUpdate($this->draft, $this->pick)->success);
+  }
+
+  public function testUpdateRequiresThePickToHaveBeenMade(): void
+  {
+    $this->pick->pick_time = null;
+
+    $result = $this->sut->IsPickValidForUpdate($this->draft, $this->pick);
+
+    $this->assertSame(["Pick #3 has not been made yet."], $result->errors);
   }
 
   public function testEnsuresFieldsArentEmptyOnAdd(): void

@@ -1,13 +1,15 @@
 <?php
-namespace PhpDraft\Domain\Entities;
+namespace HootDraft\Domain\Entities;
 
+// Rows loaded from trade_assets also carry player_id as a dynamic property.
+#[\AllowDynamicProperties]
 class TradeAsset {
   public function __toString() {
     return (string)$this->player->player_id;
   }
 
   /** @var int */
-  public $trade_asset_id;
+  public $tradeasset_id;
 
   /** @var int */
   public $trade_id;
@@ -18,7 +20,7 @@ class TradeAsset {
   /** @var int */
   public $newmanager_id;
 
-  /** @var Player */
+  /** @var Pick */
   public $player;
 
   /** @var Manager */

@@ -1,5 +1,5 @@
 <?php
-namespace PhpDraft\Domain\Entities;
+namespace HootDraft\Domain\Entities;
 
 class Trade {
   /** @var int */
@@ -19,6 +19,9 @@ class Trade {
 
   /** @var Manager */
   public $manager2;
+
+  /** @var int The round the draft was in when the trade was made */
+  public $trade_round;
 
   /** @var string The timestamp of this trade */
   public $trade_time;

@@ -1,25 +1,27 @@
 <?php
-namespace PhpDraft\Domain\Services;
+namespace HootDraft\Domain\Services;
 
-use Silex\Application;
-use Symfony\Component\HttpFoundation\Request;
-use PhpDraft\Domain\Entities\Draft;
-use PhpDraft\Domain\Entities\Trade;
-use PhpDraft\Domain\Entities\TradeAsset;
-use PhpDraft\Domain\Models\PhpDraftResponse;
+use HootDraft\Domain\Entities\Draft;
+use HootDraft\Domain\Entities\Trade;
+use HootDraft\Domain\Models\HootDraftResponse;
+use HootDraft\Domain\Repositories\DraftRepository;
+use HootDraft\Domain\Repositories\PickRepository;
+use HootDraft\Domain\Repositories\TradeRepository;
 
 class TradeService {
-  private $app;
-
-  public function __construct(Application $app) {
-    $this->app = $app;
+  public function __construct(
+    private PickRepository $picks,
+    private TradeRepository $trades,
+    private DraftRepository $drafts,
+    private \PDO $pdo,
+  ) {
   }
-  
+
   public function GetManagerAssets(Draft $draft, $manager_id) {
-    $response = new PhpDraftResponse();
+    $response = new HootDraftResponse();
 
     try {
-      $assets = $this->app['phpdraft.PickRepository']->LoadManagerPicks($manager_id, $draft, false);
+      $assets = $this->picks->LoadManagerPicks($manager_id, $draft->draft_id, $draft, false);
 
       $response->success = true;
       $response->manager_id = $manager_id;
@@ -33,21 +35,33 @@ class TradeService {
   }
 
   public function EnterTrade(Draft $draft, Trade $trade) {
-    $response = new PhpDraftResponse();
+    $response = new HootDraftResponse();
 
     try {
+      // Swapping the picks, saving the trade and bumping the counter happen together or not at all
+      $this->pdo->beginTransaction();
+
       //Exchange the picks in the database
       $trade = $this->_ExchangeAssets($draft, $trade);
       //Save the trade itself
-      $trade = $this->app['phpdraft.TradeRepository']->SaveTrade($trade);
+      $trade = $this->trades->SaveTrade($trade);
       //Save all assets
-      $trade = $this->app['phpdraft.TradeRepository']->SaveAssets($trade);
+      $trade = $this->trades->SaveAssets($trade);
       //Update the draft's counter
-      $draft->draft_counter = $this->app['phpdraft.DraftRepository']->IncrementDraftCounter($draft);
+      $draft->draft_counter = $this->drafts->IncrementDraftCounter($draft);
+
+      $this->pdo->commit();
+      $this->drafts->FlushPendingCacheResets();
 
       $response->success = true;
       $response->trade = $trade;
     } catch (\Exception $e) {
+      if ($this->pdo->inTransaction()) {
+        $this->pdo->rollBack();
+      }
+
+      $this->drafts->FlushPendingCacheResets();
+
       $response->success = false;
       $response->errors = array($e->getMessage());
     }
@@ -59,17 +73,17 @@ class TradeService {
    * Perform the core swap of ownership of each pick (player) in the database
    * @param Trade $trade
    * @return Trade
-   * @throws Exception
+   * @throws \Exception
    */
   private function _ExchangeAssets(Draft $draft, Trade $trade) {
     //Update the draft counter - can be the same for all assets, doesnt matter. Trade = 1 action
     $new_counter_value = $draft->draft_counter + 1;
-    
+
     foreach ($trade->trade_assets as $asset) {
       $asset->player->manager_id = $asset->newmanager->manager_id;
       $asset->player->player_counter = $new_counter_value;
 
-      $this->app['phpdraft.PickRepository']->UpdatePick($asset->player);
+      $this->picks->UpdatePick($asset->player);
     }
 
     return $trade;

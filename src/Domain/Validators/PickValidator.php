@@ -80,6 +80,11 @@ class PickValidator {
       $valid = false;
     }
 
+    if (is_null($pick->pick_time)) {
+      $errors[] = "Pick #$pick->player_pick has not been made yet.";
+      $valid = false;
+    }
+
     if (strlen((string) $pick->first_name) > 255) {
       $errors[] = "First name is above maximum length.";
       $valid = false;

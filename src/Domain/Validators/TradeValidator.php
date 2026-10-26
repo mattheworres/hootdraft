@@ -1,20 +1,12 @@
 <?php
-namespace PhpDraft\Domain\Validators;
+namespace HootDraft\Domain\Validators;
 
-use \Silex\Application;
-use Symfony\Component\HttpFoundation\Request;
-use PhpDraft\Domain\Entities\Draft;
-use PhpDraft\Domain\Entities\Manager;
-use PhpDraft\Domain\Entities\Trade;
-use PhpDraft\Domain\Models\PhpDraftResponse;
+use HootDraft\Domain\Entities\Draft;
+use HootDraft\Domain\Entities\Manager;
+use HootDraft\Domain\Entities\Trade;
+use HootDraft\Domain\Models\HootDraftResponse;
 
 class TradeValidator {
-  private $app;
-
-  public function __construct(Application $app) {
-    $this->app = $app;
-  }
-
   public function IsManagerValidForAssetRetrieval(Draft $draft, Manager $manager) {
     $valid = true;
     $errors = array();
@@ -24,7 +16,7 @@ class TradeValidator {
       $valid = false;
     }
 
-    return new PhpDraftResponse($valid, $errors);
+    return new HootDraftResponse($valid, $errors);
   }
 
   public function IsTradeValid(Draft $draft, Trade $trade) {
@@ -38,8 +30,18 @@ class TradeValidator {
       $valid = false;
     }
 
+    if ($assetCount == 0) {
+      $errors[] = "A trade must include at least one asset.";
+      $valid = false;
+    }
+
+    if ($trade->manager1->manager_id == $trade->manager2->manager_id) {
+      $errors[] = "A trade must be between two different managers.";
+      $valid = false;
+    }
+
     foreach ($trade->trade_assets as $trade_asset) {
-      if ($trade_asset->oldmanager_id != $trade->manager1_id 
+      if ($trade_asset->oldmanager_id != $trade->manager1_id
         && $trade_asset->oldmanager_id != $trade->manager2_id) {
         $player_id = $trade_asset->player->player_id;
         $errors[] = "Asset #$player_id does not belong to either manager.";
@@ -68,6 +70,6 @@ class TradeValidator {
       $valid = false;
     }
 
-    return new PhpDraftResponse($valid, $errors);
+    return new HootDraftResponse($valid, $errors);
   }
 }

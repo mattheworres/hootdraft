@@ -33,7 +33,7 @@ by a route's `_checks` default (see `src/EventListener/RouteCheckListener.php`).
 | [x] | GET | `/draft/{draft_id}/round/{draft_round}/picks/all` | PickController::GetAllRoundPicks | public | draftViewable, draftInProgressOrCompleted |
 | [x] | GET | `/draft/{draft_id}/round/{draft_round}/picks/selected` | PickController::GetSelectedRoundPicks | public | draftViewable, draftInProgressOrCompleted |
 | [x] | GET | `/draft/{draft_id}/picks/search` | PickController::SearchPicks | public | draftViewable, draftInProgressOrCompleted |
-| [ ] | GET | `/draft/{draft_id}/trades` | TradeController::GetAll | public | draftViewable, draftInProgressOrCompleted |
+| [x] | GET | `/draft/{draft_id}/trades` | TradeController::GetAll | public | draftViewable, draftInProgressOrCompleted |
 | [x] | GET | `/draft/{draft_id}/timer/remaining` | RoundTimeController::GetTimeRemaining | public | draftViewable, draftInProgress |
 | [x] | GET | `/style` | IndexController::Style | public | - |
 | [x] | GET | `/draftOptions` | IndexController::DraftOptions | public | - |
@@ -63,15 +63,15 @@ by a route's `_checks` default (see `src/EventListener/RouteCheckListener.php`).
 | [x] | PUT | `/commish/draft/{draft_id}/managers/reorder` | Commish\ManagerController::Reorder | commish (ROLE_COMMISH) | commishEditableDraft, draftSettingUpOrInProgress |
 | [x] | PUT | `/commish/draft/{draft_id}/manager/{manager_id}` | Commish\ManagerController::Update | commish (ROLE_COMMISH) | commishEditableDraft, draftSettingUpOrInProgress |
 | [x] | DELETE | `/commish/draft/{draft_id}/manager/{manager_id}` | Commish\ManagerController::Delete | commish (ROLE_COMMISH) | commishEditableDraft, draftSettingUpOrInProgress |
-| [ ] | GET | `/commish/proplayers/search` | Commish\ProPlayerController::Search | commish (ROLE_COMMISH) | - |
-| [ ] | GET | `/commish/draft/{draft_id}/manager/{manager_id}/assets` | Commish\TradeController::GetAssets | commish (ROLE_COMMISH) | commishEditableDraft, draftInProgress |
-| [ ] | POST | `/commish/draft/{draft_id}/trade` | Commish\TradeController::Create | commish (ROLE_COMMISH) | commishEditableDraft, draftInProgress |
-| [ ] | GET | `/commish/draft/{draft_id}/pick/current` | Commish\PickController::GetCurrent | commish (ROLE_COMMISH) | commishEditableDraft, draftInProgress |
-| [ ] | POST | `/commish/draft/{draft_id}/pick/{player_id}` | Commish\PickController::Add | commish (ROLE_COMMISH) | commishEditableDraft, draftInProgress |
-| [ ] | GET | `/commish/draft/{draft_id}/picks/lastFive` | Commish\PickController::GetLast5 | commish (ROLE_COMMISH) | commishEditableDraft, draftInProgress |
-| [ ] | GET | `/commish/draft/{draft_id}/round/{draft_round}/picks` | Commish\PickController::GetByRound | commish (ROLE_COMMISH) | commishEditableDraft, draftInProgress |
-| [ ] | PUT | `/commish/draft/{draft_id}/pick/{player_id}` | Commish\PickController::Update | commish (ROLE_COMMISH) | commishEditableDraft, draftInProgress |
-| [ ] | GET | `/commish/draft/{draft_id}/picks/alreadyDrafted` | Commish\PickController::AlreadyDrafted | commish (ROLE_COMMISH) | commishEditableDraft, draftInProgress |
+| [x] | GET | `/commish/proplayers/search` | Commish\ProPlayerController::Search | commish (ROLE_COMMISH) | - |
+| [x] | GET | `/commish/draft/{draft_id}/manager/{manager_id}/assets` | Commish\TradeController::GetAssets | commish (ROLE_COMMISH) | commishEditableDraft, draftInProgress |
+| [x] | POST | `/commish/draft/{draft_id}/trade` | Commish\TradeController::Create | commish (ROLE_COMMISH) | commishEditableDraft, draftInProgress |
+| [x] | GET | `/commish/draft/{draft_id}/pick/current` | Commish\PickController::GetCurrent | commish (ROLE_COMMISH) | commishEditableDraft, draftInProgress |
+| [x] | POST | `/commish/draft/{draft_id}/pick/{player_id}` | Commish\PickController::Add | commish (ROLE_COMMISH) | commishEditableDraft, draftInProgress |
+| [x] | GET | `/commish/draft/{draft_id}/picks/lastFive` | Commish\PickController::GetLast5 | commish (ROLE_COMMISH) | commishEditableDraft, draftInProgress |
+| [x] | GET | `/commish/draft/{draft_id}/round/{draft_round}/picks` | Commish\PickController::GetByRound | commish (ROLE_COMMISH) | commishEditableDraft, draftInProgress |
+| [x] | PUT | `/commish/draft/{draft_id}/pick/{player_id}` | Commish\PickController::Update | commish (ROLE_COMMISH) | commishEditableDraft, draftInProgress |
+| [x] | GET | `/commish/draft/{draft_id}/picks/alreadyDrafted` | Commish\PickController::AlreadyDrafted | commish (ROLE_COMMISH) | commishEditableDraft, draftInProgress |
 
 63 routes.
 

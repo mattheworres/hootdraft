@@ -43,6 +43,8 @@ class CommishTest extends KernelTestCase
       $cache->DeleteCachedItem("draft$id");
       $this->db()->executeStatement('DELETE FROM round_times WHERE draft_id = ?', [$id]);
       $this->db()->executeStatement('DELETE FROM depth_chart_positions WHERE draft_id = ?', [$id]);
+      $this->db()->executeStatement('DELETE FROM trade_assets WHERE trade_id IN (SELECT trade_id FROM trades WHERE draft_id = ?)', [$id]);
+      $this->db()->executeStatement('DELETE FROM trades WHERE draft_id = ?', [$id]);
       $this->db()->executeStatement('DELETE FROM players WHERE draft_id = ?', [$id]);
       $this->db()->executeStatement('DELETE FROM managers WHERE draft_id = ?', [$id]);
     }
@@ -272,10 +274,10 @@ class CommishTest extends KernelTestCase
     $this->db()->insert('managers', ['draft_id' => $id, 'manager_name' => 'One', 'draft_order' => 1]);
     $this->db()->insert('managers', ['draft_id' => $id, 'manager_name' => 'Two', 'draft_order' => 2]);
 
-    // TODO(4.4/4.5): starting a draft is refused until picks and trades are ported, so nothing is half started
     $start = $this->call('PUT', "/commish/draft/$id/status", ['status' => 'in_progress']);
-    $this->assertSame(400, $start->getStatusCode());
-    $this->assertSame('undrafted', $this->db()->fetchOne('SELECT draft_status FROM draft WHERE draft_id = ?', [$id]));
+    $this->assertSame(200, $start->getStatusCode(), $start->getContent());
+    $this->assertSame('in_progress', $this->db()->fetchOne('SELECT draft_status FROM draft WHERE draft_id = ?', [$id]));
+    $this->assertSame(2 * (int) $this->db()->fetchOne('SELECT draft_rounds FROM draft WHERE draft_id = ?', [$id]), (int) $this->db()->fetchOne('SELECT COUNT(*) FROM players WHERE draft_id = ?', [$id]));
   }
 
   public function testUpdateStatusOnAnInProgressDraft(): void

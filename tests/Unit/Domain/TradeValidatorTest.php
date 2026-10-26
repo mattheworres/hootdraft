@@ -1,25 +1,28 @@
 <?php
-namespace PhpDraft\Test;
+namespace HootDraft\Tests\Unit\Domain;
 
 use PHPUnit\Framework\TestCase;
-use PhpDraft\Domain\Entities\Draft;
-use PhpDraft\Domain\Entities\Manager;
-use PhpDraft\Domain\Entities\Trade;
-use PhpDraft\Domain\Entities\TradeAsset;
-use PhpDraft\Domain\Entities\Pick;
-use PhpDraft\Domain\Validators\TradeValidator;
+use HootDraft\Domain\Entities\Draft;
+use HootDraft\Domain\Entities\Manager;
+use HootDraft\Domain\Entities\Trade;
+use HootDraft\Domain\Entities\TradeAsset;
+use HootDraft\Domain\Entities\Pick;
+use HootDraft\Domain\Validators\TradeValidator;
 
 class TradeValidatorTest extends TestCase {
-  function setUp() {
-    $this->app = require dirname(__FILE__).'/../../../../api/config/_app.php';
+  private Draft $draft;
+  private Trade $trade;
+  private TradeValidator $sut;
+
+  protected function setUp(): void {
     $this->draft = new Draft();
     $this->trade = new Trade();
     $this->trade->manager1 = new Manager();
     $this->trade->manager2 = new Manager();
-    $this->sut = new TradeValidator($this->app);
+    $this->sut = new TradeValidator();
   }
 
-  public function testIsInvalidManagerIndicatedForAssetRetrieval() {
+  public function testIsInvalidManagerIndicatedForAssetRetrieval(): void {
     $this->draft->draft_id = 1;
 
     $this->trade->manager1->draft_id = 2;
@@ -29,7 +32,7 @@ class TradeValidatorTest extends TestCase {
     $this->assertFalse($result->success);
   }
 
-  public function testIsValidManagerIndicatedForAssetRetrieval() {
+  public function testIsValidManagerIndicatedForAssetRetrieval(): void {
     $this->draft->draft_id = 1;
 
     $this->trade->manager1->draft_id = 1;
@@ -39,7 +42,7 @@ class TradeValidatorTest extends TestCase {
     $this->assertTrue($result->success);
   }
 
-  public function testValidationOfTradeRoundValues() {
+  public function testValidationOfTradeRoundValues(): void {
     $this->draft->draft_rounds = 10;
 
     $result = $this->sut->IsTradeValid($this->draft, $this->trade);
@@ -65,7 +68,7 @@ class TradeValidatorTest extends TestCase {
     $this->assertNotContains("Invalid value for trade round.", $result->errors);
   }
 
-  public function testValidationOfTradeAssetOwnership() {
+  public function testValidationOfTradeAssetOwnership(): void {
     $this->draft->draft_id = 1;
 
     $tradeAsset1 = new TradeAsset();
@@ -130,7 +133,22 @@ class TradeValidatorTest extends TestCase {
     $this->assertContains("Asset #2 does not belong to draft #1", $result->errors);
   }
 
-  public function testValidationOfAssetCounts() {
+  public function testATradeNeedsAssetsAndTwoDifferentManagers(): void {
+    $this->trade->manager1->manager_id = 5;
+    $this->trade->manager2->manager_id = 5;
+
+    $result = $this->sut->IsTradeValid($this->draft, $this->trade);
+
+    $this->assertContains("A trade must include at least one asset.", $result->errors);
+    $this->assertContains("A trade must be between two different managers.", $result->errors);
+
+    $this->trade->manager2->manager_id = 6;
+    $result = $this->sut->IsTradeValid($this->draft, $this->trade);
+
+    $this->assertNotContains("A trade must be between two different managers.", $result->errors);
+  }
+
+  public function testValidationOfAssetCounts(): void {
     $this->draft->draft_id = 1;
 
     $tradeAsset1 = new TradeAsset();
@@ -158,7 +176,7 @@ class TradeValidatorTest extends TestCase {
     $this->assertContains("One or more of the trade assets are duplicate.", $result->errors);
   }
 
-  public function testValidationOfManagersBelongingToTheDraft() {
+  public function testValidationOfManagersBelongingToTheDraft(): void {
     $this->draft->draft_id = 1;
     $this->trade->manager1->draft_id = 2;
     $this->trade->manager2->draft_id = 1;

@@ -373,8 +373,38 @@ class DraftRepository {
     return;
   }
 
+  // Drafts whose cache was reset inside a transaction. A concurrent reader can re-cache the old row until the
+  // commit lands, so these are cleared again once the service has committed or rolled back.
+  private array $pendingCacheResets = array();
+
   private function ResetDraftCache($draft_id) {
+    if ($this->pdo->inTransaction()) {
+      $this->pendingCacheResets[$draft_id] = true;
+    }
+
     $this->UnsetCachedDraft($draft_id);
+  }
+
+  /** Call after committing or rolling back a transaction that wrote to draft rows. */
+  public function FlushPendingCacheResets() {
+    $draft_ids = array_keys($this->pendingCacheResets);
+    $this->pendingCacheResets = array();
+
+    foreach ($draft_ids as $draft_id) {
+      $this->UnsetCachedDraft($draft_id);
+    }
+  }
+
+  /** Reads the current pick straight from the DB and locks the row until the transaction ends. */
+  public function LockCurrentPick(Draft $draft) {
+    $stmt = $this->pdo->prepare("SELECT draft_current_pick FROM draft WHERE draft_id = ? FOR UPDATE");
+    $stmt->bindParam(1, $draft->draft_id);
+
+    if (!$stmt->execute()) {
+      throw new \Exception("Unable to lock draft.");
+    }
+
+    return (int)$stmt->fetchColumn();
   }
 
   private function SetCachedDraft(Draft $draft) {

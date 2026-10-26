@@ -10,6 +10,7 @@ use HootDraft\Domain\Repositories\DraftRepository;
 use HootDraft\Domain\Repositories\ManagerRepository;
 use HootDraft\Domain\Repositories\PickRepository;
 use HootDraft\Domain\Repositories\RoundTimeRepository;
+use HootDraft\Domain\Repositories\TradeRepository;
 use HootDraft\Domain\Services\DraftService;
 use PHPUnit\Framework\TestCase;
 
@@ -29,6 +30,7 @@ class DraftServiceTest extends TestCase
     ?DepthChartPositionRepository $depthChartPositions = null,
     ?PickRepository $picks = null,
     ?\PDO $pdo = null,
+    ?TradeRepository $trades = null,
   ): DraftService {
     return new DraftService(
       new DraftDataRepository(),
@@ -38,6 +40,7 @@ class DraftServiceTest extends TestCase
       $this->createStub(RoundTimeRepository::class),
       $picks ?? $this->createStub(PickRepository::class),
       $pdo ?? $this->createStub(\PDO::class),
+      $trades ?? $this->createStub(TradeRepository::class),
     );
   }
 
@@ -178,16 +181,63 @@ class DraftServiceTest extends TestCase
     $this->assertSame(['Unable to create depth chart positions for 4'], $response->errors);
   }
 
-  public function testDeleteRemovesThePicksAndCommits(): void
+  public function testDeleteRemovesTheTradesAndPicksAndCommits(): void
   {
+    $trades = $this->createMock(TradeRepository::class);
+    $trades->expects($this->once())->method('DeleteAllTrades')->with(4);
     $picks = $this->createMock(PickRepository::class);
     $picks->expects($this->once())->method('DeleteAllPicks')->with(4);
     $repository = $this->createMock(DraftRepository::class);
     $repository->expects($this->once())->method('DeleteDraft')->with(4);
 
-    $response = $this->service($repository, null, $picks, $this->pdo(1, 0))->DeleteDraft($this->draftWith('complete', 0));
+    $response = $this->service($repository, null, $picks, $this->pdo(1, 0), $trades)->DeleteDraft($this->draftWith('complete', 0));
 
     $this->assertTrue($response->success);
+  }
+
+  public function testStartingADraftClearsTradesAndPicksThenSetsUpPicks(): void
+  {
+    $trades = $this->createMock(TradeRepository::class);
+    $trades->expects($this->once())->method('DeleteAllTrades')->with(4);
+    $picks = $this->createMock(PickRepository::class);
+    $picks->expects($this->once())->method('DeleteAllPicks')->with(4);
+    $picks->expects($this->once())->method('SetupPicks');
+    $draft = $this->draftWith('in_progress', 0);
+    $repository = $this->createMock(DraftRepository::class);
+    $repository->method('UpdateStatus')->willReturn($draft);
+    $repository->expects($this->once())->method('SetDraftInProgress')->with($draft);
+
+    $response = $this->service($repository, null, $picks, $this->pdo(1, 0), $trades)->UpdateDraftStatus($draft, 'undrafted');
+
+    $this->assertTrue($response->success);
+  }
+
+  public function testOtherStatusChangesDoNotTouchTradesOrPicks(): void
+  {
+    $trades = $this->createMock(TradeRepository::class);
+    $trades->expects($this->never())->method('DeleteAllTrades');
+    $draft = $this->draftWith('undrafted', 0);
+    $repository = $this->createMock(DraftRepository::class);
+    $repository->method('UpdateStatus')->willReturn($draft);
+    $repository->expects($this->never())->method('SetDraftInProgress');
+
+    $response = $this->service($repository, null, null, $this->pdo(1, 0), $trades)->UpdateDraftStatus($draft, 'in_progress');
+
+    $this->assertTrue($response->success);
+  }
+
+  public function testAFailedStartRollsBack(): void
+  {
+    $picks = $this->createStub(PickRepository::class);
+    $picks->method('SetupPicks')->willThrowException(new \Exception('Unable to setup picks.'));
+    $draft = $this->draftWith('in_progress', 0);
+    $repository = $this->createStub(DraftRepository::class);
+    $repository->method('UpdateStatus')->willReturn($draft);
+
+    $response = $this->service($repository, null, $picks, $this->pdo(0, 1))->UpdateDraftStatus($draft, 'undrafted');
+
+    $this->assertFalse($response->success);
+    $this->assertSame(['Unable to setup picks.'], $response->errors);
   }
 
   public function testDeleteRollsBackWhenAStepFails(): void
