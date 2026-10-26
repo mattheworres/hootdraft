@@ -37,6 +37,8 @@ class DraftService {
     this.draftError = false;
     this.timerInstance = null;
     this.apiCallInProgress = false;
+    //Every getDraft() call that has to wait on the API gets its own deferred; all are settled when the load ends
+    this.pendingDefers = [];
     this.pollingIntervalMs = 2750;
     this.forcedReloadRequired = false;
     this.draftStatus = {
@@ -84,7 +86,7 @@ class DraftService {
    */
   getDraft(forced) {
     this.activeComponents++;
-    this.defer = this.$q.defer();
+    const defer = this.$q.defer();
 
     //On login (and when we are sent back)
     const forcedReload =
@@ -96,41 +98,26 @@ class DraftService {
       this.draft !== null &&
       this.draft.draft_id === this.$routeParams.draft_id
     ) {
-      this.defer.resolve(this.draft);
+      defer.resolve(this.draft);
       this.setupPollingAfterLoad();
-      return this.defer.promise;
+      return defer.promise;
     }
 
     if (forcedReload) {
       this.forcedReloadRequired = false;
     }
 
-    //If there's already an api call in progress, lets re-check every second to see if the draft has been populated before giving up
+    //If there's already an api call in progress, wait for it: it settles every pending call when it finishes
     if (this.apiCallInProgress) {
-      let retryNumber = 0;
-      this.retryInterval = this.$interval(() => {
-        retryNumber++;
+      this.pendingDefers.push(defer);
 
-        if (angular.isDefined(this.draft)) {
-          this.defer.resolve(this.draft);
-          this.$interval.cancel(this.retryInterval);
-          this.retryInterval = null;
-          return;
-        }
-
-        if (retryNumber === 5) {
-          this.messageService.closeToasts();
-          this.messageService.showWarning(DRAFT_ERROR_MESSAGE);
-          this.defer.reject({error: true, message: DRAFT_ERROR_MESSAGE});
-        }
-      }, 1500);
-
-      return this.defer.promise;
+      return defer.promise;
     }
 
     //From here the assumption is the remaining code in this method is only run once, the very first time
 
     //Set this flag to ensure we're not making concurrent requests to the API as multiple components mount at the same time
+    this.pendingDefers.push(defer);
     this.apiCallInProgress = true;
     this.draftStatus.loading = true;
     //Get heavy draft info from API if this is the first call to the API
@@ -160,10 +147,12 @@ class DraftService {
 
       this.setupPollingAfterLoad();
 
-      this.defer.resolve(this.draft);
+      const pending = this.pendingDefers;
+      this.pendingDefers = [];
+      pending.forEach(waiting => waiting.resolve(this.draft));
     }, this._draftErrorHandler);
 
-    return this.defer.promise;
+    return defer.promise;
   }
 
   setReloadFlag() {
@@ -341,10 +330,6 @@ class DraftService {
 
   //Private method to handle the periodic update of the draft; notifies all components when the counter changes via callbacks
   _draftIntervalHandler() {
-    if (angular.isDefined(this.defer)) {
-      this.defer = null;
-    }
-
     //If the draftId has changed, we need to get all draft data, which is a heavy call
     const getDraftData = this.draftId !== this.$routeParams.draft_id;
 
@@ -395,10 +380,9 @@ class DraftService {
       }
     }
 
-    if (angular.isDefined(this.defer) && this.defer !== null) {
-      this.defer.reject({error: true, message: DRAFT_ERROR_MESSAGE});
-      this.defer = null;
-    }
+    const pending = this.pendingDefers;
+    this.pendingDefers = [];
+    pending.forEach(waiting => waiting.reject({error: true, message: DRAFT_ERROR_MESSAGE}));
   }
 }
 
