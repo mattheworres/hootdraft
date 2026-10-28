@@ -141,6 +141,8 @@ class CommishPickTest extends CommishDraftTestCase
     $body = $this->json($response);
     $this->assertTrue($body['draft_is_complete']);
     $this->assertNull($body['next_pick']);
+    $this->assertSame($draft, (int) $body['draft_statistics']['draft_id']);
+    $this->assertSame(1, (int) $this->db()->fetchOne('SELECT COUNT(*) FROM draft_stats WHERE draft_id = ?', [$draft]));
     $this->assertSame('complete', $this->db()->fetchOne('SELECT draft_status FROM draft WHERE draft_id = ?', [$draft]));
     $this->assertNotNull($this->db()->fetchOne('SELECT draft_end_time FROM draft WHERE draft_id = ?', [$draft]));
 

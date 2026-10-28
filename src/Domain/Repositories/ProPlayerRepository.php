@@ -112,9 +112,8 @@ class ProPlayerRepository {
     return $foundPlayers;
   }
 
-  // TODO(4.6): Nothing calls this until the admin CSV upload (ProPlayerService::Upload) is ported.
   /**
-   * Delete existing players for a given league, upload new players
+   * Delete existing players for a given league, upload new players. The caller wraps this in a transaction.
    * @param string $league
    * @param array $proPlayers Array of ProPlayer objects
    */
@@ -126,8 +125,13 @@ class ProPlayerRepository {
       throw new \Exception("Unable to empty existing pro players first.");
     }
 
+    $insertStmt = $this->pdo->prepare("INSERT INTO pro_players
+      (pro_player_id, league, first_name, last_name, position, team)
+      VALUES
+      (NULL, ?, ?, ?, ?, ?)");
+
     foreach ($proPlayers as $proPlayer) {
-      $this->_saveProPlayer($proPlayer);
+      $this->_saveProPlayer($proPlayer, $insertStmt);
     }
 
     return;
@@ -135,30 +139,20 @@ class ProPlayerRepository {
 
   /**
    * Adds a new pro player to the DB
+   * @param \PDOStatement $insertStmt the prepared INSERT, shared across a batch
    * @return ProPlayer the saved player, with its new ID.
    */
-  private function _saveProPlayer(ProPlayer $proPlayer) {
+  private function _saveProPlayer(ProPlayer $proPlayer, \PDOStatement $insertStmt) {
     if ($proPlayer->pro_player_id > 0) {
       throw new \Exception("Unable to save pro player: invalid ID.");
-    } else {
-      $insertStmt = $this->pdo->prepare("INSERT INTO pro_players
-        (pro_player_id, league, first_name, last_name, position, team)
-        VALUES
-        (NULL, ?, ?, ?, ?, ?)");
-
-      $insertStmt->bindParam(1, $proPlayer->league);
-      $insertStmt->bindParam(2, $proPlayer->first_name);
-      $insertStmt->bindParam(3, $proPlayer->last_name);
-      $insertStmt->bindParam(4, $proPlayer->position);
-      $insertStmt->bindParam(5, $proPlayer->team);
-
-      if (!$insertStmt->execute()) {
-        throw new \Exception("Unable to save pro player.");
-      }
-
-      $proPlayer->pro_player_id = (int)$this->pdo->lastInsertId();
-
-      return $proPlayer;
     }
+
+    if (!$insertStmt->execute([$proPlayer->league, $proPlayer->first_name, $proPlayer->last_name, $proPlayer->position, $proPlayer->team])) {
+      throw new \Exception("Unable to save pro player.");
+    }
+
+    $proPlayer->pro_player_id = (int)$this->pdo->lastInsertId();
+
+    return $proPlayer;
   }
 }

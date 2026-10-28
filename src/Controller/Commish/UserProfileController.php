@@ -6,7 +6,7 @@ use HootDraft\Domain\Entities\LoginUser;
 use HootDraft\Domain\Models\HootDraftResponse;
 use HootDraft\Domain\Models\UserProfile;
 use HootDraft\Domain\Services\LoginUserService;
-use HootDraft\Domain\Services\UsersService;
+use HootDraft\Domain\Services\UsersInvitationService;
 use HootDraft\Domain\Validators\LoginUserValidator;
 use HootDraft\Security\CurrentUser;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,7 +20,7 @@ class UserProfileController
     private CurrentUser $currentUser,
     private LoginUserValidator $validator,
     private LoginUserService $service,
-    private UsersService $usersService,
+    private UsersInvitationService $invitationService,
   ) {
   }
 
@@ -82,7 +82,7 @@ class UserProfileController
       return new JsonResponse($validity, $validity->responseType());
     }
 
-    $response = $this->usersService->InviteNewUser($user, $message);
+    $response = $this->invitationService->InviteNewUser($user, $message);
 
     return new JsonResponse($response, $response->responseType());
   }

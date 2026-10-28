@@ -368,7 +368,7 @@ class DraftRepository {
       throw new \Exception("Unable to delete draft $draft_id.");
     }
 
-    $this->UnsetCachedDraft($draft_id);
+    $this->ResetDraftCache($draft_id);
 
     return;
   }

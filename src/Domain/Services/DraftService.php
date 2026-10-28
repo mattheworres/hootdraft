@@ -7,12 +7,12 @@ use HootDraft\Domain\Models\HootDraftResponse;
 use HootDraft\Domain\Repositories\DepthChartPositionRepository;
 use HootDraft\Domain\Repositories\DraftDataRepository;
 use HootDraft\Domain\Repositories\DraftRepository;
+use HootDraft\Domain\Repositories\DraftStatsRepository;
 use HootDraft\Domain\Repositories\ManagerRepository;
 use HootDraft\Domain\Repositories\PickRepository;
 use HootDraft\Domain\Repositories\RoundTimeRepository;
 use HootDraft\Domain\Repositories\TradeRepository;
 
-// GetDraftStats arrives with the stats repository in 4.6. See old-api for the original.
 class DraftService {
   public function __construct(
     private DraftDataRepository $draftData,
@@ -23,6 +23,7 @@ class DraftService {
     private PickRepository $picks,
     private \PDO $pdo,
     private TradeRepository $trades,
+    private DraftStatsRepository $stats,
   ) {
   }
 
@@ -124,28 +125,55 @@ class DraftService {
     return $response;
   }
 
+  /**
+   * Joins the caller's transaction when one is open (deleting a user deletes all their drafts as one unit); the
+   * caller then owns the commit, the rollback and the cache flush.
+   */
   public function DeleteDraft(Draft $draft) {
     $response = new HootDraftResponse();
+    $ownsTransaction = !$this->pdo->inTransaction();
 
     try {
-      $this->pdo->beginTransaction();
+      if ($ownsTransaction) {
+        $this->pdo->beginTransaction();
+      }
 
       $this->trades->DeleteAllTrades($draft->draft_id);
       $this->picks->DeleteAllPicks($draft->draft_id);
       $this->depthChartPositions->DeleteAllDepthChartPositions($draft->draft_id);
       $this->managers->DeleteAllManagers($draft->draft_id);
       $this->roundTimes->DeleteAll($draft->draft_id);
+      $this->stats->DeleteStats($draft->draft_id);
       $this->draftRepository->DeleteDraft($draft->draft_id);
 
-      $this->pdo->commit();
-      $this->draftRepository->FlushPendingCacheResets();
+      if ($ownsTransaction) {
+        $this->pdo->commit();
+        $this->draftRepository->FlushPendingCacheResets();
+      }
 
       $response->success = true;
     } catch (\Exception $e) {
-      $this->rollBack();
+      if ($ownsTransaction) {
+        $this->rollBack();
+      }
 
       $response->success = false;
       $response->errors = array($e->getMessage());
+    }
+
+    return $response;
+  }
+
+  public function GetDraftStats($draft_id) {
+    $response = new HootDraftResponse();
+
+    try {
+      $response->draft_statistics = $this->stats->LoadDraftStats($draft_id);
+      $response->success = true;
+    } catch (\Exception $e) {
+      $message = $e->getMessage();
+      $response->success = false;
+      $response->errors[] = $message;
     }
 
     return $response;

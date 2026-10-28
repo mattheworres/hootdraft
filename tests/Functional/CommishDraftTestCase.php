@@ -44,6 +44,7 @@ abstract class CommishDraftTestCase extends KernelTestCase
     foreach ($ids as $id) {
       $this->db()->executeStatement('DELETE FROM trade_assets WHERE trade_id IN (SELECT trade_id FROM trades WHERE draft_id = ?)', [$id]);
       $this->db()->executeStatement('DELETE FROM trades WHERE draft_id = ?', [$id]);
+      $this->db()->executeStatement('DELETE FROM draft_stats WHERE draft_id = ?', [$id]);
       $this->db()->executeStatement('DELETE FROM players WHERE draft_id = ?', [$id]);
       $this->db()->executeStatement('DELETE FROM managers WHERE draft_id = ?', [$id]);
       $this->db()->executeStatement('DELETE FROM draft WHERE draft_id = ?', [$id]);
@@ -138,6 +139,19 @@ abstract class CommishDraftTestCase extends KernelTestCase
         $this->cookies[$cookie->getName()] = $cookie->getValue();
       }
     }
+
+    self::$kernel->shutdown();
+    self::bootKernel();
+
+    return $response;
+  }
+
+  /** A multipart form post, for the file upload route. $files maps field name to an UploadedFile. */
+  protected function upload(string $uri, array $fields, array $files): Response
+  {
+    $server = ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'];
+    $request = Request::create($uri, 'POST', $fields, $this->cookies, $files, $server);
+    $response = self::$kernel->handle($request);
 
     self::$kernel->shutdown();
     self::bootKernel();

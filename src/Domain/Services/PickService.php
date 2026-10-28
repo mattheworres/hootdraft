@@ -6,8 +6,10 @@ use HootDraft\Domain\Entities\Pick;
 use HootDraft\Domain\Models\HootDraftResponse;
 use HootDraft\Domain\Repositories\DraftDataRepository;
 use HootDraft\Domain\Repositories\DraftRepository;
+use HootDraft\Domain\Repositories\DraftStatsRepository;
 use HootDraft\Domain\Repositories\PickRepository;
 use HootDraft\Domain\Repositories\PickSearchRepository;
+use Psr\Log\LoggerInterface;
 
 class PickService {
   public function __construct(
@@ -18,6 +20,8 @@ class PickService {
     private PickSearchRepository $pickSearch,
     private DraftService $draftService,
     private \PDO $pdo,
+    private DraftStatsRepository $draftStats,
+    private LoggerInterface $logger,
   ) {
   }
 
@@ -101,9 +105,18 @@ class PickService {
 
       $response->draft_is_complete = $this->draftService->DraftComplete($draft);
 
-      // TODO(4.6): when this pick completes the draft (draft_is_complete == 1), the old code also set
-      // $response->draft_statistics from DraftStatsRepository::CalculateDraftStatistics. The AngularJS client
-      // does not read it from this response (the stats page loads it from /draft/{id}/stats).
+      if ($response->draft_is_complete == 1) {
+        // The pick is already committed: failing to crunch the numbers must not report it as failed. An admin can
+        // regenerate them (POST /admin/draft/{id}/stats).
+        try {
+          // The in-memory draft doesn't know the end time the DB just stamped, so reload it for the stats
+          $completedDraft = $this->draftRepository->Load($draft->draft_id, true);
+          $response->draft_statistics = $this->draftStats->CalculateDraftStatistics($completedDraft);
+        } catch (\Throwable $e) {
+          $this->logger->error("Unable to calculate stats for draft $draft->draft_id: " . $e->getMessage(), ['exception' => $e]);
+          $response->draft_statistics = null;
+        }
+      }
 
       $response->pick = $pick;
       $response->next_pick = $next_pick;

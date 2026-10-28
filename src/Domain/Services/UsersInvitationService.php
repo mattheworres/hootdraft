@@ -12,8 +12,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
-// Only InviteNewUser is ported so far; the admin user management arrives in 4.6.
-class UsersService {
+class UsersInvitationService {
   public function __construct(
     private LoginUserRepository $repository,
     private \PDO $pdo,

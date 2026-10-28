@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpDraft\Domain\Entities;
+namespace HootDraft\Domain\Entities;
 
 class DraftStats {
   public $draft_stat_id;

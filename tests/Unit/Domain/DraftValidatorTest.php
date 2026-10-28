@@ -6,6 +6,7 @@ use HootDraft\Domain\Entities\Draft;
 use HootDraft\Domain\Repositories\DepthChartPositionRepository;
 use HootDraft\Domain\Repositories\DraftDataRepository;
 use HootDraft\Domain\Repositories\DraftRepository;
+use HootDraft\Domain\Repositories\DraftStatsRepository;
 use HootDraft\Domain\Repositories\ManagerRepository;
 use HootDraft\Domain\Repositories\PickRepository;
 use HootDraft\Domain\Repositories\RoundTimeRepository;
@@ -36,7 +37,7 @@ class DraftValidatorTest extends TestCase
   private function validator(DraftRepository $repository, DraftDataRepository $data, CurrentUser $currentUser, ?ManagerRepository $managers = null): DraftValidator
   {
     $managers ??= $this->createStub(ManagerRepository::class);
-    $service = new DraftService($data, $repository, $this->createStub(DepthChartPositionRepository::class), $managers, $this->createStub(RoundTimeRepository::class), $this->createStub(PickRepository::class), $this->createStub(\PDO::class), $this->createStub(TradeRepository::class));
+    $service = new DraftService($data, $repository, $this->createStub(DepthChartPositionRepository::class), $managers, $this->createStub(RoundTimeRepository::class), $this->createStub(PickRepository::class), $this->createStub(\PDO::class), $this->createStub(TradeRepository::class), $this->createStub(DraftStatsRepository::class));
 
     return new DraftValidator($repository, $data, $service, $managers, $currentUser, self::HEADER);
   }

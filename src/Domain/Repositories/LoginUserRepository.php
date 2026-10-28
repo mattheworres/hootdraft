@@ -4,8 +4,6 @@ namespace HootDraft\Domain\Repositories;
 
 use HootDraft\Domain\Entities\LoginUser;
 
-// The authentication flows, the public commissioner lookups and what the profile and invite routes need are
-// ported so far; the rest (LoadAll, Delete, ...) arrive with their controllers in step 4. See old-api for the originals.
 class LoginUserRepository {
   public function __construct(private \PDO $pdo) {
   }
@@ -22,6 +20,60 @@ class LoginUserRepository {
     }
 
     return $user;
+  }
+
+  public function LoadById($id) {
+    $user = new LoginUser();
+
+    $id = (int)$id;
+
+    $load_stmt = $this->pdo->prepare("SELECT * FROM users WHERE id = ? LIMIT 1");
+    $load_stmt->setFetchMode(\PDO::FETCH_INTO, $user);
+    $load_stmt->bindParam(1, $id);
+
+    if (!$load_stmt->execute() || !$load_stmt->fetch()) {
+      throw new \Exception(sprintf('User #%s does not exist.', $id));
+    }
+
+    return $user;
+  }
+
+  /** Every user without the password, salt and verification key. Admin only. */
+  public function LoadAll() {
+    $load_stmt = $this->pdo->prepare("SELECT * FROM users");
+    $load_stmt->setFetchMode(\PDO::FETCH_CLASS, LoginUser::class);
+
+    $users = array();
+
+    if (!$load_stmt->execute()) {
+      throw new \Exception("Unable to load users.");
+    }
+
+    while ($user = $load_stmt->fetch()) {
+      $users[] = $this->_ScrubUser($user);
+    }
+
+    return $users;
+  }
+
+  public function Delete(LoginUser $user) {
+    $delete_stmt = $this->pdo->prepare("DELETE FROM users WHERE id = ?");
+    $delete_stmt->bindParam(1, $user->id);
+
+    if (!$delete_stmt->execute()) {
+      throw new \Exception("Unable to delete user #$user->id");
+    }
+
+    return;
+  }
+
+  public function GetRoles() {
+    $roles = array();
+
+    $roles['ROLE_COMMISH'] = "Commissioner";
+    $roles['ROLE_ADMIN'] = "Administrator";
+
+    return $roles;
   }
 
   /** Public view of a commissioner: id and name only. */
@@ -168,8 +220,8 @@ class LoginUserRepository {
     return $row !== false && (int) $row['enabled'] === 1;
   }
 
-  public function EmailIsUnique($email) {
-    return !$this->EmailExists($email);
+  public function EmailIsUnique($email, $id = null) {
+    return !$this->EmailExists($email, $id);
   }
 
   /**
@@ -187,5 +239,14 @@ class LoginUserRepository {
       && $row['verificationKey'] !== null
       && (int) $row['fresh'] === 1
       && hash_equals((string) $row['verificationKey'], (string) $verificationKey);
+  }
+
+  private function _ScrubUser(LoginUser $user) {
+    unset($user->password);
+    unset($user->salt);
+    unset($user->verificationKey);
+    unset($user->verificationKeyCreated);
+
+    return $user;
   }
 }

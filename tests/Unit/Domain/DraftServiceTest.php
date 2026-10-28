@@ -7,6 +7,7 @@ use HootDraft\Domain\Models\DepthChartPositionCreateModel;
 use HootDraft\Domain\Repositories\DepthChartPositionRepository;
 use HootDraft\Domain\Repositories\DraftDataRepository;
 use HootDraft\Domain\Repositories\DraftRepository;
+use HootDraft\Domain\Repositories\DraftStatsRepository;
 use HootDraft\Domain\Repositories\ManagerRepository;
 use HootDraft\Domain\Repositories\PickRepository;
 use HootDraft\Domain\Repositories\RoundTimeRepository;
@@ -41,6 +42,7 @@ class DraftServiceTest extends TestCase
       $picks ?? $this->createStub(PickRepository::class),
       $pdo ?? $this->createStub(\PDO::class),
       $trades ?? $this->createStub(TradeRepository::class),
+      $this->createStub(DraftStatsRepository::class),
     );
   }
 
@@ -248,6 +250,33 @@ class DraftServiceTest extends TestCase
     $repository->expects($this->never())->method('DeleteDraft');
 
     $response = $this->service($repository, null, $picks, $this->pdo(0, 1))->DeleteDraft($this->draftWith('complete', 0));
+
+    $this->assertFalse($response->success);
+    $this->assertSame(['Unable to delete picks for 4.'], $response->errors);
+  }
+
+  public function testDeleteJoinsAnOpenTransactionAndLeavesItToTheCaller(): void
+  {
+    $pdo = $this->createMock(\PDO::class);
+    $pdo->method('inTransaction')->willReturn(true);
+    $pdo->expects($this->never())->method('beginTransaction');
+    $pdo->expects($this->never())->method('commit');
+    $pdo->expects($this->never())->method('rollBack');
+    $repository = $this->createMock(DraftRepository::class);
+    $repository->expects($this->once())->method('DeleteDraft')->with(4);
+
+    $this->assertTrue($this->service($repository, null, null, $pdo)->DeleteDraft($this->draftWith('complete', 0))->success);
+  }
+
+  public function testAFailedDeleteInsideAnOpenTransactionIsReportedWithoutRollingBack(): void
+  {
+    $pdo = $this->createMock(\PDO::class);
+    $pdo->method('inTransaction')->willReturn(true);
+    $pdo->expects($this->never())->method('rollBack');
+    $picks = $this->createStub(PickRepository::class);
+    $picks->method('DeleteAllPicks')->willThrowException(new \Exception('Unable to delete picks for 4.'));
+
+    $response = $this->service($this->createStub(DraftRepository::class), null, $picks, $pdo)->DeleteDraft($this->draftWith('complete', 0));
 
     $this->assertFalse($response->success);
     $this->assertSame(['Unable to delete picks for 4.'], $response->errors);

@@ -3,17 +3,19 @@
 namespace HootDraft\Controller;
 
 use HootDraft\Domain\Repositories\DraftRepository;
+use HootDraft\Domain\Services\DraftService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
-/** Public draft reads. `/draft/{draft_id}/stats` waits for the stats repository (4.6). */
+/** Public draft reads. */
 class DraftController
 {
   public function __construct(
     private DraftRepository $drafts,
+    private DraftService $service,
     #[Autowire('%hootdraft.draft_password_header%')] private string $draftPasswordHeader,
   ) {
   }
@@ -48,5 +50,13 @@ class DraftController
     $password = $request->headers->get($this->draftPasswordHeader, '');
 
     return new JsonResponse($this->drafts->GetPublicDraftsByCommish($commish_id, $password));
+  }
+
+  #[Route('/draft/{draft_id}/stats', name: 'draft_get_stats', methods: ['GET'], defaults: ['_checks' => ['draftViewable']])]
+  public function getStats(string $draft_id): JsonResponse
+  {
+    $response = $this->service->GetDraftStats((int) $draft_id);
+
+    return new JsonResponse($response, $response->responseType());
   }
 }

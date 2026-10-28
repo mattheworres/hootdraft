@@ -11,8 +11,6 @@ use HootDraft\Domain\Services\SaltService;
 use HootDraft\Security\User;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
-// The unauthenticated flows (registration, verification, password reset) plus invite and profile update are
-// ported so far. The admin update validator arrives with its controller in 4.6.
 class LoginUserValidator {
   /** How long the emailed links stay good. Both kinds share the users.verificationKey column. */
   public const VERIFY_LINK_TTL_SECONDS = 172800; // 48 hours
@@ -234,6 +232,85 @@ class LoginUserValidator {
     return new HootDraftResponse($valid, $errors);
   }
 
+  /**
+   * The shape of the admin user update body: every field present as a scalar (roles may also be a list of strings).
+   * `enabled` is required so a partial body can't silently disable the account.
+   */
+  public function IsAdminUserPayloadValid(array $payload) {
+    $valid = array_key_exists('enabled', $payload);
+
+    foreach (['email', 'name', 'enabled'] as $field) {
+      if (isset($payload[$field]) && !is_scalar($payload[$field])) {
+        $valid = false;
+      }
+    }
+
+    return new HootDraftResponse($valid, $valid ? array() : array("Invalid user fields."));
+  }
+
+  /** @param ?int $currentUserId The admin making the change, so they can't lock themselves out */
+  public function IsAdminUserUpdateValid(LoginUser $user, ?int $currentUserId = null) {
+    $valid = true;
+    $errors = array();
+
+    try {
+      $loadedUser = $this->repository->LoadById($user->id);
+    } catch (\Exception $e) {
+      $loadedUser = null;
+    }
+
+    if ((int) $user->id == 0 || empty($loadedUser)) {
+      $valid = false;
+      $errors[] = "Invalid user.";
+
+      //Because we need to compare new & old values, we need a valid user record to proceed with vaidation.
+      return new HootDraftResponse($valid, $errors);
+    }
+
+    //Need to verify new email
+    if (empty($user->email)) {
+      $errors[] = "Email address is missing.";
+      $valid = false;
+    } else if (!hash_equals(strtolower((string) $loadedUser->email), strtolower((string) $user->email))) {
+      $this->validateEmailAddress($user->email, $errors, $valid);
+
+      $this->validateUniqueEmail($user->email, $errors, $valid, $user->id);
+    }
+
+    if (trim((string) $user->name) === '') {
+      $errors[] = "Name is missing.";
+      $valid = false;
+    }
+
+    if (strlen((string) $user->name) > 100) {
+      $errors[] = "Name is above maximum length";
+      $valid = false;
+    }
+
+    if (!$this->repository->NameIsUnique($user->name, $user->id)) {
+      $errors[] = "Name already taken.";
+      $valid = false;
+    }
+
+    //Only the roles the admin screen offers (the old code stored whatever string arrived)
+    $roles = LoginUser::parseRoles($user->roles);
+    $knownRoles = array_keys($this->repository->GetRoles());
+
+    if (count($roles) == 0 || count(array_filter($roles, 'is_string')) != count($roles) || count(array_diff($roles, $knownRoles)) > 0) {
+      $errors[] = "Role invalid.";
+      $valid = false;
+    }
+
+    //An admin can't take their own access away: nobody else may be left to put it back
+    if ($currentUserId !== null && (int) $user->id === $currentUserId
+      && (!in_array('ROLE_ADMIN', $roles, true) || !$user->enabled)) {
+      $errors[] = "You can't remove your own admin role or disable your own account.";
+      $valid = false;
+    }
+
+    return new HootDraftResponse($valid, $errors);
+  }
+
   /** True when the plain password matches the one stored for this user, whichever hash it is still on. */
   private function passwordMatches(LoginUser $user, string $plainPassword): bool {
     return $this->hasherFactory->getPasswordHasher(User::class)
@@ -247,8 +324,8 @@ class LoginUserValidator {
     }
   }
 
-  private function validateUniqueEmail($emailAddress, &$errors, &$valid) {
-    if (!$this->repository->EmailIsUnique($emailAddress)) {
+  private function validateUniqueEmail($emailAddress, &$errors, &$valid, $excludeUserId = null) {
+    if (!$this->repository->EmailIsUnique($emailAddress, $excludeUserId)) {
       $errors[] = "Email already registered.";
       $valid = false;
     }

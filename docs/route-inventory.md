@@ -18,7 +18,7 @@ by a route's `_checks` default (see `src/EventListener/RouteCheckListener.php`).
 | [x] | GET | `/drafts` | DraftController::GetAll | public | - |
 | [x] | GET | `/drafts/{commish_id}` | DraftController::GetAllByCommish | public | - |
 | [x] | GET | `/draft/{id}` | DraftController::Get | public | - |
-| [ ] | GET | `/draft/{draft_id}/stats` | DraftController::GetStats | public | draftViewable |
+| [x] | GET | `/draft/{draft_id}/stats` | DraftController::GetStats | public | draftViewable |
 | [x] | GET | `/commissioners/search` | CommishController::SearchPublicCommissioners | public | - |
 | [x] | GET | `/commissioners/{commish_id}` | CommishController::GetPublicCommissioner | public | - |
 | [x] | GET | `/draft/{draft_id}/managers` | ManagerController::GetAll | public | draftViewable |
@@ -37,13 +37,13 @@ by a route's `_checks` default (see `src/EventListener/RouteCheckListener.php`).
 | [x] | GET | `/draft/{draft_id}/timer/remaining` | RoundTimeController::GetTimeRemaining | public | draftViewable, draftInProgress |
 | [x] | GET | `/style` | IndexController::Style | public | - |
 | [x] | GET | `/draftOptions` | IndexController::DraftOptions | public | - |
-| [ ] | GET | `/admin/drafts` | Admin\DraftStatsController::GetDrafts | admin (ROLE_ADMIN) | - |
-| [ ] | POST | `/admin/draft/{draft_id}/stats` | Admin\DraftStatsController::Create | admin (ROLE_ADMIN) | - |
-| [ ] | GET | `/admin/sports` | Admin\ProPlayerController::GetSports | admin (ROLE_ADMIN) | - |
-| [ ] | POST | `/admin/proplayers` | Admin\ProPlayerController::Upload | admin (ROLE_ADMIN) | - |
-| [ ] | GET | `/admin/users` | Admin\UserController::Get | admin (ROLE_ADMIN) | - |
-| [ ] | PUT | `/admin/user/{user_id}` | Admin\UserController::Update | admin (ROLE_ADMIN) | - |
-| [ ] | DELETE | `/admin/user/{user_id}` | Admin\UserController::Delete | admin (ROLE_ADMIN) | - |
+| [x] | GET | `/admin/drafts` | Admin\DraftStatsController::GetDrafts | admin (ROLE_ADMIN) | - |
+| [x] | POST | `/admin/draft/{draft_id}/stats` | Admin\DraftStatsController::Create | admin (ROLE_ADMIN) | - |
+| [x] | GET | `/admin/sports` | Admin\ProPlayerController::GetSports | admin (ROLE_ADMIN) | - |
+| [x] | POST | `/admin/proplayers` | Admin\ProPlayerController::Upload | admin (ROLE_ADMIN) | - |
+| [x] | GET | `/admin/users` | Admin\UserController::Get | admin (ROLE_ADMIN) | - |
+| [x] | PUT | `/admin/user/{user_id}` | Admin\UserController::Update | admin (ROLE_ADMIN) | - |
+| [x] | DELETE | `/admin/user/{user_id}` | Admin\UserController::Delete | admin (ROLE_ADMIN) | - |
 | [x] | GET | `/commish` | Commish\IndexController::Index | commish (ROLE_COMMISH) | - |
 | [x] | POST | `/commish/user/invite` | Commish\UserProfileController::InviteNewCommissioner | commish (ROLE_COMMISH) | - |
 | [x] | GET | `/commish/profile` | Commish\UserProfileController::Get | commish (ROLE_COMMISH) | - |

@@ -5,14 +5,14 @@ namespace HootDraft\Domain\Services;
 use HootDraft\Domain\Entities\LoginUser;
 use HootDraft\Domain\Models\HootDraftResponse;
 use HootDraft\Domain\Models\MailMessage;
+use HootDraft\Domain\Repositories\DraftRepository;
 use HootDraft\Domain\Repositories\LoginUserRepository;
 use HootDraft\Security\User;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
-// Only the account lifecycle is ported so far (create, verify, forgotten password, reset, profile update).
-// Token minting is gone: the session cookie replaced the JWT. The admin parts arrive in 4.6.
+// Token minting is gone: the session cookie replaced the JWT.
 class LoginUserService {
   public function __construct(
     private LoginUserRepository $repository,
@@ -22,8 +22,64 @@ class LoginUserService {
     private SaltService $saltService,
     private LoggerInterface $logger,
     private PasswordHasherFactoryInterface $hasherFactory,
+    private DraftRepository $drafts,
+    private DraftService $draftService,
     #[Autowire('%hootdraft.app_base_url%')] private string $appBaseUrl,
   ) {
+  }
+
+  public function GetAll() {
+    $response = new HootDraftResponse();
+
+    try {
+      $response->users = $this->repository->LoadAll();
+      $response->roles = $this->repository->GetRoles();
+      $response->success = true;
+    } catch (\Exception $e) {
+      $message = $e->getMessage();
+      $response->success = false;
+      $response->errors[] = $message;
+    }
+
+    return $response;
+  }
+
+  /** Deletes the user and every draft they own as one unit: any failure leaves the user and all their drafts intact. */
+  public function DeleteUser(LoginUser $user) {
+    $response = new HootDraftResponse();
+
+    try {
+      $this->pdo->beginTransaction();
+
+      //Find all drafts this user owns
+      $drafts = $this->drafts->GetAllDraftsByCommish($user->id);
+      foreach ($drafts as $draft) {
+        $deleted = $this->draftService->DeleteDraft($draft);
+        if (!$deleted->success) {
+          $this->logger->error("Unable to delete draft $draft->draft_id while deleting user $user->id: " . implode('; ', $deleted->errors));
+
+          throw new \Exception("Unable to recursively delete draft or one of its children.");
+        }
+      }
+      $this->repository->Delete($user);
+
+      $this->pdo->commit();
+      $this->drafts->FlushPendingCacheResets();
+
+      $response->success = true;
+    } catch (\Exception $e) {
+      $this->rollBack();
+      $this->drafts->FlushPendingCacheResets();
+
+      $response->success = false;
+      $response->errors[] = $e->getMessage();
+    }
+
+    return $response;
+  }
+
+  public function IsAdmin(LoginUser $user) {
+    return in_array('ROLE_ADMIN', LoginUser::parseRoles($user->roles), true);
   }
 
   public function SearchCommissioners($searchTerm) {
