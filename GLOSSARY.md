@@ -91,3 +91,9 @@ _Avoid_: Roster, lineup
 **Draft Stats**:
 A summary of a Complete Draft: how long it took, which Managers and Rounds were fastest and slowest, and which teams and positions were chosen most and least. An Admin can regenerate them.
 _Avoid_: Draft statistics, report, recap
+
+### Source control
+
+**Develop branch**:
+The main repository branch that finished work merges into. Today it is named `master`, and the code and docs still say `master`. The team will rename it. Use "develop branch" in new text.
+_Avoid_: Master, main

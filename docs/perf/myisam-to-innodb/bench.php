@@ -418,7 +418,7 @@ function matchQueries(array $terms): array {
   $queries = [];
   foreach ($searches as $shape => [$keywords, $draft, $team, $position]) {
     $queries[] = ["pick_search.$shape", 'match', 'pick_search', function (PDO $pdo, bool $count = false) use ($keywords, $draft, $team) {
-      // Same SQL as PickSearchRepository::SearchStrict
+      // Same SQL as the old PickSearchRepository::SearchStrict (removed, see docs/adr/0003)
       $sql = 'SELECT p.*, m.manager_name, MATCH (p.first_name, p.last_name) AGAINST (?) as search_score '
         . 'FROM players p LEFT OUTER JOIN managers m ON m.manager_id = p.manager_id WHERE MATCH (p.first_name, p.last_name) AGAINST (?) AND p.draft_id = ? ';
       $params = [$keywords, $keywords, $draft];

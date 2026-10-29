@@ -2,8 +2,6 @@
 
 namespace HootDraft\Domain\Models;
 
-// emptyResultsData() adds a search_count property, so this stays open to dynamic properties.
-#[\AllowDynamicProperties]
 class PickSearchModel {
   /** @var string */
   public $draft_id;
@@ -30,14 +28,6 @@ class PickSearchModel {
     $this->position = $position;
     // The sort is interpolated into the ORDER BY clause, so only the two real directions get through
     $this->sort = strtoupper((string) $sort) === 'ASC' ? 'ASC' : 'DESC';
-  }
-
-  /**
-   * Used if the strict search returns no results, empty the results (for any reason) and set the count to zero.
-   */
-  public function emptyResultsData() {
-    unset($this->player_results);
-    $this->search_count = 0;
   }
 
   public function hasName() {

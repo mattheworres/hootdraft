@@ -188,44 +188,132 @@ class PickTest extends CommishDraftTestCase
     $this->assertSame(['Julio', 'Antonio'], array_column($desc['player_results'], 'first_name'));
   }
 
-  public function testSearchSplitsAFullNameWhenNothingElseMatches(): void
+  public function testSearchFindsAPartialNameInsideAName(): void
   {
-    [$draft] = $this->seedMadeDraft();
+    [$draft, $a] = $this->seedMadeDraft();
+    $this->createPick($draft, $a, 3, 5, ['first_name' => 'LaDainian', 'last_name' => 'Tomlinson', 'team' => 'SD', 'position' => 'RB'], 3);
 
-    $result = $this->json($this->call('GET', "/draft/$draft/picks/search?keywords=" . urlencode('Antonio Brown')));
+    $prefix = $this->json($this->call('GET', "/draft/$draft/picks/search?keywords=Tom"));
+    $this->assertSame(['Tomlinson'], array_column($prefix['player_results'], 'last_name'));
 
-    $this->assertSame(['Antonio'], array_column($result['player_results'], 'first_name'));
+    $inside = $this->json($this->call('GET', "/draft/$draft/picks/search?keywords=linson"));
+    $this->assertSame(['Tomlinson'], array_column($inside['player_results'], 'last_name'));
   }
 
-  public function testSearchKeepsTheStrictResultsWhenThereAreSome(): void
-  {
-    [$draft] = $this->seedMadeDraft();
-
-    $result = $this->json($this->call('GET', "/draft/$draft/picks/search?keywords=Brown"));
-
-    $this->assertSame(['Antonio'], array_column($result['player_results'], 'first_name'));
-    // The loose search scores its rows below zero, so a positive score means the ranked full-text query answered
-    $this->assertGreaterThan(0, (float) $result['player_results'][0]['search_score']);
-  }
-
-  public function testSplitSearchHonorsTeamAndPosition(): void
+  public function testSearchRanksTheBestMatchFirstWhateverThePickOrder(): void
   {
     [$draft, $a, $b] = $this->seedMadeDraft();
-    // Names too short for the full-text index, so only the split search can find them
+    // Picks 1 and 2 are made already. Pick 5 is the exact name, pick 6 starts with it, pick 7 only contains it.
+    $this->createPick($draft, $a, 3, 5, ['first_name' => 'Tom', 'last_name' => 'Brady', 'team' => 'NE', 'position' => 'QB'], 3);
+    $this->createPick($draft, $b, 3, 6, ['first_name' => 'LaDainian', 'last_name' => 'Tomlinson', 'team' => 'SD', 'position' => 'RB'], 4);
+    $this->createPick($draft, $a, 4, 7, ['first_name' => 'Autumn', 'last_name' => 'Bartomeo', 'team' => 'DAL', 'position' => 'WR'], 5);
+
+    foreach (['DESC', 'ASC'] as $sort) {
+      $result = $this->json($this->call('GET', "/draft/$draft/picks/search?keywords=Tom&sort=$sort"));
+      $this->assertSame(['Brady', 'Tomlinson', 'Bartomeo'], array_column($result['player_results'], 'last_name'), "tiers rank before pick order ($sort)");
+    }
+  }
+
+  public function testSearchSortToggleOrdersPicksInsideOneTier(): void
+  {
+    [$draft, $a, $b] = $this->seedMadeDraft();
+    $this->createPick($draft, $a, 3, 5, ['first_name' => 'Tom', 'last_name' => 'Brady', 'team' => 'NE', 'position' => 'QB'], 3);
+    $this->createPick($draft, $b, 3, 6, ['first_name' => 'Tom', 'last_name' => 'Cruise', 'team' => 'NE', 'position' => 'QB'], 4);
+
+    $asc = $this->json($this->call('GET', "/draft/$draft/picks/search?keywords=Tom&sort=ASC"));
+    $this->assertSame(['Brady', 'Cruise'], array_column($asc['player_results'], 'last_name'));
+
+    $desc = $this->json($this->call('GET', "/draft/$draft/picks/search?keywords=Tom&sort=nonsense"));
+    $this->assertSame(['Cruise', 'Brady'], array_column($desc['player_results'], 'last_name'));
+  }
+
+  public function testSearchFindsAFullNameInEitherOrder(): void
+  {
+    [$draft] = $this->seedMadeDraft();
+
+    foreach (['Antonio Brown', 'Brown Antonio', 'ant brow'] as $keywords) {
+      $result = $this->json($this->call('GET', "/draft/$draft/picks/search?keywords=" . urlencode($keywords)));
+      $this->assertSame(['Antonio'], array_column($result['player_results'], 'first_name'), $keywords);
+    }
+
+    $none = $this->json($this->call('GET', "/draft/$draft/picks/search?keywords=" . urlencode('Antonio Jones')));
+    $this->assertSame([], $none['player_results']);
+  }
+
+  public function testSearchFullNameOutranksAPartialMatch(): void
+  {
+    [$draft, $a] = $this->seedMadeDraft();
+    $this->createPick($draft, $a, 3, 5, ['first_name' => 'Antonio', 'last_name' => 'Browning', 'team' => 'PIT', 'position' => 'WR'], 3);
+
+    $result = $this->json($this->call('GET', "/draft/$draft/picks/search?keywords=" . urlencode('Antonio Brown') . '&sort=DESC'));
+
+    $this->assertSame(['Brown', 'Browning'], array_column($result['player_results'], 'last_name'));
+    $this->assertGreaterThan($result['player_results'][1]['search_score'], $result['player_results'][0]['search_score']);
+  }
+
+  public function testSearchHonorsTeamAndPositionWithAFullName(): void
+  {
+    [$draft, $a, $b] = $this->seedMadeDraft();
+    // Names of two letters, which a full-text index would skip
     $this->createPick($draft, $a, 3, 5, ['first_name' => 'Al', 'last_name' => 'Be', 'team' => 'PIT', 'position' => 'RB'], 3);
     $this->createPick($draft, $b, 3, 6, ['first_name' => 'Al', 'last_name' => 'Xu', 'team' => 'ATL', 'position' => 'WR'], 4);
-    $keywords = urlencode('Al Be');
 
-    $both = $this->json($this->call('GET', "/draft/$draft/picks/search?keywords=$keywords"));
+    $both = $this->json($this->call('GET', "/draft/$draft/picks/search?keywords=Al"));
     $this->assertEqualsCanonicalizing(['Be', 'Xu'], array_column($both['player_results'], 'last_name'));
 
-    $team = $this->call('GET', "/draft/$draft/picks/search?keywords=$keywords&team=PIT");
-    $this->assertSame(200, $team->getStatusCode(), $team->getContent());
-    $this->assertSame(['Be'], array_column($this->json($team)['player_results'], 'last_name'));
+    $team = $this->json($this->call('GET', "/draft/$draft/picks/search?keywords=" . urlencode('Al Be') . '&team=PIT'));
+    $this->assertSame(['Be'], array_column($team['player_results'], 'last_name'));
 
-    $position = $this->call('GET', "/draft/$draft/picks/search?keywords=$keywords&team=ATL&position=WR");
-    $this->assertSame(200, $position->getStatusCode(), $position->getContent());
-    $this->assertSame(['Xu'], array_column($this->json($position)['player_results'], 'last_name'));
+    $position = $this->json($this->call('GET', "/draft/$draft/picks/search?keywords=Al&team=ATL&position=WR"));
+    $this->assertSame(['Xu'], array_column($position['player_results'], 'last_name'));
+  }
+
+  public function testSearchTreatsLikeWildcardsAsPlainCharacters(): void
+  {
+    [$draft, $a] = $this->seedMadeDraft();
+    $this->createPick($draft, $a, 3, 5, ['first_name' => 'Pat', 'last_name' => '50%_Off', 'team' => 'PIT', 'position' => 'RB'], 3);
+
+    foreach (['%', '_', 'Bro_n'] as $keywords) {
+      $expected = $keywords == 'Bro_n' ? [] : ['50%_Off'];
+      $result = $this->json($this->call('GET', "/draft/$draft/picks/search?keywords=" . urlencode($keywords)));
+      $this->assertSame($expected, array_column($result['player_results'], 'last_name'), $keywords);
+    }
+  }
+
+  public function testSearchWithoutKeywordsReturnsAllSelectedPicksInSortOrder(): void
+  {
+    [$draft] = $this->seedMadeDraft();
+
+    $asc = $this->json($this->call('GET', "/draft/$draft/picks/search?sort=ASC"));
+    $this->assertSame(['Antonio', 'Julio'], array_column($asc['player_results'], 'first_name'));
+
+    $desc = $this->json($this->call('GET', "/draft/$draft/picks/search?sort=nonsense"));
+    $this->assertSame(['Julio', 'Antonio'], array_column($desc['player_results'], 'first_name'));
+  }
+
+  public function testSearchRanksMultipleWordsByTheirWorstWord(): void
+  {
+    [$draft, $a, $b] = $this->seedMadeDraft();
+    // "Tom" is only inside "Bartom", so the earlier pick ranks below the later one.
+    $this->createPick($draft, $a, 3, 5, ['first_name' => 'Bartom', 'last_name' => 'Bradley', 'team' => 'DAL', 'position' => 'WR'], 3);
+    $this->createPick($draft, $b, 3, 6, ['first_name' => 'Tom', 'last_name' => 'Bradley', 'team' => 'NE', 'position' => 'QB'], 4);
+
+    $result = $this->json($this->call('GET', "/draft/$draft/picks/search?keywords=" . urlencode('Tom Brad') . '&sort=ASC'));
+
+    $this->assertSame(['Tom', 'Bartom'], array_column($result['player_results'], 'first_name'));
+    $this->assertGreaterThan($result['player_results'][1]['search_score'], $result['player_results'][0]['search_score']);
+  }
+
+  public function testSearchTreatsABackslashAsAPlainCharacter(): void
+  {
+    [$draft, $a, $b] = $this->seedMadeDraft();
+    $this->createPick($draft, $a, 3, 5, ['first_name' => 'Pat', 'last_name' => 'A\\B', 'team' => 'PIT', 'position' => 'RB'], 3);
+    $this->createPick($draft, $b, 3, 6, ['first_name' => 'Sam', 'last_name' => 'AB', 'team' => 'PIT', 'position' => 'RB'], 4);
+
+    foreach (['A\\B' => ['A\\B'], '\\' => ['A\\B'], 'B\\' => []] as $keywords => $expected) {
+      $result = $this->json($this->call('GET', "/draft/$draft/picks/search?keywords=" . urlencode((string) $keywords)));
+      $this->assertSame($expected, array_column($result['player_results'], 'last_name'), (string) $keywords);
+    }
   }
 
   public function testManagerDepthChartGroupsPicksByPosition(): void

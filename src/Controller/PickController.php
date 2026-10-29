@@ -136,20 +136,7 @@ class PickController
 
     $pickSearchModel = new PickSearchModel($draftId, $keywords, $team, $position, $sort);
 
-    $pickSearchModel = $this->pickSearch->SearchStrict($pickSearchModel);
-
-    if (count($pickSearchModel->player_results) == 0) {
-      $pickSearchModel = $this->pickSearch->SearchLoose($pickSearchModel);
-    }
-
-    #If there's a space and no matches so far, create another searches where we manually split them firstname/lastname by sace automatically
-    $splitNameAutomatically = count($pickSearchModel->player_results) == 0 && strpos((string) $keywords, " ") != false;
-
-    if ($splitNameAutomatically) {
-      $pickSearchModel = new PickSearchModel($draftId, $keywords, $team, $position, $sort);
-      $names = explode(" ", $keywords, 2);
-      $pickSearchModel = $this->pickSearch->SearchSplit($pickSearchModel, $names[0], $names[1]);
-    }
+    $pickSearchModel = $this->pickSearch->Search($pickSearchModel);
 
     return new JsonResponse($pickSearchModel);
   }
