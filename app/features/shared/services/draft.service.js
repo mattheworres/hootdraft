@@ -14,7 +14,8 @@ class DraftService {
     subscriptionKeys,
     $rootScope,
     $q,
-    errorService
+    errorService,
+    idHelperService
   ) {
     this.$uibModal = $uibModal;
     this.$sessionStorage = $sessionStorage;
@@ -28,6 +29,7 @@ class DraftService {
     this.$rootScope = $rootScope;
     this.$q = $q;
     this.errorService = errorService;
+    this.idHelperService = idHelperService;
 
     this.activeComponents = 0;
     this.failedConnectionTries = 0;
@@ -57,7 +59,7 @@ class DraftService {
       this.subscriptionKeys.routeHasDraft,
       (event, args) => {
         const {hasDraft, needsReloaded} = args;
-        const draftIdChanged = this.draftId !== this.$routeParams.draft_id;
+        const draftIdChanged = !this.idHelperService.isSame(this.draftId, this.$routeParams.draft_id);
         const forceReload = angular.isDefined(needsReloaded) && needsReloaded;
 
         if (forceReload) {
@@ -96,7 +98,7 @@ class DraftService {
     if (
       forcedReload === false &&
       this.draft !== null &&
-      this.draft.draft_id === this.$routeParams.draft_id
+      this.idHelperService.isSame(this.draft.draft_id, this.$routeParams.draft_id)
     ) {
       defer.resolve(this.draft);
       this.setupPollingAfterLoad();
@@ -122,7 +124,7 @@ class DraftService {
     this.draftStatus.loading = true;
     //Get heavy draft info from API if this is the first call to the API
     const getDraftData =
-      this.draft === null || this.draftId !== this.$routeParams.draft_id;
+      this.draft === null || !this.idHelperService.isSame(this.draftId, this.$routeParams.draft_id);
     //Ensure the draft ID we're using is correct
     this.draftId = this.$routeParams.draft_id;
 
@@ -203,7 +205,7 @@ class DraftService {
   }
 
   startDraft(draftId) {
-    if (this.draftId !== draftId) {
+    if (!this.idHelperService.isSame(this.draftId, draftId)) {
       this.draftId = draftId;
     }
 
@@ -236,7 +238,7 @@ class DraftService {
   }
 
   resetDraft(draftId) {
-    if (this.draftId !== draftId) {
+    if (!this.idHelperService.isSame(this.draftId, draftId)) {
       this.draftId = draftId;
     }
 
@@ -272,7 +274,7 @@ class DraftService {
   }
 
   deleteDraft(draftId) {
-    if (this.draftId !== draftId) {
+    if (!this.idHelperService.isSame(this.draftId, draftId)) {
       this.draftId = draftId;
     }
 
@@ -331,7 +333,7 @@ class DraftService {
   //Private method to handle the periodic update of the draft; notifies all components when the counter changes via callbacks
   _draftIntervalHandler() {
     //If the draftId has changed, we need to get all draft data, which is a heavy call
-    const getDraftData = this.draftId !== this.$routeParams.draft_id;
+    const getDraftData = !this.idHelperService.isSame(this.draftId, this.$routeParams.draft_id);
 
     this.draftId = this.$routeParams.draft_id;
 
@@ -399,6 +401,7 @@ DraftService.$inject = [
   '$rootScope',
   '$q',
   'errorService',
+  'idHelperService',
 ];
 
 angular.module('phpdraft.shared').service('draftService', DraftService);

@@ -55,10 +55,6 @@ class CommishPickEntryController {
 
     if (currentPick && currentPick.isFirstChange() === false) {
       const localCurrentPick = currentPick.currentValue;
-      this.isFirstPick =
-        (angular.isDefined(localCurrentPick)
-          ? localCurrentPick.player_pick
-          : 0) === '1';
 
       //If manual entry, we need to make sure to properly update "selected" on the current pick so the display acts accordingly
       if (this.manualEntry) {
@@ -243,7 +239,6 @@ angular.module('phpdraft.pick').component('phpdCommishPickEntry', {
   bindings: {
     draft: '<',
     currentPick: '=',
-    isFirstPick: '=',
     pristinePick: '<',
     positions: '<',
     teams: '<',
