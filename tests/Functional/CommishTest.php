@@ -2,110 +2,19 @@
 
 namespace HootDraft\Tests\Functional;
 
-use Doctrine\DBAL\Connection;
-use HootDraft\Domain\Services\DatabaseCacheService;
 use HootDraft\Domain\Services\EmailService;
 use HootDraft\Tests\Support\CapturingEmailService;
 use PHPUnit\Framework\Attributes\Group;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\MessageDigestPasswordHasher;
 
 /** The commissioner's drafts, round timers, profile and invitations, plus the public pick timer, against the test DB. */
 #[Group('database')]
-class CommishTest extends KernelTestCase
+class CommishTest extends CommishDraftTestCase
 {
-  private const SALT = 'Zm9vYmFyYmF6cXV4';
-  private const PASSWORD = 'correct horse';
+  protected bool $keepKernelBetweenCalls = true;
 
-  private array $cookies = [];
-
-  protected function setUp(): void
+  protected static function domain(): string
   {
-    self::bootKernel();
-    $this->cookies = [];
-    $this->cleanUp();
-  }
-
-  protected function tearDown(): void
-  {
-    $this->cleanUp();
-    parent::tearDown();
-  }
-
-  private function cleanUp(): void
-  {
-    $users = "SELECT id FROM users WHERE email LIKE '%@commish-test.example'";
-    $cache = static::getContainer()->get(DatabaseCacheService::class);
-
-    foreach ($this->db()->fetchFirstColumn("SELECT draft_id FROM draft WHERE commish_id IN ($users)") as $id) {
-      $cache->DeleteCachedItem("draft$id");
-      $this->db()->executeStatement('DELETE FROM round_times WHERE draft_id = ?', [$id]);
-      $this->db()->executeStatement('DELETE FROM depth_chart_positions WHERE draft_id = ?', [$id]);
-      $this->db()->executeStatement('DELETE FROM trade_assets WHERE trade_id IN (SELECT trade_id FROM trades WHERE draft_id = ?)', [$id]);
-      $this->db()->executeStatement('DELETE FROM trades WHERE draft_id = ?', [$id]);
-      $this->db()->executeStatement('DELETE FROM players WHERE draft_id = ?', [$id]);
-      $this->db()->executeStatement('DELETE FROM managers WHERE draft_id = ?', [$id]);
-    }
-
-    $this->db()->executeStatement("DELETE FROM draft WHERE commish_id IN ($users)");
-    $this->db()->executeStatement("DELETE FROM users WHERE email LIKE '%@commish-test.example'");
-  }
-
-  private function db(): Connection
-  {
-    return static::getContainer()->get(Connection::class);
-  }
-
-  private function createUser(string $name, string $roles = 'ROLE_COMMISH'): int
-  {
-    $hash = (new MessageDigestPasswordHasher('sha512', true, 5000))->hash(self::PASSWORD, self::SALT);
-    $this->db()->insert('users', [
-      'email' => strtolower($name) . '@commish-test.example', 'password' => $hash, 'salt' => self::SALT, 'name' => $name,
-      'roles' => $roles, 'enabled' => 1, 'creationTime' => '2020-01-01 00:00:00',
-    ]);
-
-    return (int) $this->db()->lastInsertId();
-  }
-
-  private function createDraft(int $commishId, string $name, string $status = 'undrafted', array $extra = []): int
-  {
-    $this->db()->insert('draft', $extra + [
-      'commish_id' => $commishId, 'draft_create_time' => '2024-01-01 12:00:00', 'draft_name' => $name, 'draft_sport' => 'NFL',
-      'draft_status' => $status, 'draft_style' => 'serpentine', 'draft_rounds' => 3,
-    ]);
-
-    return (int) $this->db()->lastInsertId();
-  }
-
-  private function call(string $method, string $uri, ?array $body = null): Response
-  {
-    $server = ['CONTENT_TYPE' => 'application/json', 'HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'];
-    $request = Request::create($uri, $method, [], $this->cookies, [], $server, $body === null ? null : json_encode($body));
-    $response = self::$kernel->handle($request);
-
-    foreach ($response->headers->getCookies() as $cookie) {
-      if ($cookie->getValue() === null || $cookie->getExpiresTime() !== 0 && $cookie->getExpiresTime() < time()) {
-        unset($this->cookies[$cookie->getName()]);
-      } else {
-        $this->cookies[$cookie->getName()] = $cookie->getValue();
-      }
-    }
-
-    return $response;
-  }
-
-  private function logIn(string $name, string $password = self::PASSWORD): Response
-  {
-    $this->cookies = [];
-
-    return $this->call('POST', '/login', ['_email' => strtolower($name) . '@commish-test.example', '_password' => $password]);
-  }
-
-  private function json(Response $response): mixed
-  {
-    return json_decode($response->getContent(), true);
+    return 'commish-test.example';
   }
 
   private function newDraftBody(array $overrides = []): array
@@ -196,7 +105,7 @@ class CommishTest extends KernelTestCase
     $alice = $this->createUser('Alice');
     $this->logIn('Alice');
 
-    $running = $this->createDraft($alice, 'Running draft', 'in_progress', ['using_depth_charts' => 1]);
+    $running = $this->createDraft($alice, 'in_progress', null, ['using_depth_charts' => 1]);
     $this->db()->insert('depth_chart_positions', ['draft_id' => $running, 'position' => 'QB', 'slots' => 1, 'display_order' => 0]);
     $positionId = (int) $this->db()->lastInsertId();
 
@@ -209,7 +118,7 @@ class CommishTest extends KernelTestCase
     $this->assertSame([$positionId], array_map('intval', $this->db()->fetchFirstColumn('SELECT id FROM depth_chart_positions WHERE draft_id = ?', [$running])));
 
     // While setting up, turning them off removes the positions
-    $setup = $this->createDraft($alice, 'Setup draft', 'undrafted', ['using_depth_charts' => 1]);
+    $setup = $this->createDraft($alice, 'undrafted', null, ['using_depth_charts' => 1]);
     $this->db()->insert('depth_chart_positions', ['draft_id' => $setup, 'position' => 'QB', 'slots' => 1, 'display_order' => 0]);
 
     $off = $this->call('PUT', "/commish/draft/$setup", $this->newDraftBody(['name' => 'Setup draft', 'using_depth_charts' => false]));
@@ -221,7 +130,7 @@ class CommishTest extends KernelTestCase
   {
     $alice = $this->createUser('Alice');
     $this->createUser('Bob');
-    $id = $this->createDraft($alice, 'Alice draft');
+    $id = $this->createDraft($alice, 'undrafted');
     $this->logIn('Bob');
 
     $permission = [['success' => false, 'errors' => ['You do not have permission to this draft.']]];
@@ -245,7 +154,7 @@ class CommishTest extends KernelTestCase
   public function testCompletedDraftsCannotBeUpdated(): void
   {
     $alice = $this->createUser('Alice');
-    $id = $this->createDraft($alice, 'Done draft', 'complete');
+    $id = $this->createDraft($alice, 'complete', null, ['draft_name' => 'Done draft']);
     $this->logIn('Alice');
 
     $update = $this->call('PUT', "/commish/draft/$id", $this->newDraftBody(['name' => 'Nope']));
@@ -259,7 +168,7 @@ class CommishTest extends KernelTestCase
   public function testUpdateStatus(): void
   {
     $alice = $this->createUser('Alice');
-    $id = $this->createDraft($alice, 'Alice draft');
+    $id = $this->createDraft($alice, 'undrafted');
     $this->logIn('Alice');
 
     $invalid = $this->call('PUT', "/commish/draft/$id/status", ['status' => 'bogus']);
@@ -283,14 +192,14 @@ class CommishTest extends KernelTestCase
   public function testUpdateStatusOnAnInProgressDraft(): void
   {
     $alice = $this->createUser('Alice');
-    $id = $this->createDraft($alice, 'Running draft', 'in_progress');
+    $id = $this->createDraft($alice, 'in_progress');
     $this->logIn('Alice');
 
     $reset = $this->call('PUT', "/commish/draft/$id/status", ['status' => 'undrafted']);
     $this->assertSame(200, $reset->getStatusCode(), $reset->getContent());
     $this->assertSame('undrafted', $this->db()->fetchOne('SELECT draft_status FROM draft WHERE draft_id = ?', [$id]));
 
-    $complete = $this->createDraft($alice, 'Finished draft', 'complete');
+    $complete = $this->createDraft($alice, 'complete');
     $locked = $this->call('PUT', "/commish/draft/$complete/status", ['status' => 'undrafted']);
     $this->assertSame(['The draft is completed, therefore its status cannot be changed.'], $this->json($locked)['errors']);
   }
@@ -298,7 +207,7 @@ class CommishTest extends KernelTestCase
   public function testTimers(): void
   {
     $alice = $this->createUser('Alice');
-    $id = $this->createDraft($alice, 'Alice draft');
+    $id = $this->createDraft($alice, 'undrafted', null, ['draft_rounds' => 3]);
     $this->logIn('Alice');
 
     // Nothing saved yet: one blank, dynamic timer per round
@@ -336,7 +245,7 @@ class CommishTest extends KernelTestCase
   public function testSavedTimersShowUnderTheirOwnRounds(): void
   {
     $alice = $this->createUser('Alice');
-    $id = $this->createDraft($alice, 'Alice draft', 'undrafted', ['draft_rounds' => 10]);
+    $id = $this->createDraft($alice, 'undrafted', null, ['draft_rounds' => 10]);
     $this->logIn('Alice');
 
     foreach ([1 => 30, 2 => 45, 5 => 60] as $round => $seconds) {
@@ -352,10 +261,10 @@ class CommishTest extends KernelTestCase
   public function testTimeRemaining(): void
   {
     $alice = $this->createUser('Alice');
-    $setup = $this->createDraft($alice, 'Setting up');
-    $private = $this->createDraft($alice, 'Private draft', 'in_progress', ['draft_password' => 'secret']);
+    $setup = $this->createDraft($alice, 'undrafted');
+    $private = $this->createDraft($alice, 'in_progress', null, ['draft_password' => 'secret']);
     $started = gmdate('Y-m-d H:i:s', time() - 20);
-    $id = $this->createDraft($alice, 'Running draft', 'in_progress', ['draft_start_time' => $started, 'draft_current_round' => 1, 'draft_current_pick' => 1]);
+    $id = $this->createDraft($alice, 'in_progress', null, ['draft_start_time' => $started, 'draft_current_round' => 1, 'draft_current_pick' => 1]);
     $this->db()->insert('managers', ['draft_id' => $id, 'manager_name' => 'One', 'draft_order' => 1]);
     $managerId = (int) $this->db()->lastInsertId();
     $this->db()->insert('players', ['draft_id' => $id, 'manager_id' => $managerId, 'player_round' => 1, 'player_pick' => 1]);

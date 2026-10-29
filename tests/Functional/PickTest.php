@@ -2,106 +2,29 @@
 
 namespace HootDraft\Tests\Functional;
 
-use Doctrine\DBAL\Connection;
 use HootDraft\Domain\Services\DatabaseCacheService;
 use PHPUnit\Framework\Attributes\Group;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /** Public pick reads, search and the depth chart (read and update), against the migrated test DB. */
 #[Group('database')]
-class PickTest extends KernelTestCase
+class PickTest extends CommishDraftTestCase
 {
   private const PASSWORD_HEADER = 'HTTP_X_PHPDRAFT_DRAFTPASSWORD';
   private const EMAIL = 'alice@pick-test.example';
 
-  private array $cookies = [];
-  private array $draftIds = [];
+  /** A draft two picks in: round 2, pick 3 */
+  private const PICKS_MADE = ['draft_current_round' => 2, 'draft_current_pick' => 3, 'draft_counter' => 2];
 
-  protected function setUp(): void
+  protected static function domain(): string
   {
-    self::bootKernel();
-    $this->cookies = [];
-    $this->cleanUp();
-  }
-
-  protected function tearDown(): void
-  {
-    $this->cleanUp();
-    parent::tearDown();
-  }
-
-  private function cleanUp(): void
-  {
-    $ids = $this->db()->fetchFirstColumn("SELECT draft_id FROM draft WHERE commish_id IN (SELECT id FROM users WHERE email LIKE '%@pick-test.example')");
-    foreach ($ids as $id) {
-      $this->db()->executeStatement('DELETE FROM players WHERE draft_id = ?', [$id]);
-      $this->db()->executeStatement('DELETE FROM managers WHERE draft_id = ?', [$id]);
-      $this->db()->executeStatement('DELETE FROM depth_chart_positions WHERE draft_id = ?', [$id]);
-      $this->db()->executeStatement('DELETE FROM draft WHERE draft_id = ?', [$id]);
-    }
-    $this->db()->executeStatement("DELETE FROM users WHERE email LIKE '%@pick-test.example'");
-
-    $cache = static::getContainer()->get(DatabaseCacheService::class);
-    foreach (array_merge($this->draftIds, $ids) as $id) {
-      $cache->DeleteCachedItem("draft$id");
-    }
-    $this->draftIds = [];
-  }
-
-  private function db(): Connection
-  {
-    return static::getContainer()->get(Connection::class);
-  }
-
-  private function createUser(): int
-  {
-    $this->db()->insert('users', [
-      'email' => self::EMAIL, 'password' => 'x', 'salt' => 'x', 'name' => 'Alice',
-      'roles' => 'ROLE_COMMISH', 'enabled' => 1, 'creationTime' => '2020-01-01 00:00:00',
-    ]);
-
-    return (int) $this->db()->lastInsertId();
-  }
-
-  private function createDraft(int $commishId, string $status = 'in_progress', ?string $password = null, int $depthCharts = 0, ?string $endTime = null): int
-  {
-    $this->db()->insert('draft', [
-      'commish_id' => $commishId, 'draft_create_time' => '2024-01-01 12:00:00', 'draft_name' => 'Pick test draft', 'draft_sport' => 'NFL',
-      'draft_status' => $status, 'draft_style' => 'standard', 'draft_rounds' => 2, 'draft_password' => $password,
-      'draft_current_round' => 2, 'draft_current_pick' => 3, 'draft_counter' => 2, 'using_depth_charts' => $depthCharts,
-      'draft_start_time' => '2024-01-01 12:00:00', 'draft_end_time' => $endTime,
-    ]);
-    $id = (int) $this->db()->lastInsertId();
-    $this->draftIds[] = $id;
-
-    return $id;
-  }
-
-  private function createManager(int $draftId, string $name, int $order): int
-  {
-    $this->db()->insert('managers', ['draft_id' => $draftId, 'manager_name' => $name, 'draft_order' => $order]);
-
-    return (int) $this->db()->lastInsertId();
-  }
-
-  private function createPick(int $draftId, int $managerId, int $round, int $pick, ?array $player = null, ?int $counter = null): int
-  {
-    $row = ['draft_id' => $draftId, 'manager_id' => $managerId, 'player_round' => $round, 'player_pick' => $pick];
-    if ($player) {
-      $row += $player + ['pick_time' => '2024-01-01 12:05:00', 'pick_duration' => 300, 'player_counter' => $counter];
-    }
-    $this->db()->insert('players', $row);
-
-    return (int) $this->db()->lastInsertId();
+    return 'pick-test.example';
   }
 
   /** A second, private draft owned by the same commissioner. Returns [draft, manager A, manager B, pick ids]. */
   private function seedPrivateDraft(): array
   {
     $alice = (int) $this->db()->fetchOne('SELECT id FROM users WHERE email = ?', [self::EMAIL]);
-    $draft = $this->createDraft($alice, 'in_progress', 'secret');
+    $draft = $this->createDraft($alice, 'in_progress', 'secret', self::PICKS_MADE);
     $a = $this->createManager($draft, 'Private A', 1);
     $b = $this->createManager($draft, 'Private B', 2);
     $picks = [
@@ -113,10 +36,10 @@ class PickTest extends KernelTestCase
   }
 
   /** Two managers and four picks (round 1: A, B; round 2: B, A); the first two are made. Returns [draft, A, B, pick ids]. */
-  private function seedDraft(string $status = 'in_progress', ?string $password = null, int $depthCharts = 0, ?string $endTime = null): array
+  private function seedMadeDraft(string $status = 'in_progress', ?string $password = null, int $depthCharts = 0, ?string $endTime = null): array
   {
-    $alice = $this->createUser();
-    $draft = $this->createDraft($alice, $status, $password, $depthCharts, $endTime);
+    $alice = $this->createUser('Alice');
+    $draft = $this->createDraft($alice, $status, $password, self::PICKS_MADE + ['using_depth_charts' => $depthCharts, 'draft_end_time' => $endTime]);
     $a = $this->createManager($draft, 'Team A', 1);
     $b = $this->createManager($draft, 'Team B', 2);
     $picks = [
@@ -129,30 +52,9 @@ class PickTest extends KernelTestCase
     return [$draft, $a, $b, $picks];
   }
 
-  private function call(string $method, string $uri, ?array $body = null, array $headers = []): Response
-  {
-    $server = $headers + ['CONTENT_TYPE' => 'application/json', 'HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'];
-    $request = Request::create($uri, $method, [], $this->cookies, [], $server, $body === null ? null : json_encode($body));
-    $response = self::$kernel->handle($request);
-
-    foreach ($response->headers->getCookies() as $cookie) {
-      $this->cookies[$cookie->getName()] = $cookie->getValue();
-    }
-
-    self::$kernel->shutdown();
-    self::bootKernel();
-
-    return $response;
-  }
-
-  private function json(Response $response): mixed
-  {
-    return json_decode($response->getContent(), true);
-  }
-
   public function testPicksAreHiddenUntilTheDraftHasStarted(): void
   {
-    [$draft] = $this->seedDraft('undrafted');
+    [$draft] = $this->seedMadeDraft('undrafted');
 
     $response = $this->call('GET', "/draft/$draft/picks");
 
@@ -162,7 +64,7 @@ class PickTest extends KernelTestCase
 
   public function testPrivateDraftNeedsThePasswordHeader(): void
   {
-    [$draft] = $this->seedDraft('in_progress', 'secret');
+    [$draft] = $this->seedMadeDraft('in_progress', 'secret');
 
     $blocked = $this->call('GET', "/draft/$draft/picks/last");
     $this->assertSame(400, $blocked->getStatusCode());
@@ -174,7 +76,7 @@ class PickTest extends KernelTestCase
 
   public function testGetAllGroupsPicksByRound(): void
   {
-    [$draft] = $this->seedDraft();
+    [$draft] = $this->seedMadeDraft();
 
     $response = $this->call('GET', "/draft/$draft/picks");
     $this->assertSame(200, $response->getStatusCode(), $response->getContent());
@@ -192,7 +94,7 @@ class PickTest extends KernelTestCase
 
   public function testLastAndNextPicks(): void
   {
-    [$draft] = $this->seedDraft();
+    [$draft] = $this->seedMadeDraft();
 
     $last = $this->json($this->call('GET', "/draft/$draft/picks/last"));
     $this->assertSame(['Julio', 'Antonio'], array_column($last, 'first_name'));
@@ -214,7 +116,7 @@ class PickTest extends KernelTestCase
 
   public function testUpdatedPicksOnlyWhenTheCounterIsBehind(): void
   {
-    [$draft] = $this->seedDraft();
+    [$draft] = $this->seedMadeDraft();
 
     $behind = $this->json($this->call('GET', "/draft/$draft/picks/updated?pick_counter=1"));
     $this->assertTrue($behind['success'], json_encode($behind));
@@ -231,7 +133,7 @@ class PickTest extends KernelTestCase
 
   public function testManagerAndRoundPicks(): void
   {
-    [$draft, $a, $b] = $this->seedDraft();
+    [$draft, $a, $b] = $this->seedMadeDraft();
 
     $all = $this->json($this->call('GET', "/draft/$draft/manager/$a/picks/all"));
     $this->assertSame([1, 4], array_column($all, 'player_pick'));
@@ -251,7 +153,7 @@ class PickTest extends KernelTestCase
 
   public function testManagerRoutesDoNotLeakPicksFromAnotherDraft(): void
   {
-    [$draft] = $this->seedDraft();
+    [$draft] = $this->seedMadeDraft();
     [$private, $privateManager, , $privatePicks] = $this->seedPrivateDraft();
 
     foreach (['picks/all', 'picks/selected'] as $route) {
@@ -269,7 +171,7 @@ class PickTest extends KernelTestCase
 
   public function testSearchFindsMadePicksByNameTeamAndPosition(): void
   {
-    [$draft] = $this->seedDraft();
+    [$draft] = $this->seedMadeDraft();
 
     $loose = $this->json($this->call('GET', "/draft/$draft/picks/search?keywords=Bro"));
     $this->assertSame(['Antonio'], array_column($loose['player_results'], 'first_name'));
@@ -288,7 +190,7 @@ class PickTest extends KernelTestCase
 
   public function testSearchSplitsAFullNameWhenNothingElseMatches(): void
   {
-    [$draft] = $this->seedDraft();
+    [$draft] = $this->seedMadeDraft();
 
     $result = $this->json($this->call('GET', "/draft/$draft/picks/search?keywords=" . urlencode('Antonio Brown')));
 
@@ -297,7 +199,7 @@ class PickTest extends KernelTestCase
 
   public function testSearchKeepsTheStrictResultsWhenThereAreSome(): void
   {
-    [$draft] = $this->seedDraft();
+    [$draft] = $this->seedMadeDraft();
 
     $result = $this->json($this->call('GET', "/draft/$draft/picks/search?keywords=Brown"));
 
@@ -308,7 +210,7 @@ class PickTest extends KernelTestCase
 
   public function testSplitSearchHonorsTeamAndPosition(): void
   {
-    [$draft, $a, $b] = $this->seedDraft();
+    [$draft, $a, $b] = $this->seedMadeDraft();
     // Names too short for the full-text index, so only the split search can find them
     $this->createPick($draft, $a, 3, 5, ['first_name' => 'Al', 'last_name' => 'Be', 'team' => 'PIT', 'position' => 'RB'], 3);
     $this->createPick($draft, $b, 3, 6, ['first_name' => 'Al', 'last_name' => 'Xu', 'team' => 'ATL', 'position' => 'WR'], 4);
@@ -328,7 +230,7 @@ class PickTest extends KernelTestCase
 
   public function testManagerDepthChartGroupsPicksByPosition(): void
   {
-    [$draft, $a, , $picks] = $this->seedDraft('in_progress', null, 1);
+    [$draft, $a, , $picks] = $this->seedMadeDraft('in_progress', null, 1);
     $this->db()->insert('depth_chart_positions', ['draft_id' => $draft, 'position' => 'WR', 'slots' => 2, 'display_order' => 1]);
     $position = (int) $this->db()->lastInsertId();
     $this->db()->update('players', ['depth_chart_position_id' => $position], ['player_id' => $picks[0]]);
@@ -347,7 +249,7 @@ class PickTest extends KernelTestCase
 
   public function testManagerDepthChartRequiresADraftThatUsesThem(): void
   {
-    [$draft, $a] = $this->seedDraft();
+    [$draft, $a] = $this->seedMadeDraft();
 
     $response = $this->call('GET', "/draft/$draft/manager/$a/depth_chart");
 
@@ -357,7 +259,7 @@ class PickTest extends KernelTestCase
 
   public function testUpdateDepthChartAssignsAPosition(): void
   {
-    [$draft, , , $picks] = $this->seedDraft('in_progress', null, 1);
+    [$draft, , , $picks] = $this->seedMadeDraft('in_progress', null, 1);
     $this->db()->insert('depth_chart_positions', ['draft_id' => $draft, 'position' => 'WR', 'slots' => 2, 'display_order' => 1]);
     $position = (int) $this->db()->lastInsertId();
 
@@ -376,9 +278,9 @@ class PickTest extends KernelTestCase
 
   public function testUpdateDepthChartRejectsAPickFromAnotherDraftOrAMissingPick(): void
   {
-    [$draft] = $this->seedDraft('in_progress', null, 1);
+    [$draft] = $this->seedMadeDraft('in_progress', null, 1);
     $position = $this->createPosition($draft);
-    $other = $this->createDraft((int) $this->db()->fetchOne("SELECT id FROM users WHERE email = ?", [self::EMAIL]));
+    $other = $this->createDraft((int) $this->db()->fetchOne("SELECT id FROM users WHERE email = ?", [self::EMAIL]), 'in_progress', null, self::PICKS_MADE);
     $foreign = $this->createPick($other, $this->createManager($other, 'Other', 1), 1, 1);
 
     $mismatch = $this->call('PUT', "/draft/$draft/pick/$foreign/depth_chart/$position");
@@ -393,13 +295,13 @@ class PickTest extends KernelTestCase
 
   public function testUpdateDepthChartStopsTenMinutesAfterTheDraftEnds(): void
   {
-    [$recent, , , $recentPicks] = $this->seedDraft('complete', null, 1, gmdate('Y-m-d H:i:s', time() - 60));
+    [$recent, , , $recentPicks] = $this->seedMadeDraft('complete', null, 1, gmdate('Y-m-d H:i:s', time() - 60));
     $position = $this->createPosition($recent);
     $this->assertSame(200, $this->call('PUT', "/draft/$recent/pick/{$recentPicks[0]}/depth_chart/$position")->getStatusCode());
 
     $this->cleanUp();
 
-    [$old, , , $oldPicks] = $this->seedDraft('complete', null, 1, gmdate('Y-m-d H:i:s', time() - 3600));
+    [$old, , , $oldPicks] = $this->seedMadeDraft('complete', null, 1, gmdate('Y-m-d H:i:s', time() - 3600));
     $late = $this->call('PUT', "/draft/$old/pick/{$oldPicks[0]}/depth_chart/1");
     $this->assertSame(400, $late->getStatusCode());
     $this->assertFalse($this->json($late)[0]['success']);
@@ -407,9 +309,9 @@ class PickTest extends KernelTestCase
 
   public function testUpdateDepthChartRejectsAPositionThatIsNotTheDraftsOwn(): void
   {
-    [$draft, , , $picks] = $this->seedDraft('in_progress', null, 1);
+    [$draft, , , $picks] = $this->seedMadeDraft('in_progress', null, 1);
     $this->createPosition($draft);
-    $other = $this->createDraft((int) $this->db()->fetchOne("SELECT id FROM users WHERE email = ?", [self::EMAIL]), 'in_progress', null, 1);
+    $other = $this->createDraft((int) $this->db()->fetchOne("SELECT id FROM users WHERE email = ?", [self::EMAIL]), 'in_progress', null, self::PICKS_MADE + ['using_depth_charts' => 1]);
     $foreignPosition = $this->createPosition($other);
 
     foreach ([$foreignPosition, 999999999] as $badPosition) {
@@ -424,7 +326,7 @@ class PickTest extends KernelTestCase
 
   public function testUpdateDepthChartRejectsADraftWithoutDepthCharts(): void
   {
-    [$draft, , , $picks] = $this->seedDraft();
+    [$draft, , , $picks] = $this->seedMadeDraft();
 
     $response = $this->call('PUT', "/draft/$draft/pick/{$picks[0]}/depth_chart/5");
 
@@ -434,7 +336,7 @@ class PickTest extends KernelTestCase
 
   public function testUpdateDepthChartWithPositionZeroUnassignsThePick(): void
   {
-    [$draft, , , $picks] = $this->seedDraft('in_progress', null, 1);
+    [$draft, , , $picks] = $this->seedMadeDraft('in_progress', null, 1);
     $position = $this->createPosition($draft);
     $this->db()->update('players', ['depth_chart_position_id' => $position], ['player_id' => $picks[0]]);
 
@@ -446,7 +348,7 @@ class PickTest extends KernelTestCase
 
   public function testNonGetRequestsNeedTheRequestedWithHeader(): void
   {
-    [$draft, , , $picks] = $this->seedDraft();
+    [$draft, , , $picks] = $this->seedMadeDraft();
 
     $response = $this->call('PUT', "/draft/$draft/pick/{$picks[0]}/depth_chart/1", null, ['HTTP_X_REQUESTED_WITH' => '']);
 

@@ -2,111 +2,17 @@
 
 namespace HootDraft\Tests\Functional;
 
-use Doctrine\DBAL\Connection;
-use HootDraft\Domain\Services\DatabaseCacheService;
 use PHPUnit\Framework\Attributes\Group;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\MessageDigestPasswordHasher;
 
 /** Public manager list, commissioner manager CRUD and the depth chart position lookup, against the migrated test DB. */
 #[Group('database')]
-class ManagerTest extends KernelTestCase
+class ManagerTest extends CommishDraftTestCase
 {
-  private const SALT = 'Zm9vYmFyYmF6cXV4';
-  private const PASSWORD = 'correct horse';
   private const PASSWORD_HEADER = 'HTTP_X_PHPDRAFT_DRAFTPASSWORD';
 
-  private array $cookies = [];
-  private array $draftIds = [];
-
-  protected function setUp(): void
+  protected static function domain(): string
   {
-    self::bootKernel();
-    $this->cookies = [];
-    $this->cleanUp();
-  }
-
-  protected function tearDown(): void
-  {
-    $this->cleanUp();
-    parent::tearDown();
-  }
-
-  private function cleanUp(): void
-  {
-    $this->db()->executeStatement("DELETE FROM draft WHERE commish_id IN (SELECT id FROM users WHERE email LIKE '%@manager-test.example')");
-    $this->db()->executeStatement("DELETE FROM users WHERE email LIKE '%@manager-test.example'");
-
-    $cache = static::getContainer()->get(DatabaseCacheService::class);
-    foreach ($this->draftIds as $id) {
-      $cache->DeleteCachedItem("draft$id");
-    }
-    $this->draftIds = [];
-  }
-
-  private function db(): Connection
-  {
-    return static::getContainer()->get(Connection::class);
-  }
-
-  private function createUser(string $name, string $roles = 'ROLE_COMMISH'): int
-  {
-    $hash = (new MessageDigestPasswordHasher('sha512', true, 5000))->hash(self::PASSWORD, self::SALT);
-    $this->db()->insert('users', [
-      'email' => strtolower($name) . '@manager-test.example', 'password' => $hash, 'salt' => self::SALT, 'name' => $name,
-      'roles' => $roles, 'enabled' => 1, 'creationTime' => '2020-01-01 00:00:00',
-    ]);
-
-    return (int) $this->db()->lastInsertId();
-  }
-
-  private function createDraft(int $commishId, string $name, string $status = 'undrafted', ?string $password = null): int
-  {
-    $this->db()->insert('draft', [
-      'commish_id' => $commishId, 'draft_create_time' => '2024-01-01 12:00:00', 'draft_name' => $name, 'draft_sport' => 'NFL',
-      'draft_status' => $status, 'draft_style' => 'serpentine', 'draft_rounds' => 10, 'draft_password' => $password,
-    ]);
-    $id = (int) $this->db()->lastInsertId();
-    $this->draftIds[] = $id;
-
-    return $id;
-  }
-
-  private function createManager(int $draftId, string $name, int $order): int
-  {
-    $this->db()->insert('managers', ['draft_id' => $draftId, 'manager_name' => $name, 'draft_order' => $order]);
-
-    return (int) $this->db()->lastInsertId();
-  }
-
-  private function call(string $method, string $uri, ?array $body = null, array $headers = []): Response
-  {
-    $server = $headers + ['CONTENT_TYPE' => 'application/json', 'HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'];
-    $request = Request::create($uri, $method, [], $this->cookies, [], $server, $body === null ? null : json_encode($body));
-    $response = self::$kernel->handle($request);
-
-    foreach ($response->headers->getCookies() as $cookie) {
-      $this->cookies[$cookie->getName()] = $cookie->getValue();
-    }
-
-    self::$kernel->shutdown();
-    self::bootKernel();
-
-    return $response;
-  }
-
-  private function logIn(string $name): void
-  {
-    $this->cookies = [];
-    $response = $this->call('POST', '/login', ['_email' => strtolower($name) . '@manager-test.example', '_password' => self::PASSWORD]);
-    $this->assertSame(200, $response->getStatusCode(), $response->getContent());
-  }
-
-  private function json(Response $response): mixed
-  {
-    return json_decode($response->getContent(), true);
+    return 'manager-test.example';
   }
 
   private function names(int $draftId): array
@@ -117,10 +23,10 @@ class ManagerTest extends KernelTestCase
   public function testPublicManagerListIsOrderedAndRespectsPrivateDrafts(): void
   {
     $alice = $this->createUser('Alice');
-    $open = $this->createDraft($alice, 'Open draft');
+    $open = $this->createDraft($alice, 'undrafted');
     $this->createManager($open, 'Second', 2);
     $this->createManager($open, 'First', 1);
-    $private = $this->createDraft($alice, 'Private draft', 'undrafted', 'secret');
+    $private = $this->createDraft($alice, 'undrafted', 'secret');
     $this->createManager($private, 'Hidden', 1);
 
     $managers = $this->json($this->call('GET', "/draft/$open/managers"));
@@ -139,11 +45,11 @@ class ManagerTest extends KernelTestCase
   {
     $alice = $this->createUser('Alice');
     $this->createUser('Bob');
-    $id = $this->createDraft($alice, 'Alice draft');
+    $id = $this->createDraft($alice, 'undrafted');
 
     $this->assertSame(401, $this->call('GET', "/commish/draft/$id/managers")->getStatusCode());
 
-    $this->logIn('Bob');
+    $this->logInSuccessfully('Bob');
     $denied = $this->call('POST', "/commish/draft/$id/manager", ['manager_name' => 'Intruder']);
     $this->assertSame(400, $denied->getStatusCode());
     $this->assertSame([['success' => false, 'errors' => ['You do not have permission to this draft.']]], $this->json($denied));
@@ -153,8 +59,8 @@ class ManagerTest extends KernelTestCase
   public function testCreateManager(): void
   {
     $alice = $this->createUser('Alice');
-    $id = $this->createDraft($alice, 'Alice draft');
-    $this->logIn('Alice');
+    $id = $this->createDraft($alice, 'undrafted');
+    $this->logInSuccessfully('Alice');
 
     $created = $this->call('POST', "/commish/draft/$id/manager", ['manager_name' => 'Zed']);
     $this->assertSame(201, $created->getStatusCode(), $created->getContent());
@@ -180,8 +86,8 @@ class ManagerTest extends KernelTestCase
   public function testCreateManyReorderUpdateAndDelete(): void
   {
     $alice = $this->createUser('Alice');
-    $id = $this->createDraft($alice, 'Alice draft');
-    $this->logIn('Alice');
+    $id = $this->createDraft($alice, 'undrafted');
+    $this->logInSuccessfully('Alice');
 
     $created = $this->call('POST', "/commish/draft/$id/managers", ['managers' => [['manager_name' => 'A'], ['manager_name' => 'B'], ['manager_name' => 'C']]]);
     $this->assertSame(201, $created->getStatusCode(), $created->getContent());
@@ -212,10 +118,10 @@ class ManagerTest extends KernelTestCase
   public function testUpdateAndDeleteRefuseAManagerFromAnotherDraft(): void
   {
     $alice = $this->createUser('Alice');
-    $mine = $this->createDraft($alice, 'Mine');
-    $other = $this->createDraft($alice, 'Other');
+    $mine = $this->createDraft($alice, 'undrafted');
+    $other = $this->createDraft($alice, 'undrafted');
     $foreign = $this->createManager($other, 'Foreign', 1);
-    $this->logIn('Alice');
+    $this->logInSuccessfully('Alice');
 
     $delete = $this->call('DELETE', "/commish/draft/$mine/manager/$foreign");
     $this->assertSame(400, $delete->getStatusCode());
@@ -232,9 +138,9 @@ class ManagerTest extends KernelTestCase
   public function testManagerChangesAreBlockedOnceTheDraftIsComplete(): void
   {
     $alice = $this->createUser('Alice');
-    $done = $this->createDraft($alice, 'Done', 'complete');
+    $done = $this->createDraft($alice, 'complete');
     $manager = $this->createManager($done, 'Locked in', 1);
-    $this->logIn('Alice');
+    $this->logInSuccessfully('Alice');
 
     $blocked = $this->call('POST', "/commish/draft/$done/manager", ['manager_name' => 'Late']);
     $this->assertSame(400, $blocked->getStatusCode());
@@ -249,9 +155,9 @@ class ManagerTest extends KernelTestCase
   public function testWildcardCharactersInANameAreNotMatchedAgainstOtherNames(): void
   {
     $alice = $this->createUser('Alice');
-    $id = $this->createDraft($alice, 'Alice draft');
+    $id = $this->createDraft($alice, 'undrafted');
     $this->createManager($id, 'Bob', 1);
-    $this->logIn('Alice');
+    $this->logInSuccessfully('Alice');
 
     foreach (['%', 'B_b', 'B%'] as $name) {
       $created = $this->call('POST', "/commish/draft/$id/manager", ['manager_name' => $name]);
@@ -265,8 +171,8 @@ class ManagerTest extends KernelTestCase
   public function testCreateManyRejectsEmptyMalformedAndCaseInsensitiveDuplicateLists(): void
   {
     $alice = $this->createUser('Alice');
-    $id = $this->createDraft($alice, 'Alice draft');
-    $this->logIn('Alice');
+    $id = $this->createDraft($alice, 'undrafted');
+    $this->logInSuccessfully('Alice');
 
     foreach ([[], ['managers' => []], ['managers' => 'Bob'], ['managers' => ['Bob']]] as $body) {
       $response = $this->call('POST', "/commish/draft/$id/managers", $body);
@@ -282,10 +188,10 @@ class ManagerTest extends KernelTestCase
   public function testReorderRejectsTheSameManagerTwice(): void
   {
     $alice = $this->createUser('Alice');
-    $id = $this->createDraft($alice, 'Alice draft');
+    $id = $this->createDraft($alice, 'undrafted');
     $first = $this->createManager($id, 'First', 1);
     $this->createManager($id, 'Second', 2);
-    $this->logIn('Alice');
+    $this->logInSuccessfully('Alice');
 
     $response = $this->call('PUT', "/commish/draft/$id/managers/reorder", ['ordered_manager_ids' => [$first, $first]]);
 
@@ -296,9 +202,9 @@ class ManagerTest extends KernelTestCase
   public function testUpdateAcceptsEitherNameKey(): void
   {
     $alice = $this->createUser('Alice');
-    $id = $this->createDraft($alice, 'Alice draft');
+    $id = $this->createDraft($alice, 'undrafted');
     $manager = $this->createManager($id, 'First', 1);
-    $this->logIn('Alice');
+    $this->logInSuccessfully('Alice');
 
     $this->assertSame(200, $this->call('PUT', "/commish/draft/$id/manager/$manager", ['manager_name' => 'Renamed'])->getStatusCode());
     $this->assertSame(['Renamed'], $this->names($id));
@@ -310,11 +216,11 @@ class ManagerTest extends KernelTestCase
   public function testTheTwentyManagerLimitHoldsAtTheDatabase(): void
   {
     $alice = $this->createUser('Alice');
-    $id = $this->createDraft($alice, 'Full');
+    $id = $this->createDraft($alice, 'undrafted');
     for ($i = 1; $i <= 19; $i++) {
       $this->createManager($id, "M$i", $i);
     }
-    $this->logIn('Alice');
+    $this->logInSuccessfully('Alice');
 
     $this->assertSame(201, $this->call('POST', "/commish/draft/$id/manager", ['manager_name' => 'Twentieth'])->getStatusCode());
     $over = $this->call('POST', "/commish/draft/$id/manager", ['manager_name' => 'Twenty-first']);
@@ -328,7 +234,7 @@ class ManagerTest extends KernelTestCase
 
     $this->assertSame(401, $this->call('GET', '/commish/depthchartposition/positions?draft_sport=NFL')->getStatusCode());
 
-    $this->logIn('Alice');
+    $this->logInSuccessfully('Alice');
     $ok = $this->json($this->call('GET', '/commish/depthchartposition/positions?draft_sport=NFL'));
     $this->assertTrue($ok['success']);
     $this->assertSame('Quarterback', $ok['positions']['QB']);

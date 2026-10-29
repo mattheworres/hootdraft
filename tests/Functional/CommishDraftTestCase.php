@@ -21,7 +21,10 @@ abstract class CommishDraftTestCase extends KernelTestCase
   /** The domain every user this test creates uses, e.g. 'pick-ops-test.example' */
   abstract protected static function domain(): string;
 
-  private array $cookies = [];
+  /** Set by a subclass that inspects services of the kernel a call ran on, e.g. the captured emails */
+  protected bool $keepKernelBetweenCalls = false;
+
+  protected array $cookies = [];
   private array $draftIds = [];
 
   protected function setUp(): void
@@ -37,11 +40,13 @@ abstract class CommishDraftTestCase extends KernelTestCase
     parent::tearDown();
   }
 
-  private function cleanUp(): void
+  protected function cleanUp(): void
   {
     $domain = static::domain();
     $ids = $this->db()->fetchFirstColumn("SELECT draft_id FROM draft WHERE commish_id IN (SELECT id FROM users WHERE email LIKE '%@$domain')");
     foreach ($ids as $id) {
+      $this->db()->executeStatement('DELETE FROM round_times WHERE draft_id = ?', [$id]);
+      $this->db()->executeStatement('DELETE FROM depth_chart_positions WHERE draft_id = ?', [$id]);
       $this->db()->executeStatement('DELETE FROM trade_assets WHERE trade_id IN (SELECT trade_id FROM trades WHERE draft_id = ?)', [$id]);
       $this->db()->executeStatement('DELETE FROM trades WHERE draft_id = ?', [$id]);
       $this->db()->executeStatement('DELETE FROM draft_stats WHERE draft_id = ?', [$id]);
@@ -74,9 +79,10 @@ abstract class CommishDraftTestCase extends KernelTestCase
     return (int) $this->db()->lastInsertId();
   }
 
-  protected function createDraft(int $commishId, string $status = 'in_progress', ?string $password = null): int
+  /** $extra overrides any column of the default row, e.g. ['draft_name' => 'Open draft', 'draft_rounds' => 10] */
+  protected function createDraft(int $commishId, string $status = 'in_progress', ?string $password = null, array $extra = []): int
   {
-    $this->db()->insert('draft', [
+    $this->db()->insert('draft', $extra + [
       'commish_id' => $commishId, 'draft_create_time' => '2024-01-01 12:00:00', 'draft_name' => 'Commish ops draft', 'draft_sport' => 'NFL',
       'draft_status' => $status, 'draft_style' => 'standard', 'draft_rounds' => 2, 'draft_password' => $password,
       'draft_current_round' => 1, 'draft_current_pick' => 1, 'draft_counter' => 0,
@@ -126,9 +132,9 @@ abstract class CommishDraftTestCase extends KernelTestCase
     return [$draft, $a, $b, $picks];
   }
 
-  protected function call(string $method, string $uri, ?array $body = null): Response
+  protected function call(string $method, string $uri, ?array $body = null, array $headers = []): Response
   {
-    $server = ['CONTENT_TYPE' => 'application/json', 'HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'];
+    $server = $headers + ['CONTENT_TYPE' => 'application/json', 'HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'];
     $request = Request::create($uri, $method, [], $this->cookies, [], $server, $body === null ? null : json_encode($body));
     $response = self::$kernel->handle($request);
 
@@ -140,8 +146,10 @@ abstract class CommishDraftTestCase extends KernelTestCase
       }
     }
 
-    self::$kernel->shutdown();
-    self::bootKernel();
+    if (!$this->keepKernelBetweenCalls) {
+      self::$kernel->shutdown();
+      self::bootKernel();
+    }
 
     return $response;
   }
@@ -159,11 +167,18 @@ abstract class CommishDraftTestCase extends KernelTestCase
     return $response;
   }
 
-  protected function logIn(string $name): Response
+  protected function logIn(string $name, string $password = self::PASSWORD): Response
   {
     $this->cookies = [];
 
-    return $this->call('POST', '/login', ['_email' => strtolower($name) . '@' . static::domain(), '_password' => self::PASSWORD]);
+    return $this->call('POST', '/login', ['_email' => strtolower($name) . '@' . static::domain(), '_password' => $password]);
+  }
+
+  /** logIn() for tests that need a session, failing with the login response when it is refused */
+  protected function logInSuccessfully(string $name): void
+  {
+    $response = $this->logIn($name);
+    $this->assertSame(200, $response->getStatusCode(), $response->getContent());
   }
 
   protected function json(Response $response): mixed
