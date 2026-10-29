@@ -1,6 +1,6 @@
 # Route inventory (old Silex router)
 
-Generated from `old-api/config/_router.php`. URLs must stay identical in the Symfony port (step 4); this is the
+Generated from the old Silex router (`old-api/config/_router.php`, deleted in 4.7). URLs must stay identical in the Symfony port (step 4); this is the
 porting checklist. Tick a row when the route is ported **and** its checks/firewall are wired.
 
 Checks are the old `->before()` closures from `_middlewares.php`; they become `RouteCheck` services referenced

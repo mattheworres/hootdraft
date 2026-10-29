@@ -57,7 +57,7 @@ task('phpdraft:verify_install', function() {
 desc('Upload app files');
 task('phpdraft:upload_files', function() {
   // Directories are uploaded as their contents (trailing slash), files one by one.
-  // Only what the running app needs: no tests/, docs/, docker/, old-api/ or node_modules.
+  // Only what the running app needs: no tests/, docs/, docker/ or node_modules.
   $phpdraft_dirs = [
     'api',
     'bin',

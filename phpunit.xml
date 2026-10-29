@@ -18,7 +18,5 @@
         <testsuite name="Functional">
             <directory>tests/Functional</directory>
         </testsuite>
-        <!-- tests/legacy holds the Silex-era tests. They target classes that are still in old-api/ and
-             get ported (namespace, constructors, PHPUnit 13 syntax) alongside their classes in step 4. -->
     </testsuites>
 </phpunit>

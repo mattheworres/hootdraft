@@ -25,27 +25,6 @@ class ManagerRepository {
     return $manager;
   }
 
-  // TODO: This runs the same query as GetManagersByDraftOrder, so it may be unused once the rest of the code is
-  // ported - revisit then and have the public controller call GetManagersByDraftOrder instead.
-  public function GetPublicManagers($draft_id) {
-    $managers = array();
-
-    $managers_stmt = $this->pdo->prepare("SELECT * FROM managers WHERE draft_id = ? ORDER BY draft_order");
-    $managers_stmt->setFetchMode(\PDO::FETCH_CLASS, Manager::class);
-
-    $managers_stmt->bindParam(1, $draft_id);
-
-    if (!$managers_stmt->execute()) {
-      throw new \Exception("Unable to load managers for draft #$draft_id");
-    }
-
-    while ($manager = $managers_stmt->fetch()) {
-      $managers[] = $manager;
-    }
-
-    return $managers;
-  }
-
   public function GetManagersByDraftOrder($draft_id, $descending = false) {
     $managers = array();
 
@@ -70,8 +49,6 @@ class ManagerRepository {
     return $managers;
   }
 
-  // TODO: Nothing calls this yet (the old DraftValidator::IsDraftStatusValid did, and isn't ported). It may be
-  // unused once the rest of the code is ported - revisit then and remove it if so.
   //Ensure a draft has the minimum number of managers - 2
   public function DraftHasManagers($draft_id) {
     $manager_stmt = $this->pdo->prepare("SELECT manager_name FROM managers WHERE draft_id = ?");
@@ -220,8 +197,6 @@ class ManagerRepository {
     return;
   }
 
-  // TODO: Nothing calls this yet (the old DraftService did, and isn't ported). It may be unused once the rest of
-  // the code is ported - revisit then and remove it if so.
   public function DeleteAllManagers($draft_id) {
     $delete_stmt = $this->pdo->prepare("DELETE FROM managers WHERE draft_id = ?");
     $delete_stmt->bindParam(1, $draft_id);

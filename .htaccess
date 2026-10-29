@@ -21,7 +21,7 @@
     RewriteEngine on
 
     # Source, config and dependency directories are never reachable (403)
-    RewriteRule ^(vendor|src|config|var|db|tests|old-api|docker|deploy|docs|bin|node_modules)(/|$) - [F,L,NC]
+    RewriteRule ^(vendor|src|config|var|db|tests|docker|deploy|docs|bin|node_modules)(/|$) - [F,L,NC]
 
     # redirect all api calls to the Symfony front controller, /api/index.php
     RewriteRule ^api(/.*)?$ api/index.php [L,NC]

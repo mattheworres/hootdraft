@@ -19,10 +19,4 @@ docker/.env
 .env.local
 .env.*.local
 var
-# Legacy Silex settings & runtime output (kept ignored until old-api/ is deleted)
-appsettings.php
-appsettings.php.local
-appsettings.php.staging
-old-api/config/logs
-old-api/config/security_cache
 .vagrant/*
