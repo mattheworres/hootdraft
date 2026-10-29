@@ -52,7 +52,7 @@ I was thinking you'd say that...
 
 ## Minimum Server Requirements
 - PHP 8.4+ installed (with the `pdo_mysql`, `ctype` and `iconv` extensions). **Note:** the API is mid-rewrite to Symfony; see PHP8Rewrite.md
-- MariaDB 12 (what the developer box runs) or a compatible MySQL database
+- MariaDB 12.3 (what the developer box runs), or MySQL 8.4 or 9. See docs/adr/0002-supported-databases.md
 - Webserver that can perform URL rewrites (Apache, IIS, or NGINX currently, possibly more in the future)
 - SMTP mail account (for user registration/password resets)
 - Google reCAPTCHA 2 site key (public and private - used to verify new user registration)

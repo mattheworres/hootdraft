@@ -1,0 +1,1196 @@
+{
+    "phase": "innodb",
+    "sql_mode": "baseline",
+    "version": "8.4.13",
+    "sizes": {
+        "players": {
+            "t": "players",
+            "ENGINE": "InnoDB",
+            "approx_rows": 497236,
+            "data_bytes": 44646400,
+            "index_bytes": 45694976
+        },
+        "pro_players": {
+            "t": "pro_players",
+            "ENGINE": "InnoDB",
+            "approx_rows": 997979,
+            "data_bytes": 64569344,
+            "index_bytes": 35749888
+        }
+    },
+    "queries": [
+        {
+            "id": "autocomplete.prefix2.big",
+            "class": "big",
+            "kind": "autocomplete",
+            "cold_ms": 7.842,
+            "cold_order": 0,
+            "iterations": 983,
+            "p50_ms": 1.508,
+            "p95_ms": 1.707,
+            "p99_ms": 1.996,
+            "mean_ms": 1.526,
+            "ids": [
+                91,
+                281,
+                1406,
+                1720,
+                1790,
+                2242,
+                2335,
+                2790,
+                2851,
+                2886,
+                2900,
+                2982,
+                3233,
+                3392,
+                3661
+            ],
+            "total_matches": 4986,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (first_name LIKE :t1 OR last_name LIKE :t2) LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 498989,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "autocomplete.prefix3.big",
+            "class": "big",
+            "kind": "autocomplete",
+            "cold_ms": 1.879,
+            "cold_order": 1,
+            "iterations": 914,
+            "p50_ms": 1.597,
+            "p95_ms": 1.992,
+            "p99_ms": 2.153,
+            "mean_ms": 1.642,
+            "ids": [
+                191,
+                854,
+                1047,
+                1227,
+                1258,
+                1663,
+                1668,
+                2057,
+                2147,
+                2809,
+                2932,
+                3284,
+                3447,
+                3553,
+                3865
+            ],
+            "total_matches": 4211,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (first_name LIKE :t1 OR last_name LIKE :t2) LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 498989,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "autocomplete.common_substring.big",
+            "class": "big",
+            "kind": "autocomplete",
+            "cold_ms": 0.462,
+            "cold_order": 2,
+            "iterations": 1500,
+            "p50_ms": 0.326,
+            "p95_ms": 0.419,
+            "p99_ms": 0.488,
+            "mean_ms": 0.336,
+            "ids": [
+                33,
+                70,
+                103,
+                135,
+                138,
+                160,
+                191,
+                232,
+                279,
+                291,
+                329,
+                404,
+                426,
+                444,
+                471
+            ],
+            "total_matches": 25577,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (first_name LIKE :t1 OR last_name LIKE :t2) LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 498989,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "autocomplete.very_common.big",
+            "class": "big",
+            "kind": "autocomplete",
+            "cold_ms": 0.271,
+            "cold_order": 3,
+            "iterations": 1500,
+            "p50_ms": 0.188,
+            "p95_ms": 0.232,
+            "p99_ms": 0.257,
+            "mean_ms": 0.191,
+            "ids": [
+                1,
+                15,
+                31,
+                49,
+                65,
+                69,
+                88,
+                97,
+                99,
+                101,
+                103,
+                109,
+                117,
+                119,
+                127
+            ],
+            "total_matches": 112136,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (first_name LIKE :t1 OR last_name LIKE :t2) LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 498989,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "autocomplete.rare.big",
+            "class": "big",
+            "kind": "autocomplete",
+            "cold_ms": 31.547,
+            "cold_order": 4,
+            "iterations": 67,
+            "p50_ms": 22.282,
+            "p95_ms": 24.747,
+            "p99_ms": 27.017,
+            "mean_ms": 22.514,
+            "ids": [
+                206,
+                423,
+                1484,
+                7089,
+                9673,
+                20091,
+                24259,
+                24468,
+                24816,
+                26991,
+                36313,
+                47682,
+                51635,
+                52163,
+                60107
+            ],
+            "total_matches": 196,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (first_name LIKE :t1 OR last_name LIKE :t2) LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 498989,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "autocomplete.no_match.big",
+            "class": "big",
+            "kind": "autocomplete",
+            "cold_ms": 403.438,
+            "cold_order": 5,
+            "iterations": 5,
+            "p50_ms": 378.714,
+            "p95_ms": 442.647,
+            "p99_ms": 442.647,
+            "mean_ms": 392,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (first_name LIKE :t1 OR last_name LIKE :t2) LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 498989,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "autocomplete.multiword.big",
+            "class": "big",
+            "kind": "autocomplete",
+            "cold_ms": 781.731,
+            "cold_order": 6,
+            "iterations": 5,
+            "p50_ms": 742.127,
+            "p95_ms": 773.462,
+            "p99_ms": 773.462,
+            "mean_ms": 746.688,
+            "ids": [
+                16,
+                57486,
+                428618
+            ],
+            "total_matches": 3,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (first_name LIKE :t1 OR last_name LIKE :t2) LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 498989,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "assumed_name.common.big",
+            "class": "big",
+            "kind": "assumed_name",
+            "cold_ms": 18.409,
+            "cold_order": 7,
+            "iterations": 80,
+            "p50_ms": 18.536,
+            "p95_ms": 22.036,
+            "p99_ms": 23.084,
+            "mean_ms": 18.831,
+            "ids": [
+                5902,
+                13868,
+                14086,
+                18183,
+                18362,
+                19700,
+                38381,
+                39410,
+                40687,
+                41672,
+                44483,
+                47858,
+                51418,
+                52517,
+                53176
+            ],
+            "total_matches": 218,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND first_name LIKE :first_name AND last_name LIKE :last_name LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 498989,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "assumed_name.no_match.big",
+            "class": "big",
+            "kind": "assumed_name",
+            "cold_ms": 344.658,
+            "cold_order": 8,
+            "iterations": 5,
+            "p50_ms": 348.685,
+            "p95_ms": 353.47,
+            "p99_ms": 353.47,
+            "mean_ms": 348.963,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND first_name LIKE :first_name AND last_name LIKE :last_name LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 498989,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "manual.last.big",
+            "class": "big",
+            "kind": "manual",
+            "cold_ms": 0.894,
+            "cold_order": 9,
+            "iterations": 1500,
+            "p50_ms": 0.5,
+            "p95_ms": 0.614,
+            "p99_ms": 0.697,
+            "mean_ms": 0.511,
+            "ids": [
+                33,
+                70,
+                103,
+                191,
+                291,
+                404,
+                426,
+                444,
+                471,
+                485,
+                695,
+                717,
+                843,
+                854,
+                983
+            ],
+            "total_matches": 16412,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND last_name LIKE :last_name LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 498989,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "manual.last_position.big",
+            "class": "big",
+            "kind": "manual",
+            "cold_ms": 1.268,
+            "cold_order": 10,
+            "iterations": 1161,
+            "p50_ms": 1.214,
+            "p95_ms": 1.65,
+            "p99_ms": 2.612,
+            "mean_ms": 1.292,
+            "ids": [
+                103,
+                404,
+                471,
+                1272,
+                1273,
+                1372,
+                1538,
+                1566,
+                1660,
+                1941,
+                2147,
+                2834,
+                2899,
+                2928,
+                2932
+            ],
+            "total_matches": 4600,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND last_name LIKE :last_name AND position = :position LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 498989,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "manual.team_position.big",
+            "class": "big",
+            "kind": "manual",
+            "cold_ms": 0.935,
+            "cold_order": 11,
+            "iterations": 1500,
+            "p50_ms": 0.865,
+            "p95_ms": 0.99,
+            "p99_ms": 1.117,
+            "mean_ms": 0.875,
+            "ids": [
+                373,
+                404,
+                727,
+                747,
+                841,
+                906,
+                942,
+                1081,
+                1189,
+                1291,
+                1468,
+                1705,
+                1743,
+                1765,
+                2168
+            ],
+            "total_matches": 5648,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND team = :team AND position = :position LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 498989,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "manual.first_last_team.big",
+            "class": "big",
+            "kind": "manual",
+            "cold_ms": 53.469,
+            "cold_order": 12,
+            "iterations": 27,
+            "p50_ms": 54.083,
+            "p95_ms": 57.801,
+            "p99_ms": 110.221,
+            "mean_ms": 56.318,
+            "ids": [
+                8677,
+                12289,
+                18800,
+                34708,
+                70464,
+                70597,
+                71923,
+                82880,
+                85071,
+                88163,
+                102581,
+                106735,
+                109562,
+                110126,
+                156199
+            ],
+            "total_matches": 69,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND first_name LIKE :first_name AND last_name LIKE :last_name AND team = :team LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 498989,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "autocomplete.prefix2.small",
+            "class": "small",
+            "kind": "autocomplete",
+            "cold_ms": 3.505,
+            "cold_order": 13,
+            "iterations": 667,
+            "p50_ms": 2.215,
+            "p95_ms": 2.603,
+            "p99_ms": 2.802,
+            "mean_ms": 2.249,
+            "ids": [
+                10127,
+                17234,
+                21842,
+                23724,
+                27519,
+                36839,
+                42172,
+                46693,
+                48429,
+                48670,
+                58555,
+                64817,
+                65088,
+                67296,
+                67385
+            ],
+            "total_matches": 192,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (first_name LIKE :t1 OR last_name LIKE :t2) LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 50948,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "autocomplete.prefix3.small",
+            "class": "small",
+            "kind": "autocomplete",
+            "cold_ms": 33.078,
+            "cold_order": 14,
+            "iterations": 46,
+            "p50_ms": 32.702,
+            "p95_ms": 34.681,
+            "p99_ms": 38.601,
+            "mean_ms": 32.989,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (first_name LIKE :t1 OR last_name LIKE :t2) LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 50948,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "autocomplete.common_substring.small",
+            "class": "small",
+            "kind": "autocomplete",
+            "cold_ms": 0.678,
+            "cold_order": 15,
+            "iterations": 1500,
+            "p50_ms": 0.392,
+            "p95_ms": 0.481,
+            "p99_ms": 0.595,
+            "mean_ms": 0.401,
+            "ids": [
+                23,
+                898,
+                1021,
+                1726,
+                1985,
+                3593,
+                3743,
+                3935,
+                4813,
+                6381,
+                6439,
+                6657,
+                7033,
+                7789,
+                8123
+            ],
+            "total_matches": 1584,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (first_name LIKE :t1 OR last_name LIKE :t2) LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 50948,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "autocomplete.very_common.small",
+            "class": "small",
+            "kind": "autocomplete",
+            "cold_ms": 0.32,
+            "cold_order": 16,
+            "iterations": 1500,
+            "p50_ms": 0.201,
+            "p95_ms": 0.267,
+            "p99_ms": 0.316,
+            "mean_ms": 0.207,
+            "ids": [
+                23,
+                303,
+                334,
+                601,
+                672,
+                898,
+                980,
+                1146,
+                1321,
+                1342,
+                1389,
+                1453,
+                1457,
+                1534,
+                1647
+            ],
+            "total_matches": 7267,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (first_name LIKE :t1 OR last_name LIKE :t2) LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 50948,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "autocomplete.rare.small",
+            "class": "small",
+            "kind": "autocomplete",
+            "cold_ms": 7.38,
+            "cold_order": 17,
+            "iterations": 212,
+            "p50_ms": 6.949,
+            "p95_ms": 8.363,
+            "p99_ms": 8.736,
+            "mean_ms": 7.075,
+            "ids": [
+                4107,
+                27778,
+                59680,
+                71900,
+                74127,
+                152039,
+                155212,
+                167519,
+                177489,
+                196552,
+                198175,
+                215488,
+                216995,
+                219938,
+                225415
+            ],
+            "total_matches": 88,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (first_name LIKE :t1 OR last_name LIKE :t2) LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 50948,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "autocomplete.no_match.small",
+            "class": "small",
+            "kind": "autocomplete",
+            "cold_ms": 32.09,
+            "cold_order": 18,
+            "iterations": 46,
+            "p50_ms": 32.501,
+            "p95_ms": 33.664,
+            "p99_ms": 38.473,
+            "mean_ms": 32.631,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (first_name LIKE :t1 OR last_name LIKE :t2) LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 50948,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "autocomplete.multiword.small",
+            "class": "small",
+            "kind": "autocomplete",
+            "cold_ms": 64.88,
+            "cold_order": 19,
+            "iterations": 21,
+            "p50_ms": 65.15,
+            "p95_ms": 102.472,
+            "p99_ms": 144.999,
+            "mean_ms": 72.254,
+            "ids": [
+                303
+            ],
+            "total_matches": 1,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (first_name LIKE :t1 OR last_name LIKE :t2) LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 50948,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "assumed_name.common.small",
+            "class": "small",
+            "kind": "assumed_name",
+            "cold_ms": 23.603,
+            "cold_order": 20,
+            "iterations": 66,
+            "p50_ms": 22.707,
+            "p95_ms": 25.017,
+            "p99_ms": 26.778,
+            "mean_ms": 22.9,
+            "ids": [
+                10127,
+                36839,
+                46693,
+                64817,
+                113258,
+                191507,
+                265154,
+                344583,
+                351708,
+                375252,
+                384013,
+                461026,
+                611112,
+                619644,
+                731010
+            ],
+            "total_matches": 18,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND first_name LIKE :first_name AND last_name LIKE :last_name LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 50948,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "assumed_name.no_match.small",
+            "class": "small",
+            "kind": "assumed_name",
+            "cold_ms": 29.827,
+            "cold_order": 21,
+            "iterations": 49,
+            "p50_ms": 30.719,
+            "p95_ms": 31.937,
+            "p99_ms": 36.103,
+            "mean_ms": 30.797,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND first_name LIKE :first_name AND last_name LIKE :last_name LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 50948,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "manual.last.small",
+            "class": "small",
+            "kind": "manual",
+            "cold_ms": 0.709,
+            "cold_order": 22,
+            "iterations": 1500,
+            "p50_ms": 0.432,
+            "p95_ms": 0.528,
+            "p99_ms": 0.594,
+            "mean_ms": 0.44,
+            "ids": [
+                23,
+                898,
+                1985,
+                3593,
+                6381,
+                6439,
+                6657,
+                7033,
+                7789,
+                8123,
+                8207,
+                9335,
+                10105,
+                10594,
+                10667
+            ],
+            "total_matches": 1127,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND last_name LIKE :last_name LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 50948,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "manual.last_position.small",
+            "class": "small",
+            "kind": "manual",
+            "cold_ms": 1.701,
+            "cold_order": 23,
+            "iterations": 888,
+            "p50_ms": 1.62,
+            "p95_ms": 2.052,
+            "p99_ms": 2.85,
+            "mean_ms": 1.689,
+            "ids": [
+                23,
+                1985,
+                3593,
+                6439,
+                7033,
+                7789,
+                8123,
+                9335,
+                10105,
+                21694,
+                24926,
+                39926,
+                41438,
+                47114,
+                52465
+            ],
+            "total_matches": 252,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND last_name LIKE :last_name AND position = :position LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 50948,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "manual.team_position.small",
+            "class": "small",
+            "kind": "manual",
+            "cold_ms": 0.783,
+            "cold_order": 24,
+            "iterations": 1500,
+            "p50_ms": 0.685,
+            "p95_ms": 0.83,
+            "p99_ms": 0.924,
+            "mean_ms": 0.697,
+            "ids": [
+                1345,
+                1647,
+                2311,
+                4468,
+                7033,
+                7669,
+                8827,
+                9279,
+                14080,
+                14273,
+                14564,
+                14888,
+                14961,
+                17856,
+                20179
+            ],
+            "total_matches": 878,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND team = :team AND position = :position LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 50948,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "manual.first_last_team.small",
+            "class": "small",
+            "kind": "manual",
+            "cold_ms": 28.311,
+            "cold_order": 25,
+            "iterations": 51,
+            "p50_ms": 29.169,
+            "p95_ms": 34.711,
+            "p99_ms": 35.49,
+            "mean_ms": 29.74,
+            "ids": [
+                92706,
+                223939,
+                241592,
+                266551,
+                300166,
+                322306,
+                340575,
+                438866,
+                452105,
+                497194,
+                652551,
+                656672,
+                732596,
+                785331,
+                945020
+            ],
+            "total_matches": 16,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND first_name LIKE :first_name AND last_name LIKE :last_name AND team = :team LIMIT 15",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "pro_players",
+                    "type": "ref",
+                    "possible_keys": "league_idx",
+                    "key": "league_idx",
+                    "rows": 50948,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "pick_search.common_name",
+            "class": "match",
+            "kind": "pick_search",
+            "cold_ms": 180.077,
+            "cold_order": 26,
+            "iterations": 209,
+            "p50_ms": 7.092,
+            "p95_ms": 8.415,
+            "p99_ms": 9.501,
+            "mean_ms": 7.199,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT p.*, m.manager_name, MATCH (p.first_name, p.last_name) AGAINST (?) as search_score FROM players p LEFT OUTER JOIN managers m ON m.manager_id = p.manager_id WHERE MATCH (p.first_name, p.last_name) AGAINST (?) AND p.draft_id = ? AND p.pick_time IS NOT NULL ORDER BY search_score ASC, p.player_pick ASC",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "p",
+                    "type": "fulltext",
+                    "possible_keys": "draft_idx,firstlastname_idx",
+                    "key": "firstlastname_idx",
+                    "rows": 1,
+                    "extra": "Using where; Using filesort"
+                },
+                {
+                    "select_type": "SIMPLE",
+                    "table": "m",
+                    "type": "eq_ref",
+                    "possible_keys": "PRIMARY",
+                    "key": "PRIMARY",
+                    "rows": 1,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "pick_search.rare_name",
+            "class": "match",
+            "kind": "pick_search",
+            "cold_ms": 5.142,
+            "cold_order": 27,
+            "iterations": 1500,
+            "p50_ms": 0.543,
+            "p95_ms": 0.69,
+            "p99_ms": 0.779,
+            "mean_ms": 0.55,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT p.*, m.manager_name, MATCH (p.first_name, p.last_name) AGAINST (?) as search_score FROM players p LEFT OUTER JOIN managers m ON m.manager_id = p.manager_id WHERE MATCH (p.first_name, p.last_name) AGAINST (?) AND p.draft_id = ? AND p.pick_time IS NOT NULL ORDER BY search_score ASC, p.player_pick ASC",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "p",
+                    "type": "fulltext",
+                    "possible_keys": "draft_idx,firstlastname_idx",
+                    "key": "firstlastname_idx",
+                    "rows": 1,
+                    "extra": "Using where; Using filesort"
+                },
+                {
+                    "select_type": "SIMPLE",
+                    "table": "m",
+                    "type": "eq_ref",
+                    "possible_keys": "PRIMARY",
+                    "key": "PRIMARY",
+                    "rows": 1,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "pick_search.two_words",
+            "class": "match",
+            "kind": "pick_search",
+            "cold_ms": 97.143,
+            "cold_order": 28,
+            "iterations": 74,
+            "p50_ms": 20.295,
+            "p95_ms": 21.498,
+            "p99_ms": 22.557,
+            "mean_ms": 20.331,
+            "ids": [
+                249889,
+                249757,
+                249802,
+                249844
+            ],
+            "total_matches": 4,
+            "sql": "SELECT p.*, m.manager_name, MATCH (p.first_name, p.last_name) AGAINST (?) as search_score FROM players p LEFT OUTER JOIN managers m ON m.manager_id = p.manager_id WHERE MATCH (p.first_name, p.last_name) AGAINST (?) AND p.draft_id = ? AND p.pick_time IS NOT NULL ORDER BY search_score ASC, p.player_pick ASC",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "p",
+                    "type": "fulltext",
+                    "possible_keys": "draft_idx,firstlastname_idx",
+                    "key": "firstlastname_idx",
+                    "rows": 1,
+                    "extra": "Using where; Using filesort"
+                },
+                {
+                    "select_type": "SIMPLE",
+                    "table": "m",
+                    "type": "eq_ref",
+                    "possible_keys": "PRIMARY",
+                    "key": "PRIMARY",
+                    "rows": 1,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "pick_search.no_match",
+            "class": "match",
+            "kind": "pick_search",
+            "cold_ms": 0.867,
+            "cold_order": 29,
+            "iterations": 1500,
+            "p50_ms": 0.168,
+            "p95_ms": 0.226,
+            "p99_ms": 0.259,
+            "mean_ms": 0.171,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT p.*, m.manager_name, MATCH (p.first_name, p.last_name) AGAINST (?) as search_score FROM players p LEFT OUTER JOIN managers m ON m.manager_id = p.manager_id WHERE MATCH (p.first_name, p.last_name) AGAINST (?) AND p.draft_id = ? AND p.pick_time IS NOT NULL ORDER BY search_score ASC, p.player_pick ASC",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "p",
+                    "type": "fulltext",
+                    "possible_keys": "draft_idx,firstlastname_idx",
+                    "key": "firstlastname_idx",
+                    "rows": 1,
+                    "extra": "Using where; Using filesort"
+                },
+                {
+                    "select_type": "SIMPLE",
+                    "table": "m",
+                    "type": "eq_ref",
+                    "possible_keys": "PRIMARY",
+                    "key": "PRIMARY",
+                    "rows": 1,
+                    "extra": "Using where"
+                }
+            ]
+        },
+        {
+            "id": "pick_search.with_team",
+            "class": "match",
+            "kind": "pick_search",
+            "cold_ms": 7.37,
+            "cold_order": 30,
+            "iterations": 223,
+            "p50_ms": 6.541,
+            "p95_ms": 7.956,
+            "p99_ms": 8.582,
+            "mean_ms": 6.741,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT p.*, m.manager_name, MATCH (p.first_name, p.last_name) AGAINST (?) as search_score FROM players p LEFT OUTER JOIN managers m ON m.manager_id = p.manager_id WHERE MATCH (p.first_name, p.last_name) AGAINST (?) AND p.draft_id = ? AND p.team = ? AND p.pick_time IS NOT NULL ORDER BY search_score ASC, p.player_pick ASC",
+            "explain": [
+                {
+                    "select_type": "SIMPLE",
+                    "table": "p",
+                    "type": "fulltext",
+                    "possible_keys": "draft_idx,firstlastname_idx",
+                    "key": "firstlastname_idx",
+                    "rows": 1,
+                    "extra": "Using where; Using filesort"
+                },
+                {
+                    "select_type": "SIMPLE",
+                    "table": "m",
+                    "type": "eq_ref",
+                    "possible_keys": "PRIMARY",
+                    "key": "PRIMARY",
+                    "rows": 1,
+                    "extra": "Using where"
+                }
+            ]
+        }
+    ],
+    "upload": {
+        "rows": 4000,
+        "repeats": 5,
+        "median_ms": 527.8,
+        "min_ms": 507.3,
+        "max_ms": 555.3
+    }
+}

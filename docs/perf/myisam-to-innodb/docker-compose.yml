@@ -1,0 +1,31 @@
+# Throwaway database for the pro_players MyISAM vs InnoDB benchmark (see README.md).
+# Run through run.sh, which sets the project name. Nothing here shares a volume or port with the dev box.
+#   PERF_DB_IMAGE=mariadb:12.3 (default) | mysql:8.4 | mysql:9
+
+services:
+  db:
+    image: ${PERF_DB_IMAGE:-mariadb:12.3}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --innodb-buffer-pool-size=512M
+    environment:
+      MYSQL_ROOT_PASSWORD: perf
+      MYSQL_DATABASE: perf
+    ports:
+      - "127.0.0.1:3308:3306"
+
+  runner:
+    build:
+      context: ../../docker/php
+    working_dir: /var/www/html
+    volumes:
+      - ../..:/var/www/html
+    environment:
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_NAME: perf
+      DB_USER: root
+      DB_PASS: perf
+    depends_on:
+      - db

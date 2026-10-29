@@ -1,0 +1,687 @@
+{
+    "phase": "innodb+fulltext",
+    "sql_mode": "fulltext",
+    "version": "9.7.4",
+    "sizes": {
+        "players": {
+            "t": "players",
+            "ENGINE": "InnoDB",
+            "approx_rows": 496966,
+            "data_bytes": 44646400,
+            "index_bytes": 45694976
+        },
+        "pro_players": {
+            "t": "pro_players",
+            "ENGINE": "InnoDB",
+            "approx_rows": 996812,
+            "data_bytes": 64569344,
+            "index_bytes": 35749888
+        }
+    },
+    "queries": [
+        {
+            "id": "autocomplete.prefix2.big",
+            "class": "big",
+            "kind": "autocomplete",
+            "cold_ms": 34.8,
+            "cold_order": 0,
+            "iterations": 85,
+            "p50_ms": 17.668,
+            "p95_ms": 20.254,
+            "p99_ms": 21.616,
+            "mean_ms": 17.856,
+            "ids": [
+                91,
+                281,
+                1790,
+                2242,
+                2335,
+                2790,
+                2851,
+                2886,
+                2982,
+                3392,
+                3661,
+                4246,
+                4596,
+                4799,
+                5112
+            ],
+            "total_matches": 3489,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (MATCH(first_name) AGAINST(:t1 IN BOOLEAN MODE) OR MATCH(last_name) AGAINST(:t2 IN BOOLEAN MODE)) LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "autocomplete.prefix3.big",
+            "class": "big",
+            "kind": "autocomplete",
+            "cold_ms": 24.241,
+            "cold_order": 1,
+            "iterations": 70,
+            "p50_ms": 21.207,
+            "p95_ms": 25.021,
+            "p99_ms": 25.711,
+            "mean_ms": 21.437,
+            "ids": [
+                191,
+                854,
+                1047,
+                1227,
+                1258,
+                1663,
+                1668,
+                2057,
+                2147,
+                2809,
+                2932,
+                3284,
+                3447,
+                3553,
+                3865
+            ],
+            "total_matches": 4121,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (MATCH(first_name) AGAINST(:t1 IN BOOLEAN MODE) OR MATCH(last_name) AGAINST(:t2 IN BOOLEAN MODE)) LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "autocomplete.common_substring.big",
+            "class": "big",
+            "kind": "autocomplete",
+            "cold_ms": 72.297,
+            "cold_order": 2,
+            "iterations": 24,
+            "p50_ms": 64.293,
+            "p95_ms": 68.878,
+            "p99_ms": 71.595,
+            "mean_ms": 64.813,
+            "ids": [
+                10385,
+                11097,
+                28062,
+                30083,
+                38167,
+                46929,
+                54968,
+                76620,
+                86187,
+                96753,
+                105638,
+                121171,
+                137787,
+                151204,
+                163352
+            ],
+            "total_matches": 86,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (MATCH(first_name) AGAINST(:t1 IN BOOLEAN MODE) OR MATCH(last_name) AGAINST(:t2 IN BOOLEAN MODE)) LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "autocomplete.very_common.big",
+            "class": "big",
+            "kind": "autocomplete",
+            "cold_ms": 41.651,
+            "cold_order": 3,
+            "iterations": 46,
+            "p50_ms": 32.851,
+            "p95_ms": 34.254,
+            "p99_ms": 39.321,
+            "mean_ms": 33.055,
+            "ids": [
+                31,
+                103,
+                275,
+                391,
+                492,
+                493,
+                694,
+                734,
+                794,
+                807,
+                852,
+                941,
+                974,
+                1144,
+                1201
+            ],
+            "total_matches": 11613,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (MATCH(first_name) AGAINST(:t1 IN BOOLEAN MODE) OR MATCH(last_name) AGAINST(:t2 IN BOOLEAN MODE)) LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "autocomplete.rare.big",
+            "class": "big",
+            "kind": "autocomplete",
+            "cold_ms": 30.24,
+            "cold_order": 4,
+            "iterations": 51,
+            "p50_ms": 29.569,
+            "p95_ms": 32.686,
+            "p99_ms": 36.13,
+            "mean_ms": 29.978,
+            "ids": [
+                206,
+                423,
+                1484,
+                7089,
+                9673,
+                20091,
+                24259,
+                24468,
+                24816,
+                26991,
+                36313,
+                47682,
+                51635,
+                52163,
+                60107
+            ],
+            "total_matches": 196,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (MATCH(first_name) AGAINST(:t1 IN BOOLEAN MODE) OR MATCH(last_name) AGAINST(:t2 IN BOOLEAN MODE)) LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "autocomplete.no_match.big",
+            "class": "big",
+            "kind": "autocomplete",
+            "cold_ms": 405.132,
+            "cold_order": 5,
+            "iterations": 5,
+            "p50_ms": 346.772,
+            "p95_ms": 358.482,
+            "p99_ms": 358.482,
+            "mean_ms": 348.849,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (MATCH(first_name) AGAINST(:t1 IN BOOLEAN MODE) OR MATCH(last_name) AGAINST(:t2 IN BOOLEAN MODE)) LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "autocomplete.multiword.big",
+            "class": "big",
+            "kind": "autocomplete",
+            "cold_ms": 422.561,
+            "cold_order": 6,
+            "iterations": 5,
+            "p50_ms": 394.633,
+            "p95_ms": 399.099,
+            "p99_ms": 399.099,
+            "mean_ms": 393.784,
+            "ids": [
+                16,
+                57486,
+                428618
+            ],
+            "total_matches": 3,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (MATCH(first_name) AGAINST(:t1 IN BOOLEAN MODE) OR MATCH(last_name) AGAINST(:t2 IN BOOLEAN MODE)) LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "assumed_name.common.big",
+            "class": "big",
+            "kind": "assumed_name",
+            "cold_ms": 91.89,
+            "cold_order": 7,
+            "iterations": 21,
+            "p50_ms": 73.103,
+            "p95_ms": 78.89,
+            "p99_ms": 83.739,
+            "mean_ms": 73.792,
+            "ids": [
+                5902,
+                13868,
+                14086,
+                18183,
+                18362,
+                19700,
+                38381,
+                39410,
+                40687,
+                41672,
+                44483,
+                47858,
+                51418,
+                52517,
+                53176
+            ],
+            "total_matches": 214,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND MATCH(first_name) AGAINST(:first_name IN BOOLEAN MODE) AND MATCH(last_name) AGAINST(:last_name IN BOOLEAN MODE) LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "assumed_name.no_match.big",
+            "class": "big",
+            "kind": "assumed_name",
+            "cold_ms": 10.76,
+            "cold_order": 8,
+            "iterations": 169,
+            "p50_ms": 8.848,
+            "p95_ms": 9.627,
+            "p99_ms": 10.711,
+            "mean_ms": 8.907,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND MATCH(first_name) AGAINST(:first_name IN BOOLEAN MODE) AND MATCH(last_name) AGAINST(:last_name IN BOOLEAN MODE) LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "manual.last.big",
+            "class": "big",
+            "kind": "manual",
+            "cold_ms": 4.656,
+            "cold_order": 9,
+            "iterations": 329,
+            "p50_ms": 4.524,
+            "p95_ms": 5.062,
+            "p99_ms": 5.554,
+            "mean_ms": 4.564,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND MATCH(last_name) AGAINST(:last_name IN BOOLEAN MODE) LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "manual.last_position.big",
+            "class": "big",
+            "kind": "manual",
+            "cold_ms": 4.428,
+            "cold_order": 10,
+            "iterations": 332,
+            "p50_ms": 4.494,
+            "p95_ms": 4.822,
+            "p99_ms": 5.405,
+            "mean_ms": 4.517,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND MATCH(last_name) AGAINST(:last_name IN BOOLEAN MODE) AND position = :position LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "manual.team_position.big",
+            "class": "big",
+            "kind": "manual",
+            "cold_ms": 0.941,
+            "cold_order": 11,
+            "iterations": 1500,
+            "p50_ms": 0.863,
+            "p95_ms": 1.025,
+            "p99_ms": 1.165,
+            "mean_ms": 0.879,
+            "ids": [
+                373,
+                404,
+                727,
+                747,
+                841,
+                906,
+                942,
+                1081,
+                1189,
+                1291,
+                1468,
+                1705,
+                1743,
+                1765,
+                2168
+            ],
+            "total_matches": 5648,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND team = :team AND position = :position LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "manual.first_last_team.big",
+            "class": "big",
+            "kind": "manual",
+            "cold_ms": 144.604,
+            "cold_order": 12,
+            "iterations": 11,
+            "p50_ms": 145.568,
+            "p95_ms": 159.343,
+            "p99_ms": 159.343,
+            "mean_ms": 146.968,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND MATCH(first_name) AGAINST(:first_name IN BOOLEAN MODE) AND MATCH(last_name) AGAINST(:last_name IN BOOLEAN MODE) AND team = :team LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "autocomplete.prefix2.small",
+            "class": "small",
+            "kind": "autocomplete",
+            "cold_ms": 21.145,
+            "cold_order": 13,
+            "iterations": 82,
+            "p50_ms": 18.215,
+            "p95_ms": 20.293,
+            "p99_ms": 21.465,
+            "mean_ms": 18.451,
+            "ids": [
+                10127,
+                17234,
+                21842,
+                23724,
+                27519,
+                36839,
+                42172,
+                46693,
+                48429,
+                48670,
+                58555,
+                64817,
+                65088,
+                67296,
+                67385
+            ],
+            "total_matches": 192,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (MATCH(first_name) AGAINST(:t1 IN BOOLEAN MODE) OR MATCH(last_name) AGAINST(:t2 IN BOOLEAN MODE)) LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "autocomplete.prefix3.small",
+            "class": "small",
+            "kind": "autocomplete",
+            "cold_ms": 54.005,
+            "cold_order": 14,
+            "iterations": 29,
+            "p50_ms": 52.656,
+            "p95_ms": 59.334,
+            "p99_ms": 63.294,
+            "mean_ms": 53.408,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (MATCH(first_name) AGAINST(:t1 IN BOOLEAN MODE) OR MATCH(last_name) AGAINST(:t2 IN BOOLEAN MODE)) LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "autocomplete.common_substring.small",
+            "class": "small",
+            "kind": "autocomplete",
+            "cold_ms": 39.205,
+            "cold_order": 15,
+            "iterations": 38,
+            "p50_ms": 40.017,
+            "p95_ms": 46.489,
+            "p99_ms": 47.378,
+            "mean_ms": 40.466,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (MATCH(first_name) AGAINST(:t1 IN BOOLEAN MODE) OR MATCH(last_name) AGAINST(:t2 IN BOOLEAN MODE)) LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "autocomplete.very_common.small",
+            "class": "small",
+            "kind": "autocomplete",
+            "cold_ms": 33.961,
+            "cold_order": 16,
+            "iterations": 45,
+            "p50_ms": 33.259,
+            "p95_ms": 35.499,
+            "p99_ms": 39.879,
+            "mean_ms": 33.458,
+            "ids": [
+                23,
+                303,
+                898,
+                980,
+                1342,
+                1389,
+                2539,
+                2630,
+                3931,
+                6831,
+                10007,
+                12800,
+                12894,
+                13341,
+                15444
+            ],
+            "total_matches": 669,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (MATCH(first_name) AGAINST(:t1 IN BOOLEAN MODE) OR MATCH(last_name) AGAINST(:t2 IN BOOLEAN MODE)) LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "autocomplete.rare.small",
+            "class": "small",
+            "kind": "autocomplete",
+            "cold_ms": 16.579,
+            "cold_order": 17,
+            "iterations": 96,
+            "p50_ms": 15.618,
+            "p95_ms": 16.505,
+            "p99_ms": 19.258,
+            "mean_ms": 15.742,
+            "ids": [
+                4107,
+                27778,
+                59680,
+                71900,
+                74127,
+                152039,
+                155212,
+                167519,
+                177489,
+                196552,
+                198175,
+                215488,
+                216995,
+                219938,
+                225415
+            ],
+            "total_matches": 88,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (MATCH(first_name) AGAINST(:t1 IN BOOLEAN MODE) OR MATCH(last_name) AGAINST(:t2 IN BOOLEAN MODE)) LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "autocomplete.no_match.small",
+            "class": "small",
+            "kind": "autocomplete",
+            "cold_ms": 38,
+            "cold_order": 18,
+            "iterations": 39,
+            "p50_ms": 38.652,
+            "p95_ms": 44.182,
+            "p99_ms": 46.471,
+            "mean_ms": 39.275,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (MATCH(first_name) AGAINST(:t1 IN BOOLEAN MODE) OR MATCH(last_name) AGAINST(:t2 IN BOOLEAN MODE)) LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "autocomplete.multiword.small",
+            "class": "small",
+            "kind": "autocomplete",
+            "cold_ms": 58.735,
+            "cold_order": 19,
+            "iterations": 26,
+            "p50_ms": 57.599,
+            "p95_ms": 62.125,
+            "p99_ms": 65.369,
+            "mean_ms": 58.376,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND (MATCH(first_name) AGAINST(:t1 IN BOOLEAN MODE) OR MATCH(last_name) AGAINST(:t2 IN BOOLEAN MODE)) LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "assumed_name.common.small",
+            "class": "small",
+            "kind": "assumed_name",
+            "cold_ms": 128.301,
+            "cold_order": 20,
+            "iterations": 12,
+            "p50_ms": 128.184,
+            "p95_ms": 158.115,
+            "p99_ms": 158.115,
+            "mean_ms": 132.441,
+            "ids": [
+                10127,
+                36839,
+                46693,
+                64817,
+                113258,
+                191507,
+                265154,
+                344583,
+                351708,
+                375252,
+                384013,
+                461026,
+                611112,
+                619644,
+                731010
+            ],
+            "total_matches": 18,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND MATCH(first_name) AGAINST(:first_name IN BOOLEAN MODE) AND MATCH(last_name) AGAINST(:last_name IN BOOLEAN MODE) LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "assumed_name.no_match.small",
+            "class": "small",
+            "kind": "assumed_name",
+            "cold_ms": 10.36,
+            "cold_order": 21,
+            "iterations": 169,
+            "p50_ms": 8.852,
+            "p95_ms": 9.916,
+            "p99_ms": 10.938,
+            "mean_ms": 8.914,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND MATCH(first_name) AGAINST(:first_name IN BOOLEAN MODE) AND MATCH(last_name) AGAINST(:last_name IN BOOLEAN MODE) LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "manual.last.small",
+            "class": "small",
+            "kind": "manual",
+            "cold_ms": 4.702,
+            "cold_order": 22,
+            "iterations": 329,
+            "p50_ms": 4.512,
+            "p95_ms": 5.283,
+            "p99_ms": 5.601,
+            "mean_ms": 4.564,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND MATCH(last_name) AGAINST(:last_name IN BOOLEAN MODE) LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "manual.last_position.small",
+            "class": "small",
+            "kind": "manual",
+            "cold_ms": 4.476,
+            "cold_order": 23,
+            "iterations": 324,
+            "p50_ms": 4.599,
+            "p95_ms": 5.012,
+            "p99_ms": 5.684,
+            "mean_ms": 4.639,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND MATCH(last_name) AGAINST(:last_name IN BOOLEAN MODE) AND position = :position LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "manual.team_position.small",
+            "class": "small",
+            "kind": "manual",
+            "cold_ms": 0.789,
+            "cold_order": 24,
+            "iterations": 1500,
+            "p50_ms": 0.738,
+            "p95_ms": 0.985,
+            "p99_ms": 1.208,
+            "mean_ms": 0.767,
+            "ids": [
+                1345,
+                1647,
+                2311,
+                4468,
+                7033,
+                7669,
+                8827,
+                9279,
+                14080,
+                14273,
+                14564,
+                14888,
+                14961,
+                17856,
+                20179
+            ],
+            "total_matches": 878,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND team = :team AND position = :position LIMIT 15",
+            "explain": [
+                []
+            ]
+        },
+        {
+            "id": "manual.first_last_team.small",
+            "class": "small",
+            "kind": "manual",
+            "cold_ms": 157.224,
+            "cold_order": 25,
+            "iterations": 11,
+            "p50_ms": 144.289,
+            "p95_ms": 160.225,
+            "p99_ms": 160.225,
+            "mean_ms": 146.376,
+            "ids": [],
+            "total_matches": 0,
+            "sql": "SELECT * FROM pro_players WHERE league = :league AND MATCH(first_name) AGAINST(:first_name IN BOOLEAN MODE) AND MATCH(last_name) AGAINST(:last_name IN BOOLEAN MODE) AND team = :team LIMIT 15",
+            "explain": [
+                []
+            ]
+        }
+    ]
+}

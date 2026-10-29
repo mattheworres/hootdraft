@@ -94,52 +94,23 @@ class DraftStatsRepository {
     $this->DeleteStats($draft->draft_id);
 
     $this->_LoadDraftSpecificStats($draft, $draft_stats);
-    $this->_LoadLongestAveragePick($draft->draft_id, $draft_stats);
-    $this->_LoadShortestAveragePick($draft->draft_id, $draft_stats);
-    $this->_LoadSlowestPick($draft->draft_id, $draft_stats);
-    $this->_LoadFastestPick($draft->draft_id, $draft_stats);
+    $this->_LoadManagerSuperlatives($draft->draft_id, $draft_stats);
     $this->_LoadAveragePickTime($draft->draft_id, $draft_stats);
     $this->_LoadRoundTimes($draft, $draft_stats);
     $this->_LoadTeamSuperlatives($draft->draft_id, $draft_stats, $teams);
     $this->_LoadPositionSuperlatives($draft->draft_id, $draft_stats, $positions);
 
-    $insert_stmt = $this->pdo->prepare("INSERT INTO draft_stats
-      (draft_id, drafting_time_seconds, longest_avg_pick_manager_name, longest_avg_pick_seconds, shortest_avg_pick_manager_name, shortest_avg_pick_seconds,
-        longest_single_pick_manager_name, longest_single_pick_seconds, shortest_single_pick_manager_name, shortest_single_pick_seconds,
-        average_pick_seconds, longest_round, longest_round_seconds, shortest_round, shortest_round_seconds,
-        average_round_seconds, most_drafted_team, most_drafted_team_count, least_drafted_team, least_drafted_team_count,
-        most_drafted_position, most_drafted_position_count, least_drafted_position, least_drafted_position_count)
-      VALUES
-      (:draft_id, :drafting_time_seconds, :longest_avg_pick_manager_name, :longest_avg_pick_seconds, :shortest_avg_pick_manager_name, :shortest_avg_pick_seconds,
-        :longest_single_pick_manager_name, :longest_single_pick_seconds, :shortest_single_pick_manager_name, :shortest_single_pick_seconds,
-        :average_pick_seconds, :longest_round, :longest_round_seconds, :shortest_round, :shortest_round_seconds,
-        :average_round_seconds, :most_drafted_team, :most_drafted_team_count, :least_drafted_team, :least_drafted_team_count,
-        :most_drafted_position, :most_drafted_position_count, :least_drafted_position, :least_drafted_position_count)");
+    // Column names come from DraftStats' own properties, never from input
+    $values = get_object_vars($draft_stats);
+    unset($values['draft_stat_id']);
+    $columns = array_keys($values);
 
-    $insert_stmt->bindValue(':draft_id', $draft_stats->draft_id);
-    $insert_stmt->bindValue(':drafting_time_seconds', $draft_stats->drafting_time_seconds);
-    $insert_stmt->bindValue(':longest_avg_pick_manager_name', $draft_stats->longest_avg_pick_manager_name);
-    $insert_stmt->bindValue(':longest_avg_pick_seconds', $draft_stats->longest_avg_pick_seconds);
-    $insert_stmt->bindValue(':shortest_avg_pick_manager_name', $draft_stats->shortest_avg_pick_manager_name);
-    $insert_stmt->bindValue(':shortest_avg_pick_seconds', $draft_stats->shortest_avg_pick_seconds);
-    $insert_stmt->bindValue(':longest_single_pick_manager_name', $draft_stats->longest_single_pick_manager_name);
-    $insert_stmt->bindValue(':longest_single_pick_seconds', $draft_stats->longest_single_pick_seconds);
-    $insert_stmt->bindValue(':shortest_single_pick_manager_name', $draft_stats->shortest_single_pick_manager_name);
-    $insert_stmt->bindValue(':shortest_single_pick_seconds', $draft_stats->shortest_single_pick_seconds);
-    $insert_stmt->bindValue(':average_pick_seconds', $draft_stats->average_pick_seconds);
-    $insert_stmt->bindValue(':longest_round', $draft_stats->longest_round);
-    $insert_stmt->bindValue(':longest_round_seconds', $draft_stats->longest_round_seconds);
-    $insert_stmt->bindValue(':shortest_round', $draft_stats->shortest_round);
-    $insert_stmt->bindValue(':shortest_round_seconds', $draft_stats->shortest_round_seconds);
-    $insert_stmt->bindValue(':average_round_seconds', $draft_stats->average_round_seconds);
-    $insert_stmt->bindValue(':most_drafted_team', $draft_stats->most_drafted_team);
-    $insert_stmt->bindValue(':most_drafted_team_count', $draft_stats->most_drafted_team_count);
-    $insert_stmt->bindValue(':least_drafted_team', $draft_stats->least_drafted_team);
-    $insert_stmt->bindValue(':least_drafted_team_count', $draft_stats->least_drafted_team_count);
-    $insert_stmt->bindValue(':most_drafted_position', $draft_stats->most_drafted_position);
-    $insert_stmt->bindValue(':most_drafted_position_count', $draft_stats->most_drafted_position_count);
-    $insert_stmt->bindValue(':least_drafted_position', $draft_stats->least_drafted_position);
-    $insert_stmt->bindValue(':least_drafted_position_count', $draft_stats->least_drafted_position_count);
+    $insert_stmt = $this->pdo->prepare("INSERT INTO draft_stats (" . implode(', ', $columns) . ")
+      VALUES (" . implode(', ', array_map(fn ($column) => ":$column", $columns)) . ")");
+
+    foreach ($values as $column => $value) {
+      $insert_stmt->bindValue(":$column", $value);
+    }
 
     if (!$insert_stmt->execute()) {
       throw new \Exception("Unable to insert new draft stats row.");
@@ -180,80 +151,54 @@ class DraftStatsRepository {
     $stats->drafting_time_seconds = (int)($end_seconds - $start_seconds);
   }
 
-  private function _LoadLongestAveragePick($draft_id, DraftStats $stats) {
-    $stmt = $this->pdo->prepare("SELECT m.manager_name, avg(p.pick_duration) as pick_average
+  /** One grouped query for every manager's average, slowest and fastest pick; the extremes are picked here. */
+  private function _LoadManagerSuperlatives($draft_id, DraftStats $stats) {
+    $stmt = $this->pdo->prepare("SELECT m.manager_name, avg(p.pick_duration) as pick_average,
+      max(p.pick_duration) as pick_max, min(p.pick_duration) as pick_min
     FROM players p
     LEFT OUTER JOIN managers m
     ON m.manager_id = p.manager_id
     WHERE p.draft_id = ?
     AND p.pick_duration IS NOT NULL
     GROUP BY m.manager_name
-    ORDER BY pick_average DESC
-    LIMIT 1");
+    ORDER BY m.manager_name");
 
     $stmt->bindParam(1, $draft_id);
 
-    $row = $this->_FetchRow($stmt);
+    if (!$stmt->execute()) {
+      throw new \Exception("Unable to calculate draft stats.");
+    }
 
+    $managers = $stmt->fetchAll();
+
+    $row = $this->_Extreme($managers, 'pick_average', true);
     $stats->longest_avg_pick_manager_name = ($row['manager_name'] ?? null);
     $stats->longest_avg_pick_seconds = (int)($row['pick_average'] ?? null);
-  }
 
-  private function _LoadShortestAveragePick($draft_id, DraftStats $stats) {
-    $stmt = $this->pdo->prepare("SELECT m.manager_name, avg(p.pick_duration) as pick_average
-    FROM players p
-    LEFT OUTER JOIN managers m
-    ON m.manager_id = p.manager_id
-    WHERE p.draft_id = ?
-    AND p.pick_duration IS NOT NULL
-    GROUP BY m.manager_name
-    ORDER BY pick_average ASC
-    LIMIT 1");
-
-    $stmt->bindParam(1, $draft_id);
-
-    $row = $this->_FetchRow($stmt);
-
+    $row = $this->_Extreme($managers, 'pick_average', false);
     $stats->shortest_avg_pick_manager_name = ($row['manager_name'] ?? null);
     $stats->shortest_avg_pick_seconds = (int)($row['pick_average'] ?? null);
-  }
 
-  private function _LoadSlowestPick($draft_id, DraftStats $stats) {
-    $stmt = $this->pdo->prepare("SELECT m.manager_name, max(p.pick_duration) as pick_max
-    FROM players p
-    LEFT OUTER JOIN managers m
-    ON m.manager_id = p.manager_id
-    WHERE p.draft_id = ?
-    AND p.pick_duration IS NOT NULL
-    GROUP BY m.manager_name
-    ORDER BY pick_max DESC
-    LIMIT 1");
-
-    $stmt->bindParam(1, $draft_id);
-
-    $row = $this->_FetchRow($stmt);
-
+    $row = $this->_Extreme($managers, 'pick_max', true);
     $stats->longest_single_pick_manager_name = ($row['manager_name'] ?? null);
     $stats->longest_single_pick_seconds = (int)($row['pick_max'] ?? null);
-  }
 
-  private function _LoadFastestPick($draft_id, DraftStats $stats) {
-    $stmt = $this->pdo->prepare("SELECT m.manager_name, min(p.pick_duration) as pick_min
-    FROM players p
-    LEFT OUTER JOIN managers m
-    ON m.manager_id = p.manager_id
-    WHERE p.draft_id = ?
-    AND p.pick_duration IS NOT NULL
-    GROUP BY m.manager_name
-    ORDER BY pick_min ASC
-    LIMIT 1");
-
-    $stmt->bindParam(1, $draft_id);
-
-    $row = $this->_FetchRow($stmt);
-
+    $row = $this->_Extreme($managers, 'pick_min', false);
     $stats->shortest_single_pick_manager_name = ($row['manager_name'] ?? null);
     $stats->shortest_single_pick_seconds = (int)($row['pick_min'] ?? null);
+  }
+
+  /** The row with the highest ($highest) or lowest $column value; the first one wins a tie. Null when there are no rows. */
+  private function _Extreme(array $rows, string $column, bool $highest) {
+    $best = null;
+
+    foreach ($rows as $row) {
+      if ($best === null || ($highest ? (float)$row[$column] > (float)$best[$column] : (float)$row[$column] < (float)$best[$column])) {
+        $best = $row;
+      }
+    }
+
+    return $best;
   }
 
   private function _LoadAveragePickTime($draft_id, DraftStats $stats) {
@@ -310,66 +255,40 @@ class DraftStatsRepository {
   }
 
   private function _LoadTeamSuperlatives($draft_id, DraftStats $stats, $teams) {
-    $stmt = $this->pdo->prepare("SELECT DISTINCT p.team, count(team) as team_occurences
-    FROM players p
-    WHERE p.draft_id = ?
-    AND p.team IS NOT NULL
-    GROUP BY team
-    ORDER BY team_occurences DESC
-    LIMIT 1");
-
-    $stmt->bindParam(1, $draft_id);
-
-    $row = $this->_FetchRow($stmt);
-
+    $row = $this->_CountExtreme($draft_id, 'team', 'DESC');
     $stats->most_drafted_team = isset($row['team']) ? ($teams[$row['team']] ?? $row['team']) : "";
-    $stats->most_drafted_team_count = (int)($row['team_occurences'] ?? null);
+    $stats->most_drafted_team_count = (int)($row['occurrences'] ?? null);
 
-    $stmt = $this->pdo->prepare("SELECT DISTINCT p.team, count(team) as team_occurences
-    FROM players p
-    WHERE p.draft_id = ?
-    AND p.team IS NOT NULL
-    GROUP BY team
-    ORDER BY team_occurences ASC
-    LIMIT 1");
-
-    $stmt->bindParam(1, $draft_id);
-
-    $row = $this->_FetchRow($stmt);
-
+    $row = $this->_CountExtreme($draft_id, 'team', 'ASC');
     $stats->least_drafted_team = isset($row['team']) ? ($teams[$row['team']] ?? $row['team']) : "";
-    $stats->least_drafted_team_count = (int)($row['team_occurences'] ?? null);
+    $stats->least_drafted_team_count = (int)($row['occurrences'] ?? null);
   }
 
   private function _LoadPositionSuperlatives($draft_id, DraftStats $stats, $positions) {
-    $stmt = $this->pdo->prepare("SELECT DISTINCT p.position, count(position) as position_occurences
-    FROM players p
-    WHERE p.draft_id = ?
-    AND p.position IS NOT NULL
-    GROUP BY position
-    ORDER BY position_occurences DESC
-    LIMIT 1");
-
-    $stmt->bindParam(1, $draft_id);
-
-    $row = $this->_FetchRow($stmt);
-
+    $row = $this->_CountExtreme($draft_id, 'position', 'DESC');
     $stats->most_drafted_position = isset($row['position']) ? ($positions[$row['position']] ?? $row['position']) : "";
-    $stats->most_drafted_position_count = (int)($row['position_occurences'] ?? null);
+    $stats->most_drafted_position_count = (int)($row['occurrences'] ?? null);
 
-    $stmt = $this->pdo->prepare("SELECT DISTINCT p.position, count(position) as position_occurences
+    $row = $this->_CountExtreme($draft_id, 'position', 'ASC');
+    $stats->least_drafted_position = isset($row['position']) ? ($positions[$row['position']] ?? $row['position']) : "";
+    $stats->least_drafted_position_count = (int)($row['occurrences'] ?? null);
+  }
+
+  /** The most ($direction DESC) or least (ASC) drafted value of the players table's team or position column. */
+  private function _CountExtreme($draft_id, string $column, string $direction) {
+    $column = $column === 'position' ? 'position' : 'team';
+    $direction = $direction === 'ASC' ? 'ASC' : 'DESC';
+
+    $stmt = $this->pdo->prepare("SELECT p.$column, count(p.$column) as occurrences
     FROM players p
     WHERE p.draft_id = ?
-    AND p.position IS NOT NULL
-    GROUP BY position
-    ORDER BY position_occurences ASC
+    AND p.$column IS NOT NULL
+    GROUP BY p.$column
+    ORDER BY occurrences $direction
     LIMIT 1");
 
     $stmt->bindParam(1, $draft_id);
 
-    $row = $this->_FetchRow($stmt);
-
-    $stats->least_drafted_position = isset($row['position']) ? ($positions[$row['position']] ?? $row['position']) : "";
-    $stats->least_drafted_position_count = (int)($row['position_occurences'] ?? null);
+    return $this->_FetchRow($stmt);
   }
 }

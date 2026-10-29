@@ -1,0 +1,42 @@
+{
+    "phase": "myisam",
+    "seconds": 8,
+    "levels": [
+        {
+            "workers": 1,
+            "queries": 568,
+            "queries_per_second": 71,
+            "p50_ms": 3.452,
+            "p95_ms": 50.131,
+            "p99_ms": 96.894,
+            "max_ms": 105.6
+        },
+        {
+            "workers": 4,
+            "queries": 2280,
+            "queries_per_second": 285,
+            "p50_ms": 3.23,
+            "p95_ms": 51.313,
+            "p99_ms": 97.461,
+            "max_ms": 116.8
+        },
+        {
+            "workers": 16,
+            "queries": 3005,
+            "queries_per_second": 376,
+            "p50_ms": 7.387,
+            "p95_ms": 199.479,
+            "p99_ms": 379.819,
+            "max_ms": 422.7
+        },
+        {
+            "workers": 64,
+            "queries": 2986,
+            "queries_per_second": 373,
+            "p50_ms": 34.275,
+            "p95_ms": 704.83,
+            "p99_ms": 1278.407,
+            "max_ms": 1599.5
+        }
+    ]
+}

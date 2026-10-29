@@ -1,0 +1,42 @@
+{
+    "phase": "innodb",
+    "seconds": 8,
+    "levels": [
+        {
+            "workers": 1,
+            "queries": 5626,
+            "queries_per_second": 703,
+            "p50_ms": 0.452,
+            "p95_ms": 3.775,
+            "p99_ms": 6.839,
+            "max_ms": 8.4
+        },
+        {
+            "workers": 4,
+            "queries": 8909,
+            "queries_per_second": 1114,
+            "p50_ms": 1.171,
+            "p95_ms": 11.081,
+            "p99_ms": 18.316,
+            "max_ms": 25.8
+        },
+        {
+            "workers": 16,
+            "queries": 9213,
+            "queries_per_second": 1152,
+            "p50_ms": 2.882,
+            "p95_ms": 53.287,
+            "p99_ms": 87.848,
+            "max_ms": 154.1
+        },
+        {
+            "workers": 64,
+            "queries": 9328,
+            "queries_per_second": 1166,
+            "p50_ms": 8.517,
+            "p95_ms": 212.293,
+            "p99_ms": 322.756,
+            "max_ms": 563
+        }
+    ]
+}

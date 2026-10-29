@@ -1,0 +1,34 @@
+{
+    "leagues": {
+        "big": "MLB",
+        "small": "SuperRugby"
+    },
+    "league_counts": {
+        "MLB": 3885,
+        "NFLExtended": 2324,
+        "NHL": 2037,
+        "NFLStandard": 977,
+        "NBA": 507,
+        "SuperRugby": 270
+    },
+    "per_league": {
+        "big": {
+            "team": "TEX",
+            "position": "RP",
+            "rare_last": "Barnette",
+            "first": "Tyler",
+            "last": "Binford"
+        },
+        "small": {
+            "team": "CRU",
+            "position": "OB",
+            "rare_last": "Muirhead",
+            "first": "Sean",
+            "last": "Fainga'anuku"
+        }
+    },
+    "drafts": [
+        1,
+        20
+    ]
+}

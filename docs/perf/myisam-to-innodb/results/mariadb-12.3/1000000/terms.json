@@ -1,0 +1,34 @@
+{
+    "leagues": {
+        "big": "MLB",
+        "small": "SuperRugby"
+    },
+    "league_counts": {
+        "MLB": 392457,
+        "NFLExtended": 235373,
+        "NHL": 196688,
+        "NFLStandard": 97289,
+        "NBA": 50578,
+        "SuperRugby": 27615
+    },
+    "per_league": {
+        "big": {
+            "team": "TEX",
+            "position": "RP",
+            "rare_last": "Clement",
+            "first": "Tyler",
+            "last": "Binford"
+        },
+        "small": {
+            "team": "HIG",
+            "position": "OB",
+            "rare_last": "Toala",
+            "first": "Sean",
+            "last": "Fainga'anuku"
+        }
+    },
+    "drafts": [
+        1,
+        1000
+    ]
+}

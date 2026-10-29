@@ -1,0 +1,23 @@
+{
+    "seed": {
+        "dataset": "100000",
+        "seconds": 5.356,
+        "version": "8.4.13",
+        "sizes": {
+            "players": {
+                "t": "players",
+                "ENGINE": "InnoDB",
+                "approx_rows": 99749,
+                "data_bytes": 8929280,
+                "index_bytes": 11091968
+            },
+            "pro_players": {
+                "t": "pro_players",
+                "ENGINE": "MyISAM",
+                "approx_rows": 100000,
+                "data_bytes": 4310160,
+                "index_bytes": 5391360
+            }
+        }
+    }
+}
