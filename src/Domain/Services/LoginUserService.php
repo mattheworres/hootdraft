@@ -140,7 +140,7 @@ class LoginUserService {
       $this->logger->error('Unable to create new user or send the Email Verification Key link: ' . $e->getMessage(), ['exception' => $e]);
 
       $response->success = false;
-      $response->errors = array("Unable to create new user or send verification email.");
+      $response->errors = array("Unable to create new user or send the email to verify your address.");
     }
 
     return $response;
@@ -193,7 +193,7 @@ class LoginUserService {
     // A Reset must not stand in for Email Verification, and a Disabled user stays out
     if (!$user->enabled || !$user->emailVerified) {
       $response->success = false;
-      $response->errors = array("This account hasn't been verified yet. Check your email for the verification link.");
+      $response->errors = array("This account's email address is not verified yet. Check your email for the link to verify it.");
 
       return $response;
     }
@@ -336,15 +336,15 @@ class LoginUserService {
 
     $emailVerificationLink = $this->createEmailVerificationLink($user);
 
-    $message->subject = "HootDraft: Verify your email address";
+    $message->subject = "HootDraft: Please verify your email address";
     $message->is_html = true;
-    $message->body = $this->templates->RenderTemplate($addressChanged ? 'ReverifyEmail.html' : 'VerifyEmail.html', array(
+    $message->body = $this->templates->RenderTemplate($addressChanged ? 'EmailVerificationAddressChanged.html' : 'EmailVerification.html', array(
       'imageBaseUrl' => sprintf("%s/images/email", $this->appBaseUrl),
-      'verifyLink' => $emailVerificationLink,
+      'emailVerificationLink' => $emailVerificationLink,
     ));
     $message->altBody = $addressChanged
-      ? "Hi, and welcome to Hoot Draft! Before we get started, can you click this link to verify that you are who you say you are? Thanks pal! $emailVerificationLink"
-      : "Hey pal, we need you to verify your email address. Click this link to do so: $emailVerificationLink";
+      ? "Hey pal, we need you to verify your new email address. Click this link to do so: $emailVerificationLink"
+      : "Hi, and welcome to Hoot Draft! Before we get started, can you click this link to verify your email address? Thanks pal! $emailVerificationLink";
 
     $this->emailService->SendMail($message);
   }

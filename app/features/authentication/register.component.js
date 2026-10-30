@@ -70,7 +70,7 @@ class RegisterController {
       this.form.$setPristine();
       this.showRegistrationForm = false;
 
-      this.messageService.showInfo('Verification email sent');
+      this.messageService.showInfo('We sent you an email to verify your address');
     };
 
     const registerFailureHandler = response => {

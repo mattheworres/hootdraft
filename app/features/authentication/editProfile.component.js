@@ -27,6 +27,7 @@ class EditProfileController {
   loadUserProfileData() {
     const loadSuccess = data => {
       this.lodash.merge(this.userProfile, data);
+      this.savedEmail = this.userProfile.email;
       this.loading = false;
     };
 
@@ -36,6 +37,15 @@ class EditProfileController {
     };
 
     this.api.Authentication.getProfile({}, loadSuccess, errorHandler);
+  }
+
+  // The server compares addresses without regard to case. No model value means the field holds an invalid address.
+  emailChanged() {
+    const {email} = this.userProfile;
+
+    return angular.isString(email) &&
+      angular.isString(this.savedEmail) &&
+      email.toLowerCase() !== this.savedEmail.toLowerCase();
   }
 
   passwordInputType() {
@@ -78,12 +88,15 @@ class EditProfileController {
         this.authenticationService.uncacheSession();
 
         if (response.sendEmail === true) {
-          this.messageService.showInfo('Your email was updated. In order to login again you must verify your email address. An email has been sent to that account to activate it. You will be logged out for now. See you soon!');
+          this.messageService.showInfo('Your email was updated, so we logged you out. To log in again, click the link we emailed to your new address to verify it. See you soon!');
           this.$location.path('/home');
         } else {
           this.messageService.showInfo('Since you changed your password, we had to log you out and log you back in again. But no biggie - just enter your new password now to login again.');
           this.$location.path('/login');
         }
+
+        // The session has ended: do not cache the name again or send the user back to a page that needs a login
+        return;
       }
 
       if (this.$sessionStorage.userName !== this.userProfile.name) {

@@ -25,8 +25,8 @@ _Avoid_: Player
 ### Accounts
 
 **Email Verified / Email Unverified**:
-Whether the user followed the emailed link for their current address. A new user and a Commissioner who changed their email are Email Unverified until they follow the link. Always use the full term: "verified", "unverified" and "verification" alone do not say which check is meant. The matching token is the **Email Verification Key**.
-_Avoid_: Verified, unverified, verification (without "Email"), confirmed, active
+Whether the user followed the emailed link for their current address. A new user and a Commissioner who changed their email are Email Unverified until they follow the link. In code, comments and docs always use the full term: "verified", "unverified" and "verification" alone do not say which check is meant. In text shown to users (messages, screens, emails) plain "verify", "verified" and "unverified" are fine when it is clear that the email address is meant, because the full term reads awkwardly there. The bare noun "verification" is still avoided in that text. The matching token is the **Email Verification Key**.
+_Avoid_: Verified, unverified, verification (without "Email") in code, comments and docs; confirmed, active
 
 **Enabled / Disabled**:
 The Admin's switch. A Disabled user cannot log in. Only an Admin changes it, and it is separate from Email Verified.

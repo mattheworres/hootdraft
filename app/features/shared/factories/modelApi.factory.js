@@ -24,10 +24,10 @@ angular.module('phpdraft.shared').factory('api', ($resource, ENV) =>
         {method: 'GET', url: `${ENV.apiEndpoint}me`},
       'register':
         {method: 'POST', url: `${ENV.apiEndpoint}register`},
-      'verify':
-        {method: 'POST', url: `${ENV.apiEndpoint}verify`},
-      'verifyResetToken':
-        {method: 'GET', url: `${ENV.apiEndpoint}verifyToken`},
+      'emailVerification':
+        {method: 'POST', url: `${ENV.apiEndpoint}emailVerification`},
+      'checkResetKey':
+        {method: 'GET', url: `${ENV.apiEndpoint}checkResetKey`},
       'lostPassword':
         {method: 'POST', url: `${ENV.apiEndpoint}lostPassword`},
       'resetPassword':

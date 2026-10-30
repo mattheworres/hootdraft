@@ -26,30 +26,30 @@ class InviteSetupController {
     this.resetToken = this.$routeParams.token;
 
     if ((this.email === null) || (this.resetToken === null)) {
-      this.messageService.showError('Invalid token or email');
+      this.messageService.showError('Invalid Reset Key or email');
       this.showResetForm = false;
       this.showLoading = false;
       return;
     }
 
-    const verifyModel = {
+    const checkModel = {
       _email: this.email,
       _resetKey: this.resetToken,
     };
 
-    const verifyResult = this.authenticationService.verifyResetToken(verifyModel);
+    const checkResult = this.authenticationService.checkResetKey(checkModel);
 
-    const verificationSuccess = () => {
+    const checkSuccess = () => {
       this.showResetForm = true;
       this.showLoading = false;
     };
 
-    const verificationFailure = () => {
+    const checkFailure = () => {
       this.showResetForm = false;
       this.showLoading = false;
     };
 
-    verifyResult.promise.then(verificationSuccess, verificationFailure);
+    checkResult.promise.then(checkSuccess, checkFailure);
   }
 
   passwordInputType() {

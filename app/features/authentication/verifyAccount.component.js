@@ -23,7 +23,7 @@ class VerifyAccountController {
     const {email, token} = this.$routeParams;
 
     if ((email === null) || (token === null)) {
-      this.messageService.showError('Invalid verification data');
+      this.messageService.showError('Invalid link or email');
       this.showErrorInformation = true;
       return;
     }
@@ -40,7 +40,7 @@ class VerifyAccountController {
 
         this.$location.path('/home');
 
-        this.messageService.showInfo('Your account has been verified, and you are now logged in. Welcome!');
+        this.messageService.showInfo('Your email is now verified, and you are now logged in. Welcome!');
       }, 3500);
     };
 
@@ -49,21 +49,21 @@ class VerifyAccountController {
 
       this.showErrorInformation = true;
 
-      const verifyError = this.errorService.parseValidationErrorsFromResponse(response);
+      const emailVerificationError = this.errorService.parseValidationErrorsFromResponse(response);
 
-      this.messageService.showError(`${verifyError}`, 'Unable to verify');
+      this.messageService.showError(`${emailVerificationError}`, 'Unable to verify your email');
     };
 
-    const verificationModel = {
+    const emailVerificationModel = {
       _email: email,
       _emailVerificationKey: token,
     };
 
-    const verificationResult = this.authenticationService.verify(verificationModel);
+    const emailVerificationResult = this.authenticationService.emailVerification(emailVerificationModel);
 
     this.messageService.closeToasts();
 
-    verificationResult.promise.then(successHandler, failureHandler);
+    emailVerificationResult.promise.then(successHandler, failureHandler);
   }
 }
 

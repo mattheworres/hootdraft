@@ -106,16 +106,16 @@ class AuthenticationService {
     return this._makeApiCall(model, this.api.Authentication.register);
   }
 
-  verify(model) {
-    return this._makeApiCall(model, this.api.Authentication.verify);
+  emailVerification(model) {
+    return this._makeApiCall(model, this.api.Authentication.emailVerification);
   }
 
   lostPassword(model) {
     return this._makeApiCall(model, this.api.Authentication.lostPassword);
   }
 
-  verifyResetToken(model) {
-    return this._makeApiCall(model, this.api.Authentication.verifyResetToken);
+  checkResetKey(model) {
+    return this._makeApiCall(model, this.api.Authentication.checkResetKey);
   }
 
   resetPassword(model) {

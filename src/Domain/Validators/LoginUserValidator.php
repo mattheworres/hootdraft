@@ -147,14 +147,14 @@ class LoginUserValidator {
     $emailVerificationKey = $this->saltService->UrlDecodeSalt($rawEmailVerificationKey);
 
     if (strlen($emailVerificationKey) != 16) {
-      $errors[] = "Verification token invalid.";
+      $errors[] = "Email Verification Key invalid.";
       $valid = false;
     }
 
     $this->validateEmailAddress($emailAddress, $errors, $valid);
 
     if (!$this->repository->EmailVerificationKeyMatches($emailAddress, $emailVerificationKey, self::EMAIL_VERIFICATION_KEY_TTL_SECONDS)) {
-      $errors[] = "Verification token invalid.";
+      $errors[] = "Email Verification Key invalid.";
       $valid = false;
     }
 
@@ -183,12 +183,12 @@ class LoginUserValidator {
     }
 
     if (strlen($resetKey) != 16) {
-      $errors[] = "Verification token invalid.";
+      $errors[] = "Reset Key invalid.";
       $valid = false;
     }
 
     if (!$this->repository->ResetKeyMatches($emailAddress, $resetKey, self::RESET_LINK_TTL_SECONDS)) {
-      $errors[] = "Verification token invalid.";
+      $errors[] = "Reset Key invalid.";
       $valid = false;
     }
 
@@ -214,12 +214,12 @@ class LoginUserValidator {
     }
 
     if (strlen($resetKey) != 16) {
-      $errors[] = "Verification token invalid.";
+      $errors[] = "Reset Key invalid.";
       $valid = false;
     }
 
     if (!$this->repository->ResetKeyMatches($emailAddress, $resetKey, self::RESET_LINK_TTL_SECONDS)) {
-      $errors[] = "Verification token invalid.";
+      $errors[] = "Reset Key invalid.";
       $valid = false;
     }
 
@@ -341,7 +341,7 @@ class LoginUserValidator {
   // A Reset only works for an Enabled, Email Verified account: it must not stand in for Email Verification, or lift a Disable
   private function validateResetAllowed($emailAddress, &$errors, &$valid) {
     if (!$this->repository->IsEnabledAndEmailVerified($emailAddress)) {
-      $errors[] = "Verification token invalid.";
+      $errors[] = "Reset Key invalid.";
       $valid = false;
     }
   }

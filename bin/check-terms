@@ -18,12 +18,25 @@ const SCANNED_EXTENSIONS = ['php', 'html', 'yaml', 'yml', 'sql', 'twig'];
 const SKIPPED_FILES = ['bin/check-terms', 'config/reference.php'];
 const ALLOW_FILE = __DIR__ . '/check-terms.allow';
 
-/** rule id => [regex, what to use instead] */
+/**
+ * rule id => [regex, what to use instead, scope]
+ *
+ * scope "code" checks names, comments and docs, "text" checks text shown to users (quoted strings and whole email
+ * templates, see splitLine), and "all" (the default) checks the whole line. Users read plain words, so text may say
+ * "verify" and "verified" where the email address is clear from context. Code must be exact.
+ */
 const RULES = [
   'verification-without-email' => [
     // "verif" is fine when "email" (or "email un") comes right before it: Email Verified, EmailUnverified, email_verification
     '/(?<!email)(?<!email )(?<!email_)(?<!emailun)(?<!email un)(?<!email_un)verif/i',
-    'say Email Verified / Email Unverified / Email Verification Key in full',
+    'in code say Email Verified / Email Unverified / Email Verification Key in full (plain "verify" is fine in text shown to users)',
+    'code',
+  ],
+  'verification-noun-in-text' => [
+    // Users may read "verify", "verified" and "unverified", but the noun alone does not say what is checked
+    '/(?<!email)(?<!email )(?<!email_)verification/i',
+    'say "verify your email address" or Email Verification Key, not the bare noun',
+    'text',
   ],
   'token' => [
     '/(?<![$\\\\])\btokens?\b(?!\\\\)/i',
@@ -38,6 +51,28 @@ const RULES = [
     'say Depth Chart',
   ],
 ];
+
+/**
+ * Splits a line into [code, text]. Text is what a user can read: every quoted string, or the whole line in an email
+ * template. A comment that quotes a word counts as text, which is the kinder mistake.
+ *
+ * @return array{string, string}
+ */
+function splitLine(string $path, string $line): array
+{
+  if (str_starts_with($path, 'templates/')) {
+    return ['', $line];
+  }
+
+  $text = '';
+  $code = preg_replace_callback('/\'(?:[^\'\\\\]|\\\\.)*\'|"(?:[^"\\\\]|\\\\.)*"/', function (array $match) use (&$text): string {
+    $text .= ' ' . $match[0];
+
+    return ' ';
+  }, $line);
+
+  return [$code, $text];
+}
 
 /** @return list<array{rule: string, glob: string, needle: string, used: bool}> */
 function loadAllowList(): array
@@ -90,8 +125,14 @@ $allowList = loadAllowList();
 $violations = [];
 foreach (scannedFiles() as $path) {
   foreach (file(ROOT . '/' . $path, FILE_IGNORE_NEW_LINES) ?: [] as $number => $line) {
+    [$code, $text] = splitLine($path, $line);
     foreach (RULES as $rule => [$regex, $advice]) {
-      if (preg_match($regex, $line, $match) && !isAllowed($allowList, $rule, $path, $line)) {
+      $checked = match (RULES[$rule][2] ?? 'all') {
+        'code' => $code,
+        'text' => $text,
+        default => $line,
+      };
+      if (preg_match($regex, $checked, $match) && !isAllowed($allowList, $rule, $path, $line)) {
         $violations[] = sprintf("%s:%d: %s: \"%s\" - %s\n    %s", $path, $number + 1, $rule, $match[0], $advice, trim(mb_substr($line, 0, 160)));
       }
     }

@@ -272,6 +272,42 @@ class AuthenticationTest extends KernelTestCase
     $this->assertSame(200, $this->login('new@auth-test.example', 'hunter2hunter2')->getStatusCode());
   }
 
+  public function testEmailsAndErrorsNameTheKeysInFull(): void
+  {
+    $register = ['_email' => 'words@auth-test.example', '_password' => 'hunter2hunter2', '_confirmPassword' => 'hunter2hunter2', '_name' => 'Words Auth Test', '_recaptcha' => 'x'];
+
+    static::getContainer()->get(EmailService::class)->failing = true;
+    $failed = $this->call('POST', '/register', $register);
+    $this->assertSame(['Unable to create new user or send the email to verify your address.'], $this->body($failed)['errors']);
+    static::getContainer()->get(EmailService::class)->failing = false;
+    $this->db()->executeStatement("DELETE FROM users WHERE email LIKE '%@auth-test.example'");
+
+    $this->call('POST', '/register', $register);
+    $this->createLegacyUser('changer@auth-test.example');
+    $this->login('changer@auth-test.example');
+    $this->call('PUT', '/commish/profile', [
+      '_email' => 'changed@auth-test.example', '_name' => 'User changer@auth-test.example', '_password' => self::PASSWORD,
+      '_newPassword' => '', '_newConfirmedPassword' => '',
+    ]);
+
+    $this->assertCount(2, $this->sent);
+    foreach ($this->sent as $message) {
+      $this->assertSame('HootDraft: Please verify your email address', $message->subject);
+      $this->assertMatchesRegularExpression('~href="[^"]+/verify/[^"]+"~', $message->body, 'the template shows the link');
+    }
+
+    $this->createEmailUnverifiedUser('pending@auth-test.example', 60);
+    $lost = $this->call('POST', '/lostPassword', ['_email' => 'pending@auth-test.example', '_recaptcha' => 'x']);
+    $this->assertSame(['This account\'s email address is not verified yet. Check your email for the link to verify it.'], $this->body($lost)['errors']);
+
+    $badKey = $this->call('POST', '/emailVerification', ['_email' => 'pending@auth-test.example', '_emailVerificationKey' => 'BBBBBBBBBBBBBBBB']);
+    $this->assertSame(['Email Verification Key invalid.'], $this->body($badKey)['errors']);
+
+    $this->createLegacyUser('reset@auth-test.example');
+    $badReset = $this->call('GET', '/checkResetKey?' . http_build_query(['_email' => 'reset@auth-test.example', '_resetKey' => 'BBBBBBBBBBBBBBBB']));
+    $this->assertSame(['Reset Key invalid.'], $this->body($badReset)['errors']);
+  }
+
   public function testEmailUnverifiedWithAFreshKeyGetsTheMessageAndNoEmail(): void
   {
     $this->createEmailUnverifiedUser('fresh@auth-test.example', 3600);
