@@ -4,10 +4,14 @@
 
 **Blocked by:** 01
 
-**Status:** ready-for-agent
+**Status:** wontfix
 
 - [ ] `/lostPassword` sends a reset email to an unverified (disabled) account, the same as to an enabled one
 - [ ] Completing `/resetPassword` enables the account and logs the user in
 - [ ] An invited user's flow (`/inviteSetup` via `/verifyToken` and `/resetPassword`) still works
 - [ ] Login still refuses an unverified account with the generic failure message
 - [ ] Functional tests cover: register, let the verification key expire, request a reset, complete it, then log in successfully. The same for the "changed email in profile" case
+
+## Comments
+
+- Superseded by `.scratch/email-verified-split/`. Letting a password reset enable an unverified account was the wrong fix. The new design separates `emailVerified` from `enabled`, adds a second token column pair, and resends the verification email when an unverified user logs in with the correct password and the old token has expired. See `.scratch/email-verified-split/spec.md`.
