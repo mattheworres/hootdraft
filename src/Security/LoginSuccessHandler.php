@@ -18,8 +18,8 @@ class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
       return new JsonResponse(['success' => false, 'errors' => ['Invalid credentials.']], Response::HTTP_BAD_REQUEST);
     }
 
-    // A pending verification / reset key is deliberately left alone: logging in with the old password must not
-    // cancel a reset the owner asked for. Keys expire on their own (see LoginUserRepository::VerificationMatches).
+    // A pending reset key is deliberately left alone: logging in with the old password must not
+    // cancel a reset the owner asked for. Keys expire on their own (see LoginUserRepository::ResetKeyMatches).
     return new JsonResponse(AuthResponse::for($user));
   }
 }

@@ -12,7 +12,7 @@ use HootDraft\Security\User;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
 class LoginUserValidator {
-  /** How long the emailed links stay good. Both kinds share the users.verificationKey column. */
+  /** How long the emailed links stay good. Both kinds still share the users.resetKey column. */
   public const VERIFY_LINK_TTL_SECONDS = 172800; // 48 hours
   public const RESET_LINK_TTL_SECONDS = 3600; // 1 hour
 
@@ -153,7 +153,7 @@ class LoginUserValidator {
 
     $this->validateEmailAddress($emailAddress, $errors, $valid);
 
-    if (!$this->repository->VerificationMatches($emailAddress, $verificationToken, self::VERIFY_LINK_TTL_SECONDS)) {
+    if (!$this->repository->ResetKeyMatches($emailAddress, $verificationToken, self::VERIFY_LINK_TTL_SECONDS)) {
       $errors[] = "Verification token invalid.";
       $valid = false;
     }
@@ -187,7 +187,7 @@ class LoginUserValidator {
       $valid = false;
     }
 
-    if (!$this->repository->VerificationMatches($emailAddress, $verificationToken, self::RESET_LINK_TTL_SECONDS)) {
+    if (!$this->repository->ResetKeyMatches($emailAddress, $verificationToken, self::RESET_LINK_TTL_SECONDS)) {
       $errors[] = "Verification token invalid.";
       $valid = false;
     }
@@ -218,7 +218,7 @@ class LoginUserValidator {
       $valid = false;
     }
 
-    if (!$this->repository->VerificationMatches($emailAddress, $verificationToken, self::RESET_LINK_TTL_SECONDS)) {
+    if (!$this->repository->ResetKeyMatches($emailAddress, $verificationToken, self::RESET_LINK_TTL_SECONDS)) {
       $errors[] = "Verification token invalid.";
       $valid = false;
     }

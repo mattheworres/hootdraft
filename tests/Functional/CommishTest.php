@@ -345,10 +345,10 @@ class CommishTest extends CommishDraftTestCase
     $this->assertTrue($body['invalidateLogin']);
     $this->assertTrue($body['sendEmail']);
 
-    $row = $this->db()->fetchAssociative('SELECT email, enabled, verificationKey FROM users WHERE id = ?', [$alice]);
+    $row = $this->db()->fetchAssociative('SELECT email, enabled, resetKey FROM users WHERE id = ?', [$alice]);
     $this->assertSame('alice2@commish-test.example', $row['email']);
     $this->assertSame(0, (int) $row['enabled']);
-    $this->assertNotEmpty($row['verificationKey']);
+    $this->assertNotEmpty($row['resetKey']);
 
     $mailer = static::getContainer()->get(EmailService::class);
     $this->assertInstanceOf(CapturingEmailService::class, $mailer);
@@ -357,7 +357,7 @@ class CommishTest extends CommishDraftTestCase
 
     // The session is gone, and the address verifies with the emailed link
     $this->assertSame(401, $this->call('GET', '/commish/profile')->getStatusCode());
-    $verified = $this->call('POST', '/verify', ['_email' => 'alice2@commish-test.example', '_verificationToken' => $row['verificationKey']]);
+    $verified = $this->call('POST', '/verify', ['_email' => 'alice2@commish-test.example', '_verificationToken' => $row['resetKey']]);
     $this->assertSame(200, $verified->getStatusCode(), $verified->getContent());
   }
 
@@ -388,7 +388,7 @@ class CommishTest extends CommishDraftTestCase
 
     // The invitation link goes through the reset endpoints, and stays good for longer than a reset link
     $this->cookies = [];
-    $token = $row['verificationKey'];
+    $token = $row['resetKey'];
     $this->assertSame(200, $this->call('GET', '/verifyToken?' . http_build_query(['_email' => 'carol@commish-test.example', '_verificationToken' => $token]))->getStatusCode());
 
     $reset = $this->call('POST', '/resetPassword', ['_email' => 'carol@commish-test.example', '_password' => 'carols password', '_confirmPassword' => 'carols password', '_verificationToken' => $token]);

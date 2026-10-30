@@ -207,7 +207,7 @@ class AdminTest extends CommishDraftTestCase
     $this->assertTrue($body['success']);
     $this->assertSame(['ROLE_COMMISH' => 'Commissioner', 'ROLE_ADMIN' => 'Administrator'], $body['roles']);
     $alice = array_values(array_filter($body['users'], fn ($u) => $u['email'] === 'alice@' . static::domain()))[0];
-    $this->assertSame(['id', 'enabled', 'email', 'name', 'roles', 'creationTime'], array_keys($alice));
+    $this->assertSame(['id', 'enabled', 'emailVerified', 'email', 'name', 'roles', 'creationTime'], array_keys($alice));
   }
 
   public function testUpdateUser(): void

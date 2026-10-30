@@ -38,7 +38,7 @@ class LoginUserRepository {
     return $user;
   }
 
-  /** Every user without the password, salt and verification key. Admin only. */
+  /** Every user without the password, salt, reset key and email verification key. Admin only. */
   public function LoadAll() {
     $load_stmt = $this->pdo->prepare("SELECT * FROM users");
     $load_stmt->setFetchMode(\PDO::FETCH_CLASS, LoginUser::class);
@@ -122,12 +122,15 @@ class LoginUserRepository {
   /** Leaves only what was selected (id, name) so nothing else serializes into the public JSON. */
   private function _ScrubPublicUser(LoginUser $user) {
     unset($user->enabled);
+    unset($user->emailVerified);
     unset($user->email);
     unset($user->password);
     unset($user->salt);
     unset($user->roles);
-    unset($user->verificationKey);
-    unset($user->verificationKeyCreated);
+    unset($user->resetKey);
+    unset($user->resetKeyCreated);
+    unset($user->emailVerificationKey);
+    unset($user->emailVerificationKeyCreated);
     unset($user->creationTime);
 
     return $user;
@@ -135,9 +138,10 @@ class LoginUserRepository {
 
   public function Create(LoginUser $user) {
     $insert_stmt = $this->pdo->prepare("INSERT INTO users
-        (id, email, password, salt, name, roles, verificationKey, verificationKeyCreated, enabled, creationTime)
+        (id, email, password, salt, name, roles, resetKey, resetKeyCreated,
+          emailVerificationKey, emailVerificationKeyCreated, enabled, emailVerified, creationTime)
         VALUES
-        (NULL, ?, ?, ?, ?, ?, ?, ?, ?, UTC_TIMESTAMP())");
+        (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, UTC_TIMESTAMP())");
 
     $ok = $insert_stmt->execute([
       strtolower($user->email),
@@ -145,9 +149,12 @@ class LoginUserRepository {
       $user->salt,
       $user->name,
       implode(',', $user->roles),
-      $user->verificationKey,
-      $user->verificationKeyCreated,
+      $user->resetKey,
+      $user->resetKeyCreated,
+      $user->emailVerificationKey,
+      $user->emailVerificationKeyCreated,
       (int) $user->enabled,
+      (int) $user->emailVerified,
     ]);
 
     if (!$ok) {
@@ -162,7 +169,8 @@ class LoginUserRepository {
   public function Update(LoginUser $user) {
     $update_stmt = $this->pdo->prepare("UPDATE users
         SET email = ?, password = ?, salt = ?,
-          name = ?, roles = ?, verificationKey = ?, verificationKeyCreated = ?, enabled = ?
+          name = ?, roles = ?, resetKey = ?, resetKeyCreated = ?,
+          emailVerificationKey = ?, emailVerificationKeyCreated = ?, enabled = ?, emailVerified = ?
         WHERE id = ?");
 
     $ok = $update_stmt->execute([
@@ -171,9 +179,12 @@ class LoginUserRepository {
       $user->salt,
       $user->name,
       is_array($user->roles) ? implode(',', $user->roles) : $user->roles,
-      $user->verificationKey,
-      $user->verificationKeyCreated,
+      $user->resetKey,
+      $user->resetKeyCreated,
+      $user->emailVerificationKey,
+      $user->emailVerificationKeyCreated,
       (int) $user->enabled,
+      (int) $user->emailVerified,
       $user->id,
     ]);
 
@@ -228,24 +239,26 @@ class LoginUserRepository {
    * True when the key is the one issued to this email and was issued no more than $maxAgeSeconds ago.
    * The key is compared here rather than in SQL so the comparison is constant time.
    */
-  public function VerificationMatches($email, $verificationKey, int $maxAgeSeconds) {
-    $verification_stmt = $this->pdo->prepare("SELECT verificationKey,
-        (verificationKeyCreated IS NOT NULL AND verificationKeyCreated > UTC_TIMESTAMP() - INTERVAL ? SECOND) AS fresh
+  public function ResetKeyMatches($email, $resetKey, int $maxAgeSeconds) {
+    $reset_stmt = $this->pdo->prepare("SELECT resetKey,
+        (resetKeyCreated IS NOT NULL AND resetKeyCreated > UTC_TIMESTAMP() - INTERVAL ? SECOND) AS fresh
         FROM users WHERE email = ? LIMIT 1");
-    $verification_stmt->execute([$maxAgeSeconds, strtolower($email)]);
-    $row = $verification_stmt->fetch(\PDO::FETCH_ASSOC);
+    $reset_stmt->execute([$maxAgeSeconds, strtolower($email)]);
+    $row = $reset_stmt->fetch(\PDO::FETCH_ASSOC);
 
     return $row !== false
-      && $row['verificationKey'] !== null
+      && $row['resetKey'] !== null
       && (int) $row['fresh'] === 1
-      && hash_equals((string) $row['verificationKey'], (string) $verificationKey);
+      && hash_equals((string) $row['resetKey'], (string) $resetKey);
   }
 
   private function _ScrubUser(LoginUser $user) {
     unset($user->password);
     unset($user->salt);
-    unset($user->verificationKey);
-    unset($user->verificationKeyCreated);
+    unset($user->resetKey);
+    unset($user->resetKeyCreated);
+    unset($user->emailVerificationKey);
+    unset($user->emailVerificationKeyCreated);
 
     return $user;
   }

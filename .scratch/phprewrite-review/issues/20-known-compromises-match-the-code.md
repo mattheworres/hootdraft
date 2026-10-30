@@ -8,7 +8,7 @@ Entries that are now wrong:
 - 4.5(5) says `TradeAsset` keeps `trade_asset_id`. The entity now declares `tradeasset_id`
 
 Changes never recorded:
-- verification key expiry (48h), with the invite key dated 47h ahead
+- verification key expiry (48h), with the invite key dated 47h ahead (this has been superceded by the 3 scratch tickets for email-verified-split)
 - the 400 for a malformed JSON body
 - transactions and a Draft lock in Draft update, Round Time save and every Manager save
 - Draft and Manager name checks moved from `LIKE` to equality

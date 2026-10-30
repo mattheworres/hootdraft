@@ -40,10 +40,10 @@ class UsersInvitationService {
     $user->salt = '';
     $user->enabled = 1;
     $user->roles = array('ROLE_COMMISH');
-    $user->verificationKey = $this->saltService->GenerateSaltForUrl();
+    $user->resetKey = $this->saltService->GenerateSaltForUrl();
     // The link is checked against the (1 hour) password reset lifetime, but an invitation should last as long as
     // a verification link, so the key is dated ahead by the difference
-    $user->verificationKeyCreated = gmdate('Y-m-d H:i:s', time() + LoginUserValidator::VERIFY_LINK_TTL_SECONDS - LoginUserValidator::RESET_LINK_TTL_SECONDS);
+    $user->resetKeyCreated = gmdate('Y-m-d H:i:s', time() + LoginUserValidator::VERIFY_LINK_TTL_SECONDS - LoginUserValidator::RESET_LINK_TTL_SECONDS);
 
     try {
       // The invitation only sticks if the email goes out, otherwise the name and email would be taken for nothing
@@ -93,7 +93,7 @@ class UsersInvitationService {
 
   private function generateNewInviteLink(LoginUser $user) {
     $encodedEmail = urlencode($user->email);
-    $encodedToken = urlencode($user->verificationKey);
+    $encodedToken = urlencode($user->resetKey);
 
     return sprintf("%s/inviteSetup/%s/%s", $this->appBaseUrl, $encodedEmail, $encodedToken);
   }

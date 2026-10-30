@@ -22,6 +22,20 @@ _Avoid_: Team, owner, drafter
 A real-world professional athlete in the searchable player list. The Commissioner searches it while entering a Pick, and the match is only a suggestion.
 _Avoid_: Player
 
+### Accounts
+
+**Email Verified / Email Unverified**:
+Whether the user followed the emailed link for their current address. A new user and a Commissioner who changed their email are Email Unverified until they follow the link. Always use the full term: "verified", "unverified" and "verification" alone do not say which check is meant. The matching token is the **Email Verification Key**.
+_Avoid_: Verified, unverified, verification (without "Email"), confirmed, active
+
+**Enabled / Disabled**:
+The Admin's switch. A Disabled user cannot log in. Only an Admin changes it, and it is separate from Email Verified.
+_Avoid_: Blocked, active, inactive
+
+**Reset**:
+Choosing a new password through an emailed link, after a lost password request. It uses its own token, the **Reset Key**, which is separate from the Email Verification Key. A Reset never makes a user Email Verified.
+_Avoid_: Verification, verify
+
 ### The draft
 
 **Draft**:

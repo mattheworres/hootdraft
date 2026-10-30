@@ -218,7 +218,7 @@ class AuthenticationTest extends KernelTestCase
     // Unverified accounts can't log in yet
     $this->assertSame(400, $this->login('new@auth-test.example', 'hunter2hunter2')->getStatusCode());
 
-    $key = $this->db()->fetchOne("SELECT verificationKey FROM users WHERE email = 'new@auth-test.example'");
+    $key = $this->db()->fetchOne("SELECT resetKey FROM users WHERE email = 'new@auth-test.example'");
     $response = $this->call('POST', '/verify', ['_email' => 'new@auth-test.example', '_verificationToken' => $key]);
 
     $this->assertSame(200, $response->getStatusCode(), $response->getContent());
@@ -227,7 +227,7 @@ class AuthenticationTest extends KernelTestCase
 
     // Verifying logged them in
     $this->assertSame(200, $this->call('GET', '/me')->getStatusCode());
-    $this->assertNull($this->db()->fetchOne("SELECT verificationKey FROM users WHERE email = 'new@auth-test.example'"));
+    $this->assertNull($this->db()->fetchOne("SELECT resetKey FROM users WHERE email = 'new@auth-test.example'"));
   }
 
   public function testRegisterRejectsBadInput(): void
@@ -247,7 +247,7 @@ class AuthenticationTest extends KernelTestCase
     $response = $this->call('POST', '/lostPassword', ['_email' => 'reset@auth-test.example', '_recaptcha' => 'x']);
     $this->assertSame(200, $response->getStatusCode(), $response->getContent());
 
-    $key = $this->db()->fetchOne("SELECT verificationKey FROM users WHERE email = 'reset@auth-test.example'");
+    $key = $this->db()->fetchOne("SELECT resetKey FROM users WHERE email = 'reset@auth-test.example'");
     $this->assertSame(16, strlen($key));
 
     $this->assertSame(200, $this->call('GET', '/verifyToken?' . http_build_query(['_email' => 'reset@auth-test.example', '_verificationToken' => $key]))->getStatusCode());
@@ -269,23 +269,23 @@ class AuthenticationTest extends KernelTestCase
   public function testResetIsRefusedForUnverifiedAccountsAndLeavesTheirKeyAlone(): void
   {
     $this->createLegacyUser('pending@auth-test.example', 'ROLE_COMMISH', 0);
-    $this->db()->executeStatement("UPDATE users SET verificationKey = 'AAAAAAAAAAAAAAAA', verificationKeyCreated = UTC_TIMESTAMP() WHERE email = 'pending@auth-test.example'");
+    $this->db()->executeStatement("UPDATE users SET resetKey = 'AAAAAAAAAAAAAAAA', resetKeyCreated = UTC_TIMESTAMP() WHERE email = 'pending@auth-test.example'");
 
     $response = $this->call('POST', '/lostPassword', ['_email' => 'pending@auth-test.example', '_recaptcha' => 'x']);
 
     $this->assertSame(400, $response->getStatusCode());
-    $this->assertSame('AAAAAAAAAAAAAAAA', $this->db()->fetchOne("SELECT verificationKey FROM users WHERE email = 'pending@auth-test.example'"));
+    $this->assertSame('AAAAAAAAAAAAAAAA', $this->db()->fetchOne("SELECT resetKey FROM users WHERE email = 'pending@auth-test.example'"));
   }
 
   public function testEmailedKeysExpire(): void
   {
     $this->createLegacyUser('stale@auth-test.example');
-    $this->db()->executeStatement("UPDATE users SET verificationKey = 'AAAAAAAAAAAAAAAA', verificationKeyCreated = UTC_TIMESTAMP() - INTERVAL 2 HOUR WHERE email = 'stale@auth-test.example'");
+    $this->db()->executeStatement("UPDATE users SET resetKey = 'AAAAAAAAAAAAAAAA', resetKeyCreated = UTC_TIMESTAMP() - INTERVAL 2 HOUR WHERE email = 'stale@auth-test.example'");
 
     $query = http_build_query(['_email' => 'stale@auth-test.example', '_verificationToken' => 'AAAAAAAAAAAAAAAA']);
     $this->assertSame(400, $this->call('GET', '/verifyToken?' . $query)->getStatusCode(), 'a reset link is good for an hour');
 
-    $this->db()->executeStatement("UPDATE users SET verificationKeyCreated = UTC_TIMESTAMP() - INTERVAL 30 MINUTE WHERE email = 'stale@auth-test.example'");
+    $this->db()->executeStatement("UPDATE users SET resetKeyCreated = UTC_TIMESTAMP() - INTERVAL 30 MINUTE WHERE email = 'stale@auth-test.example'");
     $this->assertSame(200, $this->call('GET', '/verifyToken?' . $query)->getStatusCode());
   }
 
@@ -293,10 +293,10 @@ class AuthenticationTest extends KernelTestCase
   {
     $this->createLegacyUser('pendingreset@auth-test.example');
     $this->call('POST', '/lostPassword', ['_email' => 'pendingreset@auth-test.example', '_recaptcha' => 'x']);
-    $key = $this->db()->fetchOne("SELECT verificationKey FROM users WHERE email = 'pendingreset@auth-test.example'");
+    $key = $this->db()->fetchOne("SELECT resetKey FROM users WHERE email = 'pendingreset@auth-test.example'");
 
     $this->assertSame(200, $this->login('pendingreset@auth-test.example')->getStatusCode());
 
-    $this->assertSame($key, $this->db()->fetchOne("SELECT verificationKey FROM users WHERE email = 'pendingreset@auth-test.example'"));
+    $this->assertSame($key, $this->db()->fetchOne("SELECT resetKey FROM users WHERE email = 'pendingreset@auth-test.example'"));
   }
 }

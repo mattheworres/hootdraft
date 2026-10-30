@@ -113,7 +113,7 @@ class LoginUserService {
   public function CreateUnverifiedNewUser(LoginUser $user) {
     $user->enabled = false;
 
-    $this->issueVerificationKey($user);
+    $this->issueResetKey($user);
     $user->salt = ''; // only the legacy digest hasher used a per-user salt
     $user->password = $this->hash($user->password);
     $user->roles = array('ROLE_COMMISH');
@@ -158,7 +158,7 @@ class LoginUserService {
 
   public function VerifyUser(LoginUser $user) {
     $user->enabled = true;
-    $this->clearVerificationKey($user);
+    $this->clearResetKey($user);
 
     $this->repository->Update($user);
 
@@ -177,7 +177,7 @@ class LoginUserService {
       return $response;
     }
 
-    $this->issueVerificationKey($user);
+    $this->issueResetKey($user);
 
     try {
       $this->pdo->beginTransaction();
@@ -214,7 +214,7 @@ class LoginUserService {
   }
 
   public function ResetPassword(LoginUser $user) {
-    $this->clearVerificationKey($user);
+    $this->clearResetKey($user);
     $user->salt = '';
     $user->password = $this->hash($user->password);
 
@@ -251,7 +251,7 @@ class LoginUserService {
       $user->email = $email;
       $user->enabled = 0;
       $invalidateLogin = true;
-      $this->issueVerificationKey($user);
+      $this->issueResetKey($user);
       $sendEmail = true;
     }
 
@@ -304,14 +304,14 @@ class LoginUserService {
     return $response;
   }
 
-  private function issueVerificationKey(LoginUser $user) {
-    $user->verificationKey = $this->saltService->GenerateSaltForUrl();
-    $user->verificationKeyCreated = gmdate('Y-m-d H:i:s');
+  private function issueResetKey(LoginUser $user) {
+    $user->resetKey = $this->saltService->GenerateSaltForUrl();
+    $user->resetKeyCreated = gmdate('Y-m-d H:i:s');
   }
 
-  private function clearVerificationKey(LoginUser $user) {
-    $user->verificationKey = null;
-    $user->verificationKeyCreated = null;
+  private function clearResetKey(LoginUser $user) {
+    $user->resetKey = null;
+    $user->resetKeyCreated = null;
   }
 
   private function rollBack() {
@@ -325,10 +325,10 @@ class LoginUserService {
   }
 
   private function createEmailVerificationLink(LoginUser $user) {
-    return sprintf("%s/verify/%s/%s", $this->appBaseUrl, urlencode($user->email), urlencode($user->verificationKey));
+    return sprintf("%s/verify/%s/%s", $this->appBaseUrl, urlencode($user->email), urlencode($user->resetKey));
   }
 
   private function createForgottenPasswordLink(LoginUser $user) {
-    return sprintf("%s/resetPassword/%s/%s", $this->appBaseUrl, urlencode($user->email), urlencode($user->verificationKey));
+    return sprintf("%s/resetPassword/%s/%s", $this->appBaseUrl, urlencode($user->email), urlencode($user->resetKey));
   }
 }
