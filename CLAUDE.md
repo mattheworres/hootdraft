@@ -2,6 +2,13 @@
 
 Write your findings and explanations meant for human review using ASD-STE100 Simplified Technical English. Be succinct and clear in your writing.
 
+## Commands
+
+Run inside the php container.
+
+- Tests: `docker compose exec -T php composer test` (one file: add `-- tests/Functional/AuthenticationTest.php`)
+- PHPStan, glossary terms and tests together: `docker compose exec -T php composer check`
+
 ## Agent skills
 
 ### Issue tracker

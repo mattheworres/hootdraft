@@ -4,7 +4,7 @@
 
 **Blocked by:** 01
 
-**Status:** ready-for-human
+**Status:** completed
 
 - [x] Registration creates the user with `emailVerified = 0`, `enabled = 1`, and an Email Verification Key. The email links to that key
 - [x] `IsVerificationValid` and `VerifyUser` use the email verification columns (the item below renames them). `VerifyUser` sets `emailVerified = 1`, clears the Email Verification Key, and never writes `enabled`. A Disabled user who follows the email link stays Disabled

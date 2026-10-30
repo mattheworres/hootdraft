@@ -2,7 +2,7 @@
 
 namespace HootDraft\Domain\Entities;
 
-class LoginUser {
+final class LoginUser {
   public $id;
   /** Set only by an Admin. A Disabled user cannot log in. */
   public $enabled;

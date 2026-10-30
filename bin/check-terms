@@ -1,0 +1,112 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Fails when code uses a term that GLOSSARY.md says to avoid.
+ *
+ * Each rule below mirrors an _Avoid_ line in GLOSSARY.md. Only terms with few false positives get a rule; the rest
+ * stay a judgement call for review. A hit that is fine (a stored value, a legacy migration, text a later ticket
+ * rewrites) goes in bin/check-terms.allow with its reason. An allow entry that no longer matches anything also
+ * fails, so the list shrinks as the code is cleaned up.
+ *
+ * Run: composer check-terms
+ */
+
+const ROOT = __DIR__ . '/..';
+const SCANNED_DIRS = ['src', 'tests', 'templates', 'config', 'db', 'bin'];
+const SCANNED_EXTENSIONS = ['php', 'html', 'yaml', 'yml', 'sql', 'twig'];
+const SKIPPED_FILES = ['bin/check-terms', 'config/reference.php'];
+const ALLOW_FILE = __DIR__ . '/check-terms.allow';
+
+/** rule id => [regex, what to use instead] */
+const RULES = [
+  'verification-without-email' => [
+    // "verif" is fine when "email" (or "email un") comes right before it: Email Verified, EmailUnverified, email_verification
+    '/(?<!email)(?<!email )(?<!email_)(?<!emailun)(?<!email un)(?<!email_un)verif/i',
+    'say Email Verified / Email Unverified / Email Verification Key in full',
+  ],
+  'token' => [
+    '/(?<![$\\\\])\btokens?\b(?!\\\\)/i',
+    'say Email Verification Key or Reset Key (or "emailed link")',
+  ],
+  'active' => [
+    '/\b(in)?active\b/i',
+    'say Enabled / Disabled for a user, In Progress for a Draft',
+  ],
+  'roster-lineup' => [
+    '/\b(roster|lineup)s?\b/i',
+    'say Depth Chart',
+  ],
+];
+
+/** @return list<array{rule: string, glob: string, needle: string, used: bool}> */
+function loadAllowList(): array
+{
+  $entries = [];
+  foreach (file(ALLOW_FILE, FILE_IGNORE_NEW_LINES) ?: [] as $number => $line) {
+    $line = trim($line);
+    if ($line === '' || $line[0] === '#') {
+      continue;
+    }
+    $parts = array_map('trim', explode('|', $line, 3));
+    if (count($parts) !== 3 || !isset(RULES[$parts[0]])) {
+      fwrite(STDERR, 'bin/check-terms.allow line ' . ($number + 1) . ": expected 'rule | path-glob | text-on-the-line'\n");
+      exit(2);
+    }
+    $entries[] = ['rule' => $parts[0], 'glob' => $parts[1], 'needle' => $parts[2], 'used' => false];
+  }
+
+  return $entries;
+}
+
+/** @return iterable<string> paths relative to the repo root */
+function scannedFiles(): iterable
+{
+  foreach (SCANNED_DIRS as $dir) {
+    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(ROOT . '/' . $dir, FilesystemIterator::SKIP_DOTS));
+    foreach ($iterator as $file) {
+      $path = $dir . substr($file->getPathname(), strlen(ROOT . '/' . $dir));
+      if (in_array($file->getExtension(), SCANNED_EXTENSIONS, true) && !in_array($path, SKIPPED_FILES, true)) {
+        yield $path;
+      }
+    }
+  }
+}
+
+function isAllowed(array &$allowList, string $rule, string $path, string $line): bool
+{
+  $allowed = false;
+  foreach ($allowList as &$entry) {
+    if ($entry['rule'] === $rule && fnmatch($entry['glob'], $path) && ($entry['needle'] === '*' || str_contains($line, $entry['needle']))) {
+      $entry['used'] = true;
+      $allowed = true;
+    }
+  }
+
+  return $allowed;
+}
+
+$allowList = loadAllowList();
+$violations = [];
+foreach (scannedFiles() as $path) {
+  foreach (file(ROOT . '/' . $path, FILE_IGNORE_NEW_LINES) ?: [] as $number => $line) {
+    foreach (RULES as $rule => [$regex, $advice]) {
+      if (preg_match($regex, $line, $match) && !isAllowed($allowList, $rule, $path, $line)) {
+        $violations[] = sprintf("%s:%d: %s: \"%s\" - %s\n    %s", $path, $number + 1, $rule, $match[0], $advice, trim(mb_substr($line, 0, 160)));
+      }
+    }
+  }
+}
+$stale = array_filter($allowList, fn(array $entry) => !$entry['used']);
+
+foreach ($violations as $violation) {
+  echo $violation, "\n";
+}
+foreach ($stale as $entry) {
+  echo "bin/check-terms.allow: unused entry (remove it): {$entry['rule']} | {$entry['glob']} | {$entry['needle']}\n";
+}
+if ($violations || $stale) {
+  echo "\n", count($violations), ' term violation(s), ', count($stale), " unused allow entr(ies). See GLOSSARY.md.\n";
+  exit(1);
+}
+echo "No glossary term violations.\n";

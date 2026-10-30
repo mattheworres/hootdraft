@@ -1,0 +1,54 @@
+# Hits that bin/check-terms accepts. Format: rule | path-glob | text that must be on the line ("*": any line)
+# Every entry needs a reason in the comment above it. An entry that matches nothing fails the check: delete it.
+
+# --- Not about Email Verification --------------------------------------------------------------------------------
+# reCAPTCHA verification and password hash verification are different things.
+verification-without-email | src/Domain/Services/RecaptchaVerifier.php | *
+verification-without-email | src/Controller/AuthenticationController.php | RecaptchaVerifier
+verification-without-email | src/Controller/AuthenticationController.php | recaptcha->Verify(
+verification-without-email | src/Domain/Validators/LoginUserValidator.php | ->verify(
+verification-without-email | tests/Unit/Security/LegacyHashMigrationTest.php | *
+verification-without-email | config/packages/security.yaml | Verify-only
+# A Draft's commissioner is checked, not an account's email.
+verification-without-email | src/Domain/Repositories/DraftRepository.php | has been verified as owner
+
+# --- Not a Depth Chart --------------------------------------------------------------------------------------------
+# The display name of a Pro Player league.
+roster-lineup | src/Domain/Repositories/DraftDataRepository.php | Extended Rosters
+
+# --- "token" means the removed login JWT, not an emailed key -------------------------------------------------------
+token | src/Domain/Services/LoginUserService.php | Token minting is gone
+token | src/Controller/AuthenticationController.php | return a token any more
+token | src/Controller/AuthenticationController.php | instead of keeping a token
+token | src/Controller/DraftController.php | similar to the old token
+token | config/packages/security.yaml | no token is
+token | tests/Functional/AuthenticationTest.php | assertArrayNotHasKey('token'
+
+# --- Migrations are history ---------------------------------------------------------------------------------------
+# The old column names verificationKey and verificationKeyCreated must stay spelled out here.
+verification-without-email | db/migrations/20170324024149_create_users.php | *
+verification-without-email | db/migrations/20170324024159_fix_users_verification_column.php | *
+verification-without-email | db/migrations/20261022000000_add_users_verification_key_created.php | *
+verification-without-email | db/migrations/20261031000000_split_email_verified_from_enabled.php | *
+verification-without-email | db/scripts/2.1_to_2.2_Upgrade.sql | *
+
+# --- Kept by decision ---------------------------------------------------------------------------------------------
+# The emailed link points at the client route /verify/:email/:key. It is renamed together with the client in ticket 03.
+verification-without-email | src/Domain/Services/LoginUserService.php | "%s/verify/%s/%s"
+verification-without-email | tests/Functional/AuthenticationTest.php | /verify/
+
+# --- Ticket 03 rewrites these (user-facing text, email templates and the template key) ----------------------------
+# Remove each entry when ticket 03 changes the text; the check then tells you which entries are left.
+verification-without-email | src/Security/LoginFailureHandler.php | Your account email is still unverified
+verification-without-email | tests/Functional/AuthenticationTest.php | Your account email is still unverified
+verification-without-email | src/Domain/Services/LoginUserService.php | send verification email.
+verification-without-email | src/Domain/Services/LoginUserService.php | hasn't been verified yet
+verification-without-email | src/Domain/Services/LoginUserService.php | Verify your email address
+verification-without-email | src/Domain/Services/LoginUserService.php | VerifyEmail.html
+verification-without-email | src/Domain/Services/LoginUserService.php | verifyLink
+verification-without-email | src/Domain/Services/LoginUserService.php | verify that you are who you say you are
+verification-without-email | src/Domain/Services/LoginUserService.php | we need you to verify your email address
+verification-without-email | src/Domain/Validators/LoginUserValidator.php | Verification token invalid.
+token | src/Domain/Validators/LoginUserValidator.php | Verification token invalid.
+verification-without-email | templates/email/VerifyEmail.html | *
+verification-without-email | templates/email/ReverifyEmail.html | *

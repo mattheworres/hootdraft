@@ -40,7 +40,7 @@ class DraftValidator {
   }
 
   public function IsDraftEditableForUser(Draft $draft, ?User $current_user) {
-    if (!empty($current_user) && !empty($draft) && $draft->commish_id == $current_user->getId()) {
+    if (!empty($current_user) && $draft->commish_id == $current_user->getId()) {
       return true;
     }
 

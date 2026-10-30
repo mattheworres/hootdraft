@@ -2,7 +2,7 @@
 
 namespace HootDraft\Domain\Services;
 
-/** Generates the random 16 character tokens used for Email Verification Key and Reset Key links. */
+/** Generates the random 16 character keys used for Email Verification Key and Reset Key links. */
 class SaltService {
   public function GenerateSalt() {
     $length = 16;

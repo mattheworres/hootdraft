@@ -1,0 +1,6 @@
+#!/bin/sh
+# Fast checks only (the full suite takes over a minute): composer check runs them all.
+# Enable once per clone: git config core.hooksPath .githooks
+set -e
+docker compose exec -T php composer phpstan
+docker compose exec -T php composer check-terms

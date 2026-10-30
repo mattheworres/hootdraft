@@ -183,7 +183,7 @@ class AuthenticationController
     return new JsonResponse($response, $response->responseType());
   }
 
-  /** Starts the session for somebody who just proved who they are with an emailed token. */
+  /** Starts the session for somebody who just proved who they are with an emailed link. */
   private function startSession(string $email, HootDraftResponse $response): HootDraftResponse
   {
     $user = $this->userProvider->loadUserByIdentifier($email);

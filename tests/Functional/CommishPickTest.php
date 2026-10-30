@@ -133,11 +133,13 @@ class CommishPickTest extends CommishDraftTestCase
     [$draft, , , $picks] = $this->seedDraft();
     $this->logIn('Alice');
 
+    $response = null;
     foreach ($picks as $index => $pickId) {
       $response = $this->call('POST', "/commish/draft/$draft/pick/$pickId", self::PLAYER);
       $this->assertSame(201, $response->getStatusCode(), $response->getContent());
     }
 
+    $this->assertNotNull($response, 'the seeded draft has picks');
     $body = $this->json($response);
     $this->assertTrue($body['draft_is_complete']);
     $this->assertNull($body['next_pick']);
