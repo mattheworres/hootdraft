@@ -70,7 +70,6 @@ class UserProfileController
 
     $user = new LoginUser();
 
-    $user->enabled = 0;
     $user->email = strtolower($payload->getString('email'));
     $user->name = $payload->getString('name');
 

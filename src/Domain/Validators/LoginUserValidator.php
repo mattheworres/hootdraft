@@ -12,8 +12,8 @@ use HootDraft\Security\User;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
 class LoginUserValidator {
-  /** How long the emailed links stay good. Both kinds still share the users.resetKey column. */
-  public const VERIFY_LINK_TTL_SECONDS = 172800; // 48 hours
+  /** How long the emailed links stay good: the Email Verification Key and the Reset Key each have their own column pair. */
+  public const EMAIL_VERIFICATION_KEY_TTL_SECONDS = 172800; // 48 hours
   public const RESET_LINK_TTL_SECONDS = 3600; // 1 hour
 
   public function __construct(
@@ -104,7 +104,7 @@ class LoginUserValidator {
       $valid = false;
     }
 
-    //Need to verify new email
+    //A changed email address has to be valid and unused
     if (empty($emailAddress)) {
       $errors[] = "Email address is missing.";
       $valid = false;
@@ -114,7 +114,7 @@ class LoginUserValidator {
       $this->validateUniqueEmail($emailAddress, $errors, $valid);
     }
 
-    //Need to verify new password, ensure old password is correct
+    //A new password has to be long enough and typed twice
     if (!empty($newPassword)) {
       $this->validatePasswordLength($newPassword, $errors, $valid);
 
@@ -140,20 +140,20 @@ class LoginUserValidator {
     return new HootDraftResponse($valid, $errors);
   }
 
-  public function IsVerificationValid(string $emailAddress, string $rawVerificationToken) {
+  public function IsEmailVerificationKeyValid(string $emailAddress, string $rawEmailVerificationKey) {
     $valid = true;
     $errors = array();
 
-    $verificationToken = $this->saltService->UrlDecodeSalt($rawVerificationToken);
+    $emailVerificationKey = $this->saltService->UrlDecodeSalt($rawEmailVerificationKey);
 
-    if (strlen($verificationToken) != 16) {
+    if (strlen($emailVerificationKey) != 16) {
       $errors[] = "Verification token invalid.";
       $valid = false;
     }
 
     $this->validateEmailAddress($emailAddress, $errors, $valid);
 
-    if (!$this->repository->ResetKeyMatches($emailAddress, $verificationToken, self::VERIFY_LINK_TTL_SECONDS)) {
+    if (!$this->repository->EmailVerificationKeyMatches($emailAddress, $emailVerificationKey, self::EMAIL_VERIFICATION_KEY_TTL_SECONDS)) {
       $errors[] = "Verification token invalid.";
       $valid = false;
     }
@@ -170,24 +170,24 @@ class LoginUserValidator {
     return new HootDraftResponse($valid, $errors);
   }
 
-  public function IsResetPasswordTokenValid(string $emailAddress, string $rawVerificationToken) {
+  public function IsResetKeyValid(string $emailAddress, string $rawResetKey) {
     $valid = true;
     $errors = array();
 
-    $verificationToken = $this->saltService->UrlDecodeSalt($rawVerificationToken);
+    $resetKey = $this->saltService->UrlDecodeSalt($rawResetKey);
 
     if (empty($emailAddress)
-      || empty($verificationToken)) {
+      || empty($resetKey)) {
       $errors[] = "One or more missing fields";
       $valid = false;
     }
 
-    if (strlen($verificationToken) != 16) {
+    if (strlen($resetKey) != 16) {
       $errors[] = "Verification token invalid.";
       $valid = false;
     }
 
-    if (!$this->repository->ResetKeyMatches($emailAddress, $verificationToken, self::RESET_LINK_TTL_SECONDS)) {
+    if (!$this->repository->ResetKeyMatches($emailAddress, $resetKey, self::RESET_LINK_TTL_SECONDS)) {
       $errors[] = "Verification token invalid.";
       $valid = false;
     }
@@ -199,26 +199,26 @@ class LoginUserValidator {
     return new HootDraftResponse($valid, $errors);
   }
 
-  public function IsResetPasswordRequestValid(string $emailAddress, string $password, string $confirmPassword, string $rawVerificationToken) {
+  public function IsResetRequestValid(string $emailAddress, string $password, string $confirmPassword, string $rawResetKey) {
     $valid = true;
     $errors = array();
 
-    $verificationToken = $this->saltService->UrlDecodeSalt($rawVerificationToken);
+    $resetKey = $this->saltService->UrlDecodeSalt($rawResetKey);
 
     if (empty($emailAddress)
       || empty($password)
       || empty($confirmPassword)
-      || empty($verificationToken)) {
+      || empty($resetKey)) {
       $errors[] = "One or more missing fields.";
       $valid = false;
     }
 
-    if (strlen($verificationToken) != 16) {
+    if (strlen($resetKey) != 16) {
       $errors[] = "Verification token invalid.";
       $valid = false;
     }
 
-    if (!$this->repository->ResetKeyMatches($emailAddress, $verificationToken, self::RESET_LINK_TTL_SECONDS)) {
+    if (!$this->repository->ResetKeyMatches($emailAddress, $resetKey, self::RESET_LINK_TTL_SECONDS)) {
       $errors[] = "Verification token invalid.";
       $valid = false;
     }
@@ -267,7 +267,7 @@ class LoginUserValidator {
       return new HootDraftResponse($valid, $errors);
     }
 
-    //Need to verify new email
+    //A changed email address has to be valid and unused
     if (empty($user->email)) {
       $errors[] = "Email address is missing.";
       $valid = false;
@@ -338,9 +338,9 @@ class LoginUserValidator {
     }
   }
 
-  // A reset link only works for verified accounts: it must not stand in for verifying the address, or lift a disable
+  // A Reset only works for an Enabled, Email Verified account: it must not stand in for Email Verification, or lift a Disable
   private function validateResetAllowed($emailAddress, &$errors, &$valid) {
-    if (!$this->repository->IsEnabled($emailAddress)) {
+    if (!$this->repository->IsEnabledAndEmailVerified($emailAddress)) {
       $errors[] = "Verification token invalid.";
       $valid = false;
     }

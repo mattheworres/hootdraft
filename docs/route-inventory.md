@@ -11,9 +11,9 @@ by a route's `_checks` default (see `src/EventListener/RouteCheckListener.php`).
 | --- | --- | --- | --- | --- | --- |
 | [x] | POST | `/login` | AuthenticationController::Login | public (json_login authenticator) | - |
 | [x] | POST | `/register` | AuthenticationController::Register | public (login firewall) | - |
-| [x] | POST | `/verify` | AuthenticationController::VerifyAccount | public (login firewall) | - |
+| [x] | POST | `/emailVerification` (was `/verify`) | AuthenticationController::VerifyAccount | public (login firewall) | - |
 | [x] | POST | `/lostPassword` | AuthenticationController::LostPassword | public (login firewall) | - |
-| [x] | GET | `/verifyToken` | AuthenticationController::VerifyResetPasswordToken | public (login firewall) | - |
+| [x] | GET | `/checkResetKey` (was `/verifyToken`) | AuthenticationController::VerifyResetPasswordToken | public (login firewall) | - |
 | [x] | POST | `/resetPassword` | AuthenticationController::ResetPassword | public (login firewall) | - |
 | [x] | GET | `/drafts` | DraftController::GetAll | public | - |
 | [x] | GET | `/drafts/{commish_id}` | DraftController::GetAllByCommish | public | - |

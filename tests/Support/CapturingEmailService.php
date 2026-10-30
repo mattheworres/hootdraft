@@ -11,8 +11,15 @@ class CapturingEmailService extends EmailService
   /** @var MailMessage[] */
   public array $sent = [];
 
+  /** Set to make the next SendMail calls fail, as a down SMTP server would. */
+  public bool $failing = false;
+
   public function SendMail(MailMessage $message)
   {
+    if ($this->failing) {
+      throw new \RuntimeException('SMTP is down.');
+    }
+
     $this->sent[] = $message;
   }
 }

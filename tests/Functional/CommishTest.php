@@ -334,7 +334,7 @@ class CommishTest extends CommishDraftTestCase
     $this->assertSame('ALICE', $this->db()->fetchOne('SELECT name FROM users WHERE id = ?', [$alice]));
   }
 
-  public function testChangingTheEmailRequiresVerificationAgain(): void
+  public function testChangingTheEmailRequiresEmailVerificationAgain(): void
   {
     $alice = $this->createUser('Alice');
     $this->logIn('Alice');
@@ -345,20 +345,22 @@ class CommishTest extends CommishDraftTestCase
     $this->assertTrue($body['invalidateLogin']);
     $this->assertTrue($body['sendEmail']);
 
-    $row = $this->db()->fetchAssociative('SELECT email, enabled, resetKey FROM users WHERE id = ?', [$alice]);
+    $row = $this->db()->fetchAssociative('SELECT email, enabled, emailVerified, emailVerificationKey, resetKey FROM users WHERE id = ?', [$alice]);
     $this->assertSame('alice2@commish-test.example', $row['email']);
-    $this->assertSame(0, (int) $row['enabled']);
-    $this->assertNotEmpty($row['resetKey']);
+    $this->assertSame([1, 0], [(int) $row['enabled'], (int) $row['emailVerified']], 'only an Admin writes enabled');
+    $this->assertSame(16, strlen($row['emailVerificationKey']));
+    $this->assertNull($row['resetKey']);
 
     $mailer = static::getContainer()->get(EmailService::class);
     $this->assertInstanceOf(CapturingEmailService::class, $mailer);
     $this->assertCount(1, $mailer->sent);
     $this->assertSame(['alice2@commish-test.example' => 'Alice'], $mailer->sent[0]->to_addresses);
 
-    // The session is gone, and the address verifies with the emailed link
+    // The session is gone, and the address becomes Email Verified with the emailed link
     $this->assertSame(401, $this->call('GET', '/commish/profile')->getStatusCode());
-    $verified = $this->call('POST', '/verify', ['_email' => 'alice2@commish-test.example', '_verificationToken' => $row['resetKey']]);
-    $this->assertSame(200, $verified->getStatusCode(), $verified->getContent());
+    $followed = $this->call('POST', '/emailVerification', ['_email' => 'alice2@commish-test.example', '_emailVerificationKey' => $row['emailVerificationKey']]);
+    $this->assertSame(200, $followed->getStatusCode(), $followed->getContent());
+    $this->assertSame(1, (int) $this->db()->fetchOne('SELECT emailVerified FROM users WHERE id = ?', [$alice]));
   }
 
   public function testInviteNewCommissioner(): void
@@ -381,7 +383,7 @@ class CommishTest extends CommishDraftTestCase
 
     $row = $this->db()->fetchAssociative("SELECT * FROM users WHERE email = 'carol@commish-test.example'");
     $this->assertSame('ROLE_COMMISH', $row['roles']);
-    $this->assertSame(1, (int) $row['enabled']);
+    $this->assertSame([1, 1], [(int) $row['enabled'], (int) $row['emailVerified']]);
 
     // Nobody knows the generated password
     $this->assertSame(400, $this->logIn('Carol')->getStatusCode());
@@ -389,9 +391,9 @@ class CommishTest extends CommishDraftTestCase
     // The invitation link goes through the reset endpoints, and stays good for longer than a reset link
     $this->cookies = [];
     $token = $row['resetKey'];
-    $this->assertSame(200, $this->call('GET', '/verifyToken?' . http_build_query(['_email' => 'carol@commish-test.example', '_verificationToken' => $token]))->getStatusCode());
+    $this->assertSame(200, $this->call('GET', '/checkResetKey?' . http_build_query(['_email' => 'carol@commish-test.example', '_resetKey' => $token]))->getStatusCode());
 
-    $reset = $this->call('POST', '/resetPassword', ['_email' => 'carol@commish-test.example', '_password' => 'carols password', '_confirmPassword' => 'carols password', '_verificationToken' => $token]);
+    $reset = $this->call('POST', '/resetPassword', ['_email' => 'carol@commish-test.example', '_password' => 'carols password', '_confirmPassword' => 'carols password', '_resetKey' => $token]);
     $this->assertSame(200, $reset->getStatusCode(), $reset->getContent());
     $this->assertSame('Carol', $this->json($reset)['name']);
     $this->assertSame(200, $this->logIn('Carol', 'carols password')->getStatusCode());

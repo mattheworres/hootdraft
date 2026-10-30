@@ -57,7 +57,7 @@ class UserController
       return new JsonResponse($validity, $validity->responseType());
     }
 
-    $this->users->Update($user);
+    $this->users->UpdateAsAdmin($user);
 
     $response = new HootDraftResponse(true, array());
 

@@ -85,24 +85,33 @@ class AuthenticationController
     $user->password = $payload->getString('_password');
     $user->name = $payload->getString('_name');
 
-    $response = $this->service->CreateUnverifiedNewUser($user);
+    $response = $this->service->CreateEmailUnverifiedNewUser($user);
 
     return new JsonResponse($response, $response->responseType());
   }
 
-  #[Route('/verify', name: 'verify', methods: ['POST'])]
-  public function verifyAccount(Request $request): JsonResponse
+  /** The emailed Email Verification Key link lands here. */
+  #[Route('/emailVerification', name: 'email_verification', methods: ['POST'])]
+  public function followEmailVerificationLink(Request $request): JsonResponse
   {
     $payload = $request->getPayload();
     $email = $payload->getString('_email');
 
-    $validity = $this->validator->IsVerificationValid($email, $payload->getString('_verificationToken'));
+    $validity = $this->validator->IsEmailVerificationKeyValid($email, $payload->getString('_emailVerificationKey'));
 
     if (!$validity->success) {
       return new JsonResponse($validity, Response::HTTP_BAD_REQUEST);
     }
 
-    $response = $this->service->VerifyUser($this->repository->Load($email));
+    $user = $this->repository->Load($email);
+    $response = $this->service->MarkEmailVerified($user);
+
+    // The address is Email Verified now, but a Disabled user stays out: no session for them
+    if (!$user->enabled) {
+      $response = new HootDraftResponse(false, ['Account is not enabled.']);
+
+      return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
+    }
 
     if ($response->success) {
       $response = $this->startSession($email, $response);
@@ -133,12 +142,12 @@ class AuthenticationController
     return new JsonResponse($response, $response->responseType());
   }
 
-  #[Route('/verifyToken', name: 'verify_token', methods: ['GET'])]
-  public function verifyResetPasswordToken(Request $request): JsonResponse
+  #[Route('/checkResetKey', name: 'reset_key_check', methods: ['GET'])]
+  public function checkResetKey(Request $request): JsonResponse
   {
-    $validity = $this->validator->IsResetPasswordTokenValid(
+    $validity = $this->validator->IsResetKeyValid(
       $request->query->getString('_email'),
-      $request->query->getString('_verificationToken'),
+      $request->query->getString('_resetKey'),
     );
 
     return new JsonResponse($validity, $validity->responseType());
@@ -151,11 +160,11 @@ class AuthenticationController
     $email = $payload->getString('_email');
     $password = $payload->getString('_password');
 
-    $validity = $this->validator->IsResetPasswordRequestValid(
+    $validity = $this->validator->IsResetRequestValid(
       $email,
       $password,
       $payload->getString('_confirmPassword'),
-      $payload->getString('_verificationToken'),
+      $payload->getString('_resetKey'),
     );
 
     if (!$validity->success) {

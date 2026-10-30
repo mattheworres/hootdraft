@@ -73,7 +73,7 @@ abstract class CommishDraftTestCase extends KernelTestCase
     $hash = (new MessageDigestPasswordHasher('sha512', true, 5000))->hash(self::PASSWORD, self::SALT);
     $this->db()->insert('users', [
       'email' => strtolower($name) . '@' . static::domain(), 'password' => $hash, 'salt' => self::SALT, 'name' => $name,
-      'roles' => $roles, 'enabled' => 1, 'creationTime' => '2020-01-01 00:00:00',
+      'roles' => $roles, 'enabled' => 1, 'emailVerified' => 1, 'creationTime' => '2020-01-01 00:00:00',
     ]);
 
     return (int) $this->db()->lastInsertId();

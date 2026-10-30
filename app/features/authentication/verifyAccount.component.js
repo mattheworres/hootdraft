@@ -56,7 +56,7 @@ class VerifyAccountController {
 
     const verificationModel = {
       _email: email,
-      _verificationToken: token,
+      _emailVerificationKey: token,
     };
 
     const verificationResult = this.authenticationService.verify(verificationModel);

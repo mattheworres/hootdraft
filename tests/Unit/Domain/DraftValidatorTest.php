@@ -62,7 +62,7 @@ class DraftValidatorTest extends TestCase
 
   private function user(int $id, array $roles = ['ROLE_COMMISH']): User
   {
-    return new User($id, "u$id@example.com", "User $id", 'x', null, $roles, true);
+    return new User($id, "u$id@example.com", "User $id", 'x', null, $roles, true, true);
   }
 
   private function viewable(Draft $draft, ?User $user, ?string $password = null): bool

@@ -49,7 +49,7 @@ class LegacyHashMigrationTest extends TestCase
 
   public function testUserHidesPasswordHashInSession(): void
   {
-    $user = new User(1, 'a@b.co', 'Al', self::LEGACY_HASH, self::SALT, ['ROLE_COMMISH'], true);
+    $user = new User(1, 'a@b.co', 'Al', self::LEGACY_HASH, self::SALT, ['ROLE_COMMISH'], true, true);
 
     $this->assertStringNotContainsString(self::LEGACY_HASH, serialize($user));
   }

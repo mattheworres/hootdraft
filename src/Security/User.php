@@ -7,8 +7,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * The authenticated principal, built from a `users` row. Lives in the session, so it is refreshed from the
- * database on every request (see UserProvider::refreshUser): disabling a user or changing roles takes effect
- * immediately. getSalt() is only meaningful for accounts still on the legacy digest hash.
+ * database on every request (see UserProvider::refreshUser): disabling a user, losing their Email Verified status or
+ * changing roles takes effect immediately. getSalt() is only meaningful for accounts still on the legacy digest hash.
  */
 final class User implements UserInterface, LegacyPasswordAuthenticatedUserInterface
 {
@@ -21,6 +21,7 @@ final class User implements UserInterface, LegacyPasswordAuthenticatedUserInterf
     private ?string $salt,
     private array $roles,
     private bool $enabled,
+    private bool $emailVerified,
   ) {
   }
 
@@ -57,6 +58,11 @@ final class User implements UserInterface, LegacyPasswordAuthenticatedUserInterf
   public function isEnabled(): bool
   {
     return $this->enabled;
+  }
+
+  public function isEmailVerified(): bool
+  {
+    return $this->emailVerified;
   }
 
   public function isAdmin(): bool

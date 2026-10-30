@@ -34,7 +34,7 @@ class InviteSetupController {
 
     const verifyModel = {
       _email: this.email,
-      _verificationToken: this.resetToken,
+      _resetKey: this.resetToken,
     };
 
     const verifyResult = this.authenticationService.verifyResetToken(verifyModel);
@@ -74,7 +74,7 @@ class InviteSetupController {
     const resetModel = {
       _email: this.email,
       _password: this.form.password.$viewValue,
-      _verificationToken: this.resetToken,
+      _resetKey: this.resetToken,
       _confirmPassword: this.form.confirmedPassword.$viewValue,
     };
 

@@ -3,10 +3,12 @@
 namespace HootDraft\Domain\Services;
 
 use HootDraft\Domain\Entities\LoginUser;
+use HootDraft\Domain\Models\EmailVerificationResend;
 use HootDraft\Domain\Models\HootDraftResponse;
 use HootDraft\Domain\Models\MailMessage;
 use HootDraft\Domain\Repositories\DraftRepository;
 use HootDraft\Domain\Repositories\LoginUserRepository;
+use HootDraft\Domain\Validators\LoginUserValidator;
 use HootDraft\Security\User;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -110,10 +112,11 @@ class LoginUserService {
     return $response;
   }
 
-  public function CreateUnverifiedNewUser(LoginUser $user) {
-    $user->enabled = false;
+  public function CreateEmailUnverifiedNewUser(LoginUser $user) {
+    $user->enabled = true;
+    $user->emailVerified = false;
 
-    $this->issueResetKey($user);
+    $this->issueEmailVerificationKey($user);
     $user->salt = ''; // only the legacy digest hasher used a per-user salt
     $user->password = $this->hash($user->password);
     $user->roles = array('ROLE_COMMISH');
@@ -127,27 +130,14 @@ class LoginUserService {
 
       $user = $this->repository->Create($user);
 
-      $message = new MailMessage();
-      $message->to_addresses = array($user->email => $user->name);
-
-      $verifyLink = $this->createEmailVerificationLink($user);
-
-      $message->subject = "HootDraft: Verify your email address";
-      $message->is_html = true;
-      $message->body = $this->templates->RenderTemplate('VerifyEmail.html', array(
-        'imageBaseUrl' => sprintf("%s/images/email", $this->appBaseUrl),
-        'verifyLink' => $verifyLink,
-      ));
-      $message->altBody = "Hey pal, we need you to verify your email address. Click this link to do so: $verifyLink";
-
-      $this->emailService->SendMail($message);
+      $this->sendEmailVerificationEmail($user);
 
       $this->pdo->commit();
 
       $response->success = true;
     } catch (\Exception $e) {
       $this->rollBack();
-      $this->logger->error('Unable to create new user or send verification email: ' . $e->getMessage(), ['exception' => $e]);
+      $this->logger->error('Unable to create new user or send the Email Verification Key link: ' . $e->getMessage(), ['exception' => $e]);
 
       $response->success = false;
       $response->errors = array("Unable to create new user or send verification email.");
@@ -156,21 +146,52 @@ class LoginUserService {
     return $response;
   }
 
-  public function VerifyUser(LoginUser $user) {
-    $user->enabled = true;
-    $this->clearResetKey($user);
+  /** The user followed the emailed link. Their address is Email Verified now; `enabled` is the Admin's and stays as it is. */
+  public function MarkEmailVerified(LoginUser $user) {
+    $user->emailVerified = true;
+    $this->clearEmailVerificationKey($user);
 
     $this->repository->Update($user);
 
     return new HootDraftResponse(true);
   }
 
+  /**
+   * For an Enabled, Email Unverified user who gave the right password: if their Email Verification Key has expired
+   * (or is missing), issues a new one and emails the link. A fresh key sends nothing: the link they already have
+   * still works, and this is what keeps the email volume down. The new key and the email are one unit: if the email
+   * fails, the old key stays, so the user is not locked out for 48 hours and the next login tries again.
+   */
+  public function ResendEmailVerificationIfExpired(LoginUser $user): EmailVerificationResend {
+    if (!$user->enabled || $user->emailVerified || !$this->emailVerificationKeyExpired($user)) {
+      return EmailVerificationResend::NotNeeded;
+    }
+
+    $this->issueEmailVerificationKey($user);
+
+    try {
+      $this->pdo->beginTransaction();
+
+      $this->repository->Update($user);
+
+      $this->sendEmailVerificationEmail($user);
+
+      $this->pdo->commit();
+
+      return EmailVerificationResend::Sent;
+    } catch (\Exception $e) {
+      $this->rollBack();
+      $this->logger->error('Unable to send a new Email Verification Key link: ' . $e->getMessage(), ['exception' => $e]);
+
+      return EmailVerificationResend::Failed;
+    }
+  }
+
   public function BeginForgottenPasswordProcess(LoginUser $user) {
     $response = new HootDraftResponse();
 
-    // An unverified (or disabled) account's key is its verification key; replacing it would break the link
-    // they were already sent, and a reset must not stand in for verifying the address.
-    if (!$user->enabled) {
+    // A Reset must not stand in for Email Verification, and a Disabled user stays out
+    if (!$user->enabled || !$user->emailVerified) {
       $response->success = false;
       $response->errors = array("This account hasn't been verified yet. Check your email for the verification link.");
 
@@ -237,7 +258,7 @@ class LoginUserService {
   /**
    * Saves the signed-in commissioner's profile. A new email address or password ends their login: the session is
    * dropped on the next request because the user no longer matches the database. A new address also has to be
-   * verified again, so the account is disabled until the emailed link is followed.
+   * Email Verified again, so the user cannot log in until the emailed link is followed. `enabled` is not touched.
    */
   public function UpdateUserProfile(LoginUser $user, string $email, string $name, string $newPassword) {
     $email = strtolower($email);
@@ -249,9 +270,9 @@ class LoginUserService {
     //Update user email, invalidate login
     if (!empty($email) && !hash_equals($email, strtolower((string) $user->email))) {
       $user->email = $email;
-      $user->enabled = 0;
+      $user->emailVerified = false;
       $invalidateLogin = true;
-      $this->issueResetKey($user);
+      $this->issueEmailVerificationKey($user);
       $sendEmail = true;
     }
 
@@ -269,23 +290,7 @@ class LoginUserService {
       $user = $this->repository->Update($user);
 
       if ($sendEmail) {
-        $message = new MailMessage();
-
-        $message->to_addresses = array(
-          $user->email => $user->name
-        );
-
-        $verifyLink = $this->createEmailVerificationLink($user);
-
-        $message->subject = "HootDraft: Verify your email address";
-        $message->is_html = true;
-        $message->body = $this->templates->RenderTemplate('ReverifyEmail.html', array(
-          'imageBaseUrl' => sprintf("%s/images/email", $this->appBaseUrl),
-          'verifyLink' => $verifyLink,
-        ));
-        $message->altBody = "Hi, and welcome to Hoot Draft! Before we get started, can you click this link to verify that you are who you say you are? Thanks pal! $verifyLink";
-
-        $this->emailService->SendMail($message);
+        $this->sendEmailVerificationEmail($user, true);
       }
 
       $this->pdo->commit();
@@ -302,6 +307,46 @@ class LoginUserService {
     }
 
     return $response;
+  }
+
+  private function issueEmailVerificationKey(LoginUser $user) {
+    $user->emailVerificationKey = $this->saltService->GenerateSaltForUrl();
+    $user->emailVerificationKeyCreated = gmdate('Y-m-d H:i:s');
+  }
+
+  private function clearEmailVerificationKey(LoginUser $user) {
+    $user->emailVerificationKey = null;
+    $user->emailVerificationKeyCreated = null;
+  }
+
+  private function emailVerificationKeyExpired(LoginUser $user): bool {
+    if (empty($user->emailVerificationKey) || empty($user->emailVerificationKeyCreated)) {
+      return true;
+    }
+
+    $created = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $user->emailVerificationKeyCreated, new \DateTimeZone('UTC'));
+
+    return $created === false || $created->getTimestamp() <= time() - LoginUserValidator::EMAIL_VERIFICATION_KEY_TTL_SECONDS;
+  }
+
+  /** @param bool $addressChanged True when the user changed their address (not a new user, not a resend) */
+  private function sendEmailVerificationEmail(LoginUser $user, bool $addressChanged = false) {
+    $message = new MailMessage();
+    $message->to_addresses = array($user->email => $user->name);
+
+    $emailVerificationLink = $this->createEmailVerificationLink($user);
+
+    $message->subject = "HootDraft: Verify your email address";
+    $message->is_html = true;
+    $message->body = $this->templates->RenderTemplate($addressChanged ? 'ReverifyEmail.html' : 'VerifyEmail.html', array(
+      'imageBaseUrl' => sprintf("%s/images/email", $this->appBaseUrl),
+      'verifyLink' => $emailVerificationLink,
+    ));
+    $message->altBody = $addressChanged
+      ? "Hi, and welcome to Hoot Draft! Before we get started, can you click this link to verify that you are who you say you are? Thanks pal! $emailVerificationLink"
+      : "Hey pal, we need you to verify your email address. Click this link to do so: $emailVerificationLink";
+
+    $this->emailService->SendMail($message);
   }
 
   private function issueResetKey(LoginUser $user) {
@@ -325,7 +370,7 @@ class LoginUserService {
   }
 
   private function createEmailVerificationLink(LoginUser $user) {
-    return sprintf("%s/verify/%s/%s", $this->appBaseUrl, urlencode($user->email), urlencode($user->resetKey));
+    return sprintf("%s/verify/%s/%s", $this->appBaseUrl, urlencode($user->email), urlencode($user->emailVerificationKey));
   }
 
   private function createForgottenPasswordLink(LoginUser $user) {

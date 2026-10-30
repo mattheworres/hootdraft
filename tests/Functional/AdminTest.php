@@ -227,6 +227,27 @@ class AdminTest extends CommishDraftTestCase
     $this->assertNotEmpty($row['password'], 'the password hash is left alone');
   }
 
+  public function testUpdateUserLeavesEmailVerifiedAndTheKeysAlone(): void
+  {
+    $alice = $this->createUser('Alice');
+    $this->db()->executeStatement(
+      "UPDATE users SET emailVerified = 0, emailVerificationKey = 'AAAAAAAAAAAAAAAA', emailVerificationKeyCreated = '2026-10-30 12:00:00', resetKey = 'BBBBBBBBBBBBBBBB', resetKeyCreated = '2026-10-30 13:00:00' WHERE id = ?",
+      [$alice],
+    );
+    $this->logInAsAdmin();
+
+    $response = $this->call('PUT', "/admin/user/$alice", ['email' => 'alice@admin-test.example', 'name' => 'Alice', 'roles' => 'ROLE_COMMISH', 'enabled' => 0]);
+    $this->assertSame(200, $response->getStatusCode(), $response->getContent());
+
+    $row = $this->db()->fetchAssociative('SELECT * FROM users WHERE id = ?', [$alice]);
+    $this->assertSame([0, 0], [(int) $row['enabled'], (int) $row['emailVerified']]);
+    $this->assertSame(['AAAAAAAAAAAAAAAA', '2026-10-30 12:00:00'], [$row['emailVerificationKey'], $row['emailVerificationKeyCreated']]);
+    $this->assertSame(['BBBBBBBBBBBBBBBB', '2026-10-30 13:00:00'], [$row['resetKey'], $row['resetKeyCreated']]);
+
+    $this->call('PUT', "/admin/user/$alice", ['email' => 'alice@admin-test.example', 'name' => 'Alice', 'roles' => 'ROLE_COMMISH', 'enabled' => 1]);
+    $this->assertSame([1, 0], array_map('intval', $this->db()->fetchNumeric('SELECT enabled, emailVerified FROM users WHERE id = ?', [$alice])));
+  }
+
   public function testUpdateUserValidation(): void
   {
     $alice = $this->createUser('Alice');

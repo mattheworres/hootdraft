@@ -30,8 +30,9 @@ class UsersInvitationService {
    * Creates an account for the invitee and emails them a link to choose their password (the client's
    * /inviteSetup page uses the password reset endpoints).
    *
-   * The account is created enabled, with a password nobody knows: the reset endpoints refuse disabled accounts,
-   * so a disabled one could never be set up. Following the emailed link is what proves the address.
+   * The account is created Enabled and Email Verified, with a password nobody knows: the Reset endpoints refuse
+   * Disabled and Email Unverified accounts, so one of those could never be set up. Following the emailed link is
+   * what proves the address.
    */
   public function InviteNewUser(LoginUser $user, $message) {
     $response = new HootDraftResponse();
@@ -39,11 +40,12 @@ class UsersInvitationService {
     $user->password = $this->hasherFactory->getPasswordHasher(User::class)->hash(bin2hex(random_bytes(32)));
     $user->salt = '';
     $user->enabled = 1;
+    $user->emailVerified = 1;
     $user->roles = array('ROLE_COMMISH');
     $user->resetKey = $this->saltService->GenerateSaltForUrl();
-    // The link is checked against the (1 hour) password reset lifetime, but an invitation should last as long as
-    // a verification link, so the key is dated ahead by the difference
-    $user->resetKeyCreated = gmdate('Y-m-d H:i:s', time() + LoginUserValidator::VERIFY_LINK_TTL_SECONDS - LoginUserValidator::RESET_LINK_TTL_SECONDS);
+    // The link is checked against the (1 hour) Reset Key lifetime, but an invitation should last as long as
+    // an Email Verification Key, so the key is dated ahead by the difference
+    $user->resetKeyCreated = gmdate('Y-m-d H:i:s', time() + LoginUserValidator::EMAIL_VERIFICATION_KEY_TTL_SECONDS - LoginUserValidator::RESET_LINK_TTL_SECONDS);
 
     try {
       // The invitation only sticks if the email goes out, otherwise the name and email would be taken for nothing

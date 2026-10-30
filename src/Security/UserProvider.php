@@ -18,7 +18,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
 
   public function loadUserByIdentifier(string $identifier): UserInterface
   {
-    $stmt = $this->pdo->prepare('SELECT id, email, name, password, salt, roles, enabled FROM users WHERE email = ? LIMIT 1');
+    $stmt = $this->pdo->prepare('SELECT id, email, name, password, salt, roles, enabled, emailVerified FROM users WHERE email = ? LIMIT 1');
     $stmt->execute([strtolower($identifier)]);
     $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
@@ -34,6 +34,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
       $row['salt'],
       array_values(array_filter(array_map('trim', explode(',', (string) $row['roles'])))),
       (bool) $row['enabled'],
+      (bool) $row['emailVerified'],
     );
   }
 
@@ -45,9 +46,9 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
 
     $refreshed = $this->loadUserByIdentifier($user->getUserIdentifier());
 
-    // Unverified / disabled since logging in: drop the session
-    if (!$refreshed->isEnabled()) {
-      throw new UserNotFoundException('User is disabled.');
+    // Disabled or Email Unverified since logging in (an email change does the latter): drop the session
+    if (!$refreshed->isEnabled() || !$refreshed->isEmailVerified()) {
+      throw new UserNotFoundException('User is Disabled or Email Unverified.');
     }
 
     return $refreshed;

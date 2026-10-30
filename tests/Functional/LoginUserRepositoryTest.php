@@ -86,6 +86,47 @@ class LoginUserRepositoryTest extends KernelTestCase
     $this->assertNull($loaded->resetKey);
   }
 
+  public function testUpdateNeverWritesEnabled(): void
+  {
+    $user = $this->repository()->Create($this->newUser());
+
+    $user->enabled = 0;
+    $user->name = 'Alice Two';
+    $this->repository()->Update($user);
+
+    $loaded = $this->repository()->LoadById($user->id);
+    $this->assertSame('Alice Two', $loaded->name);
+    $this->assertSame(1, (int) $loaded->enabled);
+  }
+
+  public function testUpdateAsAdminWritesEnabledButNotEmailVerified(): void
+  {
+    $user = $this->repository()->Create($this->newUser());
+
+    $user->enabled = 0;
+    $user->emailVerified = 1;
+    $user->name = 'Alice Two';
+    $user->emailVerificationKey = null;
+    $this->repository()->UpdateAsAdmin($user);
+
+    $loaded = $this->repository()->LoadById($user->id);
+    $this->assertSame('Alice Two', $loaded->name);
+    $this->assertSame([0, 0], [(int) $loaded->enabled, (int) $loaded->emailVerified]);
+    $this->assertSame('AAAAAAAAAAAAAAAA', $loaded->emailVerificationKey);
+  }
+
+  public function testEmailVerificationKeyMatchesOnlyTheEmailVerificationKey(): void
+  {
+    $this->repository()->Create($this->newUser());
+    $email = 'alice@repository-test.example';
+
+    $this->assertFalse($this->repository()->EmailVerificationKeyMatches($email, 'AAAAAAAAAAAAAAAA', 3600), 'older than the limit');
+    $this->assertTrue($this->repository()->EmailVerificationKeyMatches($email, 'AAAAAAAAAAAAAAAA', 10 * 365 * 86400));
+    $this->assertFalse($this->repository()->EmailVerificationKeyMatches($email, 'BBBBBBBBBBBBBBBB', 10 * 365 * 86400), 'that is the Reset Key');
+    $this->assertTrue($this->repository()->ResetKeyMatches($email, 'BBBBBBBBBBBBBBBB', 10 * 365 * 86400));
+    $this->assertFalse($this->repository()->ResetKeyMatches($email, 'AAAAAAAAAAAAAAAA', 10 * 365 * 86400));
+  }
+
   public function testAdminUserListHidesEveryKey(): void
   {
     $this->repository()->Create($this->newUser());

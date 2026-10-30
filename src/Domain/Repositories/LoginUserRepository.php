@@ -166,11 +166,12 @@ class LoginUserRepository {
     return $user;
   }
 
+  /** Saves everything except `enabled`: only an Admin changes that (see UpdateAsAdmin). */
   public function Update(LoginUser $user) {
     $update_stmt = $this->pdo->prepare("UPDATE users
         SET email = ?, password = ?, salt = ?,
           name = ?, roles = ?, resetKey = ?, resetKeyCreated = ?,
-          emailVerificationKey = ?, emailVerificationKeyCreated = ?, enabled = ?, emailVerified = ?
+          emailVerificationKey = ?, emailVerificationKeyCreated = ?, emailVerified = ?
         WHERE id = ?");
 
     $ok = $update_stmt->execute([
@@ -183,8 +184,26 @@ class LoginUserRepository {
       $user->resetKeyCreated,
       $user->emailVerificationKey,
       $user->emailVerificationKeyCreated,
-      (int) $user->enabled,
       (int) $user->emailVerified,
+      $user->id,
+    ]);
+
+    if (!$ok) {
+      throw new \Exception("Unable to update user.");
+    }
+
+    return $user;
+  }
+
+  /** The Admin's edit: email, name, roles and `enabled`. Email Verified and the keys are not the Admin's to change. */
+  public function UpdateAsAdmin(LoginUser $user) {
+    $update_stmt = $this->pdo->prepare("UPDATE users SET email = ?, name = ?, roles = ?, enabled = ? WHERE id = ?");
+
+    $ok = $update_stmt->execute([
+      $user->email,
+      $user->name,
+      is_array($user->roles) ? implode(',', $user->roles) : $user->roles,
+      (int) $user->enabled,
       $user->id,
     ]);
 
@@ -223,33 +242,44 @@ class LoginUserRepository {
     return $email_stmt->fetch() !== false;
   }
 
-  public function IsEnabled($email) {
-    $stmt = $this->pdo->prepare("SELECT enabled FROM users WHERE email = ? LIMIT 1");
+  /** True for a user who is Enabled and Email Verified: the only kind who may Reset a password. */
+  public function IsEnabledAndEmailVerified($email) {
+    $stmt = $this->pdo->prepare("SELECT enabled, emailVerified FROM users WHERE email = ? LIMIT 1");
     $stmt->execute([strtolower($email)]);
     $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-    return $row !== false && (int) $row['enabled'] === 1;
+    return $row !== false && (int) $row['enabled'] === 1 && (int) $row['emailVerified'] === 1;
   }
 
   public function EmailIsUnique($email, $id = null) {
     return !$this->EmailExists($email, $id);
   }
 
-  /**
-   * True when the key is the one issued to this email and was issued no more than $maxAgeSeconds ago.
-   * The key is compared here rather than in SQL so the comparison is constant time.
-   */
+  /** True when the Reset Key is the one issued to this email and was issued no more than $maxAgeSeconds ago. */
   public function ResetKeyMatches($email, $resetKey, int $maxAgeSeconds) {
-    $reset_stmt = $this->pdo->prepare("SELECT resetKey,
-        (resetKeyCreated IS NOT NULL AND resetKeyCreated > UTC_TIMESTAMP() - INTERVAL ? SECOND) AS fresh
+    return $this->keyMatches('resetKey', 'resetKeyCreated', $email, $resetKey, $maxAgeSeconds);
+  }
+
+  /** True when the Email Verification Key is the one issued to this email and was issued no more than $maxAgeSeconds ago. */
+  public function EmailVerificationKeyMatches($email, $emailVerificationKey, int $maxAgeSeconds) {
+    return $this->keyMatches('emailVerificationKey', 'emailVerificationKeyCreated', $email, $emailVerificationKey, $maxAgeSeconds);
+  }
+
+  /**
+   * The key is compared here rather than in SQL so the comparison is constant time.
+   * The column names are never user input: only the two callers above pass them.
+   */
+  private function keyMatches(string $keyColumn, string $createdColumn, $email, $key, int $maxAgeSeconds) {
+    $key_stmt = $this->pdo->prepare("SELECT $keyColumn AS storedKey,
+        ($createdColumn IS NOT NULL AND $createdColumn > UTC_TIMESTAMP() - INTERVAL ? SECOND) AS fresh
         FROM users WHERE email = ? LIMIT 1");
-    $reset_stmt->execute([$maxAgeSeconds, strtolower($email)]);
-    $row = $reset_stmt->fetch(\PDO::FETCH_ASSOC);
+    $key_stmt->execute([$maxAgeSeconds, strtolower($email)]);
+    $row = $key_stmt->fetch(\PDO::FETCH_ASSOC);
 
     return $row !== false
-      && $row['resetKey'] !== null
+      && $row['storedKey'] !== null
       && (int) $row['fresh'] === 1
-      && hash_equals((string) $row['resetKey'], (string) $resetKey);
+      && hash_equals((string) $row['storedKey'], (string) $key);
   }
 
   private function _ScrubUser(LoginUser $user) {
