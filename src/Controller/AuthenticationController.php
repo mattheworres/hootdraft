@@ -16,6 +16,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
@@ -36,11 +37,14 @@ class AuthenticationController
   ) {
   }
 
-  /** Handled by the firewall's json_login authenticator before it ever gets here. Needs a route to exist. */
+  /**
+   * A JSON login is handled by the firewall's json_login authenticator before it ever gets here. Anything else (a
+   * form post, no body) can't hold credentials, so MalformedLoginListener answers it like a wrong password.
+   */
   #[Route('/login', name: 'login', methods: ['POST'])]
   public function login(): never
   {
-    throw new \LogicException('The json_login authenticator should have handled this request.');
+    throw new BadRequestHttpException('A login must be a JSON body.');
   }
 
   /** Handled by the firewall's logout listener. POST only so a link can't log somebody out. */

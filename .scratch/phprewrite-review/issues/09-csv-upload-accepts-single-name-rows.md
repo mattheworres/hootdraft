@@ -1,6 +1,6 @@
 # 09: The Pro Player CSV upload accepts the bundled MLB file
 
-**What to build:** An Admin can upload every bundled Pro Player CSV in `resources/`. Today a row whose name column isn't exactly "Last, First" makes the upload refuse the whole file. The bundled MLB file has one such row (`Henry;RP;SDG`), so that file can no longer be imported. Master inserted these rows as "Unknown Player". Decision: import a single-name row with the whole name as the last name and an empty first name, so `Henry` stays findable as Henry.
+**What to build:** An Admin can upload every bundled Pro Player CSV in `resources/`. Today a row whose name column isn't exactly "Last, First" makes the upload refuse the whole file. The bundled MLB file has one such row (`Henry;RP;SDG`), so that file can no longer be imported. The develop branch inserted these rows as "Unknown Player". Decision: import a single-name row with the whole name as the last name and an empty first name, so `Henry` stays findable as Henry.
 
 Also rename the variable that carries the league but is called `$sport`.
 

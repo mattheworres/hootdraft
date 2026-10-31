@@ -1,6 +1,6 @@
 # 10: Regenerating Draft Stats uses the Draft status helper
 
-**What to build:** The Admin "regenerate Draft Stats" action decides whether a Draft is Complete through the same `DraftService` helper as the rest of the app, not a hard-coded `!== 'complete'` string. Decision on `average_round_seconds`: keep the new formula (total Pick Duration divided by the number of Rounds, which is what "average round" means). Ticket 20 records it as a deliberate change from master, which divided the largest per-Round total by the number of Rounds.
+**What to build:** The Admin "regenerate Draft Stats" action decides whether a Draft is Complete through the same `DraftService` helper as the rest of the app, not a hard-coded `!== 'complete'` string. Decision on `average_round_seconds`: keep the new formula (total Pick Duration divided by the number of Rounds, which is what "average round" means). Ticket 20 records it as a deliberate change from the develop branch, which divided the largest per-Round total by the number of Rounds.
 
 **Blocked by:** 01
 

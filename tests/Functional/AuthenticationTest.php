@@ -5,6 +5,8 @@ namespace HootDraft\Tests\Functional;
 use Doctrine\DBAL\Connection;
 use HootDraft\Domain\Models\MailMessage;
 use HootDraft\Domain\Services\EmailService;
+use Monolog\Level;
+use Monolog\LogRecord;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,11 +33,18 @@ class AuthenticationTest extends KernelTestCase
   /** @var MailMessage[] everything the app tried to send; the kernel reboots after each call, which empties its own list */
   private array $sent = [];
 
+  /** @var LogRecord[] everything the app logged, collected the same way as $sent */
+  private array $logged = [];
+
+  /** @var array<string,mixed> what the kernel boots with between calls; see rebootKernel() */
+  private array $kernelOptions = [];
+
   protected function setUp(): void
   {
     self::bootKernel();
     $this->cookies = [];
     $this->sent = [];
+    $this->logged = [];
     $this->db()->executeStatement("DELETE FROM users WHERE email LIKE '%@auth-test.example'");
   }
 
@@ -79,16 +88,30 @@ class AuthenticationTest extends KernelTestCase
     return $this->db()->fetchAssociative('SELECT * FROM users WHERE email = ?', [$email]);
   }
 
+  /** Boots the kernel with these options now and after every call, e.g. ['debug' => false] for production behaviour. */
+  private function rebootKernel(array $options): void
+  {
+    $this->kernelOptions = $options;
+    self::ensureKernelShutdown();
+    self::bootKernel($options);
+  }
+
   private function call(string $method, string $uri, ?array $json = null, bool $ajax = true): Response
   {
-    $server = ['CONTENT_TYPE' => 'application/json'];
+    return $this->sendRaw($method, $uri, $json === null ? null : json_encode($json), 'application/json', $ajax);
+  }
+
+  private function sendRaw(string $method, string $uri, ?string $content, string $contentType, bool $ajax = true): Response
+  {
+    $server = ['CONTENT_TYPE' => $contentType];
     if ($ajax) {
       $server['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
     }
 
-    $request = Request::create($uri, $method, [], $this->cookies, [], $server, $json === null ? null : json_encode($json));
+    $request = Request::create($uri, $method, [], $this->cookies, [], $server, $content);
     $response = self::$kernel->handle($request);
     $this->sent = array_merge($this->sent, static::getContainer()->get(EmailService::class)->sent);
+    $this->logged = array_merge($this->logged, static::getContainer()->get('monolog.handler.test')->getRecords());
 
     foreach ($response->headers->getCookies() as $cookie) {
       if ($cookie->getValue() === null || $cookie->getExpiresTime() !== 0 && $cookie->getExpiresTime() < time()) {
@@ -100,7 +123,7 @@ class AuthenticationTest extends KernelTestCase
 
     // Each browser request is a fresh PHP request; don't let session state leak between them in-process
     self::$kernel->shutdown();
-    self::bootKernel();
+    self::bootKernel($this->kernelOptions);
 
     return $response;
   }
@@ -161,6 +184,33 @@ class AuthenticationTest extends KernelTestCase
     ] as $response) {
       $this->assertSame(400, $response->getStatusCode());
       $this->assertSame(['success' => false, 'errors' => ['Invalid credentials.']], $this->body($response));
+    }
+
+    $this->assertSame([], $this->cookies);
+  }
+
+  public function testMalformedLoginsAnswerLikeAWrongPassword(): void
+  {
+    $this->createLegacyUser('malformed@auth-test.example');
+
+    $responses = [
+      'missing email' => $this->call('POST', '/login', ['_password' => self::PASSWORD]),
+      'missing password' => $this->call('POST', '/login', ['_email' => 'malformed@auth-test.example']),
+      'non-string email' => $this->call('POST', '/login', ['_email' => ['malformed@auth-test.example'], '_password' => self::PASSWORD]),
+      'non-string password' => $this->call('POST', '/login', ['_email' => 'malformed@auth-test.example', '_password' => 12345]),
+      'null email' => $this->call('POST', '/login', ['_email' => null, '_password' => self::PASSWORD]),
+      'empty email' => $this->call('POST', '/login', ['_email' => '', '_password' => self::PASSWORD]),
+      'empty password' => $this->call('POST', '/login', ['_email' => 'malformed@auth-test.example', '_password' => '']),
+      'JSON list' => $this->sendRaw('POST', '/login', '["malformed@auth-test.example"]', 'application/json'),
+      'invalid JSON' => $this->sendRaw('POST', '/login', '{"_email": ', 'application/json'),
+      'empty JSON body' => $this->sendRaw('POST', '/login', '', 'application/json'),
+      'form body' => $this->sendRaw('POST', '/login', http_build_query(['_email' => 'malformed@auth-test.example', '_password' => self::PASSWORD]), 'application/x-www-form-urlencoded'),
+      'no body' => $this->sendRaw('POST', '/login', null, 'text/plain'),
+    ];
+
+    foreach ($responses as $case => $response) {
+      $this->assertSame(400, $response->getStatusCode(), $case);
+      $this->assertSame(['success' => false, 'errors' => [self::GENERIC_FAILURE]], $this->body($response), $case);
     }
 
     $this->assertSame([], $this->cookies);
@@ -457,6 +507,39 @@ class AuthenticationTest extends KernelTestCase
 
     $this->assertSame(400, $response->getStatusCode());
     $this->assertFalse($this->body($response)['success']);
+  }
+
+  public function testAnEmptyRecaptchaSecretOutsideDebugFailsTheCaptchaAndIsLogged(): void
+  {
+    $this->rebootKernel(['debug' => false]);
+    $this->createLegacyUser('nocaptcha@auth-test.example');
+
+    $register = $this->call('POST', '/register', [
+      '_email' => 'captcha@auth-test.example', '_password' => 'hunter2hunter2', '_confirmPassword' => 'hunter2hunter2',
+      '_name' => 'Captcha Auth Test', '_recaptcha' => 'x',
+    ]);
+    $lost = $this->call('POST', '/lostPassword', ['_email' => 'nocaptcha@auth-test.example', '_recaptcha' => 'x']);
+
+    foreach (['register' => $register, 'lost password' => $lost] as $case => $response) {
+      $this->assertSame(400, $response->getStatusCode(), $case);
+      $this->assertSame(['success' => false, 'errors' => ['recaptcha-failed']], $this->body($response), $case);
+    }
+
+    $this->assertFalse($this->db()->fetchOne("SELECT 1 FROM users WHERE email = 'captcha@auth-test.example'"));
+    $this->assertNull($this->userRow('nocaptcha@auth-test.example')['resetKey']);
+    $this->assertSame([], $this->sent);
+    $this->assertCount(2, array_filter($this->logged, fn(LogRecord $record) => $record->level === Level::Critical && str_contains($record->message, 'RECAPTCHA_SECRET')));
+  }
+
+  public function testAnEmptyRecaptchaSecretInDebugSkipsTheCaptcha(): void
+  {
+    $this->rebootKernel(['debug' => true]);
+    $this->createLegacyUser('debugcaptcha@auth-test.example');
+
+    $response = $this->call('POST', '/lostPassword', ['_email' => 'debugcaptcha@auth-test.example', '_recaptcha' => 'x']);
+
+    $this->assertSame(200, $response->getStatusCode(), $response->getContent());
+    $this->assertSame([], array_filter($this->logged, fn(LogRecord $record) => str_contains($record->message, 'RECAPTCHA_SECRET')));
   }
 
   public function testLostPasswordAndResetFlow(): void

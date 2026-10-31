@@ -1,6 +1,6 @@
 # 03: The AngularJS client handles numbers from the API
 
-**What to build:** The client behaves correctly now that the API returns integer columns as JSON numbers. On PHP 8.1+, pdo_mysql returns native ints, where master returned strings. Decision: fix the client comparisons, not the server, so the planned Angular migration doesn't inherit string-typed flags. No server change.
+**What to build:** The client behaves correctly now that the API returns integer columns as JSON numbers. On PHP 8.1+, pdo_mysql returns native ints, where the develop branch returned strings. Decision: fix the client comparisons, not the server, so the planned Angular migration doesn't inherit string-typed flags. No server change.
 
 These behaviours broke:
 
