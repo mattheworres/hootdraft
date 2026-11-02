@@ -6,6 +6,7 @@ class AuthenticationService {
     this.$location = $location;
     this.messageService = messageService;
     this.pathHelperService = pathHelperService;
+    this.pendingSessionCheck = $q.resolve();
   }
 
   cacheSession(userData) {
@@ -79,14 +80,24 @@ class AuthenticationService {
   // all of them, so a new tab can be logged in with nothing cached: always ask, and pick the user up if so.
   verifySession() {
     const wasAuthenticated = this.isAuthenticated();
+    const checked = this.$q.defer();
+    this.pendingSessionCheck = checked.promise;
 
     this.api.Authentication.me(data => {
       this.cacheSession(data);
+      checked.resolve();
     }, response => {
       if (response.status === 401 && wasAuthenticated) {
         this.handleSessionExpired();
       }
+      checked.resolve();
     });
+  }
+
+  // Resolves once the server has answered verifySession(), logged in or not. It never rejects, so a route can wait
+  // for it and an anonymous visitor still gets the page.
+  sessionChecked() {
+    return this.pendingSessionCheck;
   }
 
   // The server says the session is over although this tab thinks we are logged in
