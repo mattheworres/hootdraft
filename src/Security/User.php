@@ -2,6 +2,7 @@
 
 namespace HootDraft\Security;
 
+use HootDraft\Domain\Entities\LoginUser;
 use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -67,7 +68,7 @@ final class User implements UserInterface, LegacyPasswordAuthenticatedUserInterf
 
   public function isAdmin(): bool
   {
-    return in_array('ROLE_ADMIN', $this->roles, true);
+    return LoginUser::rolesIncludeAdmin($this->roles);
   }
 
   public function getUserIdentifier(): string

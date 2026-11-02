@@ -2,6 +2,7 @@
 
 namespace HootDraft\Tests\Functional;
 
+use HootDraft\Domain\Entities\LoginUser;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -40,7 +41,7 @@ class AdminTest extends CommishDraftTestCase
 
   private function logInAsAdmin(): void
   {
-    $this->createUser('Root', 'ROLE_ADMIN');
+    $this->createUser('Root', LoginUser::ROLE_ADMIN);
     $this->logIn('Root');
   }
 
@@ -205,7 +206,7 @@ class AdminTest extends CommishDraftTestCase
     $body = $this->json($this->call('GET', '/admin/users'));
 
     $this->assertTrue($body['success']);
-    $this->assertSame(['ROLE_COMMISH' => 'Commissioner', 'ROLE_ADMIN' => 'Administrator'], $body['roles']);
+    $this->assertSame([LoginUser::ROLE_COMMISH => 'Commissioner', LoginUser::ROLE_ADMIN => 'Administrator'], $body['roles']);
     $alice = array_values(array_filter($body['users'], fn ($u) => $u['email'] === 'alice@' . static::domain()))[0];
     $this->assertSame(['id', 'enabled', 'emailVerified', 'email', 'name', 'roles', 'creationTime'], array_keys($alice));
   }
@@ -215,16 +216,27 @@ class AdminTest extends CommishDraftTestCase
     $alice = $this->createUser('Alice');
     $this->logInAsAdmin();
 
-    $response = $this->call('PUT', "/admin/user/$alice", ['email' => 'Alice2@admin-test.example', 'name' => 'Alice Two', 'roles' => 'ROLE_ADMIN', 'enabled' => 0]);
+    $response = $this->call('PUT', "/admin/user/$alice", ['email' => 'Alice2@admin-test.example', 'name' => 'Alice Two', 'roles' => LoginUser::ROLE_ADMIN, 'enabled' => 0]);
     $this->assertSame(200, $response->getStatusCode(), $response->getContent());
     $this->assertSame(['success' => true, 'errors' => []], $this->json($response));
 
     $row = $this->db()->fetchAssociative('SELECT * FROM users WHERE id = ?', [$alice]);
     $this->assertSame('alice2@admin-test.example', $row['email']);
     $this->assertSame('Alice Two', $row['name']);
-    $this->assertSame('ROLE_ADMIN', $row['roles']);
+    $this->assertSame(LoginUser::ROLE_ADMIN, $row['roles']);
     $this->assertSame(0, (int) $row['enabled']);
     $this->assertNotEmpty($row['password'], 'the password hash is left alone');
+  }
+
+  public function testUpdateUserStoresTheParsedRoles(): void
+  {
+    $alice = $this->createUser('Alice');
+    $this->logInAsAdmin();
+
+    $response = $this->call('PUT', "/admin/user/$alice", ['email' => 'alice@admin-test.example', 'name' => 'Alice', 'roles' => ' ' . LoginUser::ROLE_COMMISH . ', ' . LoginUser::ROLE_ADMIN . ',', 'enabled' => 1]);
+    $this->assertSame(200, $response->getStatusCode(), $response->getContent());
+
+    $this->assertSame(LoginUser::ROLE_COMMISH . ',' . LoginUser::ROLE_ADMIN, $this->db()->fetchOne('SELECT roles FROM users WHERE id = ?', [$alice]));
   }
 
   public function testUpdateUserLeavesEmailVerifiedAndTheKeysAlone(): void
@@ -236,7 +248,7 @@ class AdminTest extends CommishDraftTestCase
     );
     $this->logInAsAdmin();
 
-    $response = $this->call('PUT', "/admin/user/$alice", ['email' => 'alice@admin-test.example', 'name' => 'Alice', 'roles' => 'ROLE_COMMISH', 'enabled' => 0]);
+    $response = $this->call('PUT', "/admin/user/$alice", ['email' => 'alice@admin-test.example', 'name' => 'Alice', 'roles' => LoginUser::ROLE_COMMISH, 'enabled' => 0]);
     $this->assertSame(200, $response->getStatusCode(), $response->getContent());
 
     $row = $this->db()->fetchAssociative('SELECT * FROM users WHERE id = ?', [$alice]);
@@ -244,7 +256,7 @@ class AdminTest extends CommishDraftTestCase
     $this->assertSame(['AAAAAAAAAAAAAAAA', '2026-10-30 12:00:00'], [$row['emailVerificationKey'], $row['emailVerificationKeyCreated']]);
     $this->assertSame(['BBBBBBBBBBBBBBBB', '2026-10-30 13:00:00'], [$row['resetKey'], $row['resetKeyCreated']]);
 
-    $this->call('PUT', "/admin/user/$alice", ['email' => 'alice@admin-test.example', 'name' => 'Alice', 'roles' => 'ROLE_COMMISH', 'enabled' => 1]);
+    $this->call('PUT', "/admin/user/$alice", ['email' => 'alice@admin-test.example', 'name' => 'Alice', 'roles' => LoginUser::ROLE_COMMISH, 'enabled' => 1]);
     $this->assertSame([1, 0], array_map('intval', $this->db()->fetchNumeric('SELECT enabled, emailVerified FROM users WHERE id = ?', [$alice])));
   }
 
@@ -258,11 +270,11 @@ class AdminTest extends CommishDraftTestCase
     $this->assertSame(400, $response->getStatusCode());
     $this->assertSame(['Email already registered.', 'Name already taken.', 'Role invalid.'], $this->json($response)['errors']);
 
-    $this->assertSame(400, $this->call('PUT', "/admin/user/$alice", ['email' => '', 'name' => 'Alice', 'roles' => 'ROLE_COMMISH'])->getStatusCode());
-    $this->assertSame(400, $this->call('PUT', "/admin/user/$alice", ['email' => 'alice@admin-test.example', 'name' => '', 'roles' => 'ROLE_COMMISH'])->getStatusCode());
-    $this->assertSame(400, $this->call('PUT', "/admin/user/$alice", ['email' => ['a'], 'name' => 'Alice', 'roles' => 'ROLE_COMMISH'])->getStatusCode());
-    $this->assertSame(400, $this->call('PUT', "/admin/user/$alice", ['email' => 'alice@admin-test.example', 'name' => 'Alice', 'roles' => [['ROLE_COMMISH']]])->getStatusCode());
-    $this->assertSame(404, $this->call('PUT', '/admin/user/999999999', ['email' => 'a@b.co', 'name' => 'Z', 'roles' => 'ROLE_COMMISH'])->getStatusCode());
+    $this->assertSame(400, $this->call('PUT', "/admin/user/$alice", ['email' => '', 'name' => 'Alice', 'roles' => LoginUser::ROLE_COMMISH])->getStatusCode());
+    $this->assertSame(400, $this->call('PUT', "/admin/user/$alice", ['email' => 'alice@admin-test.example', 'name' => '', 'roles' => LoginUser::ROLE_COMMISH])->getStatusCode());
+    $this->assertSame(400, $this->call('PUT', "/admin/user/$alice", ['email' => ['a'], 'name' => 'Alice', 'roles' => LoginUser::ROLE_COMMISH])->getStatusCode());
+    $this->assertSame(400, $this->call('PUT', "/admin/user/$alice", ['email' => 'alice@admin-test.example', 'name' => 'Alice', 'roles' => [[LoginUser::ROLE_COMMISH]]])->getStatusCode());
+    $this->assertSame(404, $this->call('PUT', '/admin/user/999999999', ['email' => 'a@b.co', 'name' => 'Z', 'roles' => LoginUser::ROLE_COMMISH])->getStatusCode());
     $this->assertSame('alice@admin-test.example', $this->db()->fetchOne('SELECT email FROM users WHERE id = ?', [$alice]));
   }
 
@@ -271,7 +283,7 @@ class AdminTest extends CommishDraftTestCase
     $alice = $this->createUser('Alice');
     $this->logInAsAdmin();
 
-    $response = $this->call('PUT', "/admin/user/$alice", ['email' => 'alice@admin-test.example', 'name' => 'Alice', 'roles' => 'ROLE_COMMISH']);
+    $response = $this->call('PUT', "/admin/user/$alice", ['email' => 'alice@admin-test.example', 'name' => 'Alice', 'roles' => LoginUser::ROLE_COMMISH]);
 
     $this->assertSame(400, $response->getStatusCode());
     $this->assertSame(['Invalid user fields.'], $this->json($response)['errors']);
@@ -282,16 +294,16 @@ class AdminTest extends CommishDraftTestCase
   {
     $this->logInAsAdmin();
     $root = (int) $this->db()->fetchOne('SELECT id FROM users WHERE email = ?', ['root@admin-test.example']);
-    $self = ['email' => 'root@admin-test.example', 'name' => 'Root', 'roles' => 'ROLE_ADMIN', 'enabled' => 1];
+    $self = ['email' => 'root@admin-test.example', 'name' => 'Root', 'roles' => LoginUser::ROLE_ADMIN, 'enabled' => 1];
 
-    foreach ([['roles' => 'ROLE_COMMISH'], ['enabled' => 0]] as $change) {
+    foreach ([['roles' => LoginUser::ROLE_COMMISH], ['enabled' => 0]] as $change) {
       $response = $this->call('PUT', "/admin/user/$root", $change + $self);
       $this->assertSame(400, $response->getStatusCode());
       $this->assertSame(["You can't remove your own admin role or disable your own account."], $this->json($response)['errors']);
     }
 
     $this->assertSame(200, $this->call('PUT', "/admin/user/$root", ['name' => 'Root Renamed'] + $self)->getStatusCode());
-    $this->assertSame('ROLE_ADMIN', $this->db()->fetchOne('SELECT roles FROM users WHERE id = ?', [$root]));
+    $this->assertSame(LoginUser::ROLE_ADMIN, $this->db()->fetchOne('SELECT roles FROM users WHERE id = ?', [$root]));
   }
 
   public function testDeleteUserRemovesTheirDraftsToo(): void
@@ -339,7 +351,7 @@ class AdminTest extends CommishDraftTestCase
   public function testAdminsCannotBeDeleted(): void
   {
     $this->logInAsAdmin();
-    $other = $this->createUser('Boss', 'ROLE_COMMISH,ROLE_ADMIN');
+    $other = $this->createUser('Boss', LoginUser::ROLE_COMMISH . ',' . LoginUser::ROLE_ADMIN);
 
     $response = $this->call('DELETE', "/admin/user/$other");
     $this->assertSame(400, $response->getStatusCode());

@@ -2,6 +2,7 @@
 
 namespace HootDraft\Tests\Unit\Security;
 
+use HootDraft\Domain\Entities\LoginUser;
 use HootDraft\Security\User;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\PasswordHasher\Hasher\MessageDigestPasswordHasher;
@@ -49,7 +50,7 @@ class LegacyHashMigrationTest extends TestCase
 
   public function testUserHidesPasswordHashInSession(): void
   {
-    $user = new User(1, 'a@b.co', 'Al', self::LEGACY_HASH, self::SALT, ['ROLE_COMMISH'], true, true);
+    $user = new User(1, 'a@b.co', 'Al', self::LEGACY_HASH, self::SALT, [LoginUser::ROLE_COMMISH], true, true);
 
     $this->assertStringNotContainsString(self::LEGACY_HASH, serialize($user));
   }

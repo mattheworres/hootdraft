@@ -44,7 +44,7 @@ class LoginUserRepositoryTest extends KernelTestCase
     $user->password = 'x';
     $user->salt = '';
     $user->name = 'Alice';
-    $user->roles = ['ROLE_COMMISH'];
+    $user->roles = [LoginUser::ROLE_COMMISH];
     $user->enabled = 1;
     $user->emailVerified = 0;
     $user->emailVerificationKey = 'AAAAAAAAAAAAAAAA';

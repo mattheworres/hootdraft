@@ -3,6 +3,7 @@
 namespace HootDraft\Tests\Functional;
 
 use Doctrine\DBAL\Connection;
+use HootDraft\Domain\Entities\LoginUser;
 use HootDraft\Domain\Services\DatabaseCacheService;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -68,7 +69,7 @@ abstract class CommishDraftTestCase extends KernelTestCase
     return static::getContainer()->get(Connection::class);
   }
 
-  protected function createUser(string $name, string $roles = 'ROLE_COMMISH'): int
+  protected function createUser(string $name, string $roles = LoginUser::ROLE_COMMISH): int
   {
     $hash = (new MessageDigestPasswordHasher('sha512', true, 5000))->hash(self::PASSWORD, self::SALT);
     $this->db()->insert('users', [

@@ -2,6 +2,7 @@
 
 namespace HootDraft\Controller\Admin;
 
+use HootDraft\Domain\Entities\LoginUser;
 use HootDraft\Domain\Models\HootDraftResponse;
 use HootDraft\Domain\Repositories\LoginUserRepository;
 use HootDraft\Domain\Services\LoginUserService;
@@ -46,7 +47,7 @@ class UserController
 
     $user->email = strtolower((string) ($payload['email'] ?? ''));
     $user->name = (string) ($payload['name'] ?? '');
-    $user->roles = $payload['roles'] ?? '';
+    $user->roles = LoginUser::parseRoles($payload['roles'] ?? '');
 
     //Coerce down to a 1 or 0 type
     $user->enabled = filter_var($payload['enabled'], FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
@@ -69,7 +70,7 @@ class UserController
   {
     $user = $this->load($user_id);
 
-    if ($this->service->IsAdmin($user)) {
+    if ($user->isAdmin()) {
       $response = new HootDraftResponse(false, array());
       $response->errors[] = "Unable to delete user - user is admin.";
 

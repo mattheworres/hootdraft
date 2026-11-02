@@ -41,7 +41,7 @@ class UsersInvitationService {
     $user->salt = '';
     $user->enabled = 1;
     $user->emailVerified = 1;
-    $user->roles = array('ROLE_COMMISH');
+    $user->roles = array(LoginUser::ROLE_COMMISH);
     $user->resetKey = $this->saltService->GenerateSaltForUrl();
     // The link is checked against the (1 hour) Reset Key lifetime, but an invitation should last as long as
     // an Email Verification Key, so the key is dated ahead by the difference

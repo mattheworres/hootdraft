@@ -2,6 +2,7 @@
 
 namespace HootDraft\Tests\Functional;
 
+use HootDraft\Domain\Entities\LoginUser;
 use HootDraft\Domain\Services\EmailService;
 use HootDraft\Tests\Support\CapturingEmailService;
 use PHPUnit\Framework\Attributes\Group;
@@ -36,7 +37,7 @@ class CommishTest extends CommishDraftTestCase
     $this->createUser('Alice');
     $this->logIn('Alice');
 
-    $this->assertSame(['authenticated' => true, 'roles' => ['ROLE_COMMISH']], $this->json($this->call('GET', '/commish')));
+    $this->assertSame(['authenticated' => true, 'roles' => [LoginUser::ROLE_COMMISH]], $this->json($this->call('GET', '/commish')));
   }
 
   public function testGetCreateReturnsTheDefaultsForTheSignedInCommissioner(): void
@@ -382,7 +383,7 @@ class CommishTest extends CommishDraftTestCase
     $this->assertSame(['carol@commish-test.example' => 'Carol'], $mailer->sent[0]->to_addresses);
 
     $row = $this->db()->fetchAssociative("SELECT * FROM users WHERE email = 'carol@commish-test.example'");
-    $this->assertSame('ROLE_COMMISH', $row['roles']);
+    $this->assertSame(LoginUser::ROLE_COMMISH, $row['roles']);
     $this->assertSame([1, 1], [(int) $row['enabled'], (int) $row['emailVerified']]);
 
     // Nobody knows the generated password

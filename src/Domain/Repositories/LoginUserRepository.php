@@ -70,8 +70,8 @@ class LoginUserRepository {
   public function GetRoles() {
     $roles = array();
 
-    $roles['ROLE_COMMISH'] = "Commissioner";
-    $roles['ROLE_ADMIN'] = "Administrator";
+    $roles[LoginUser::ROLE_COMMISH] = "Commissioner";
+    $roles[LoginUser::ROLE_ADMIN] = "Administrator";
 
     return $roles;
   }

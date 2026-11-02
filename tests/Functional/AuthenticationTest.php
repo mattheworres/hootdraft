@@ -3,6 +3,7 @@
 namespace HootDraft\Tests\Functional;
 
 use Doctrine\DBAL\Connection;
+use HootDraft\Domain\Entities\LoginUser;
 use HootDraft\Domain\Models\MailMessage;
 use HootDraft\Domain\Services\EmailService;
 use Monolog\Level;
@@ -60,7 +61,7 @@ class AuthenticationTest extends KernelTestCase
   }
 
   /** A user as the Silex-era app stored them: legacy digest + salt. */
-  private function createLegacyUser(string $email, string $roles = 'ROLE_COMMISH', int $enabled = 1, int $emailVerified = 1): void
+  private function createLegacyUser(string $email, string $roles = LoginUser::ROLE_COMMISH, int $enabled = 1, int $emailVerified = 1): void
   {
     $hash = (new MessageDigestPasswordHasher('sha512', true, 5000))->hash(self::PASSWORD, self::SALT);
 
@@ -73,7 +74,7 @@ class AuthenticationTest extends KernelTestCase
   /** An Email Unverified user holding an Email Verification Key issued $ageSeconds ago (null: no key at all). */
   private function createEmailUnverifiedUser(string $email, ?int $ageSeconds, int $enabled = 1): void
   {
-    $this->createLegacyUser($email, 'ROLE_COMMISH', $enabled, 0);
+    $this->createLegacyUser($email, LoginUser::ROLE_COMMISH, $enabled, 0);
 
     if ($ageSeconds !== null) {
       $this->db()->executeStatement(
@@ -175,7 +176,7 @@ class AuthenticationTest extends KernelTestCase
   public function testBadPasswordUnknownEmailAndDisabledAccountAllLookTheSame(): void
   {
     $this->createLegacyUser('known@auth-test.example');
-    $this->createLegacyUser('disabled@auth-test.example', 'ROLE_COMMISH', 0);
+    $this->createLegacyUser('disabled@auth-test.example', LoginUser::ROLE_COMMISH, 0);
 
     foreach ([
       $this->login('known@auth-test.example', 'wrong password'),
@@ -218,7 +219,7 @@ class AuthenticationTest extends KernelTestCase
 
   public function testMeRequiresSessionAndReportsUser(): void
   {
-    $this->createLegacyUser('me@auth-test.example', 'ROLE_ADMIN');
+    $this->createLegacyUser('me@auth-test.example', LoginUser::ROLE_ADMIN);
 
     $this->assertSame(401, $this->call('GET', '/me')->getStatusCode());
 
@@ -227,6 +228,35 @@ class AuthenticationTest extends KernelTestCase
 
     $this->assertSame(200, $response->getStatusCode());
     $this->assertTrue($this->body($response)['is_admin']);
+  }
+
+  public function testMeReportsTheRoles(): void
+  {
+    $this->createLegacyUser('me-commish@auth-test.example');
+    $this->createLegacyUser('me-admin@auth-test.example', LoginUser::ROLE_COMMISH . ', ' . LoginUser::ROLE_ADMIN);
+
+    $this->assertArrayNotHasKey('roles', $this->body($this->login('me-commish@auth-test.example')), 'only /me reports the roles');
+    $commish = $this->body($this->call('GET', '/me'));
+
+    $this->assertSame([LoginUser::ROLE_COMMISH], $commish['roles']);
+    $this->assertFalse($commish['is_admin']);
+    $this->assertSame('User me-commish@auth-test.example', $commish['name']);
+
+    $this->cookies = [];
+    $this->login('me-admin@auth-test.example');
+    $admin = $this->body($this->call('GET', '/me'));
+
+    $this->assertSame([LoginUser::ROLE_COMMISH, LoginUser::ROLE_ADMIN], $admin['roles']);
+    $this->assertTrue($admin['is_admin']);
+
+    // An Admin stored without ROLE_COMMISH still reports it, from the role hierarchy
+    $this->createLegacyUser('me-admin-only@auth-test.example', LoginUser::ROLE_ADMIN);
+    $this->cookies = [];
+    $this->login('me-admin-only@auth-test.example');
+    $adminOnly = $this->body($this->call('GET', '/me'));
+
+    $this->assertEqualsCanonicalizing([LoginUser::ROLE_ADMIN, LoginUser::ROLE_COMMISH], $adminOnly['roles']);
+    $this->assertTrue($adminOnly['is_admin']);
   }
 
   public function testCommishRoutesNeedLoginAndAdminRoutesNeedAdmin(): void
@@ -242,7 +272,7 @@ class AuthenticationTest extends KernelTestCase
     $this->assertSame(403, $this->call('GET', '/admin/_probe')->getStatusCode());
 
     // ... and an admin inherits ROLE_COMMISH through the role hierarchy
-    $this->createLegacyUser('admin@auth-test.example', 'ROLE_ADMIN');
+    $this->createLegacyUser('admin@auth-test.example', LoginUser::ROLE_ADMIN);
     $this->cookies = [];
     $this->login('admin@auth-test.example');
 
@@ -571,7 +601,7 @@ class AuthenticationTest extends KernelTestCase
   public function testLostPasswordIsRefusedForEmailUnverifiedAndDisabledAccountsAndLeavesTheirKeysAlone(): void
   {
     $this->createEmailUnverifiedUser('pending@auth-test.example', 60);
-    $this->createLegacyUser('off@auth-test.example', 'ROLE_COMMISH', 0);
+    $this->createLegacyUser('off@auth-test.example', LoginUser::ROLE_COMMISH, 0);
 
     foreach (['pending@auth-test.example', 'off@auth-test.example'] as $email) {
       $response = $this->call('POST', '/lostPassword', ['_email' => $email, '_recaptcha' => 'x']);

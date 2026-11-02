@@ -80,10 +80,6 @@ class LoginUserService {
     return $response;
   }
 
-  public function IsAdmin(LoginUser $user) {
-    return in_array('ROLE_ADMIN', LoginUser::parseRoles($user->roles), true);
-  }
-
   public function SearchCommissioners($searchTerm) {
     $response = new HootDraftResponse();
 
@@ -119,7 +115,7 @@ class LoginUserService {
     $this->issueEmailVerificationKey($user);
     $user->salt = ''; // only the legacy digest hasher used a per-user salt
     $user->password = $this->hash($user->password);
-    $user->roles = array('ROLE_COMMISH');
+    $user->roles = array(LoginUser::ROLE_COMMISH);
 
     $response = new HootDraftResponse();
 

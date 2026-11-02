@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 
 /**
  * Login, logout and the account email flows. Authentication is a session cookie set by the firewall
@@ -34,6 +35,7 @@ class AuthenticationController
     private Security $security,
     private UserProvider $userProvider,
     private CurrentUser $currentUser,
+    private RoleHierarchyInterface $roleHierarchy,
   ) {
   }
 
@@ -59,7 +61,12 @@ class AuthenticationController
   public function me(): JsonResponse
   {
     // access_control guarantees an authenticated user here
-    return new JsonResponse(AuthResponse::for($this->currentUser->get()));
+    $user = $this->currentUser->get();
+    $response = AuthResponse::for($user);
+    // Every granted role, so an Admin also reports ROLE_COMMISH and the client can check one role for each permission
+    $response->roles = $this->roleHierarchy->getReachableRoleNames($user->getRoles());
+
+    return new JsonResponse($response);
   }
 
   #[Route('/register', name: 'register', methods: ['POST'])]

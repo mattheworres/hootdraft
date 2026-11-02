@@ -2,6 +2,7 @@
 
 namespace HootDraft\Security;
 
+use HootDraft\Domain\Entities\LoginUser;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -32,7 +33,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
       $row['name'],
       $row['password'],
       $row['salt'],
-      array_values(array_filter(array_map('trim', explode(',', (string) $row['roles'])))),
+      LoginUser::parseRoles($row['roles']),
       (bool) $row['enabled'],
       (bool) $row['emailVerified'],
     );

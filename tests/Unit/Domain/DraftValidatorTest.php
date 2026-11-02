@@ -3,6 +3,7 @@
 namespace HootDraft\Tests\Unit\Domain;
 
 use HootDraft\Domain\Entities\Draft;
+use HootDraft\Domain\Entities\LoginUser;
 use HootDraft\Domain\Repositories\DepthChartPositionRepository;
 use HootDraft\Domain\Repositories\DraftDataRepository;
 use HootDraft\Domain\Repositories\DraftRepository;
@@ -60,7 +61,7 @@ class DraftValidatorTest extends TestCase
     return $draft;
   }
 
-  private function user(int $id, array $roles = ['ROLE_COMMISH']): User
+  private function user(int $id, array $roles = [LoginUser::ROLE_COMMISH]): User
   {
     return new User($id, "u$id@example.com", "User $id", 'x', null, $roles, true, true);
   }
@@ -96,7 +97,7 @@ class DraftValidatorTest extends TestCase
     $this->assertTrue($this->viewable($private, null, 'secret'));
     $this->assertTrue($this->viewable($private, $this->user(10)));
     $this->assertFalse($this->viewable($private, $this->user(11)));
-    $this->assertTrue($this->viewable($private, $this->user(11, ['ROLE_ADMIN'])));
+    $this->assertTrue($this->viewable($private, $this->user(11, [LoginUser::ROLE_ADMIN])));
   }
 
   public function testEditableByOwnerOrAdminOnly(): void
@@ -104,7 +105,7 @@ class DraftValidatorTest extends TestCase
     $draft = $this->draft();
 
     $this->assertTrue($this->sut->IsDraftEditableForUser($draft, $this->user(10)));
-    $this->assertTrue($this->sut->IsDraftEditableForUser($draft, $this->user(11, ['ROLE_ADMIN'])));
+    $this->assertTrue($this->sut->IsDraftEditableForUser($draft, $this->user(11, [LoginUser::ROLE_ADMIN])));
     $this->assertFalse($this->sut->IsDraftEditableForUser($draft, $this->user(11)));
     $this->assertFalse($this->sut->IsDraftEditableForUser($draft, null));
   }

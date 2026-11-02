@@ -2,6 +2,7 @@
 
 namespace HootDraft\Tests\Functional;
 
+use HootDraft\Domain\Entities\LoginUser;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -170,7 +171,7 @@ class DraftReadTest extends CommishDraftTestCase
   {
     $alice = $this->createUser('Alice');
     $this->createUser('Bob');
-    $this->createUser('Root', 'ROLE_ADMIN');
+    $this->createUser('Root', LoginUser::ROLE_ADMIN);
     $id = $this->createDraft($alice, 'undrafted', null, ['draft_name' => 'Alice draft']);
     $uri = "/commish/_probe/draft/$id/editable";
 

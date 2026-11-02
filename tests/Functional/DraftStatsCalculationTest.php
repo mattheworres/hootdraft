@@ -2,6 +2,7 @@
 
 namespace HootDraft\Tests\Functional;
 
+use HootDraft\Domain\Entities\LoginUser;
 use PHPUnit\Framework\Attributes\Group;
 
 /** What POST /admin/draft/{id}/stats calculates, with pick durations seeded straight into the database. */
@@ -25,7 +26,7 @@ class DraftStatsCalculationTest extends CommishDraftTestCase
     }
     $this->db()->update('draft', ['draft_end_time' => $end], ['draft_id' => $draft]);
 
-    $this->createUser('Root', 'ROLE_ADMIN');
+    $this->createUser('Root', LoginUser::ROLE_ADMIN);
     $this->logIn('Root');
 
     $response = $this->call('POST', "/admin/draft/$draft/stats");

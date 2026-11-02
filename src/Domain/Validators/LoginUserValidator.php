@@ -303,7 +303,7 @@ class LoginUserValidator {
 
     //An admin can't take their own access away: nobody else may be left to put it back
     if ($currentUserId !== null && (int) $user->id === $currentUserId
-      && (!in_array('ROLE_ADMIN', $roles, true) || !$user->enabled)) {
+      && (!LoginUser::rolesIncludeAdmin($roles) || !$user->enabled)) {
       $errors[] = "You can't remove your own admin role or disable your own account.";
       $valid = false;
     }

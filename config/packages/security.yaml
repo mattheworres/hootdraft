@@ -34,10 +34,11 @@ security:
       logout:
         path: logout
 
+  # The role names are constants on HootDraft\Domain\Entities\LoginUser
   role_hierarchy:
-    ROLE_ADMIN: [ROLE_COMMISH]
+    !php/const HootDraft\Domain\Entities\LoginUser::ROLE_ADMIN: [!php/const HootDraft\Domain\Entities\LoginUser::ROLE_COMMISH]
 
   access_control:
-    - { path: ^/admin, roles: ROLE_ADMIN }
-    - { path: ^/commish, roles: ROLE_COMMISH }
+    - { path: ^/admin, roles: !php/const HootDraft\Domain\Entities\LoginUser::ROLE_ADMIN }
+    - { path: ^/commish, roles: !php/const HootDraft\Domain\Entities\LoginUser::ROLE_COMMISH }
     - { path: ^/me$, roles: IS_AUTHENTICATED_FULLY }
