@@ -54,6 +54,8 @@ class DraftStatsCalculationTest extends CommishDraftTestCase
 
     $this->assertSame([2, 250], [$stats['longest_round'], $stats['longest_round_seconds']]);
     $this->assertSame([1, 130], [$stats['shortest_round'], $stats['shortest_round_seconds']]);
+    // Total pick time over the number of rounds: (130 + 250) / 2.
+    // The develop branch divided the longest round by the rounds. That gives 250 / 2 = 125.
     $this->assertSame(190, $stats['average_round_seconds']);
     $this->assertSame(1800, $stats['drafting_time_seconds']);
   }

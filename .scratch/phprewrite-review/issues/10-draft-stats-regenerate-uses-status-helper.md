@@ -4,9 +4,9 @@
 
 **Blocked by:** 01
 
-**Status:** ready-for-agent
+**Status:** completed
 
-- [ ] The Admin Draft Stats controller uses the `DraftService` Complete helper
-- [ ] Regenerating Draft Stats still answers 409 for a Draft that isn't Complete and 404 for a missing one
-- [ ] A Draft Stats test asserts `average_round_seconds` for a known Draft, so the chosen formula is pinned
-- [ ] `AdminTest`, `DraftStatsTest` and `DraftStatsCalculationTest` pass
+- [x] The Admin Draft Stats controller uses the `DraftService` Complete helper
+- [x] Regenerating Draft Stats still answers 409 for a Draft that isn't Complete and 404 for a missing one
+- [x] A Draft Stats test asserts `average_round_seconds` for a known Draft, so the chosen formula is pinned
+- [x] `AdminTest`, `DraftStatsTest` and `DraftStatsCalculationTest` pass

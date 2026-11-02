@@ -4,6 +4,7 @@ namespace HootDraft\Controller\Admin;
 
 use HootDraft\Domain\Repositories\DraftRepository;
 use HootDraft\Domain\Repositories\DraftStatsRepository;
+use HootDraft\Domain\Services\DraftService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -12,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 /** Role (ROLE_ADMIN) comes from security.yaml. */
 class DraftStatsController
 {
-  public function __construct(private DraftRepository $drafts, private DraftStatsRepository $stats)
+  public function __construct(private DraftRepository $drafts, private DraftStatsRepository $stats, private DraftService $service)
   {
   }
 
@@ -31,7 +32,7 @@ class DraftStatsController
       throw new NotFoundHttpException("Unable to load draft.");
     }
 
-    if ($draft->draft_status !== 'complete') {
+    if (!$this->service->DraftComplete($draft)) {
       throw new ConflictHttpException("Stats can only be calculated for a completed draft.");
     }
 
