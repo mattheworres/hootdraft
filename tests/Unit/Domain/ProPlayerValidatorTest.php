@@ -20,36 +20,36 @@ class ProPlayerValidatorTest extends TestCase {
     return $file;
   }
 
-  public function testEnsuresSportIsNotEmpty(): void {
-    $result = $this->sut->IsUploadSportValid("", $this->file());
+  public function testEnsuresLeagueIsNotEmpty(): void {
+    $result = $this->sut->IsUploadLeagueValid("", $this->file());
 
     $this->assertFalse($result->success);
     $this->assertContains("One or more missing fields.", $result->errors);
   }
 
   public function testUploadErrorsAreReported(): void {
-    $result = $this->sut->IsUploadSportValid("NFL", $this->file(1));
+    $result = $this->sut->IsUploadLeagueValid("NFL", $this->file(1));
 
     $this->assertFalse($result->success);
     $this->assertContains("Upload error - 1", $result->errors);
   }
 
-  public function testValidateSportValues(): void {
-    $result = $this->sut->IsUploadSportValid("QVC", $this->file());
+  public function testValidateLeagueValues(): void {
+    $result = $this->sut->IsUploadLeagueValid("QVC", $this->file());
 
     $this->assertFalse($result->success);
-    $this->assertContains("Sport QVC is an invalid value.", $result->errors);
+    $this->assertContains("League QVC is an invalid value.", $result->errors);
   }
 
   public function testAFileIsRequired(): void {
-    $result = $this->sut->IsUploadSportValid("NFL", null);
+    $result = $this->sut->IsUploadLeagueValid("NFL", null);
 
     $this->assertFalse($result->success);
     $this->assertContains("Must upload a CSV file", $result->errors);
   }
 
-  public function testAValidSportAndFilePass(): void {
-    $result = $this->sut->IsUploadSportValid("NFL", $this->file());
+  public function testAValidLeagueAndFilePass(): void {
+    $result = $this->sut->IsUploadLeagueValid("NFL", $this->file());
 
     $this->assertTrue($result->success);
     $this->assertSame([], $result->errors);

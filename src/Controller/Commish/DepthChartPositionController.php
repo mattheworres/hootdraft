@@ -23,7 +23,7 @@ class DepthChartPositionController
   {
     $draft_sport = $request->query->get('draft_sport');
 
-    $validity = $this->validator->IsDraftSportValid($draft_sport);
+    $validity = $this->validator->IsDraftLeagueValid($draft_sport);
 
     if (!$validity->success) {
       return new JsonResponse($validity, JsonResponse::HTTP_BAD_REQUEST);

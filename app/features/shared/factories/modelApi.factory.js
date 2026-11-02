@@ -46,8 +46,8 @@ angular.module('phpdraft.shared').factory('api', ($resource, ENV) =>
     }),
 
     Admin: $resource(`${ENV.apiEndpoint}admin`, {draft_id: '@draft_id'}, {
-      'getSports':
-        {method: 'GET', url: `${ENV.apiEndpoint}admin/sports`},
+      'getLeagues':
+        {method: 'GET', url: `${ENV.apiEndpoint}admin/leagues`},
       'getAllDrafts':
         {method: 'GET', url: `${ENV.apiEndpoint}admin/drafts`, isArray: true},
       'regenerateDraftStats':

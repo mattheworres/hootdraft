@@ -150,7 +150,7 @@ class DraftRepository {
     $draft = $this->SetSecurityProperties($currentUser, $draft, $password);
 
     if ($getDraftData && !$draft->is_locked) {
-      $draft->sports = $this->draftData->GetSports();
+      $draft->sports = $this->draftData->GetLeagues();
       $draft->styles = $this->draftData->GetStyles();
       $draft->statuses = $this->draftData->GetStatuses();
       $draft->teams = $this->draftData->GetTeams($draft->draft_sport);

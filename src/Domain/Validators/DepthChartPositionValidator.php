@@ -9,13 +9,13 @@ class DepthChartPositionValidator {
   public function __construct(private DraftDataRepository $draftData) {
   }
 
-  public function IsDraftSportValid($draft_sport) {
+  public function IsDraftLeagueValid($draft_sport) {
     $valid = true;
     $errors = array();
-    $draft_sports = $this->draftData->GetSports();
+    $leagues = $this->draftData->GetLeagues();
     $draft_sport = (string) $draft_sport;
 
-    if (strlen($draft_sport) < 3 || strlen($draft_sport) > 4 || strlen($draft_sports[$draft_sport] ?? '') == 0) {
+    if (strlen($draft_sport) < 3 || strlen($draft_sport) > 4 || strlen($leagues[$draft_sport] ?? '') == 0) {
       $errors[] = "Draft sport is an invalid value.";
       $valid = false;
     }

@@ -104,7 +104,7 @@ class PickValidatorTest extends TestCase
     $this->assertTrue($this->sut->IsPickValidForUpdate($this->draft, $this->pick)->success);
   }
 
-  public function testTeamAndPositionMustBeValidForTheSport(): void
+  public function testTeamAndPositionMustBeValidForTheLeague(): void
   {
     $this->pick->team = "XXX";
     $this->pick->position = "QQ";

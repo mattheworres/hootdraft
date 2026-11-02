@@ -9,18 +9,18 @@ class ProPlayerValidator {
   public function __construct(private DraftDataRepository $draftData) {
   }
 
-  public function IsUploadSportValid($sport, ?UploadedFile $file) {
+  public function IsUploadLeagueValid($league, ?UploadedFile $file) {
     $valid = true;
     $errors = array();
-    $sports = $this->draftData->GetSports();
+    $leagues = $this->draftData->GetLeagues();
 
-    if (empty($sport)) {
+    if (empty($league)) {
       $errors[] = "One or more missing fields.";
       $valid = false;
     }
 
-    if (!array_key_exists((string) $sport, $sports)) {
-      $errors[] = "Sport $sport is an invalid value.";
+    if (!array_key_exists((string) $league, $leagues)) {
+      $errors[] = "League $league is an invalid value.";
       $valid = false;
     }
 

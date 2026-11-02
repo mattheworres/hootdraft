@@ -10,6 +10,7 @@ The skills speak in terms of five canonical triage roles. This file maps those r
 | `ready-for-human`          | `ready-for-human`       | Requires human implementation                              |
 | `wontfix`                  | `wontfix`               | Will not be actioned                                       |
 | —                          | `awaiting-human-review` | Implemented and staged, maintainer reviews before commit   |
+| —                          | `completed`             | Reviewed & committed                                       |
 
 `awaiting-human-review` is local to this repo and has no canonical role. When an agent finishes the work on an issue, it sets this status. Only the maintainer moves the issue from this status, after their review.
 

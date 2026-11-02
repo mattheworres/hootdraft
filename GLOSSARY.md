@@ -39,8 +39,12 @@ _Avoid_: Verification, verify
 ### The draft
 
 **Draft**:
-One event in which Managers take turns choosing Pro Players, run by a Commissioner for a single sport.
-_Avoid_: League, event
+One event in which Managers take turns choosing Pro Players, run by a Commissioner for a single League.
+_Avoid_: League (that word means the pro league), event
+
+**League**:
+The professional league that a Draft and its Pro Players belong to, stored as a key: **NFL**, **NFLE** (NFL Extended: the NFL with defensive players and lesser-used players such as offensive linemen), **MLB**, **NBA**, **NHL** and **S15** (Super Rugby). The Pro Player list holds a separate set of players for each League.
+_Avoid_: Sport (the old code word, still used for `draft_sport` and the Draft API field)
 
 **Setting Up**:
 The Draft status before it has begun, while Managers, Round Times and other options are still being configured.

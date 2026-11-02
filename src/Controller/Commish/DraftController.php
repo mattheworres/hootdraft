@@ -54,7 +54,7 @@ class DraftController
     $draft->commish_name = $currentUser->getName();
     $draft->draft_sport = 'NFL';
 
-    $draft->sports = $this->draftData->GetSports();
+    $draft->sports = $this->draftData->GetLeagues();
     $draft->styles = $this->draftData->GetStyles();
 
     return new JsonResponse($draft, Response::HTTP_OK);
@@ -107,7 +107,7 @@ class DraftController
     $draftId = (int) $draft_id;
     $draft = $this->drafts->Load($draftId);
 
-    $draft->sports = $this->draftData->GetSports();
+    $draft->sports = $this->draftData->GetLeagues();
     $draft->styles = $this->draftData->GetStyles();
     $draft->statuses = $this->draftData->GetStatuses();
     $draft->depthChartPositions = $draft->using_depth_charts == 1

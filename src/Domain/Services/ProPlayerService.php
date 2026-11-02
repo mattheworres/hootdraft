@@ -58,11 +58,11 @@ class ProPlayerService {
   }
 
   /**
-   * Replaces a league's players with the rows of a semicolon-separated CSV ("Last, First";POS;TEAM). The whole CSV is
-   * parsed before the database is touched, and the delete + inserts are one transaction, so a bad file or a failure
-   * part-way keeps the old list instead of leaving the league empty.
+   * Replaces a league's players with the rows of a semicolon-separated CSV ("Last, First";POS;TEAM, where a single name
+   * with no comma is the last name). The whole CSV is parsed before the database is touched, and the delete + inserts
+   * are one transaction, so a bad file or a failure part-way keeps the old list instead of leaving the league empty.
    */
-  public function Upload($sport, UploadedFile $file) {
+  public function Upload($league, UploadedFile $file) {
     $response = new HootDraftResponse();
 
     $tempName = $file->getRealPath();
@@ -109,17 +109,18 @@ class ProPlayerService {
 
       $new_player = new ProPlayer();
 
-      $new_player->league = $sport;
-      //Split on the first comma only, so "Smith Jr, John, III" keeps its suffix with the first name
-      $name_column = explode(",", (string) $data[0], 2);
+      $new_player->league = $league;
+      //Split on the first comma only, so "Smith Jr, John, III" keeps its suffix with the first name. A name with no
+      //comma ("Henry") is the whole last name, so it stays findable by that name.
+      $name_parts = array_map('trim', explode(",", (string) $data[0], 2));
 
-      if (count($name_column) != 2 || trim($name_column[0]) === '' || trim($name_column[1]) === '') {
+      if (in_array('', $name_parts, true)) {
         $badRows[] = $rowNumber;
         continue;
       }
 
-      $new_player->last_name = trim($name_column[0]);
-      $new_player->first_name = trim($name_column[1]);
+      $new_player->last_name = $name_parts[0];
+      $new_player->first_name = $name_parts[1] ?? '';
 
       $new_player->position = isset($data[1]) ? trim($data[1]) : '';
       $new_player->team = isset($data[2]) ? trim($data[2]) : '';
@@ -132,7 +133,7 @@ class ProPlayerService {
     if (count($badRows) > 0) {
       $response->success = false;
       $response->errors[] = "Rows " . implode(", ", array_slice($badRows, 0, 10)) . (count($badRows) > 10 ? ", ..." : "")
-        . " are not in \"Last, First\" format, so the existing players were kept.";
+        . " have a blank name or a comma with nothing on one side, so the existing players were kept.";
 
       return $response;
     }
@@ -146,7 +147,7 @@ class ProPlayerService {
 
     try {
       $this->pdo->beginTransaction();
-      $this->proPlayers->SaveProPlayers($sport, $pro_players);
+      $this->proPlayers->SaveProPlayers($league, $pro_players);
       $this->pdo->commit();
 
       $response->success = true;
@@ -155,7 +156,7 @@ class ProPlayerService {
         $this->pdo->rollBack();
       }
 
-      $this->logger->error("Unable to save the $sport pro players: " . $e->getMessage(), ['exception' => $e]);
+      $this->logger->error("Unable to save the $league pro players: " . $e->getMessage(), ['exception' => $e]);
 
       $response->success = false;
       $response->errors[] = "Error encountered when updating new players to database.";

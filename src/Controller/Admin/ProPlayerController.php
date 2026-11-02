@@ -20,31 +20,31 @@ class ProPlayerController
   ) {
   }
 
-  #[Route('/admin/sports', name: 'admin_sports_get', methods: ['GET'])]
-  public function getSports(): JsonResponse
+  #[Route('/admin/leagues', name: 'admin_leagues_get', methods: ['GET'])]
+  public function getLeagues(): JsonResponse
   {
-    return new JsonResponse($this->draftData->GetSports());
+    return new JsonResponse($this->draftData->GetLeagues());
   }
 
   #[Route('/admin/proplayers', name: 'admin_proplayers_upload', methods: ['POST'])]
   public function upload(Request $request): JsonResponse
   {
     //->all() rather than ->get(): get() throws on array values, which would skip our error response
-    $sport = $request->request->all()['sport'] ?? null;
-    $sport = is_string($sport) ? $sport : null;
+    $league = $request->request->all()['league'] ?? null;
+    $league = is_string($league) ? $league : null;
     $file = $request->files->get('file');
 
     if (!$file instanceof UploadedFile) {
       $file = null;
     }
 
-    $validity = $this->validator->IsUploadSportValid($sport, $file);
+    $validity = $this->validator->IsUploadLeagueValid($league, $file);
 
     if (!$validity->success) {
       return new JsonResponse($validity, $validity->responseType());
     }
 
-    $response = $this->service->Upload($sport, $file);
+    $response = $this->service->Upload($league, $file);
 
     return new JsonResponse($response, $response->responseType());
   }

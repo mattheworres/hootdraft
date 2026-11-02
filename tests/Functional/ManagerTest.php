@@ -228,7 +228,7 @@ class ManagerTest extends CommishDraftTestCase
     $this->assertCount(20, $this->names($id));
   }
 
-  public function testDepthChartPositionsForASport(): void
+  public function testDepthChartPositionsForALeague(): void
   {
     $this->createUser('Alice');
 

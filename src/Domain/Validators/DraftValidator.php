@@ -54,7 +54,7 @@ class DraftValidator {
   public function IsDraftValidForCreateAndUpdate(Draft $draft) {
     $valid = true;
     $errors = array();
-    $draft_sports = $this->draftData->GetSports();
+    $leagues = $this->draftData->GetLeagues();
     $draft_styles = $this->draftData->GetStyles();
 
     if (empty($draft->commish_id)
@@ -75,7 +75,7 @@ class DraftValidator {
       $valid = false;
     }
 
-    if (strlen((string)$draft->draft_sport) < 3 || strlen((string)$draft->draft_sport) > 4 || strlen($draft_sports[$draft->draft_sport] ?? '') == 0) {
+    if (strlen((string)$draft->draft_sport) < 3 || strlen((string)$draft->draft_sport) > 4 || strlen($leagues[$draft->draft_sport] ?? '') == 0) {
       $errors[] = "Draft sport is an invalid value.";
       $valid = false;
     }

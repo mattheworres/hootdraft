@@ -10,10 +10,10 @@ namespace HootDraft\Domain\Entities;
  * @property bool $draft_visible True if the draft is publicly visible, false otherwise
  * @property string $commish_name Name of the owning commissioner. Comes as an outer join with users.
  * @property string $status_display A string that can be used in display of the draft's status
- * @property array $sports_teams An array of all of the teams in the pro sport. Capitalized abbreviation is key, full name is value.
- * @property array $sports_positions An array of all the positions in the pro sport. Capitalized abbreviation is key, full name is value.
+ * @property array $sports_teams An array of all of the teams in the League. Capitalized abbreviation is key, full name is value.
+ * @property array $sports_positions An array of all the positions in the League. Capitalized abbreviation is key, full name is value.
  * @property array $sports_colors An array of all the colors used for each position in the draft. Capitalized position abbreviation is key, hex color string is value (with # prepended)
- * @property array $sports Array of all possible values used for $draft_sport
+ * @property array $sports Array of all League keys (the values allowed for $draft_sport)
  * @property array $styles Array of all possible values used for $draft_style
  * @property array $statuses Array of all possible values used for $draft_status
  */

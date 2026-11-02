@@ -5,7 +5,7 @@ namespace HootDraft\Domain\Repositories;
 class DraftDataRepository {
   private $colors;
   private $position_colors;
-  private $sports;
+  private $leagues;
   private $styles;
   private $statuses;
 
@@ -86,7 +86,7 @@ class DraftDataRepository {
       "FH" => $this->colors['light_purple']
     );
 
-    $this->sports = array(
+    $this->leagues = array(
       "NFL" => "Football (NFL)",
       "NFLE" => "Football - Extended Rosters (NFL)",
       "MLB" => "Baseball (MLB)",
@@ -352,8 +352,8 @@ class DraftDataRepository {
     return $this->position_colors;
   }
 
-  public function GetSports() {
-    return $this->sports;
+  public function GetLeagues() {
+    return $this->leagues;
   }
 
   public function GetStyles() {

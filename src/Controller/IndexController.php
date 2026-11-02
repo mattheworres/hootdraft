@@ -30,7 +30,7 @@ class IndexController
   public function draftOptions(): JsonResponse
   {
     $response = new HootDraftResponse(true);
-    $response->sports = $this->draftData->GetSports();
+    $response->sports = $this->draftData->GetLeagues();
     $response->statuses = $this->draftData->GetStatuses();
 
     return new JsonResponse($response, $response->responseType());

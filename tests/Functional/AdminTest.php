@@ -47,7 +47,7 @@ class AdminTest extends CommishDraftTestCase
 
   public function testEveryAdminRouteNeedsAnAdminSession(): void
   {
-    $routes = [['GET', '/admin/drafts'], ['POST', '/admin/draft/1/stats'], ['GET', '/admin/sports'], ['POST', '/admin/proplayers'],
+    $routes = [['GET', '/admin/drafts'], ['POST', '/admin/draft/1/stats'], ['GET', '/admin/leagues'], ['POST', '/admin/proplayers'],
       ['GET', '/admin/users'], ['PUT', '/admin/user/1'], ['DELETE', '/admin/user/1']];
 
     foreach ($routes as [$method, $uri]) {
@@ -61,14 +61,14 @@ class AdminTest extends CommishDraftTestCase
     }
   }
 
-  public function testSportsAndCompletedDrafts(): void
+  public function testLeaguesAndCompletedDrafts(): void
   {
     [$complete] = $this->seedDraft('complete');
     $this->seedDraft('in_progress');
     $this->logInAsAdmin();
 
-    $sports = $this->json($this->call('GET', '/admin/sports'));
-    $this->assertSame('Football (NFL)', $sports['NFL'] ?? null);
+    $leagues = $this->json($this->call('GET', '/admin/leagues'));
+    $this->assertSame('Football (NFL)', $leagues['NFL'] ?? null);
 
     $drafts = $this->json($this->call('GET', '/admin/drafts'));
     $ids = array_map('intval', array_column($drafts, 'draft_id'));
@@ -128,7 +128,7 @@ class AdminTest extends CommishDraftTestCase
     $this->db()->insert('pro_players', ['league' => 'NHL', 'first_name' => 'Old', 'last_name' => 'Timer', 'position' => 'C', 'team' => 'BOS']);
 
     $csv = "\xEF\xBB\xBFPlayer;Position;Team\n\"Crosby, Sidney\";C;PIT\n\n\"Ovechkin, Alex\" ; LW ; WAS\n\"Smith Jr, John, III\";D;NYR\n";
-    $response = $this->upload('/admin/proplayers', ['sport' => 'NHL'], ['file' => $this->csv($csv)]);
+    $response = $this->upload('/admin/proplayers', ['league' => 'NHL'], ['file' => $this->csv($csv)]);
     $this->assertSame(200, $response->getStatusCode(), $response->getContent());
     $this->assertTrue($this->json($response)['success']);
 
@@ -140,12 +140,41 @@ class AdminTest extends CommishDraftTestCase
     ], $rows);
   }
 
+  public function testUploadKeepsASingleNameRowAsTheLastName(): void
+  {
+    $this->logInAsAdmin();
+
+    $response = $this->upload('/admin/proplayers', ['league' => 'NHL'], ['file' => $this->csv("Player;Position;Team\n\"Crosby, Sidney\";C;PIT\nHenry;RP;SDG\n")]);
+    $this->assertSame(200, $response->getStatusCode(), $response->getContent());
+
+    $search = $this->json($this->call('GET', '/commish/proplayers/search?league=NHL&searchTerm=Henry'));
+    $this->assertSame([['first_name' => '', 'last_name' => 'Henry', 'position' => 'RP', 'team' => 'SDG']],
+      array_map(fn ($p) => array_intersect_key($p, array_flip(['first_name', 'last_name', 'position', 'team'])), $search['players']));
+  }
+
+  public function testEveryBundledCsvUploads(): void
+  {
+    $this->logInAsAdmin();
+
+    $files = glob(dirname(__DIR__, 2) . '/resources/*.csv');
+    $this->assertNotEmpty($files);
+
+    foreach ($files as $path) {
+      //Uploaded as NHL, the league this test cleans up, so the real leagues in a shared database are left alone
+      $response = $this->upload('/admin/proplayers', ['league' => 'NHL'], ['file' => new UploadedFile($path, basename($path), 'text/csv', null, true)]);
+      $this->assertSame(200, $response->getStatusCode(), basename($path) . ': ' . $response->getContent());
+
+      $players = count(array_filter(file($path, FILE_IGNORE_NEW_LINES), fn ($line) => trim($line) !== '')) - 1;
+      $this->assertSame($players, (int) $this->db()->fetchOne("SELECT COUNT(*) FROM pro_players WHERE league = 'NHL'"), basename($path));
+    }
+  }
+
   public function testUploadConvertsWindows1252ToUtf8(): void
   {
     $this->logInAsAdmin();
 
     $csv = "Player;Position;Team\n" . mb_convert_encoding("Mu\u{00F1}oz, Andr\u{00E9}s", 'Windows-1252', 'UTF-8') . ";C;PIT\n";
-    $response = $this->upload('/admin/proplayers', ['sport' => 'NHL'], ['file' => $this->csv($csv)]);
+    $response = $this->upload('/admin/proplayers', ['league' => 'NHL'], ['file' => $this->csv($csv)]);
     $this->assertSame(200, $response->getStatusCode(), $response->getContent());
 
     $row = $this->db()->fetchAssociative("SELECT first_name, last_name FROM pro_players WHERE league = 'NHL'");
@@ -159,7 +188,7 @@ class AdminTest extends CommishDraftTestCase
 
     $this->db()->executeStatement('CREATE TRIGGER admin_test_block_players BEFORE INSERT ON pro_players FOR EACH ROW SIGNAL SQLSTATE \'45000\' SET MESSAGE_TEXT = \'secret table detail\'');
     try {
-      $response = $this->upload('/admin/proplayers', ['sport' => 'NHL'], ['file' => $this->csv("\"Crosby, Sidney\";C;PIT\n")]);
+      $response = $this->upload('/admin/proplayers', ['league' => 'NHL'], ['file' => $this->csv("\"Crosby, Sidney\";C;PIT\n")]);
     } finally {
       $this->db()->executeStatement('DROP TRIGGER IF EXISTS admin_test_block_players');
     }
@@ -174,9 +203,9 @@ class AdminTest extends CommishDraftTestCase
     $this->logInAsAdmin();
     $this->db()->insert('pro_players', ['league' => 'NHL', 'first_name' => 'Old', 'last_name' => 'Timer', 'position' => 'C', 'team' => 'BOS']);
 
-    $response = $this->upload('/admin/proplayers', ['sport' => 'NHL'], ['file' => $this->csv("Player;Position;Team\n\"Crosby, Sidney\";C;PIT\nBroken Row;C;PIT\n")]);
+    $response = $this->upload('/admin/proplayers', ['league' => 'NHL'], ['file' => $this->csv("Player;Position;Team\n\"Crosby, Sidney\";C;PIT\n;C;PIT\n\", Sidney\";C;PIT\n\"Crosby,\";C;PIT\n")]);
     $this->assertSame(400, $response->getStatusCode(), $response->getContent());
-    $this->assertStringContainsString('Rows 3 ', $this->json($response)['errors'][0]);
+    $this->assertStringContainsString('Rows 3, 4, 5 ', $this->json($response)['errors'][0]);
     $this->assertSame(1, (int) $this->db()->fetchOne("SELECT COUNT(*) FROM pro_players WHERE league = 'NHL' AND last_name = 'Timer'"));
   }
 
@@ -185,15 +214,15 @@ class AdminTest extends CommishDraftTestCase
     $this->logInAsAdmin();
     $this->db()->insert('pro_players', ['league' => 'NHL', 'first_name' => 'Old', 'last_name' => 'Timer', 'position' => 'C', 'team' => 'BOS']);
 
-    $noFile = $this->upload('/admin/proplayers', ['sport' => 'NHL'], []);
+    $noFile = $this->upload('/admin/proplayers', ['league' => 'NHL'], []);
     $this->assertSame(400, $noFile->getStatusCode());
     $this->assertContains('Must upload a CSV file', $this->json($noFile)['errors']);
 
-    $badSport = $this->upload('/admin/proplayers', ['sport' => 'QVC'], ['file' => $this->csv("\"A, B\";C;D\n")]);
-    $this->assertSame(400, $badSport->getStatusCode());
-    $this->assertContains('Sport QVC is an invalid value.', $this->json($badSport)['errors']);
+    $badLeague = $this->upload('/admin/proplayers', ['league' => 'QVC'], ['file' => $this->csv("\"A, B\";C;D\n")]);
+    $this->assertSame(400, $badLeague->getStatusCode());
+    $this->assertContains('League QVC is an invalid value.', $this->json($badLeague)['errors']);
 
-    $empty = $this->upload('/admin/proplayers', ['sport' => 'NHL'], ['file' => $this->csv("Player;Position;Team\n\n")]);
+    $empty = $this->upload('/admin/proplayers', ['league' => 'NHL'], ['file' => $this->csv("Player;Position;Team\n\n")]);
     $this->assertSame(400, $empty->getStatusCode());
     $this->assertSame(1, (int) $this->db()->fetchOne("SELECT COUNT(*) FROM pro_players WHERE league = 'NHL' AND last_name = 'Timer'"));
   }

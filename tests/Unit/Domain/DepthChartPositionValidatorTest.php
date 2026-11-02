@@ -31,13 +31,13 @@ class DepthChartPositionValidatorTest extends TestCase
     return $model;
   }
 
-  public function testSportMustBeAKnownOne(): void
+  public function testLeagueMustBeAKnownOne(): void
   {
-    $this->assertTrue($this->sut->IsDraftSportValid('NFL')->success);
-    $this->assertSame(['Draft sport is an invalid value.'], $this->sut->IsDraftSportValid('XYZ')->errors);
-    $this->assertFalse($this->sut->IsDraftSportValid('')->success);
-    $this->assertFalse($this->sut->IsDraftSportValid(null)->success);
-    $this->assertFalse($this->sut->IsDraftSportValid('FOOTBALL')->success);
+    $this->assertTrue($this->sut->IsDraftLeagueValid('NFL')->success);
+    $this->assertSame(['Draft sport is an invalid value.'], $this->sut->IsDraftLeagueValid('XYZ')->errors);
+    $this->assertFalse($this->sut->IsDraftLeagueValid('')->success);
+    $this->assertFalse($this->sut->IsDraftLeagueValid(null)->success);
+    $this->assertFalse($this->sut->IsDraftLeagueValid('FOOTBALL')->success);
   }
 
   public function testPositionsNeedSlotsUniqueNamesAndStayUnderTheLimits(): void

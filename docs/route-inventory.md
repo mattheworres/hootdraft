@@ -39,7 +39,7 @@ by a route's `_checks` default (see `src/EventListener/RouteCheckListener.php`).
 | [x] | GET | `/draftOptions` | IndexController::DraftOptions | public | - |
 | [x] | GET | `/admin/drafts` | Admin\DraftStatsController::GetDrafts | admin (ROLE_ADMIN) | - |
 | [x] | POST | `/admin/draft/{draft_id}/stats` | Admin\DraftStatsController::Create | admin (ROLE_ADMIN) | - |
-| [x] | GET | `/admin/sports` | Admin\ProPlayerController::GetSports | admin (ROLE_ADMIN) | - |
+| [x] | GET | `/admin/leagues` | Admin\ProPlayerController::GetLeagues | admin (ROLE_ADMIN) | - |
 | [x] | POST | `/admin/proplayers` | Admin\ProPlayerController::Upload | admin (ROLE_ADMIN) | - |
 | [x] | GET | `/admin/users` | Admin\UserController::Get | admin (ROLE_ADMIN) | - |
 | [x] | PUT | `/admin/user/{user_id}` | Admin\UserController::Update | admin (ROLE_ADMIN) | - |
