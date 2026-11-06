@@ -4,10 +4,10 @@
 
 **Blocked by:** 01
 
-**Status:** ready-for-agent
+**Status:** awaiting-human-review
 
-- [ ] One transaction helper exists. Joining an open transaction behaves as `DraftService::DeleteDraft` does today, so `LoginUserService::DeleteUser` still wraps every Draft delete
-- [ ] `DraftService`, `ManagerService` and `RoundTimeService` use it, and their private rollback code is gone
-- [ ] Response shapes and messages for failures are unchanged
-- [ ] A test proves that an `\Error` thrown inside a transaction rolls back and leaves the connection outside a transaction
-- [ ] The full suite passes, including `AdminTest::testDeleteUserIsAllOrNothing`
+- [x] One transaction helper exists. Joining an open transaction behaves as `DraftService::DeleteDraft` does today, so `LoginUserService::DeleteUser` still wraps every Draft delete
+- [x] `DraftService`, `ManagerService` and `RoundTimeService` use it, and their private rollback code is gone
+- [x] Response shapes and messages for failures are unchanged
+- [x] A test proves that an `\Error` thrown inside a transaction rolls back and leaves the connection outside a transaction
+- [x] The full suite passes, including `AdminTest::testDeleteUserIsAllOrNothing`

@@ -11,7 +11,7 @@ class RoundTimeService {
   public function __construct(
     private RoundTimeRepository $roundTimeRepository,
     private PickRepository $pickRepository,
-    private \PDO $pdo,
+    private TransactionService $transactions,
   ) {
   }
 
@@ -19,20 +19,15 @@ class RoundTimeService {
     $response = new HootDraftResponse();
 
     try {
-      $this->pdo->beginTransaction();
+      $roundTimes = $this->transactions->Run(function () use ($draft, $model) {
+        $this->roundTimeRepository->DeleteAll($draft->draft_id);
 
-      $this->roundTimeRepository->DeleteAll($draft->draft_id);
-      $roundTimes = $this->roundTimeRepository->Save($model);
-
-      $this->pdo->commit();
+        return $this->roundTimeRepository->Save($model);
+      });
 
       $response->success = true;
       $response->roundTimes = $roundTimes;
     } catch (\Exception $e) {
-      if ($this->pdo->inTransaction()) {
-        $this->pdo->rollBack();
-      }
-
       $response->success = false;
       $response->errors = array($e->getMessage());
     }

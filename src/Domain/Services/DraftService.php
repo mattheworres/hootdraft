@@ -21,7 +21,7 @@ class DraftService {
     private ManagerRepository $managers,
     private RoundTimeRepository $roundTimes,
     private PickRepository $picks,
-    private \PDO $pdo,
+    private TransactionService $transactions,
     private TradeRepository $trades,
     private DraftStatsRepository $stats,
   ) {
@@ -59,27 +59,24 @@ class DraftService {
     $response = new HootDraftResponse();
 
     try {
-      $this->pdo->beginTransaction();
+      $draft = $this->transactions->Run(function () use ($draft, $depthChartModel) {
+        $draft = $this->draftRepository->Update($draft);
 
-      $draft = $this->draftRepository->Update($draft);
+        // Picks point at depth chart positions by id once the draft starts, so the positions are only rewritten while setting up
+        if ($this->DraftSettingUp($draft)) {
+          $this->depthChartPositions->DeleteAllDepthChartPositions($draft->draft_id);
 
-      // Picks point at depth chart positions by id once the draft starts, so the positions are only rewritten while setting up
-      if ($this->DraftSettingUp($draft)) {
-        $this->depthChartPositions->DeleteAllDepthChartPositions($draft->draft_id);
-
-        if ($draft->using_depth_charts == 1) {
-          $this->depthChartPositions->Save($depthChartModel, $draft->draft_id);
+          if ($draft->using_depth_charts == 1) {
+            $this->depthChartPositions->Save($depthChartModel, $draft->draft_id);
+          }
         }
-      }
 
-      $this->pdo->commit();
-      $this->draftRepository->FlushPendingCacheResets();
+        return $draft;
+      });
 
       $response->success = true;
       $response->draft = $draft;
     } catch (\Exception $e) {
-      $this->rollBack();
-
       $response->success = false;
       $response->errors = array($e->getMessage());
     }
@@ -92,32 +89,29 @@ class DraftService {
 
     try {
       // Moving to in progress rewrites the draft's trades and picks, so it happens together or not at all
-      $this->pdo->beginTransaction();
+      $draft = $this->transactions->Run(function () use ($draft, $old_status) {
+        $draft = $this->draftRepository->UpdateStatus($draft);
 
-      $draft = $this->draftRepository->UpdateStatus($draft);
+        //If we know we're moving from undrafted to in progress, perform the necessary setup steps:
+        if ($draft->draft_status != $old_status && $draft->draft_status == "in_progress") {
+          //Delete all trades
+          $this->trades->DeleteAllTrades($draft->draft_id);
+          //Delete all picks
+          $this->picks->DeleteAllPicks($draft->draft_id);
+          //Setup new picks
+          $managers = $this->managers->GetManagersByDraftOrder($draft->draft_id);
+          $descending_managers = $this->managers->GetManagersByDraftOrder($draft->draft_id, true);
+          $this->picks->SetupPicks($draft, $managers, $descending_managers);
+          //Set draft to in progress
+          $this->draftRepository->SetDraftInProgress($draft);
+        }
 
-      //If we know we're moving from undrafted to in progress, perform the necessary setup steps:
-      if ($draft->draft_status != $old_status && $draft->draft_status == "in_progress") {
-        //Delete all trades
-        $this->trades->DeleteAllTrades($draft->draft_id);
-        //Delete all picks
-        $this->picks->DeleteAllPicks($draft->draft_id);
-        //Setup new picks
-        $managers = $this->managers->GetManagersByDraftOrder($draft->draft_id);
-        $descending_managers = $this->managers->GetManagersByDraftOrder($draft->draft_id, true);
-        $this->picks->SetupPicks($draft, $managers, $descending_managers);
-        //Set draft to in progress
-        $this->draftRepository->SetDraftInProgress($draft);
-      }
-
-      $this->pdo->commit();
-      $this->draftRepository->FlushPendingCacheResets();
+        return $draft;
+      });
 
       $response->success = true;
       $response->draft = $draft;
     } catch (\Exception $e) {
-      $this->rollBack();
-
       $response->success = false;
       $response->errors = array($e->getMessage());
     }
@@ -131,32 +125,20 @@ class DraftService {
    */
   public function DeleteDraft(Draft $draft) {
     $response = new HootDraftResponse();
-    $ownsTransaction = !$this->pdo->inTransaction();
 
     try {
-      if ($ownsTransaction) {
-        $this->pdo->beginTransaction();
-      }
-
-      $this->trades->DeleteAllTrades($draft->draft_id);
-      $this->picks->DeleteAllPicks($draft->draft_id);
-      $this->depthChartPositions->DeleteAllDepthChartPositions($draft->draft_id);
-      $this->managers->DeleteAllManagers($draft->draft_id);
-      $this->roundTimes->DeleteAll($draft->draft_id);
-      $this->stats->DeleteStats($draft->draft_id);
-      $this->draftRepository->DeleteDraft($draft->draft_id);
-
-      if ($ownsTransaction) {
-        $this->pdo->commit();
-        $this->draftRepository->FlushPendingCacheResets();
-      }
+      $this->transactions->Run(function () use ($draft) {
+        $this->trades->DeleteAllTrades($draft->draft_id);
+        $this->picks->DeleteAllPicks($draft->draft_id);
+        $this->depthChartPositions->DeleteAllDepthChartPositions($draft->draft_id);
+        $this->managers->DeleteAllManagers($draft->draft_id);
+        $this->roundTimes->DeleteAll($draft->draft_id);
+        $this->stats->DeleteStats($draft->draft_id);
+        $this->draftRepository->DeleteDraft($draft->draft_id);
+      });
 
       $response->success = true;
     } catch (\Exception $e) {
-      if ($ownsTransaction) {
-        $this->rollBack();
-      }
-
       $response->success = false;
       $response->errors = array($e->getMessage());
     }
@@ -195,13 +177,5 @@ class DraftService {
 
   public function DraftComplete(Draft $draft) {
     return $draft->draft_status == "complete";
-  }
-
-  private function rollBack() {
-    if ($this->pdo->inTransaction()) {
-      $this->pdo->rollBack();
-    }
-
-    $this->draftRepository->FlushPendingCacheResets();
   }
 }

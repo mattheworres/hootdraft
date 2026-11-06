@@ -11,3 +11,7 @@
 - [ ] Adding a Pick still holds the double-submit guard (`LockCurrentPick`) inside the transaction
 - [ ] Registration and invite still send their email inside the transaction
 - [ ] Response shapes and messages are unchanged, and the full suite passes
+
+## Comments
+
+- From ticket 11: `DraftService::DeleteDraft` now joins an open transaction through `TransactionService::Run`. If an `\Error` occurs inside a joined Draft delete, it goes out of `LoginUserService::DeleteUser`. That method catches only `\Exception`, so today the transaction stays open. Moving `DeleteUser` onto the helper fixes this.

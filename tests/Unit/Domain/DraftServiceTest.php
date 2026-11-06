@@ -13,10 +13,14 @@ use HootDraft\Domain\Repositories\PickRepository;
 use HootDraft\Domain\Repositories\RoundTimeRepository;
 use HootDraft\Domain\Repositories\TradeRepository;
 use HootDraft\Domain\Services\DraftService;
+use HootDraft\Domain\Services\TransactionService;
+use HootDraft\Tests\Support\FakesPdoTransactions;
 use PHPUnit\Framework\TestCase;
 
 class DraftServiceTest extends TestCase
 {
+  use FakesPdoTransactions;
+
   private DraftService $sut;
   private Draft $draft;
 
@@ -40,34 +44,10 @@ class DraftServiceTest extends TestCase
       $this->createStub(ManagerRepository::class),
       $this->createStub(RoundTimeRepository::class),
       $picks ?? $this->createStub(PickRepository::class),
-      $pdo ?? $this->createStub(\PDO::class),
+      new TransactionService($pdo ?? $this->createStub(\PDO::class), $repository),
       $trades ?? $this->createStub(TradeRepository::class),
       $this->createStub(DraftStatsRepository::class),
     );
-  }
-
-  /** A PDO that is "in a transaction" once beginTransaction was called and until it is committed or rolled back */
-  private function pdo(int $expectedCommits, int $expectedRollBacks): \PDO
-  {
-    $inTransaction = false;
-    $end = function () use (&$inTransaction) {
-      $inTransaction = false;
-
-      return true;
-    };
-    $pdo = $this->createMock(\PDO::class);
-    $pdo->method('beginTransaction')->willReturnCallback(function () use (&$inTransaction) {
-      $inTransaction = true;
-
-      return true;
-    });
-    $pdo->method('inTransaction')->willReturnCallback(function () use (&$inTransaction) {
-      return $inTransaction;
-    });
-    $pdo->expects($this->exactly($expectedCommits))->method('commit')->willReturnCallback($end);
-    $pdo->expects($this->exactly($expectedRollBacks))->method('rollBack')->willReturnCallback($end);
-
-    return $pdo;
   }
 
   private function draftWith(string $status, int $usingDepthCharts): Draft
@@ -242,6 +222,20 @@ class DraftServiceTest extends TestCase
     $this->assertSame(['Unable to setup picks.'], $response->errors);
   }
 
+  public function testAnErrorInAStartRollsBackAndIsRethrown(): void
+  {
+    $picks = $this->createStub(PickRepository::class);
+    $picks->method('SetupPicks')->willThrowException(new \TypeError('Bad pick setup'));
+    $draft = $this->draftWith('in_progress', 0);
+    $repository = $this->createMock(DraftRepository::class);
+    $repository->method('UpdateStatus')->willReturn($draft);
+    $repository->expects($this->once())->method('FlushPendingCacheResets');
+
+    $this->expectException(\TypeError::class);
+
+    $this->service($repository, null, $picks, $this->pdo(0, 1))->UpdateDraftStatus($draft, 'undrafted');
+  }
+
   public function testDeleteRollsBackWhenAStepFails(): void
   {
     $picks = $this->createStub(PickRepository::class);
@@ -264,6 +258,7 @@ class DraftServiceTest extends TestCase
     $pdo->expects($this->never())->method('rollBack');
     $repository = $this->createMock(DraftRepository::class);
     $repository->expects($this->once())->method('DeleteDraft')->with(4);
+    $repository->expects($this->never())->method('FlushPendingCacheResets');
 
     $this->assertTrue($this->service($repository, null, null, $pdo)->DeleteDraft($this->draftWith('complete', 0))->success);
   }
