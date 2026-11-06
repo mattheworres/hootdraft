@@ -40,6 +40,12 @@ class DepthChartPositionValidatorTest extends TestCase
     $this->assertFalse($this->sut->IsDraftLeagueValid('FOOTBALL')->success);
   }
 
+  public function testPositionNamesMustFitTheColumn(): void
+  {
+    $this->assertTrue($this->sut->AreDepthChartPositionsValid($this->model(['ABCDEF' => 1]))->success);
+    $this->assertSame(['Depth chart position #2 is too long: ' . DepthChartPositionValidator::MAX_POSITION_LENGTH . ' characters at most.'],$this->sut->AreDepthChartPositionsValid($this->model(['QB' => 1, 'ABCDEFG' => 1]))->errors);
+  }
+
   public function testPositionsNeedSlotsUniqueNamesAndStayUnderTheLimits(): void
   {
     $this->assertTrue($this->sut->AreDepthChartPositionsValid($this->model(['QB' => 1, 'RB' => 2]))->success);

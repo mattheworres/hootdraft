@@ -210,6 +210,9 @@ class DraftRepository {
 
     $draft = $this->Load((int)$this->pdo->lastInsertId(), true);
 
+    // Load cached the new row; if the transaction rolls back, the flush must drop it
+    $this->MarkPendingCacheReset($draft->draft_id);
+
     return $draft;
   }
 
@@ -373,16 +376,21 @@ class DraftRepository {
     return;
   }
 
-  // Drafts whose cache was reset inside a transaction. A concurrent reader can re-cache the old row until the
-  // commit lands, so these are cleared again once the service has committed or rolled back.
+  // Drafts whose cache was written or reset inside a transaction. A concurrent reader can re-cache the old row until
+  // the commit lands, and a rollback can leave a cached row that no longer exists, so these are cleared again once
+  // the service has committed or rolled back.
   private array $pendingCacheResets = array();
 
   private function ResetDraftCache($draft_id) {
+    $this->MarkPendingCacheReset($draft_id);
+
+    $this->UnsetCachedDraft($draft_id);
+  }
+
+  private function MarkPendingCacheReset($draft_id) {
     if ($this->pdo->inTransaction()) {
       $this->pendingCacheResets[$draft_id] = true;
     }
-
-    $this->UnsetCachedDraft($draft_id);
   }
 
   /** Call after committing or rolling back a transaction that wrote to draft rows. */

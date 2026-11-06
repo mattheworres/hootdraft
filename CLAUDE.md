@@ -8,6 +8,7 @@ Run inside the php container.
 
 - Tests: `docker compose exec -T php composer test` (one file: add `-- tests/Functional/AuthenticationTest.php`)
 - PHPStan, glossary terms and tests together: `docker compose exec -T php composer check`
+- Commits will be blocked.
 
 ## Agent skills
 

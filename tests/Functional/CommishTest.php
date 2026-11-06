@@ -3,7 +3,9 @@
 namespace HootDraft\Tests\Functional;
 
 use HootDraft\Domain\Entities\LoginUser;
+use HootDraft\Domain\Repositories\DepthChartPositionRepository;
 use HootDraft\Domain\Services\EmailService;
+use HootDraft\Domain\Validators\DepthChartPositionValidator;
 use HootDraft\Tests\Support\CapturingEmailService;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -99,6 +101,63 @@ class CommishTest extends CommishDraftTestCase
     foreach (['managers', 'players', 'round_times', 'depth_chart_positions'] as $table) {
       $this->assertSame(0, (int) $this->db()->fetchOne("SELECT COUNT(*) FROM $table WHERE draft_id = ?", [$id]), $table);
     }
+  }
+
+  public function testATooLongPositionIsRefusedAndNothingIsSaved(): void
+  {
+    $this->createUser('Alice');
+    $this->logIn('Alice');
+
+    $before = $this->positionRowCount();
+
+    $response = $this->call('POST', '/commish/draft', $this->newDraftBody(['name' => 'Long position', 'using_depth_charts' => true, 'depthChartPositions' => [['position' => 'QB', 'slots' => 1], ['position' => 'TOOLONG', 'slots' => 1]]]));
+
+    $this->assertSame(400, $response->getStatusCode());
+    $this->assertSame(['Depth chart position #2 is too long: ' . DepthChartPositionValidator::MAX_POSITION_LENGTH . ' characters at most.'], $this->json($response)['errors']);
+    $this->assertSame(0, (int) $this->db()->fetchOne("SELECT COUNT(*) FROM draft WHERE draft_name = 'Long position'"));
+    $this->assertSame($before, $this->positionRowCount());
+  }
+
+  public function testAFailureAfterTheDraftRowLeavesNothingBehindAndARetrySucceeds(): void
+  {
+    $this->createUser('Alice');
+    $this->logIn('Alice');
+    $body = $this->newDraftBody(['name' => 'Retry me', 'using_depth_charts' => true, 'depthChartPositions' => [['position' => 'QB', 'slots' => 1], ['position' => 'RB', 'slots' => 1]]]);
+    $before = $this->positionRowCount();
+
+    // The login call already built the real repository, so start a new kernel to swap in the failing one
+    $this->restartKernel();
+    // Built by hand on the shared connection: getting it from the container would stop the swap below
+    $real = new DepthChartPositionRepository(static::getContainer()->get(\PDO::class));
+    // Write the real position rows first, then fail, so the rollback must remove both the draft and its positions
+    $failing = $this->createStub(DepthChartPositionRepository::class);
+    $failing->method('Save')->willReturnCallback(function ($model, $draft_id) use ($real) {
+      $real->Save($model, $draft_id);
+
+      throw new \PDOException("SQLSTATE[22001]: Data too long for column 'position'; INSERT INTO depth_chart_positions");
+    });
+    static::getContainer()->set(DepthChartPositionRepository::class, $failing);
+
+    $failed = $this->call('POST', '/commish/draft', $body);
+
+    $this->assertSame(400, $failed->getStatusCode());
+    $this->assertStringNotContainsStringIgnoringCase('SQL', $failed->getContent());
+    $this->assertSame(0, (int) $this->db()->fetchOne("SELECT COUNT(*) FROM draft WHERE draft_name = 'Retry me'"));
+    $this->assertSame($before, $this->positionRowCount());
+
+    // A new kernel brings back the real repository
+    $this->restartKernel();
+
+    $retried = $this->call('POST', '/commish/draft', $body);
+
+    $this->assertSame(201, $retried->getStatusCode(), $retried->getContent());
+    $this->assertSame(1, (int) $this->db()->fetchOne("SELECT COUNT(*) FROM draft WHERE draft_name = 'Retry me'"));
+  }
+
+  /** Creating a Draft writes Depth Chart positions besides the `draft` row. A failed create must leave this count unchanged. */
+  private function positionRowCount(): int
+  {
+    return (int) $this->db()->fetchOne('SELECT COUNT(*) FROM depth_chart_positions');
   }
 
   public function testDepthChartSettingsOnlyChangeWhileSettingUp(): void

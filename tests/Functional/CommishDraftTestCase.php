@@ -148,11 +148,17 @@ abstract class CommishDraftTestCase extends KernelTestCase
     }
 
     if (!$this->keepKernelBetweenCalls) {
-      self::$kernel->shutdown();
-      self::bootKernel();
+      $this->restartKernel();
     }
 
     return $response;
+  }
+
+  /** Boots a new kernel, so the next call gets a new container and new services. */
+  protected function restartKernel(): void
+  {
+    self::$kernel->shutdown();
+    self::bootKernel();
   }
 
   /** A multipart form post, for the file upload route. $files maps field name to an UploadedFile. */
@@ -162,8 +168,7 @@ abstract class CommishDraftTestCase extends KernelTestCase
     $request = Request::create($uri, 'POST', $fields, $this->cookies, $files, $server);
     $response = self::$kernel->handle($request);
 
-    self::$kernel->shutdown();
-    self::bootKernel();
+    $this->restartKernel();
 
     return $response;
   }

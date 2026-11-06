@@ -12,6 +12,7 @@ use HootDraft\Domain\Repositories\ManagerRepository;
 use HootDraft\Domain\Repositories\PickRepository;
 use HootDraft\Domain\Repositories\RoundTimeRepository;
 use HootDraft\Domain\Repositories\TradeRepository;
+use Psr\Log\LoggerInterface;
 
 class DraftService {
   public function __construct(
@@ -24,6 +25,7 @@ class DraftService {
     private TransactionService $transactions,
     private TradeRepository $trades,
     private DraftStatsRepository $stats,
+    private LoggerInterface $logger,
   ) {
   }
 
@@ -39,17 +41,24 @@ class DraftService {
     $response = new HootDraftResponse();
 
     try {
-      $draft = $this->draftRepository->Create($draft);
+      // The draft row and its depth chart positions are saved together or not at all
+      $draft = $this->transactions->Run(function () use ($draft, $depthChartModel) {
+        $draft = $this->draftRepository->Create($draft);
 
-      if ($draft->using_depth_charts) {
-        $this->depthChartPositions->Save($depthChartModel, $draft->draft_id);
-      }
+        if ($draft->using_depth_charts) {
+          $this->depthChartPositions->Save($depthChartModel, $draft->draft_id);
+        }
+
+        return $draft;
+      });
 
       $response->success = true;
       $response->draft = $draft;
     } catch (\Exception $e) {
+      // The raw message can hold SQL, so it goes to the log and the commissioner gets a plain one
+      $this->logger->error("Unable to create the draft: " . $e->getMessage(), ['exception' => $e]);
       $response->success = false;
-      $response->errors = array($e->getMessage());
+      $response->errors = array("The draft could not be created. Nothing was saved, please try again.");
     }
 
     return $response;

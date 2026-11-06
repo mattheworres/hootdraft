@@ -15,6 +15,7 @@ use HootDraft\Domain\Repositories\TradeRepository;
 use HootDraft\Domain\Services\DraftService;
 use HootDraft\Domain\Services\TransactionService;
 use HootDraft\Tests\Support\FakesPdoTransactions;
+use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\TestCase;
 
 class DraftServiceTest extends TestCase
@@ -47,6 +48,7 @@ class DraftServiceTest extends TestCase
       new TransactionService($pdo ?? $this->createStub(\PDO::class), $repository),
       $trades ?? $this->createStub(TradeRepository::class),
       $this->createStub(DraftStatsRepository::class),
+      $this->createStub(LoggerInterface::class),
     );
   }
 

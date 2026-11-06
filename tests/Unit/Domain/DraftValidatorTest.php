@@ -18,6 +18,7 @@ use HootDraft\Domain\Validators\DraftValidator;
 use HootDraft\Security\CurrentUser;
 use HootDraft\Security\User;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class DraftValidatorTest extends TestCase
@@ -39,7 +40,7 @@ class DraftValidatorTest extends TestCase
   private function validator(DraftRepository $repository, DraftDataRepository $data, CurrentUser $currentUser, ?ManagerRepository $managers = null): DraftValidator
   {
     $managers ??= $this->createStub(ManagerRepository::class);
-    $service = new DraftService($data, $repository, $this->createStub(DepthChartPositionRepository::class), $managers, $this->createStub(RoundTimeRepository::class), $this->createStub(PickRepository::class), $this->createStub(TransactionService::class), $this->createStub(TradeRepository::class), $this->createStub(DraftStatsRepository::class));
+    $service = new DraftService($data, $repository, $this->createStub(DepthChartPositionRepository::class), $managers, $this->createStub(RoundTimeRepository::class), $this->createStub(PickRepository::class), $this->createStub(TransactionService::class), $this->createStub(TradeRepository::class), $this->createStub(DraftStatsRepository::class), $this->createStub(LoggerInterface::class));
 
     return new DraftValidator($repository, $data, $service, $managers, $currentUser, self::HEADER);
   }

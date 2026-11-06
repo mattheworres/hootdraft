@@ -6,6 +6,9 @@ use HootDraft\Domain\Models\HootDraftResponse;
 use HootDraft\Domain\Repositories\DraftDataRepository;
 
 class DepthChartPositionValidator {
+  /** The size of the depth_chart_positions.position column */
+  public const MAX_POSITION_LENGTH = 6;
+
   public function __construct(private DraftDataRepository $draftData) {
   }
 
@@ -40,6 +43,9 @@ class DepthChartPositionValidator {
       if (trim((string) $depthChartPosition->position) === '') {
         $valid = false;
         $errors[] = "Depth chart position #$position_number is missing its position.";
+      } elseif (mb_strlen((string) $depthChartPosition->position) > self::MAX_POSITION_LENGTH) {
+        $valid = false;
+        $errors[] = "Depth chart position #$position_number is too long: " . self::MAX_POSITION_LENGTH . " characters at most.";
       }
 
       $slots = filter_var($depthChartPosition->slots, FILTER_VALIDATE_INT);

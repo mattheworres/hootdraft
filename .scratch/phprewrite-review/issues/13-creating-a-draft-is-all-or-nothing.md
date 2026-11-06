@@ -4,9 +4,9 @@
 
 **Blocked by:** 11
 
-**Status:** ready-for-agent
+**Status:** completed
 
-- [ ] Creating a Draft (the Draft row, Round Times and Depth Chart positions) runs in one transaction through the helper
-- [ ] A position name that is too long is refused by `DepthChartPositionValidator` with a validation message, before anything is written. The client input gets a matching `maxlength`
-- [ ] A failure part-way leaves no Draft, Round Time or position rows, and returns a 400 without SQL in the message
-- [ ] Functional tests cover: a too-long position is refused with nothing saved, and a forced failure after the Draft row leaves nothing behind and a retry with the same name succeeds
+- [x] Creating a Draft (the Draft row and Depth Chart positions) runs in one transaction through the helper. Creating a Draft writes no Round Times: the Commissioner sets them later, on the Draft that exists
+- [x] A position name that is too long is refused by `DepthChartPositionValidator` with a validation message, before anything is written. The client input gets a matching `maxlength`
+- [x] A failure part-way leaves no Draft or position rows, and returns a 400 without SQL in the message
+- [x] Functional tests cover: a too-long position is refused with nothing saved, and a forced failure after the Draft row and its positions are written leaves nothing behind and a retry with the same name succeeds
