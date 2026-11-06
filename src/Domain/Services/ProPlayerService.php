@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class ProPlayerService {
   public function __construct(
     private ProPlayerRepository $proPlayers,
-    private \PDO $pdo,
+    private TransactionService $transactions,
     private LoggerInterface $logger,
     #[Autowire('%hootdraft.set_csv_timeout%')] private bool $setCsvTimeout,
   ) {
@@ -146,16 +146,10 @@ class ProPlayerService {
     }
 
     try {
-      $this->pdo->beginTransaction();
-      $this->proPlayers->SaveProPlayers($league, $pro_players);
-      $this->pdo->commit();
+      $this->transactions->Run(fn () => $this->proPlayers->SaveProPlayers($league, $pro_players));
 
       $response->success = true;
     } catch (\Exception $e) {
-      if ($this->pdo->inTransaction()) {
-        $this->pdo->rollBack();
-      }
-
       $this->logger->error("Unable to save the $league pro players: " . $e->getMessage(), ['exception' => $e]);
 
       $response->success = false;

@@ -19,7 +19,7 @@ class PickService {
     private RoundTimeService $roundTimeService,
     private PickSearchRepository $pickSearch,
     private DraftService $draftService,
-    private \PDO $pdo,
+    private TransactionService $transactions,
     private DraftStatsRepository $draftStats,
     private LoggerInterface $logger,
   ) {
@@ -80,28 +80,27 @@ class PickService {
 
     try {
       // The counter, the pick and the draft's position move together or not at all
-      $this->pdo->beginTransaction();
+      [$draft, $pick, $next_pick] = $this->transactions->Run(function () use ($draft, $pick) {
+        // Re-check against the DB under a row lock, so a double-submit can't make the same pick twice
+        if ($this->draftRepository->LockCurrentPick($draft) != $pick->player_pick) {
+          throw new \Exception("Pick #$pick->player_pick is no longer the current pick.");
+        }
 
-      // Re-check against the DB under a row lock, so a double-submit can't make the same pick twice
-      if ($this->draftRepository->LockCurrentPick($draft) != $pick->player_pick) {
-        throw new \Exception("Pick #$pick->player_pick is no longer the current pick.");
-      }
+        //Set pick time and duration
+        $pick = $this->_CalculatePickTimeAndDuration($draft, $pick);
+        //Increment the draft counter
+        $draft->draft_counter = $this->draftRepository->IncrementDraftCounter($draft);
+        //Set the value on the pick
+        $pick->player_counter = $draft->draft_counter;
+        //Save the pick
+        $pick = $this->pickRepository->AddPick($pick);
+        //Get the next pick
+        $next_pick = $this->pickRepository->GetNextPick($draft);
+        //Move draft forward
+        $draft = $this->draftRepository->MoveDraftForward($draft, $next_pick);
 
-      //Set pick time and duration
-      $pick = $this->_CalculatePickTimeAndDuration($draft, $pick);
-      //Increment the draft counter
-      $draft->draft_counter = $this->draftRepository->IncrementDraftCounter($draft);
-      //Set the value on the pick
-      $pick->player_counter = $draft->draft_counter;
-      //Save the pick
-      $pick = $this->pickRepository->AddPick($pick);
-      //Get the next pick
-      $next_pick = $this->pickRepository->GetNextPick($draft);
-      //Move draft forward
-      $draft = $this->draftRepository->MoveDraftForward($draft, $next_pick);
-
-      $this->pdo->commit();
-      $this->draftRepository->FlushPendingCacheResets();
+        return [$draft, $pick, $next_pick];
+      });
 
       $response->draft_is_complete = $this->draftService->DraftComplete($draft);
 
@@ -125,8 +124,6 @@ class PickService {
 
       $response->success = true;
     } catch (\Exception $e) {
-      $this->rollBack();
-
       $response = new HootDraftResponse(false, array());
 
       $errorMessage = $e->getMessage();
@@ -151,8 +148,6 @@ class PickService {
       $response->pick = $pick;
       $response->success = true;
     } catch (\Exception $e) {
-      $this->rollBack();
-
       $response = new HootDraftResponse(false, array());
 
       $errorMessage = $e->getMessage();
@@ -252,13 +247,5 @@ class PickService {
     $pick->pick_duration = (int)$alloted_time;
 
     return $pick;
-  }
-
-  private function rollBack() {
-    if ($this->pdo->inTransaction()) {
-      $this->pdo->rollBack();
-    }
-
-    $this->draftRepository->FlushPendingCacheResets();
   }
 }

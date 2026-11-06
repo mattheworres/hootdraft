@@ -13,7 +13,7 @@ class TradeService {
     private PickRepository $picks,
     private TradeRepository $trades,
     private DraftRepository $drafts,
-    private \PDO $pdo,
+    private TransactionService $transactions,
   ) {
   }
 
@@ -39,29 +39,22 @@ class TradeService {
 
     try {
       // Swapping the picks, saving the trade and bumping the counter happen together or not at all
-      $this->pdo->beginTransaction();
+      $trade = $this->transactions->Run(function () use ($draft, $trade) {
+        //Exchange the picks in the database
+        $trade = $this->_ExchangeAssets($draft, $trade);
+        //Save the trade itself
+        $trade = $this->trades->SaveTrade($trade);
+        //Save all assets
+        $trade = $this->trades->SaveAssets($trade);
+        //Update the draft's counter
+        $draft->draft_counter = $this->drafts->IncrementDraftCounter($draft);
 
-      //Exchange the picks in the database
-      $trade = $this->_ExchangeAssets($draft, $trade);
-      //Save the trade itself
-      $trade = $this->trades->SaveTrade($trade);
-      //Save all assets
-      $trade = $this->trades->SaveAssets($trade);
-      //Update the draft's counter
-      $draft->draft_counter = $this->drafts->IncrementDraftCounter($draft);
-
-      $this->pdo->commit();
-      $this->drafts->FlushPendingCacheResets();
+        return $trade;
+      });
 
       $response->success = true;
       $response->trade = $trade;
     } catch (\Exception $e) {
-      if ($this->pdo->inTransaction()) {
-        $this->pdo->rollBack();
-      }
-
-      $this->drafts->FlushPendingCacheResets();
-
       $response->success = false;
       $response->errors = array($e->getMessage());
     }

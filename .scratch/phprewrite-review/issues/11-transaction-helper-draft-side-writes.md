@@ -4,10 +4,11 @@
 
 **Blocked by:** 01
 
-**Status:** awaiting-human-review
+**Status:** completed
 
 - [x] One transaction helper exists. Joining an open transaction behaves as `DraftService::DeleteDraft` does today, so `LoginUserService::DeleteUser` still wraps every Draft delete
 - [x] `DraftService`, `ManagerService` and `RoundTimeService` use it, and their private rollback code is gone
 - [x] Response shapes and messages for failures are unchanged
 - [x] A test proves that an `\Error` thrown inside a transaction rolls back and leaves the connection outside a transaction
 - [x] The full suite passes, including `AdminTest::testDeleteUserIsAllOrNothing`
+- [x] Additional: reduce duplicated code in test fakes - `pdo(int $expectedCommits, int $expectedRollbacks)` - move it into a shared test trait. DraftServiceTest has two delete tests that check `never()` on `rollback`, and this is OK.

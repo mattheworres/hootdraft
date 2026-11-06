@@ -3,12 +3,14 @@ namespace HootDraft\Domain\Repositories;
 
 use HootDraft\Domain\Entities\Draft;
 use HootDraft\Domain\Entities\DraftStats;
+use HootDraft\Domain\Services\TransactionService;
 
 class DraftStatsRepository {
   public function __construct(
     private \PDO $pdo,
     private DraftDataRepository $draftData,
     private DraftRepository $drafts,
+    private TransactionService $transactions,
   ) {
   }
 
@@ -51,13 +53,7 @@ class DraftStatsRepository {
    * caller's transaction when one is open (the caller then owns the commit and the cache flush).
    */
   public function CalculateDraftStatistics(Draft $draft) {
-    $ownsTransaction = !$this->pdo->inTransaction();
-
-    try {
-      if ($ownsTransaction) {
-        $this->pdo->beginTransaction();
-      }
-
+    return $this->transactions->Run(function () use ($draft) {
       // Concurrent calls for the same draft (final pick + admin regenerate) queue up here instead of both inserting
       $lock_stmt = $this->pdo->prepare("SELECT draft_id FROM draft WHERE draft_id = ? FOR UPDATE");
       $lock_stmt->bindParam(1, $draft->draft_id);
@@ -65,24 +61,8 @@ class DraftStatsRepository {
         throw new \Exception("Unable to lock draft for stats.");
       }
 
-      $draft_stats = $this->_ReplaceDraftStats($draft);
-
-      if ($ownsTransaction) {
-        $this->pdo->commit();
-        $this->drafts->FlushPendingCacheResets();
-      }
-    } catch (\Throwable $e) {
-      if ($ownsTransaction) {
-        if ($this->pdo->inTransaction()) {
-          $this->pdo->rollBack();
-        }
-        $this->drafts->FlushPendingCacheResets();
-      }
-
-      throw $e;
-    }
-
-    return $draft_stats;
+      return $this->_ReplaceDraftStats($draft);
+    });
   }
 
   private function _ReplaceDraftStats(Draft $draft) {

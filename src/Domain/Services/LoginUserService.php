@@ -18,7 +18,7 @@ use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 class LoginUserService {
   public function __construct(
     private LoginUserRepository $repository,
-    private \PDO $pdo,
+    private TransactionService $transactions,
     private EmailService $emailService,
     private TemplateRenderService $templates,
     private SaltService $saltService,
@@ -51,28 +51,22 @@ class LoginUserService {
     $response = new HootDraftResponse();
 
     try {
-      $this->pdo->beginTransaction();
+      $this->transactions->Run(function () use ($user) {
+        //Find all drafts this user owns. Each Draft delete joins this transaction.
+        $drafts = $this->drafts->GetAllDraftsByCommish($user->id);
+        foreach ($drafts as $draft) {
+          $deleted = $this->draftService->DeleteDraft($draft);
+          if (!$deleted->success) {
+            $this->logger->error("Unable to delete draft $draft->draft_id while deleting user $user->id: " . implode('; ', $deleted->errors));
 
-      //Find all drafts this user owns
-      $drafts = $this->drafts->GetAllDraftsByCommish($user->id);
-      foreach ($drafts as $draft) {
-        $deleted = $this->draftService->DeleteDraft($draft);
-        if (!$deleted->success) {
-          $this->logger->error("Unable to delete draft $draft->draft_id while deleting user $user->id: " . implode('; ', $deleted->errors));
-
-          throw new \Exception("Unable to recursively delete draft or one of its children.");
+            throw new \Exception("Unable to recursively delete draft or one of its children.");
+          }
         }
-      }
-      $this->repository->Delete($user);
-
-      $this->pdo->commit();
-      $this->drafts->FlushPendingCacheResets();
+        $this->repository->Delete($user);
+      });
 
       $response->success = true;
     } catch (\Exception $e) {
-      $this->rollBack();
-      $this->drafts->FlushPendingCacheResets();
-
       $response->success = false;
       $response->errors[] = $e->getMessage();
     }
@@ -122,17 +116,12 @@ class LoginUserService {
     try {
       // The account only sticks if the email goes out: otherwise the name and email would be taken by somebody
       // who never got a link and can't register again.
-      $this->pdo->beginTransaction();
-
-      $user = $this->repository->Create($user);
-
-      $this->sendEmailVerificationEmail($user);
-
-      $this->pdo->commit();
+      $this->transactions->Run(function () use ($user) {
+        $this->sendEmailVerificationEmail($this->repository->Create($user));
+      });
 
       $response->success = true;
     } catch (\Exception $e) {
-      $this->rollBack();
       $this->logger->error('Unable to create new user or send the Email Verification Key link: ' . $e->getMessage(), ['exception' => $e]);
 
       $response->success = false;
@@ -166,17 +155,14 @@ class LoginUserService {
     $this->issueEmailVerificationKey($user);
 
     try {
-      $this->pdo->beginTransaction();
+      $this->transactions->Run(function () use ($user) {
+        $this->repository->Update($user);
 
-      $this->repository->Update($user);
-
-      $this->sendEmailVerificationEmail($user);
-
-      $this->pdo->commit();
+        $this->sendEmailVerificationEmail($user);
+      });
 
       return EmailVerificationResend::Sent;
     } catch (\Exception $e) {
-      $this->rollBack();
       $this->logger->error('Unable to send a new Email Verification Key link: ' . $e->getMessage(), ['exception' => $e]);
 
       return EmailVerificationResend::Failed;
@@ -197,30 +183,27 @@ class LoginUserService {
     $this->issueResetKey($user);
 
     try {
-      $this->pdo->beginTransaction();
+      $this->transactions->Run(function () use ($user) {
+        $saved = $this->repository->Update($user);
 
-      $user = $this->repository->Update($user);
+        $message = new MailMessage();
+        $message->to_addresses = array($saved->email => $saved->name);
 
-      $message = new MailMessage();
-      $message->to_addresses = array($user->email => $user->name);
+        $resetLink = $this->createForgottenPasswordLink($saved);
 
-      $resetLink = $this->createForgottenPasswordLink($user);
+        $message->subject = "HootDraft: Reset Password Request";
+        $message->is_html = true;
+        $message->body = $this->templates->RenderTemplate('ResetPassword.html', array(
+          'imageBaseUrl' => sprintf("%s/images/email", $this->appBaseUrl),
+          'resetLink' => $resetLink,
+        ));
+        $message->altBody = "Hello, looks like you've requested to reset your password. To do so, click this link: $resetLink";
 
-      $message->subject = "HootDraft: Reset Password Request";
-      $message->is_html = true;
-      $message->body = $this->templates->RenderTemplate('ResetPassword.html', array(
-        'imageBaseUrl' => sprintf("%s/images/email", $this->appBaseUrl),
-        'resetLink' => $resetLink,
-      ));
-      $message->altBody = "Hello, looks like you've requested to reset your password. To do so, click this link: $resetLink";
-
-      $this->emailService->SendMail($message);
+        $this->emailService->SendMail($message);
+      });
 
       $response->success = true;
-
-      $this->pdo->commit();
     } catch (\Exception $e) {
-      $this->rollBack();
       $this->logger->error('Unable to send password reset email: ' . $e->getMessage(), ['exception' => $e]);
 
       $response->success = false;
@@ -281,21 +264,18 @@ class LoginUserService {
     $response = new HootDraftResponse();
 
     try {
-      $this->pdo->beginTransaction();
+      $this->transactions->Run(function () use ($user, $sendEmail) {
+        $saved = $this->repository->Update($user);
 
-      $user = $this->repository->Update($user);
-
-      if ($sendEmail) {
-        $this->sendEmailVerificationEmail($user, true);
-      }
-
-      $this->pdo->commit();
+        if ($sendEmail) {
+          $this->sendEmailVerificationEmail($saved, true);
+        }
+      });
 
       $response->success = true;
       $response->invalidateLogin = $invalidateLogin;
       $response->sendEmail = $sendEmail;
     } catch (\Exception $e) {
-      $this->rollBack();
       $this->logger->error('Unable to update user profile: ' . $e->getMessage(), ['exception' => $e]);
 
       $response->success = false;
@@ -353,12 +333,6 @@ class LoginUserService {
   private function clearResetKey(LoginUser $user) {
     $user->resetKey = null;
     $user->resetKeyCreated = null;
-  }
-
-  private function rollBack() {
-    if ($this->pdo->inTransaction()) {
-      $this->pdo->rollBack();
-    }
   }
 
   private function hash(string $plainPassword): string {

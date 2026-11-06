@@ -11,10 +11,13 @@ use HootDraft\Domain\Repositories\DraftRepository;
 use HootDraft\Domain\Repositories\PickRepository;
 use HootDraft\Domain\Repositories\TradeRepository;
 use HootDraft\Domain\Services\TradeService;
+use HootDraft\Tests\Support\FakesPdoTransactions;
 use PHPUnit\Framework\TestCase;
 
 class TradeServiceTest extends TestCase
 {
+  use FakesPdoTransactions;
+
   private function trade(): Trade
   {
     $newManager = new Manager();
@@ -50,13 +53,9 @@ class TradeServiceTest extends TestCase
     $trades->method('SaveAssets')->willReturnArgument(0);
     $drafts = $this->createStub(DraftRepository::class);
     $drafts->method('IncrementDraftCounter')->willReturn(5);
-    $pdo = $this->createMock(\PDO::class);
-    $pdo->expects($this->once())->method('beginTransaction');
-    $pdo->expects($this->once())->method('commit');
-    $pdo->expects($this->never())->method('rollBack');
 
     $draft = $this->draft();
-    $response = (new TradeService($picks, $trades, $drafts, $pdo))->EnterTrade($draft, $this->trade());
+    $response = (new TradeService($picks, $trades, $drafts, $this->transactions(1, 0)))->EnterTrade($draft, $this->trade());
 
     $this->assertTrue($response->success);
     $this->assertSame(5, $draft->draft_counter);
@@ -69,15 +68,23 @@ class TradeServiceTest extends TestCase
     $trades->method('SaveTrade')->willThrowException(new \Exception('Unable to save trade.'));
     $drafts = $this->createMock(DraftRepository::class);
     $drafts->expects($this->never())->method('IncrementDraftCounter');
-    $pdo = $this->createMock(\PDO::class);
-    $pdo->method('inTransaction')->willReturn(true);
-    $pdo->expects($this->once())->method('rollBack');
-    $pdo->expects($this->never())->method('commit');
 
-    $response = (new TradeService($picks, $trades, $drafts, $pdo))->EnterTrade($this->draft(), $this->trade());
+    $response = (new TradeService($picks, $trades, $drafts, $this->transactions(0, 1)))->EnterTrade($this->draft(), $this->trade());
 
     $this->assertFalse($response->success);
     $this->assertSame(['Unable to save trade.'], $response->errors);
     $this->assertSame(400, $response->responseType());
+  }
+
+  public function testAnErrorRollsBackAndIsRethrown(): void
+  {
+    $trades = $this->createStub(TradeRepository::class);
+    $trades->method('SaveTrade')->willThrowException(new \TypeError('Bad trade'));
+
+    $service = new TradeService($this->createStub(PickRepository::class), $trades, $this->createStub(DraftRepository::class), $this->transactions(0, 1));
+
+    $this->expectException(\TypeError::class);
+
+    $service->EnterTrade($this->draft(), $this->trade());
   }
 }

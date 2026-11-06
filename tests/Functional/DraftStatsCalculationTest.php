@@ -3,6 +3,9 @@
 namespace HootDraft\Tests\Functional;
 
 use HootDraft\Domain\Entities\LoginUser;
+use HootDraft\Domain\Repositories\DraftRepository;
+use HootDraft\Domain\Repositories\DraftStatsRepository;
+use HootDraft\Domain\Services\TransactionService;
 use PHPUnit\Framework\Attributes\Group;
 
 /** What POST /admin/draft/{id}/stats calculates, with pick durations seeded straight into the database. */
@@ -92,5 +95,26 @@ class DraftStatsCalculationTest extends CommishDraftTestCase
 
     $this->assertEquals($calculated, $read);
     $this->assertSame($calculated['draft_stat_id'], (int) $this->db()->fetchOne('SELECT draft_stat_id FROM draft_stats WHERE draft_id = ?', [$draft]));
+  }
+
+  public function testCalculatingInsideAnOpenTransactionJoinsIt(): void
+  {
+    [$draft] = $this->seedDraft('complete');
+    $container = static::getContainer();
+    $completed = $container->get(DraftRepository::class)->Load($draft, true);
+
+    try {
+      $container->get(TransactionService::class)->Run(function () use ($container, $completed) {
+        $container->get(DraftStatsRepository::class)->CalculateDraftStatistics($completed);
+
+        throw new \RuntimeException('The outer work failed');
+      });
+      $this->fail('The failure was not rethrown');
+    } catch (\RuntimeException) {
+    }
+
+    // The stats did not commit on their own: the outer rollback took them away too
+    $this->assertFalse($container->get(\PDO::class)->inTransaction());
+    $this->assertSame(0, (int) $this->db()->fetchOne('SELECT COUNT(*) FROM draft_stats WHERE draft_id = ?', [$draft]));
   }
 }

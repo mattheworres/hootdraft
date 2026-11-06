@@ -402,4 +402,17 @@ class CommishTest extends CommishDraftTestCase
     $again = $this->call('POST', '/commish/user/invite', ['email' => 'carol@commish-test.example', 'name' => 'Someone Else']);
     $this->assertSame(['Email already registered.'], $this->json($again)['errors']);
   }
+
+  public function testAFailedInvitationEmailLeavesNoAccount(): void
+  {
+    $this->createUser('Alice');
+    $this->logIn('Alice');
+    static::getContainer()->get(EmailService::class)->failing = true;
+
+    $invited = $this->call('POST', '/commish/user/invite', ['email' => 'dave@commish-test.example', 'name' => 'Dave', 'message' => 'Join us']);
+
+    $this->assertSame(400, $invited->getStatusCode());
+    $this->assertSame(['Unable to create the invited user or send the invitation email.'], $this->json($invited)['errors']);
+    $this->assertSame(0, (int) $this->db()->fetchOne("SELECT COUNT(*) FROM users WHERE email = 'dave@commish-test.example'"));
+  }
 }
