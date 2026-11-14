@@ -2,6 +2,7 @@
 
 namespace HootDraft\Tests\Functional;
 
+use HootDraft\Domain\Repositories\PickRepository;
 use PHPUnit\Framework\Attributes\Group;
 
 /** The commissioner's pick entry routes (/commish/draft/{id}/pick*, picks/*, round/*). */
@@ -97,6 +98,66 @@ class CommishPickTest extends CommishDraftTestCase
     $draftRow = $this->db()->fetchAssociative('SELECT * FROM draft WHERE draft_id = ?', [$draft]);
     $this->assertSame(2, (int) $draftRow['draft_current_pick']);
     $this->assertSame(1, (int) $draftRow['draft_counter']);
+  }
+
+  public function testAFailureAfterTheCommitStillReportsTheSavedPick(): void
+  {
+    [$draft, , , $picks] = $this->seedDraft();
+    $this->logIn('Alice');
+
+    // Keep this kernel after the call, so its log records can be read back
+    $this->keepKernelBetweenCalls = true;
+    // Only the follow-up load fails; every other repository method is real
+    $failing = new class(static::getContainer()->get(\PDO::class)) extends PickRepository {
+      public function LoadLastPicks($draft_id, $amount) {
+        throw new \PDOException('SQLSTATE[HY000]: General error: 2006 MySQL server has gone away');
+      }
+    };
+    static::getContainer()->set(PickRepository::class, $failing);
+
+    $response = $this->call('POST', "/commish/draft/$draft/pick/{$picks[0]}", self::PLAYER);
+
+    $this->assertSame(201, $response->getStatusCode(), $response->getContent());
+    $body = $this->json($response);
+    $this->assertTrue($body['success']);
+    $this->assertSame('Brown', $body['pick']['last_name']);
+    $this->assertSame($picks[1], (int) $body['next_pick']['player_id']);
+    $this->assertSame([], $body['last_5_picks']);
+    $this->assertSame([], $body['next_5_picks']);
+    $this->assertStringNotContainsStringIgnoringCase('SQL', $response->getContent());
+
+    $messages = array_column(static::getContainer()->get('monolog.handler.test')->getRecords(), 'message');
+    $this->assertContains("Pick #{$picks[0]} of draft $draft was saved, but loading the last and next 5 picks failed: SQLSTATE[HY000]: General error: 2006 MySQL server has gone away", $messages);
+
+    $this->assertNotNull($this->db()->fetchOne('SELECT pick_time FROM players WHERE player_id = ?', [$picks[0]]));
+    $this->assertSame(2, (int) $this->db()->fetchOne('SELECT draft_current_pick FROM draft WHERE draft_id = ?', [$draft]));
+  }
+
+  public function testAFailedNextPicksLoadKeepsTheLastPicks(): void
+  {
+    [$draft, , , $picks] = $this->seedDraft();
+    $this->logIn('Alice');
+
+    $this->keepKernelBetweenCalls = true;
+    // Only the next-picks load fails, so the last-picks load before it still fills the response
+    $failing = new class(static::getContainer()->get(\PDO::class)) extends PickRepository {
+      public function LoadNextPicks($draft_id, $currentPick, $amount) {
+        throw new \PDOException('SQLSTATE[HY000]: General error: 2006 MySQL server has gone away');
+      }
+    };
+    static::getContainer()->set(PickRepository::class, $failing);
+
+    $response = $this->call('POST', "/commish/draft/$draft/pick/{$picks[0]}", self::PLAYER);
+
+    $this->assertSame(201, $response->getStatusCode(), $response->getContent());
+    $body = $this->json($response);
+    $this->assertTrue($body['success']);
+    $this->assertSame([$picks[0]], array_map('intval', array_column($body['last_5_picks'], 'player_id')));
+    $this->assertSame([], $body['next_5_picks']);
+    $this->assertStringNotContainsStringIgnoringCase('SQL', $response->getContent());
+
+    $messages = array_column(static::getContainer()->get('monolog.handler.test')->getRecords(), 'message');
+    $this->assertContains("Pick #{$picks[0]} of draft $draft was saved, but loading the last and next 5 picks failed: SQLSTATE[HY000]: General error: 2006 MySQL server has gone away", $messages);
   }
 
   public function testAddPickRejectsInvalidPicks(): void

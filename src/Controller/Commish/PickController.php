@@ -2,6 +2,7 @@
 
 namespace HootDraft\Controller\Commish;
 
+use HootDraft\Domain\Entities\Draft;
 use HootDraft\Domain\Entities\Pick;
 use HootDraft\Domain\Models\HootDraftResponse;
 use HootDraft\Domain\Repositories\DraftRepository;
@@ -36,58 +37,33 @@ class PickController
     return new JsonResponse($response, $response->responseType());
   }
 
-  #[Route('/commish/draft/{draft_id}/pick/{player_id}', name: 'commish_pick_add', methods: ['POST'], defaults: ['_checks' => self::EDIT])]
-  public function add(Request $request, string $draft_id, string $player_id): JsonResponse
+  #[Route('/commish/draft/{draft_id}/pick/{pick_id}', name: 'commish_pick_add', methods: ['POST'], defaults: ['_checks' => self::EDIT])]
+  public function add(Request $request, string $draft_id, string $pick_id): JsonResponse
   {
-    $draft = $this->drafts->Load((int) $draft_id);
-
-    try {
-      $pick = $this->picks->Load((int) $player_id);
-
-      $this->fillPick($request, $pick);
-    } catch (\Exception $e) {
-      $response = new HootDraftResponse(false, array());
-      $response->errors[] = "Unable to add pick #" . (int) $player_id;
-
-      return new JsonResponse($response, $response->responseType());
-    }
-
-    $validity = $this->validator->IsPickValidForAdd($draft, $pick);
-
-    if (!$validity->success) {
-      return new JsonResponse($validity, $validity->responseType());
-    }
-
-    $response = $this->service->AddPick($draft, $pick);
-
-    return new JsonResponse($response, $response->responseType(Response::HTTP_CREATED));
+    return $this->savePick(
+      $request,
+      (int) $draft_id,
+      (int) $pick_id,
+      "Unable to add pick #",
+      fn (Draft $draft, Pick $pick) => $this->validator->IsPickValidForAdd($draft, $pick),
+      fn (Draft $draft, Pick $pick) => $this->service->AddPick($draft, $pick),
+      Response::HTTP_CREATED,
+    );
   }
 
-  #[Route('/commish/draft/{draft_id}/pick/{player_id}', name: 'commish_pick_update', methods: ['PUT'], defaults: ['_checks' => self::EDIT])]
-  public function update(Request $request, string $draft_id, string $player_id): JsonResponse
+  /** Kept from 4.5: an update also saves through PickRepository::AddPick (PHP8Rewrite.md, "Kept 1:1"). */
+  #[Route('/commish/draft/{draft_id}/pick/{pick_id}', name: 'commish_pick_update', methods: ['PUT'], defaults: ['_checks' => self::EDIT])]
+  public function update(Request $request, string $draft_id, string $pick_id): JsonResponse
   {
-    $draft = $this->drafts->Load((int) $draft_id);
-
-    try {
-      $pick = $this->picks->Load((int) $player_id);
-
-      $this->fillPick($request, $pick);
-    } catch (\Exception $e) {
-      $response = new HootDraftResponse(false, array());
-      $response->errors[] = "Unable to edit pick #" . (int) $player_id;
-
-      return new JsonResponse($response, $response->responseType());
-    }
-
-    $validity = $this->validator->IsPickValidForUpdate($draft, $pick);
-
-    if (!$validity->success) {
-      return new JsonResponse($validity, $validity->responseType());
-    }
-
-    $response = $this->service->UpdatePick($draft, $pick);
-
-    return new JsonResponse($response, $response->responseType());
+    return $this->savePick(
+      $request,
+      (int) $draft_id,
+      (int) $pick_id,
+      "Unable to edit pick #",
+      fn (Draft $draft, Pick $pick) => $this->validator->IsPickValidForUpdate($draft, $pick),
+      fn (Draft $draft, Pick $pick) => $this->service->UpdatePick($draft, $pick),
+      Response::HTTP_OK,
+    );
   }
 
   #[Route('/commish/draft/{draft_id}/picks/alreadyDrafted', name: 'commish_picks_already_drafted', methods: ['GET'], defaults: ['_checks' => self::EDIT])]
@@ -138,6 +114,38 @@ class PickController
     }
 
     return new JsonResponse($response, $response->responseType());
+  }
+
+  /**
+   * The path add and update share: load the pick, put the commissioner's entry on it, validate it, then save it.
+   *
+   * @param callable(Draft, Pick): HootDraftResponse $validate
+   * @param callable(Draft, Pick): HootDraftResponse $save
+   */
+  private function savePick(Request $request, int $draft_id, int $pick_id, string $loadError, callable $validate, callable $save, int $successStatus): JsonResponse
+  {
+    $draft = $this->drafts->Load($draft_id);
+
+    try {
+      $pick = $this->picks->Load($pick_id);
+
+      $this->fillPick($request, $pick);
+    } catch (\Exception $e) {
+      $response = new HootDraftResponse(false, array());
+      $response->errors[] = $loadError . $pick_id;
+
+      return new JsonResponse($response, $response->responseType());
+    }
+
+    $validity = $validate($draft, $pick);
+
+    if (!$validity->success) {
+      return new JsonResponse($validity, $validity->responseType());
+    }
+
+    $response = $save($draft, $pick);
+
+    return new JsonResponse($response, $response->responseType($successStatus));
   }
 
   /** The player the commissioner entered goes onto the pick before it is validated. */

@@ -101,34 +101,41 @@ class PickService {
 
         return [$draft, $pick, $next_pick];
       });
-
-      $response->draft_is_complete = $this->draftService->DraftComplete($draft);
-
-      if ($response->draft_is_complete == 1) {
-        // The pick is already committed: failing to crunch the numbers must not report it as failed. An admin can
-        // regenerate them (POST /admin/draft/{id}/stats).
-        try {
-          // The in-memory draft doesn't know the end time the DB just stamped, so reload it for the stats
-          $completedDraft = $this->draftRepository->Load($draft->draft_id, true);
-          $response->draft_statistics = $this->draftStats->CalculateDraftStatistics($completedDraft);
-        } catch (\Throwable $e) {
-          $this->logger->error("Unable to calculate stats for draft $draft->draft_id: " . $e->getMessage(), ['exception' => $e]);
-          $response->draft_statistics = null;
-        }
-      }
-
-      $response->pick = $pick;
-      $response->next_pick = $next_pick;
-      $response->last_5_picks = $this->pickRepository->LoadLastPicks($draft->draft_id, 5);
-      $response->next_5_picks = $this->pickRepository->LoadNextPicks($draft->draft_id, $draft->draft_current_pick, 5);
-
-      $response->success = true;
     } catch (\Exception $e) {
       $response = new HootDraftResponse(false, array());
 
       $errorMessage = $e->getMessage();
 
       $response->errors[] = "Unable to add pick: $errorMessage";
+
+      return $response;
+    }
+
+    // From here the pick is committed: nothing below may report it as failed
+    $response->success = true;
+    $response->pick = $pick;
+    $response->next_pick = $next_pick;
+    $response->draft_is_complete = $this->draftService->DraftComplete($draft);
+    $response->last_5_picks = [];
+    $response->next_5_picks = [];
+
+    if ($response->draft_is_complete == 1) {
+      // An admin can regenerate the numbers (POST /admin/draft/{id}/stats).
+      try {
+        // The in-memory draft doesn't know the end time the DB just stamped, so reload it for the stats
+        $completedDraft = $this->draftRepository->Load($draft->draft_id, true);
+        $response->draft_statistics = $this->draftStats->CalculateDraftStatistics($completedDraft);
+      } catch (\Throwable $e) {
+        $this->logger->error("Unable to calculate stats for draft $draft->draft_id: " . $e->getMessage(), ['exception' => $e]);
+        $response->draft_statistics = null;
+      }
+    }
+
+    try {
+      $response->last_5_picks = $this->pickRepository->LoadLastPicks($draft->draft_id, 5);
+      $response->next_5_picks = $this->pickRepository->LoadNextPicks($draft->draft_id, $draft->draft_current_pick, 5);
+    } catch (\Throwable $e) {
+      $this->logger->error("Pick #$pick->player_id of draft $draft->draft_id was saved, but loading the last and next 5 picks failed: " . $e->getMessage(), ['exception' => $e]);
     }
 
     return $response;
