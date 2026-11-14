@@ -1,6 +1,7 @@
 <?php
 namespace HootDraft\Domain\Repositories;
 
+use HootDraft\Domain\Entities\Draft;
 
 class DraftDataRepository {
   private $colors;
@@ -101,9 +102,9 @@ class DraftDataRepository {
     );
 
     $this->statuses = array(
-      "undrafted" => "Setting Up",
-      "in_progress" => "In Progress",
-      "complete" => "Completed"
+      Draft::STATUS_SETTING_UP => "Setting Up",
+      Draft::STATUS_IN_PROGRESS => "In Progress",
+      Draft::STATUS_COMPLETE => "Completed"
     );
 
     //PHPD-70: FIX 3 INFIELD ISSUES WITH CSS CLASS NAMES:

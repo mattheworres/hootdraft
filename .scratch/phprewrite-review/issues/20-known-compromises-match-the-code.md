@@ -3,11 +3,13 @@
 **What to build:** Someone reading the "Known Compromises" section of PHP8Rewrite.md, for example while writing the Playwright suite, gets an accurate list of every way the new API behaves differently from master. Fix the entries that are now wrong, and add what the review found that was never written down. Also record the changes made by tickets 02–18.
 
 Entries that are now wrong:
+
 - 4.1(3) says `/draft/{id}` with a missing Draft "is still a 500". `GET /draft/0` now answers 404
 - 4.4(1) says the public Depth Chart PUT "accepts any `position_id`". It now refuses Drafts without Depth Charts and positions from another Draft, and stores 0 as NULL
 - 4.5(5) says `TradeAsset` keeps `trade_asset_id`. The entity now declares `tradeasset_id`
 
 Changes never recorded:
+
 - verification key expiry (48h), with the invite key dated 47h ahead (this has been superceded by the 3 scratch tickets for email-verified-split)
 - the 400 for a malformed JSON body
 - transactions and a Draft lock in Draft update, Round Time save and every Manager save

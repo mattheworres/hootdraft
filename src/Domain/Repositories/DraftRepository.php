@@ -112,8 +112,9 @@ class DraftRepository {
     $draftStatement = $this->pdo->prepare("SELECT d.*, u.Name AS commish_name FROM draft d
       LEFT OUTER JOIN users u
       ON d.commish_id = u.id
-      WHERE d.draft_status = 'complete'
+      WHERE d.draft_status = ?
       ORDER BY draft_create_time DESC");
+    $draftStatement->bindValue(1, Draft::STATUS_COMPLETE);
 
     $draftStatement->setFetchMode(\PDO::FETCH_CLASS, Draft::class);
 
@@ -157,7 +158,7 @@ class DraftRepository {
       $draft->historical_teams = $this->draftData->GetHistoricalTeams($draft->draft_sport);
       $draft->positions = $this->draftData->GetPositions($draft->draft_sport);
 
-      if ($draft->using_depth_charts) {
+      if ($draft->UsesDepthCharts()) {
         $draft->depthChartPositions = $this->depthChartPositions->LoadAll($draft->draft_id);
       }
     }
@@ -310,7 +311,7 @@ class DraftRepository {
         throw new \Exception("Unable to move draft forward.");
       }
     } else {
-      $draft->draft_status = 'complete';
+      $draft->draft_status = Draft::STATUS_COMPLETE;
       $stmt = $this->pdo->prepare("UPDATE draft SET draft_status = ?, draft_end_time = UTC_TIMESTAMP() WHERE draft_id = ?");
       $stmt->bindParam(1, $draft->draft_status);
       $stmt->bindParam(2, $draft->draft_id);

@@ -21,6 +21,11 @@ namespace HootDraft\Domain\Entities;
 // is_locked, display_status, draft_create_time, ...) that are not columns, so dynamic properties stay.
 #[\AllowDynamicProperties]
 class Draft {
+  /** Stored `draft_status` values. See GLOSSARY.md: Setting Up, In Progress, Complete. */
+  public const STATUS_SETTING_UP = 'undrafted';
+  public const STATUS_IN_PROGRESS = 'in_progress';
+  public const STATUS_COMPLETE = 'complete';
+
   public function __construct() {
     //Leaving this here in case any init is needed on new drafts.
   }
@@ -70,6 +75,13 @@ class Draft {
   /** @var bool $nfl_extended Whether or not this draft uses extended NFL positions */
   public $nfl_extended;
 
-    /** @var bool $using_depth_charts Whether or not this draft uses depth chart positions */
+  /**
+   * @var bool|int|null $using_depth_charts Whether or not this draft uses depth chart positions. The column is 0 or 1,
+   *   Load() gives a bool and a locked draft has null. Read it with UsesDepthCharts().
+   */
   public $using_depth_charts;
+
+  public function UsesDepthCharts(): bool {
+    return $this->using_depth_charts == 1;
+  }
 }

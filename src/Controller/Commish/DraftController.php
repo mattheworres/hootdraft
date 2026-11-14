@@ -14,7 +14,6 @@ use HootDraft\Domain\Repositories\DraftRepository;
 use HootDraft\Domain\Repositories\RoundTimeRepository;
 use HootDraft\Domain\Services\DraftService;
 use HootDraft\Domain\Services\RoundTimeService;
-use HootDraft\Domain\Validators\DepthChartPositionValidator;
 use HootDraft\Domain\Validators\DraftValidator;
 use HootDraft\Domain\Validators\RoundTimeValidator;
 use HootDraft\Security\CurrentUser;
@@ -33,7 +32,6 @@ class DraftController
     private DraftValidator $validator,
     private DraftService $service,
     private DepthChartPositionRepository $depthChartPositions,
-    private DepthChartPositionValidator $depthChartValidator,
     private RoundTimeRepository $roundTimes,
     private RoundTimeValidator $roundTimeValidator,
     private RoundTimeService $roundTimeService,
@@ -69,31 +67,15 @@ class DraftController
 
     $draft->commish_id = $currentUser->getId();
     $draft->commish_name = $currentUser->getName();
+    $draft->draft_status = Draft::STATUS_SETTING_UP;
 
-    $draft->draft_name = $payload->get('name');
-    $draft->draft_sport = $payload->get('sport');
-    $draft->draft_status = "undrafted";
-    $draft->draft_style = $payload->get('style');
-    $draft->draft_rounds = (int) $payload->get('rounds');
-    $draft->draft_password = $payload->get('password');
-    $draft->using_depth_charts = $payload->get('using_depth_charts') == true ? 1 : 0;
+    $this->mapPayloadToDraft($payload, $draft);
+    $createPositionsModel = $this->buildDepthChartPositionModel($payload, $draft);
 
-    $validity = $this->validator->IsDraftValidForCreateAndUpdate($draft);
+    $validity = $this->validator->IsDraftValidForCreate($draft, $createPositionsModel);
 
     if (!$validity->success) {
       return new JsonResponse($validity, Response::HTTP_BAD_REQUEST);
-    }
-
-    $createPositionsModel = null;
-
-    if ($draft->using_depth_charts == 1) {
-      $createPositionsModel = $this->buildDepthChartPositionModel($payload);
-
-      $positionValidity = $this->depthChartValidator->AreDepthChartPositionsValid($createPositionsModel);
-
-      if (!$positionValidity->success) {
-        return new JsonResponse($positionValidity, Response::HTTP_BAD_REQUEST);
-      }
     }
 
     $response = $this->service->CreateNewDraft($draft, $createPositionsModel);
@@ -110,7 +92,7 @@ class DraftController
     $draft->sports = $this->draftData->GetLeagues();
     $draft->styles = $this->draftData->GetStyles();
     $draft->statuses = $this->draftData->GetStatuses();
-    $draft->depthChartPositions = $draft->using_depth_charts == 1
+    $draft->depthChartPositions = $draft->UsesDepthCharts()
       ? $this->depthChartPositions->LoadAll($draftId)
       : array();
 
@@ -123,36 +105,15 @@ class DraftController
     $payload = $request->getPayload();
     $draft = $this->drafts->Load((int) $draft_id);
 
-    // Picks reference depth chart positions once the draft starts, so the depth chart settings can only change while
-    // it is being set up. After that the rest of the form saves and the depth chart fields in it are ignored.
-    $depthChartsEditable = $this->service->DraftSettingUp($draft);
-    $usingDepthCharts = $draft->using_depth_charts;
+    $storedUsingDepthCharts = $draft->UsesDepthCharts();
 
-    $draft->draft_name = $payload->get('name');
-    $draft->draft_sport = $payload->get('sport');
-    $draft->draft_style = $payload->get('style');
-    $draft->draft_rounds = (int) $payload->get('rounds');
-    $draft->draft_password = $payload->get('password');
-    $draft->using_depth_charts = $depthChartsEditable
-      ? ($payload->get('using_depth_charts') == true ? 1 : 0)
-      : $usingDepthCharts;
+    $this->mapPayloadToDraft($payload, $draft);
+    $createPositionsModel = $this->buildDepthChartPositionModel($payload, $draft);
 
-    $validity = $this->validator->IsDraftValidForCreateAndUpdate($draft);
+    $validity = $this->validator->IsDraftValidForUpdate($draft, $createPositionsModel, $storedUsingDepthCharts);
 
     if (!$validity->success) {
       return new JsonResponse($validity, Response::HTTP_BAD_REQUEST);
-    }
-
-    $createPositionsModel = null;
-
-    if ($depthChartsEditable && $draft->using_depth_charts == 1) {
-      $createPositionsModel = $this->buildDepthChartPositionModel($payload);
-
-      $positionValidity = $this->depthChartValidator->AreDepthChartPositionsValid($createPositionsModel);
-
-      if (!$positionValidity->success) {
-        return new JsonResponse($positionValidity, Response::HTTP_BAD_REQUEST);
-      }
     }
 
     $response = $this->service->UpdateDraft($draft, $createPositionsModel);
@@ -237,8 +198,24 @@ class DraftController
     return new JsonResponse($response, $response->responseType(Response::HTTP_CREATED));
   }
 
-  private function buildDepthChartPositionModel(InputBag $payload): DepthChartPositionCreateModel
+  /** The form fields that create and update share. Always stores using_depth_charts as 0 or 1. */
+  private function mapPayloadToDraft(InputBag $payload, Draft $draft): void
   {
+    $draft->draft_name = $payload->get('name');
+    $draft->draft_sport = $payload->get('sport');
+    $draft->draft_style = $payload->get('style');
+    $draft->draft_rounds = (int) $payload->get('rounds');
+    $draft->draft_password = $payload->get('password');
+    $draft->using_depth_charts = $payload->get('using_depth_charts') == true ? 1 : 0;
+  }
+
+  /** Null when the Draft does not use Depth Charts. Then the client can send default positions, and we ignore them. */
+  private function buildDepthChartPositionModel(InputBag $payload, Draft $draft): ?DepthChartPositionCreateModel
+  {
+    if (!$draft->UsesDepthCharts()) {
+      return null;
+    }
+
     $createPositionsModel = new DepthChartPositionCreateModel();
     $createPositionsModel->depthChartEnabled = true;
 

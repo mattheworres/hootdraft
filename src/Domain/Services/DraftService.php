@@ -45,7 +45,7 @@ class DraftService {
       $draft = $this->transactions->Run(function () use ($draft, $depthChartModel) {
         $draft = $this->draftRepository->Create($draft);
 
-        if ($draft->using_depth_charts) {
+        if ($draft->UsesDepthCharts()) {
           $this->depthChartPositions->Save($depthChartModel, $draft->draft_id);
         }
 
@@ -75,7 +75,7 @@ class DraftService {
         if ($this->DraftSettingUp($draft)) {
           $this->depthChartPositions->DeleteAllDepthChartPositions($draft->draft_id);
 
-          if ($draft->using_depth_charts == 1) {
+          if ($draft->UsesDepthCharts()) {
             $this->depthChartPositions->Save($depthChartModel, $draft->draft_id);
           }
         }
@@ -102,7 +102,7 @@ class DraftService {
         $draft = $this->draftRepository->UpdateStatus($draft);
 
         //If we know we're moving from undrafted to in progress, perform the necessary setup steps:
-        if ($draft->draft_status != $old_status && $draft->draft_status == "in_progress") {
+        if ($draft->draft_status != $old_status && $draft->draft_status == Draft::STATUS_IN_PROGRESS) {
           //Delete all trades
           $this->trades->DeleteAllTrades($draft->draft_id);
           //Delete all picks
@@ -177,14 +177,14 @@ class DraftService {
   }
 
   public function DraftSettingUp(Draft $draft) {
-    return $draft->draft_status == "undrafted";
+    return $draft->draft_status == Draft::STATUS_SETTING_UP;
   }
 
   public function DraftInProgress(Draft $draft) {
-    return $draft->draft_status == "in_progress";
+    return $draft->draft_status == Draft::STATUS_IN_PROGRESS;
   }
 
   public function DraftComplete(Draft $draft) {
-    return $draft->draft_status == "complete";
+    return $draft->draft_status == Draft::STATUS_COMPLETE;
   }
 }

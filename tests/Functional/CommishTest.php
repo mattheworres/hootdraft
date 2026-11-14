@@ -165,17 +165,43 @@ class CommishTest extends CommishDraftTestCase
     $alice = $this->createUser('Alice');
     $this->logIn('Alice');
 
-    $running = $this->createDraft($alice, 'in_progress', null, ['using_depth_charts' => 1]);
+    $running = $this->createDraft($alice, 'in_progress', null, ['draft_name' => 'Running', 'using_depth_charts' => 1]);
     $this->db()->insert('depth_chart_positions', ['draft_id' => $running, 'position' => 'QB', 'slots' => 1, 'display_order' => 0]);
     $positionId = (int) $this->db()->lastInsertId();
+    $refusal = ['success' => false, 'errors' => ['Depth chart settings can only change while the draft is setting up.']];
 
-    // The rest of the form saves; the depth chart fields in it are ignored
-    $body = $this->newDraftBody(['name' => 'Running renamed', 'using_depth_charts' => false, 'depthChartPositions' => [['position' => 'WR', 'slots' => 3]]]);
-    $edited = $this->call('PUT', "/commish/draft/$running", $body);
-    $this->assertSame(200, $edited->getStatusCode(), $edited->getContent());
-    $this->assertSame('Running renamed', $this->db()->fetchOne('SELECT draft_name FROM draft WHERE draft_id = ?', [$running]));
+    // A change to the depth chart settings is refused, and nothing in the form is saved
+    foreach ([
+      ['using_depth_charts' => false],
+      ['using_depth_charts' => true, 'depthChartPositions' => [['position' => 'WR', 'slots' => 1]]],
+      ['using_depth_charts' => true, 'depthChartPositions' => [['position' => 'QB', 'slots' => 2]]],
+      ['using_depth_charts' => true, 'depthChartPositions' => [['position' => 'QB', 'slots' => 1], ['position' => 'RB', 'slots' => 1]]],
+    ] as $change) {
+      $refused = $this->call('PUT', "/commish/draft/$running", $this->newDraftBody(['name' => 'Running renamed'] + $change));
+      $this->assertSame(400, $refused->getStatusCode(), json_encode($change));
+      $this->assertSame($refusal, $this->json($refused), json_encode($change));
+    }
+
+    $this->assertSame('Running', $this->db()->fetchOne('SELECT draft_name FROM draft WHERE draft_id = ?', [$running]));
     $this->assertSame(1, (int) $this->db()->fetchOne('SELECT using_depth_charts FROM draft WHERE draft_id = ?', [$running]));
     $this->assertSame([$positionId], array_map('intval', $this->db()->fetchFirstColumn('SELECT id FROM depth_chart_positions WHERE draft_id = ?', [$running])));
+
+    // The stored depth chart settings sent back unchanged let the rest of the form save
+    $same = $this->newDraftBody(['name' => 'Running renamed', 'using_depth_charts' => true, 'depthChartPositions' => [['position' => 'QB', 'slots' => 1]]]);
+    $edited = $this->call('PUT', "/commish/draft/$running", $same);
+    $this->assertSame(200, $edited->getStatusCode(), $edited->getContent());
+    $this->assertSame('Running renamed', $this->db()->fetchOne('SELECT draft_name FROM draft WHERE draft_id = ?', [$running]));
+    $this->assertSame([$positionId], array_map('intval', $this->db()->fetchFirstColumn('SELECT id FROM depth_chart_positions WHERE draft_id = ?', [$running])));
+
+    // With depth charts off, the loaded setting is a PHP false. It must still be stored as 0. The client fills in
+    // default positions when depth charts are off, so the positions it sends are not compared.
+    $noCharts = $this->createDraft($alice, 'in_progress', null, ['draft_name' => 'No charts', 'using_depth_charts' => 0]);
+    $offBody = $this->newDraftBody(['name' => 'No charts renamed', 'using_depth_charts' => false, 'depthChartPositions' => [['position' => 'QB', 'slots' => 1]]]);
+    $offEdited = $this->call('PUT', "/commish/draft/$noCharts", $offBody);
+    $this->assertSame(200, $offEdited->getStatusCode(), $offEdited->getContent());
+    $this->assertSame('No charts renamed', $this->db()->fetchOne('SELECT draft_name FROM draft WHERE draft_id = ?', [$noCharts]));
+    $this->assertSame(0, (int) $this->db()->fetchOne('SELECT using_depth_charts FROM draft WHERE draft_id = ?', [$noCharts]));
+    $this->assertSame(0, (int) $this->db()->fetchOne('SELECT COUNT(*) FROM depth_chart_positions WHERE draft_id = ?', [$noCharts]));
 
     // While setting up, turning them off removes the positions
     $setup = $this->createDraft($alice, 'undrafted', null, ['using_depth_charts' => 1]);

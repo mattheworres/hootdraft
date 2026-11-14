@@ -2,7 +2,9 @@
 namespace HootDraft\Domain\Validators;
 
 use HootDraft\Domain\Entities\Draft;
+use HootDraft\Domain\Models\DepthChartPositionCreateModel;
 use HootDraft\Domain\Models\HootDraftResponse;
+use HootDraft\Domain\Repositories\DepthChartPositionRepository;
 use HootDraft\Domain\Repositories\DraftDataRepository;
 use HootDraft\Domain\Repositories\DraftRepository;
 use HootDraft\Domain\Repositories\ManagerRepository;
@@ -18,6 +20,8 @@ class DraftValidator {
     private DraftDataRepository $draftData,
     private DraftService $draftService,
     private ManagerRepository $managers,
+    private DepthChartPositionRepository $depthChartPositions,
+    private DepthChartPositionValidator $depthChartValidator,
     private CurrentUser $currentUser,
     #[Autowire('%hootdraft.draft_password_header%')] private string $draftPasswordHeader,
   ) {
@@ -49,6 +53,44 @@ class DraftValidator {
     }
 
     return false;
+  }
+
+  /** $positions is null when the Draft does not use Depth Charts */
+  public function IsDraftValidForCreate(Draft $draft, ?DepthChartPositionCreateModel $positions): HootDraftResponse {
+    $validity = $this->IsDraftValidForCreateAndUpdate($draft);
+
+    return $validity->success ? $this->ArePositionsValid($positions) : $validity;
+  }
+
+  /**
+   * $positions is null when the Draft does not use Depth Charts.
+   *
+   * After the Draft starts, Picks refer to Depth Chart positions. Thus, when the Draft is not Setting Up, the update
+   * must send the stored Depth Chart settings without changes.
+   */
+  public function IsDraftValidForUpdate(Draft $draft, ?DepthChartPositionCreateModel $positions, bool $storedUsingDepthCharts): HootDraftResponse {
+    $validity = $this->IsDraftValidForCreateAndUpdate($draft);
+
+    if (!$validity->success) {
+      return $validity;
+    }
+
+    if ($this->draftService->DraftSettingUp($draft)) {
+      return $this->ArePositionsValid($positions);
+    }
+
+    $unchanged = $storedUsingDepthCharts === $draft->UsesDepthCharts()
+      && ($positions === null || $positions->Matches($this->depthChartPositions->LoadAll((int) $draft->draft_id)));
+
+    return $unchanged
+      ? new HootDraftResponse(true)
+      : new HootDraftResponse(false, ['Depth chart settings can only change while the draft is setting up.']);
+  }
+
+  private function ArePositionsValid(?DepthChartPositionCreateModel $positions): HootDraftResponse {
+    return $positions === null
+      ? new HootDraftResponse(true)
+      : $this->depthChartValidator->AreDepthChartPositionsValid($positions);
   }
 
   public function IsDraftValidForCreateAndUpdate(Draft $draft) {
@@ -104,12 +146,12 @@ class DraftValidator {
     $errors = array();
     $draft_statuses = $this->draftData->GetStatuses();
 
-    if ($old_status == "complete") {
+    if ($old_status == Draft::STATUS_COMPLETE) {
       $valid = false;
       $errors[] = "The draft is completed, therefore its status cannot be changed.";
     }
 
-    if ($draft->draft_status == "complete") {
+    if ($draft->draft_status == Draft::STATUS_COMPLETE) {
       $valid = false;
       $errors[] = "You cannot set the draft as completed manually.";
     }
@@ -124,7 +166,7 @@ class DraftValidator {
       $valid = false;
     }
 
-    if ($draft->draft_status == "in_progress" && !$this->managers->DraftHasManagers($draft->draft_id)) {
+    if ($draft->draft_status == Draft::STATUS_IN_PROGRESS &&!$this->managers->DraftHasManagers($draft->draft_id)) {
       $valid = false;
       $errors[] = "A draft must have at least 2 managers before it can begin.";
     }

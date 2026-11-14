@@ -117,7 +117,7 @@ class PickValidator {
       $valid = false;
     }
 
-    if (!$draft->using_depth_charts) {
+    if (!$draft->UsesDepthCharts()) {
       $errors[] = "Draft #$draft->draft_id does not use depth charts.";
       $valid = false;
     } else if ($pick->depth_chart_position_id !== null) {

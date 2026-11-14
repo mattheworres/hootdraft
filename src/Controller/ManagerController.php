@@ -31,7 +31,7 @@ class ManagerController
   {
     $draft = $this->drafts->Load((int) $draft_id);
 
-    if (!$draft->using_depth_charts) {
+    if (!$draft->UsesDepthCharts()) {
       $response = new HootDraftResponse(false, array("Draft is not configured to use depth charts."));
 
       return new JsonResponse($response, $response->responseType());
