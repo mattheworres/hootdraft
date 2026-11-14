@@ -44,7 +44,7 @@ class PickRepository {
       throw new \Exception("Unable to load pick " . $id);
     }
 
-    $pick->selected = strlen((string) $pick->pick_time) > 0 && $pick->pick_duration > 0;
+    $pick->selected = $pick->HasBeenSelected();
 
     return $pick;
   }
@@ -85,7 +85,7 @@ class PickRepository {
     }
 
     while ($pick = $stmt->fetch()) {
-      $pick->selected = strlen((string) $pick->pick_time) > 0 && $pick->pick_duration > 0;
+      $pick->selected = $pick->HasBeenSelected();
       $picks[] = $pick;
     }
 
@@ -156,7 +156,7 @@ class PickRepository {
 
     $stmt->fetch();
 
-    $current_pick->selected = strlen((string) $current_pick->pick_time) > 0 && $current_pick->pick_duration > 0;
+    $current_pick->selected = $current_pick->HasBeenSelected();
     $current_pick->on_the_clock = true;
 
     return $current_pick;
@@ -190,7 +190,7 @@ class PickRepository {
 
     $stmt->fetch();
 
-    $previous_pick->selected = strlen((string) $previous_pick->pick_time) > 0 && $previous_pick->pick_duration > 0;
+    $previous_pick->selected = $previous_pick->HasBeenSelected();
     $previous_pick->on_the_clock = false;
 
     return $previous_pick;
@@ -248,7 +248,7 @@ class PickRepository {
     }
 
     while ($pick = $stmt->fetch()) {
-      $pick->selected = strlen((string) $pick->pick_time) > 0 && $pick->pick_duration > 0;
+      $pick->selected = $pick->HasBeenSelected();
       $picks[] = $pick;
     }
 
@@ -277,7 +277,7 @@ class PickRepository {
     }
 
     while ($pick = $stmt->fetch()) {
-      $pick->selected = strlen((string) $pick->pick_time) > 0 && $pick->pick_duration > 0;
+      $pick->selected = $pick->HasBeenSelected();
       $pick->on_the_clock = $pick->player_pick == $currentPick;
 
       $picks[] = $pick;
@@ -310,7 +310,7 @@ class PickRepository {
 
     while ($pick = $stmt->fetch()) {
       $pick->player_pick = (int)$pick->player_pick;
-      $pick->selected = strlen((string) $pick->pick_time) > 0 && $pick->pick_duration > 0;
+      $pick->selected = $pick->HasBeenSelected();
       $pick->on_the_clock = $draft != null && $pick->player_pick == $draft->draft_current_pick;
 
       $picks[] = $pick;
@@ -345,7 +345,7 @@ class PickRepository {
     }
 
     while ($pick = $stmt->fetch()) {
-      $pick->selected = strlen((string) $pick->pick_time) > 0 && $pick->pick_duration > 0;
+      $pick->selected = $pick->HasBeenSelected();
       $pick->on_the_clock = $draft != null && $pick->player_pick == $draft->draft_current_pick;
 
       $picks[] = $pick;

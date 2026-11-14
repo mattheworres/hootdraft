@@ -3,16 +3,22 @@ namespace HootDraft\Domain\Services;
 
 use HootDraft\Domain\Entities\Draft;
 use HootDraft\Domain\Entities\Trade;
+use HootDraft\Domain\Entities\TradeAsset;
 use HootDraft\Domain\Models\HootDraftResponse;
+use HootDraft\Domain\Models\TradeBuildResult;
 use HootDraft\Domain\Repositories\DraftRepository;
+use HootDraft\Domain\Repositories\ManagerRepository;
 use HootDraft\Domain\Repositories\PickRepository;
 use HootDraft\Domain\Repositories\TradeRepository;
+use HootDraft\Domain\Validators\TradeValidator;
 
 class TradeService {
   public function __construct(
     private PickRepository $picks,
     private TradeRepository $trades,
     private DraftRepository $drafts,
+    private ManagerRepository $managers,
+    private TradeValidator $validator,
     private TransactionService $transactions,
   ) {
   }
@@ -32,6 +38,45 @@ class TradeService {
     }
 
     return $response;
+  }
+
+  /**
+   * Builds the Trade the commissioner entered and validates it. The result holds the valid Trade, or only the errors:
+   * why the Trade could not be built, or why it is not valid.
+   *
+   * @param mixed $assetIds The ids of the picks to trade, as the client sent them. Anything other than an array is refused.
+   */
+  public function BuildTrade(Draft $draft, $manager1_id, $manager2_id, $assetIds): TradeBuildResult {
+    $trade = new Trade();
+    $trade->draft_id = (int) $draft->draft_id;
+    $trade->manager1_id = $manager1_id;
+    $trade->manager2_id = $manager2_id;
+    $trade->trade_round = $draft->draft_current_round;
+
+    try {
+      if (!is_array($assetIds)) {
+        throw new \Exception("Invalid trade data.");
+      }
+
+      $trade->manager1 = $this->managers->Load($manager1_id);
+      $trade->manager2 = $this->managers->Load($manager2_id);
+
+      foreach ($assetIds as $assetId) {
+        $trade->trade_assets[] = $this->_BuildAsset($trade, $assetId);
+      }
+    } catch (\Exception $e) {
+      $message = $e->getMessage();
+
+      return TradeBuildResult::Refused(array("Unable to build trade: $message"));
+    }
+
+    $validity = $this->validator->IsTradeValid($draft, $trade);
+
+    if (!$validity->success) {
+      return TradeBuildResult::Refused($validity->errors);
+    }
+
+    return TradeBuildResult::Built($trade);
   }
 
   public function EnterTrade(Draft $draft, Trade $trade) {
@@ -60,6 +105,31 @@ class TradeService {
     }
 
     return $response;
+  }
+
+  /**
+   * The pick moves from the manager who owns it to the other manager in the trade
+   * @throws \Exception if neither manager owns the pick
+   */
+  private function _BuildAsset(Trade $trade, $assetId): TradeAsset {
+    $asset = new TradeAsset();
+    $asset->player = $this->picks->Load($assetId);
+    // Stored as 1 or 0: the trade_assets column is an integer
+    $asset->was_drafted = $asset->player->HasBeenSelected() ? 1 : 0;
+
+    $side1 = [$trade->manager1_id, $trade->manager1];
+    $side2 = [$trade->manager2_id, $trade->manager2];
+
+    [$from, $to] = match (true) {
+      $asset->player->manager_id == $trade->manager1_id => [$side1, $side2],
+      $asset->player->manager_id == $trade->manager2_id => [$side2, $side1],
+      default => throw new \Exception("Invalid trade data."),
+    };
+
+    [$asset->oldmanager_id, $asset->oldmanager] = $from;
+    [$asset->newmanager_id, $asset->newmanager] = $to;
+
+    return $asset;
   }
 
   /**

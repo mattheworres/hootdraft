@@ -18,7 +18,7 @@ class TradeTest extends CommishDraftTestCase
     return ['manager1_id' => $a, 'manager2_id' => $b, 'trade_assets' => $assets];
   }
 
-  /** Marks a pick as made, as if the draft had moved on to the next one. */
+  /** Marks a Pick as a Selected Pick, as if the draft had moved on to the next one. */
   private function madePick(int $draft, int $pickId): void
   {
     $this->db()->update('players', ['first_name' => 'Antonio', 'last_name' => 'Brown', 'team' => 'PIT', 'position' => 'WR', 'pick_time' => '2024-01-01 12:05:00', 'pick_duration' => 300, 'player_counter' => 1], ['player_id' => $pickId]);
@@ -101,6 +101,8 @@ class TradeTest extends CommishDraftTestCase
     $this->assertSame($draft, (int) $trade['draft_id']);
     $this->assertSame(1, (int) $trade['trade_round']);
     $this->assertCount(2, $trade['trade_assets']);
+    // Strings, unchanged: TradeRepository::SaveAssets binds was_drafted by reference, and PDO turns it into a string
+    $this->assertSame(['1', '0'], array_column($trade['trade_assets'], 'was_drafted'));
 
     $this->assertSame($b, (int) $this->db()->fetchOne('SELECT manager_id FROM players WHERE player_id = ?', [$picks[0]]));
     $this->assertSame($a, (int) $this->db()->fetchOne('SELECT manager_id FROM players WHERE player_id = ?', [$picks[2]]));
@@ -120,7 +122,7 @@ class TradeTest extends CommishDraftTestCase
 
     $noAssets = $this->call('POST', "/commish/draft/$draft/trade", ['manager1_id' => $a, 'manager2_id' => $b]);
     $this->assertSame(400, $noAssets->getStatusCode());
-    $this->assertSame(['Unable to build trade: Invalid trade data.'], $this->json($noAssets)['errors']);
+    $this->assertSame(['success' => false, 'errors' => ['Unable to build trade: Invalid trade data.']], $this->json($noAssets));
 
     $unknownManager = $this->call('POST', "/commish/draft/$draft/trade", $this->tradeBody($a, 999999999, [$picks[0]]));
     $this->assertSame(400, $unknownManager->getStatusCode());
@@ -135,7 +137,8 @@ class TradeTest extends CommishDraftTestCase
     $this->assertEqualsCanonicalizing(["Asset #{$otherPicks[0]} does not belong to draft #$draft", "Manager 2 does not belong to draft #$draft"], $this->json($foreign)['errors']);
 
     $duplicate = $this->call('POST', "/commish/draft/$draft/trade", $this->tradeBody($a, $b, [$picks[0], $picks[0]]));
-    $this->assertSame(['One or more of the trade assets are duplicate.'], $this->json($duplicate)['errors']);
+    $this->assertSame(400, $duplicate->getStatusCode());
+    $this->assertSame(['success' => false, 'errors' => ['One or more of the trade assets are duplicate.']], $this->json($duplicate));
 
     $this->assertSame(0, (int) $this->db()->fetchOne('SELECT COUNT(*) FROM trades WHERE draft_id IN (?, ?)', [$draft, $otherDraft]));
     $this->assertSame($a, (int) $this->db()->fetchOne('SELECT manager_id FROM players WHERE player_id = ?', [$picks[0]]));

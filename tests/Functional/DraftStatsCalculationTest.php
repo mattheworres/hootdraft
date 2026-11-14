@@ -73,7 +73,7 @@ class DraftStatsCalculationTest extends CommishDraftTestCase
     $this->assertSame(['ZZ', 1], [$stats['least_drafted_position'], $stats['least_drafted_position_count']]);
   }
 
-  public function testADraftWithNoPicksMadeHasEmptyStats(): void
+  public function testADraftWithNoSelectedPicksHasEmptyStats(): void
   {
     $stats = $this->calculate([]);
 

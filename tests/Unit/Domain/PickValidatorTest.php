@@ -45,7 +45,7 @@ class PickValidatorTest extends TestCase
     $this->assertTrue($this->sut->IsPickValidForUpdate($this->draft, $this->pick)->success);
   }
 
-  public function testUpdateRequiresThePickToHaveBeenMade(): void
+  public function testUpdateRequiresASelectedPick(): void
   {
     $this->pick->pick_time = null;
 

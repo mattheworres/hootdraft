@@ -48,4 +48,9 @@ class Pick {
 
   /** @var int Depth Chart Position Id FK to the depth chart position table */
   public $depth_chart_position_id;
+
+  /** In-memory check: a pick is selected once it has both a pick time and a duration. */
+  public function HasBeenSelected(): bool {
+    return !is_null($this->pick_time) && !is_null($this->pick_duration);
+  }
 }

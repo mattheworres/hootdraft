@@ -114,7 +114,7 @@ abstract class CommishDraftTestCase extends KernelTestCase
   }
 
   /**
-   * A standard 2-round draft between Team A and Team B with none of the four picks made yet, owned by Alice.
+   * A standard 2-round draft between Team A and Team B with none of the four picks selected yet, owned by Alice.
    * Returns [draft, A, B, pick ids] (picks: A, B, B, A for picks 1 to 4).
    */
   protected function seedDraft(string $status = 'in_progress', ?string $password = null): array

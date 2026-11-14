@@ -56,7 +56,7 @@ class PickSearchRepository {
 
     while ($player = $stmt->fetch()) {
       $player->search_score = self::MAX_TIER - $this->nameTier($player, $words);
-      $player->selected = strlen((string) $player->pick_time) > 0 && $player->pick_duration > 0;
+      $player->selected = $player->HasBeenSelected();
       $players[] = $player;
     }
 
@@ -129,7 +129,7 @@ class PickSearchRepository {
     }
 
     while ($pick = $stmt->fetch()) {
-      $pick->selected = strlen((string) $pick->pick_time) > 0 && $pick->pick_duration > 0;
+      $pick->selected = $pick->HasBeenSelected();
       $picks[] = $pick;
     }
 

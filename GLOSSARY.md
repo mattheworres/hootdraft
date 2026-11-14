@@ -97,6 +97,10 @@ _Avoid_: Pick time (that word means the moment of selection)
 An exchange of Picks between two Managers, which can include Picks that are already Selected.
 _Avoid_: Swap, deal
 
+**Trade Asset**:
+One Pick in a Trade, with the Manager who gives it, the Manager who gets it, and whether it was already a Selected Pick.
+_Avoid_: Trade item, traded player
+
 **Traded Pick**:
 A Pick that now belongs to a different Manager than the one it started with.
 

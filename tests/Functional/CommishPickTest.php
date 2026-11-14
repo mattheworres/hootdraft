@@ -251,6 +251,11 @@ class CommishPickTest extends CommishDraftTestCase
     $this->assertSame([$picks[0]], array_map('intval', array_column($match['matches'], 'player_id')));
     $this->assertSame('Team A', $match['matches'][0]['manager_name']);
 
+    // A zero Pick Duration counts as selected, the same as on the board
+    $this->db()->update('players', ['pick_duration' => 0], ['player_id' => $picks[0]]);
+    $zero = $this->json($this->call('GET', "/commish/draft/$draft/picks/alreadyDrafted?first_name=Antonio&last_name=Brown"));
+    $this->assertTrue($zero['matches'][0]['selected']);
+
     $none = $this->json($this->call('GET', "/commish/draft/$draft/picks/alreadyDrafted?first_name=Nobody&last_name=Here"));
     $this->assertTrue($none['success']);
     $this->assertFalse($none['possibleMatchExists']);

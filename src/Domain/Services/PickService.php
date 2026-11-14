@@ -25,15 +25,6 @@ class PickService {
   ) {
   }
 
-  /*A replacement for the "hasBeenSelected" from 1.x - does in-memory logic to determine if pick is a selection yet*/
-  public function PickHasBeenSelected(Pick $pick) {
-    $hasTime = is_null($pick->pick_time);
-    $hasDuration = is_null($pick->pick_duration);
-    $selected = (!$hasTime && !$hasDuration);
-
-    return $selected ? 1 : 0;
-  }
-
   public function GetAll(Draft $draft) {
     $response = new HootDraftResponse();
 
