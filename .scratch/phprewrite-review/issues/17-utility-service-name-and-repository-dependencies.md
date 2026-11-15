@@ -9,9 +9,9 @@
 
 **Blocked by:** 01
 
-**Status:** ready-for-agent
+**Status:** approved
 
-- [ ] `UtilityService` has been renamed `ClientTimeFormatter`, and every caller uses the new name
-- [ ] Each of the three repository dependencies is either removed or has a Known Compromises line explaining it
-- [ ] JSON output, including formatted times, is unchanged
-- [ ] The full suite passes
+- [x] `UtilityService` has been renamed `ClientTimeFormatter`, and every caller uses the new name
+- [x] Each of the three repository dependencies is either removed or has a Known Compromises line explaining it
+- [x] JSON output, including formatted times, is unchanged
+- [x] The full suite passes

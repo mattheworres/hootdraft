@@ -20,7 +20,18 @@ class TradeService {
     private ManagerRepository $managers,
     private TradeValidator $validator,
     private TransactionService $transactions,
+    private ClientTimeFormatter $timeFormatter,
   ) {
+  }
+
+  public function GetTrades(int $draft_id) {
+    $trades = $this->trades->GetTrades($draft_id);
+
+    foreach ($trades as $trade) {
+      $trade->trade_time = $this->timeFormatter->MarkAsUtc($trade->trade_time);
+    }
+
+    return $trades;
   }
 
   public function GetManagerAssets(Draft $draft, $manager_id) {

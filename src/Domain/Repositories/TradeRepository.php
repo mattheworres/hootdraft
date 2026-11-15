@@ -4,14 +4,12 @@ namespace HootDraft\Domain\Repositories;
 use HootDraft\Domain\Entities\Manager;
 use HootDraft\Domain\Entities\Trade;
 use HootDraft\Domain\Entities\TradeAsset;
-use HootDraft\Domain\Services\UtilityService;
 
 class TradeRepository {
   public function __construct(
     private \PDO $pdo,
     private ManagerRepository $managers,
     private PickRepository $picks,
-    private UtilityService $utility,
   ) {
   }
 
@@ -43,9 +41,6 @@ class TradeRepository {
       } catch (\Exception $e) {
         throw new \Exception("Unable to load managers or trade assets: " . $e->getMessage());
       }
-
-      //To help display of UTC times on client, append UTC to the end of the string
-      $trade->trade_time = $this->utility->ConvertTimeForClientDisplay($trade->trade_time);
 
       $trades[] = $trade;
     }

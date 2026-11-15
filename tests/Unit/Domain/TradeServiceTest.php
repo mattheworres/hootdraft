@@ -12,6 +12,7 @@ use HootDraft\Domain\Repositories\DraftRepository;
 use HootDraft\Domain\Repositories\ManagerRepository;
 use HootDraft\Domain\Repositories\PickRepository;
 use HootDraft\Domain\Repositories\TradeRepository;
+use HootDraft\Domain\Services\ClientTimeFormatter;
 use HootDraft\Domain\Services\TradeService;
 use HootDraft\Domain\Services\TransactionService;
 use HootDraft\Domain\Validators\TradeValidator;
@@ -63,7 +64,20 @@ class TradeServiceTest extends TestCase
       $managers ?? $this->createStub(ManagerRepository::class),
       new TradeValidator(),
       $transactions ?? $this->createStub(TransactionService::class),
+      new ClientTimeFormatter(),
     );
+  }
+
+  public function testGetTradesMarksTradeTimesAsUtcForTheClient(): void
+  {
+    $trade = new Trade();
+    $trade->trade_time = '2026-11-14 10:00:00';
+    $trades = $this->createMock(TradeRepository::class);
+    $trades->expects($this->once())->method('GetTrades')->with(1)->willReturn([$trade]);
+
+    $result = $this->service(trades: $trades)->GetTrades(1);
+
+    $this->assertSame('2026-11-14 10:00:00 UTC', $result[0]->trade_time);
   }
 
   /** Managers 7 and 8 of draft 1. Picks 3 and 4 belong to manager 7, pick 5 to manager 8, and pick 6 to manager 99. Only pick 3 has been selected. */

@@ -4,7 +4,7 @@ namespace HootDraft\Domain\Repositories;
 use HootDraft\Domain\Entities\Draft;
 use HootDraft\Domain\Services\DatabaseCacheService;
 use HootDraft\Domain\Services\DraftService;
-use HootDraft\Domain\Services\UtilityService;
+use HootDraft\Domain\Services\ClientTimeFormatter;
 use HootDraft\Security\CurrentUser;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -12,7 +12,7 @@ class DraftRepository {
   public function __construct(
     private \PDO $pdo,
     private DatabaseCacheService $cache,
-    private UtilityService $utility,
+    private ClientTimeFormatter $timeFormatter,
     private DraftDataRepository $draftData,
     private DepthChartPositionRepository $depthChartPositions,
     private CurrentUser $currentUser,
@@ -97,9 +97,7 @@ class DraftRepository {
     $drafts = array();
 
     while ($draft = $draftStatement->fetch()) {
-      $draft->draft_create_time = $this->utility->ConvertTimeForClientDisplay($draft->draft_create_time);
-      $draft->draft_start_time = $this->utility->ConvertTimeForClientDisplay($draft->draft_start_time);
-      $draft->draft_end_time = $this->utility->ConvertTimeForClientDisplay($draft->draft_end_time);
+      $this->FormatDraftTimesForClient($draft);
 
       $drafts[] = $draft;
     }
@@ -483,11 +481,15 @@ class DraftRepository {
 
     $draft->display_status = $this->draftService->GetDraftStatusDisplay($draft);
 
-    $draft->draft_create_time = $this->utility->ConvertTimeForClientDisplay($draft->draft_create_time);
-    $draft->draft_start_time = $this->utility->ConvertTimeForClientDisplay($draft->draft_start_time);
-    $draft->draft_end_time = $this->utility->ConvertTimeForClientDisplay($draft->draft_end_time);
+    $this->FormatDraftTimesForClient($draft);
 
     return $draft;
+  }
+
+  private function FormatDraftTimesForClient(Draft $draft): void {
+    $draft->draft_create_time = $this->timeFormatter->MarkAsUtc($draft->draft_create_time);
+    $draft->draft_start_time = $this->timeFormatter->MarkAsUtc($draft->draft_start_time);
+    $draft->draft_end_time = $this->timeFormatter->MarkAsUtc($draft->draft_end_time);
   }
 
   private function SetSecurityProperties($currentUser, $draft, $password) {
