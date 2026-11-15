@@ -1,7 +1,7 @@
 class DraftIndexController {
   constructor($scope, $rootScope, $routeParams, $loading,
     $timeout, subscriptionKeys, api, messageService, draftService,
-    lodash) {
+    lodash, idHelperService) {
     this.$scope = $scope;
     this.$rootScope = $rootScope;
     this.$routeParams = $routeParams;
@@ -12,6 +12,7 @@ class DraftIndexController {
     this.messageService = messageService;
     this.draftService = draftService;
     this.lodash = lodash;
+    this.idHelperService = idHelperService;
 
     this.onSelectedDraftRoundUpdated = this.onSelectedDraftRoundUpdated.bind(this);
   }
@@ -34,7 +35,7 @@ class DraftIndexController {
     //Watch for changes on scope of the selected draft round from the pager
     this.deregisterWatcher = this.$scope.$watch((() => this.selectedDraftRound), () => {
       if ((angular.isDefined(this.draft) &&
-        this.draft.draft_id === this.$routeParams.draft_id) &&
+        this.idHelperService.isSame(this.draft.draft_id, this.$routeParams.draft_id)) &&
         this.draft.complete &&
         this.status.valid &&
         !this.status.locked) {
@@ -188,6 +189,7 @@ DraftIndexController.$inject = [
   'messageService',
   'draftService',
   'lodash',
+  'idHelperService',
 ];
 
 angular.module('phpdraft.draft').component('phpdDraftIndex', {

@@ -8,7 +8,8 @@ class DepthChartsController {
     api,
     draftService,
     messageService,
-    pathHelperService) {
+    pathHelperService,
+    idHelperService) {
     this.$scope = $scope;
     this.$routeParams = $routeParams;
     this.$loading = $loading;
@@ -19,6 +20,7 @@ class DepthChartsController {
     this.draftService = draftService;
     this.messageService = messageService;
     this.pathHelperService = pathHelperService;
+    this.idHelperService = idHelperService;
   }
 
   $onInit() {
@@ -54,7 +56,7 @@ class DepthChartsController {
 
     this.storedManager = this.$sessionStorage.depthChartManager;
 
-    if (angular.isDefined(this.storedManager) && (parseInt(this.storedManager.draft_id, 10) === parseInt(this.$routeParams.draft_id, 10))) {
+    if (angular.isDefined(this.storedManager) && (this.idHelperService.isSame(this.storedManager.draft_id, this.$routeParams.draft_id))) {
       this.selectedManager = this.storedManager;
     } else {
       delete this.$sessionStorage.depthChartManager;
@@ -260,6 +262,7 @@ DepthChartsController.$inject = [
   'draftService',
   'messageService',
   'pathHelperService',
+  'idHelperService',
 ];
 
 angular.module('phpdraft.draft').component('phpdDepthCharts', {

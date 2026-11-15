@@ -14,28 +14,28 @@ class ProPlayerManagementController {
   }
 
   $onInit() {
-    this.sports = [];
+    this.leagues = [];
     this.progress = 100;
 
-    const sportsSuccess = response => {
-      this.sports = response;
+    const leaguesSuccess = response => {
+      this.leagues = response;
     };
 
-    const sportsError = () => this.messageService.showError('Unable to load sports data, check dev tools and report findings to the open source project (please!)');
+    const leaguesError = () => this.messageService.showError('Unable to load league data, check dev tools and report findings to the open source project (please!)');
 
-    this.api.Admin.getSports({}, sportsSuccess, sportsError);
+    this.api.Admin.getLeagues({}, leaguesSuccess, leaguesError);
     this.csvFile = {};
     this.uploadInProgress = false;
   }
 
-  changeSport(sport, sportName) {
-    this.sport = sport;
-    this.sportName = sportName;
+  changeLeague(league, leagueName) {
+    this.league = league;
+    this.leagueName = leagueName;
   }
 
   submitClicked() {
-    if (!this.form.$valid || angular.isUndefined(this.sport)) {
-      this.messageService.showWarning('You must select a sport AND a CSV file first!');
+    if (!this.form.$valid || angular.isUndefined(this.league)) {
+      this.messageService.showWarning('You must select a league AND a CSV file first!');
       return;
     }
 
@@ -46,16 +46,16 @@ class ProPlayerManagementController {
       url: `${this.ENV.apiEndpoint}admin/proplayers`,
       method: 'POST',
       objectKey: '[csvFile]',
-      data: {file: this.form.csvFile.$modelValue, sport: this.sport},
+      data: {file: this.form.csvFile.$modelValue, league: this.league},
     });
 
     this.form.csvFile.upload.then((response => this.$timeout(() => {
       this.form.csvFile.result = response.data;
       this.uploadInProgress = false;
       this.form.csvFile.upload = {};
-      this.messageService.showSuccess(`${this.sport} player data updated!`);
+      this.messageService.showSuccess(`${this.league} player data updated!`);
       this.progress = 100;
-      delete this.sport;
+      delete this.league;
     })
     ), (response => {
         if (response.status > 0) {

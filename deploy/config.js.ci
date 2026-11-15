@@ -2,8 +2,8 @@
   angular.module("phpdraft.env", [])
 
 .constant("ENV", {
-  "apiEndpoint": "{phpdraft.apiBaseUrl}",
-  "recaptchaPublicKey": "{phpdraft.recaptchaPublicKey}"
+  "apiEndpoint": "{hootdraft.apiBaseUrl}",
+  "recaptchaPublicKey": "{hootdraft.recaptchaPublicKey}"
 })
 
 ;

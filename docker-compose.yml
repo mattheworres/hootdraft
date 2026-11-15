@@ -1,0 +1,60 @@
+# HootDraft developer box: nginx + PHP 8.5-FPM + MariaDB 12.3
+# Usage: docker compose up -d --build   (see docker/README.md)
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - php
+
+  php:
+    build:
+      context: ./docker/php
+      args:
+        APP_UID: ${APP_UID:-1000}
+    env_file: ./docker/.env
+    # Outgoing mail goes to the mailpit container by default (read it at http://localhost:8025). These win over
+    # docker/.env; to send real mail, remove them and set the MAIL_* values there.
+    environment:
+      MAIL_DEVELOPMENT: "1"
+      MAIL_SERVER: mailpit
+      MAIL_PORT: "1025"
+      MAIL_USER: noreply@hootdraft.local # becomes the From address, which PHPMailer requires
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+
+  # Catches every email the app sends (verification, password reset) instead of delivering it
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "127.0.0.1:8025:8025" # web inbox
+      - "127.0.0.1:1025:1025" # SMTP, if you want to point something on the host at it
+
+  db:
+    image: mariadb:12.3
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "127.0.0.1:3307:3306"
+    env_file: ./docker/.env
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  db_data:

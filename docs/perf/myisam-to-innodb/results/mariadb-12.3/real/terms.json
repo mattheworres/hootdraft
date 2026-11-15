@@ -1,0 +1,34 @@
+{
+    "leagues": {
+        "big": "MLB",
+        "small": "SuperRugby"
+    },
+    "league_counts": {
+        "MLB": 4043,
+        "NFLExtended": 2431,
+        "NHL": 2034,
+        "NFLStandard": 1008,
+        "NBA": 522,
+        "SuperRugby": 287
+    },
+    "per_league": {
+        "big": {
+            "team": "TEX",
+            "position": "RP",
+            "rare_last": "Andriese",
+            "first": "Mayo",
+            "last": "Acosta"
+        },
+        "small": {
+            "team": "HIG",
+            "position": "LF",
+            "rare_last": "Gatland",
+            "first": "Hoskins",
+            "last": "Sotutu"
+        }
+    },
+    "drafts": [
+        1,
+        10
+    ]
+}

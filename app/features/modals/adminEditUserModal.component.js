@@ -12,7 +12,7 @@ class AdminEditUserController {
       {value: 'ROLE_ADMIN', label: 'Site Administrator'},
     ];
 
-    this.user.enabled = this.user.enabled === '1';
+    this.user.enabled = Number(this.user.enabled) === 1;
     this.userIsCommish = this.user.roles.indexOf('ROLE_COMMISH') !== -1;
     this.userIsAdmin = this.user.roles.indexOf('ROLE_ADMIN') !== -1;
   }

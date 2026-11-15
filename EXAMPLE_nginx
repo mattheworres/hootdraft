@@ -1,7 +1,17 @@
 # Example NGINX Configuration
 # This is an example of what is required in order to get HootDraft to run on NGINX.
-# This config also uses PHP-FPM 7.0 so paths may very there.
+# PHP-FPM 8.4+ is required (the socket path below may vary).
 # Mileage may vary.
+#
+# nginx 1.25.1+ is required (for "http2 on").
+#
+# Server block #3 uses the same location blocks as docker/nginx/default.conf (the dev server):
+# when you change one file, change the other.
+# Allow list: the Hoot Draft directory is the web root, so only these are ever reachable --
+#   /api/*                           -> Symfony front controller (api/index.php)
+#   /css /js /fonts /images, favicon -> built AngularJS assets, as files
+#   anything else                    -> index.html (AngularJS routing)
+# Source, config, vendor/, .env*, db/, tests/ etc. can never be served because no location maps to them.
 
 #Server block #1: forward any non-HTTPS requests to the third server block.
 server {
@@ -20,7 +30,9 @@ server {
 server {
         listen 80;
         listen [::]:80;
-        listen 443 ssl http2;
+        listen 443 ssl;
+        listen [::]:443 ssl;
+        http2 on;
 
         #Domain below should have the www subdomain:
         server_name www.example.com;
@@ -33,9 +45,11 @@ server {
         return 301 https://example.com$request_uri;
 }
 
-#Server block #3: serve the Angular app via index.html, Silex API thru /api, files/media as-is
+#Server block #3: serve the AngularJS app via index.html, Symfony API thru /api, files/media as-is
 server {
-        listen 443 ssl http2;
+        listen 443 ssl;
+        listen [::]:443 ssl;
+        http2 on;
 
         #Change the absolute path below to the base directory that Hoot Draft lives
         root /var/www/example.com/current;
@@ -51,29 +65,40 @@ server {
         ssl_certificate /etc/nginx/ssl/your_ssl_certificate.crt;
         ssl_certificate_key /etc/nginx/ssl/your_ssl_private.key;
 
-        location /api/ {
-                try_files $uri /api/bootstrap.php$is_args$args;
+        #Never serve dotfiles (.git, .env, .env.local, .htaccess, ...) except /.well-known/ (Let's Encrypt etc.)
+        location ~ /\.(?!well-known/) {
+                deny all;
         }
 
+        location = /api {
+                return 301 /api/;
+        }
+
+        #Every /api/ request goes to the Symfony front controller; Symfony strips the /api base itself.
         #Ensure the path passed to fastcgi_pass below matches up with where php-fpm lives
-        location ~* \.php$ {
-                include snippets/fastcgi-php.conf;
-                fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+        location ^~ /api/ {
+                include fastcgi_params;
+                fastcgi_param SCRIPT_FILENAME $document_root/api/index.php;
+                fastcgi_param SCRIPT_NAME /api/index.php;
+                fastcgi_pass unix:/var/run/php/php8.4-fpm.sock;
         }
 
+        location ~ ^/(css|js|fonts|images)/ {
+                try_files $uri =404;
+        }
+
+        location = /favicon.ico {
+                try_files $uri =404;
+        }
+
+        #Everything else is the AngularJS app
         location / {
-                # First attempt to serve request as file, then
-                # as directory, then fall back to displaying a 404.
-                try_files $uri $uri/ /index.html;
+                try_files /index.html =404;
         }
 
-        error_page 404 /404.html;
         error_page 500 502 503 504 /50x.html;
         location = /50x.html {
                 root /usr/share/nginx/html;
         }
 
-        location ~ /\.ht {
-                deny all;
-        }
 }

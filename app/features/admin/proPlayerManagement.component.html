@@ -16,27 +16,27 @@
           <div class="row">
             <div class="col-xs-12 v-offset-2">
               <div class="form-group">
-                <label class="col-xs-12 col-sm-3 control-label" for="sport">
-                  Sport
+                <label class="col-xs-12 col-sm-3 control-label" for="league">
+                  League
                 </label>
                 <div class="col-xs-12 col-sm-8">
                   <div uib-dropdown class="btn-group label-select-distinct-filter">
                     <button type="button" class="form-control" uib-dropdown-toggle>
-                      <span ng-if="$ctrl.sport == null">
-                        Pick a Sport, any sport
+                      <span ng-if="$ctrl.league == null">
+                        Pick a league, any league
                       </span>
-                      <span ng-if="$ctrl.sport != null">
-                          <phpd-draft-label label-type="sport" label-identifier="{{$ctrl.sport}}" label-display="{{$ctrl.sportName}}"></phpd-draft-label>
+                      <span ng-if="$ctrl.league != null">
+                          <phpd-draft-label label-type="sport" label-identifier="{{$ctrl.league}}" label-display="{{$ctrl.leagueName}}"></phpd-draft-label>
                       </span>
                     </button>
                     <ul class="dropdown-menu label-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
-                      <a href ng-click="$ctrl.changeSport(key, value)" ng-repeat="(key, value) in $ctrl.sports">
+                      <a href ng-click="$ctrl.changeLeague(key, value)" ng-repeat="(key, value) in $ctrl.leagues">
                         <phpd-draft-label label-type="sport" label-identifier="{{key}}" label-display="{{value}}"></phpd-draft-label>
                       </a>
                     </ul>
                   </div>
-                  <div ng-show="$ctrl.form.$submitted || $ctrl.form.sport.$touched">
-                    <span ng-show="$ctrl.form.sport.$error.required" class="help-block">Sport is missing</span>
+                  <div ng-show="$ctrl.form.$submitted || $ctrl.form.league.$touched">
+                    <span ng-show="$ctrl.form.league.$error.required" class="help-block">League is missing</span>
                   </div>
                 </div>
               </div>
@@ -45,7 +45,7 @@
           <div class="row">
             <div class="col-xs-12 v-offset-2">
               <div class="form-group">
-                <label class="col-xs-12 col-sm-3 control-label" for="sport">
+                <label class="col-xs-12 col-sm-3 control-label" for="csvFile">
                   CSV Player Data File
                 </label>
                 <div class="col-xs-12 col-sm-8">

@@ -1,0 +1,34 @@
+{
+    "leagues": {
+        "big": "MLB",
+        "small": "SuperRugby"
+    },
+    "league_counts": {
+        "MLB": 39419,
+        "NFLExtended": 23497,
+        "NHL": 19675,
+        "NFLStandard": 9640,
+        "NBA": 5031,
+        "SuperRugby": 2738
+    },
+    "per_league": {
+        "big": {
+            "team": "TEX",
+            "position": "RP",
+            "rare_last": "Dahl",
+            "first": "Tyler",
+            "last": "Binford"
+        },
+        "small": {
+            "team": "REB",
+            "position": "LF",
+            "rare_last": "Nawaqanitawase",
+            "first": "Sean",
+            "last": "Fainga'anuku"
+        }
+    },
+    "drafts": [
+        1,
+        200
+    ]
+}

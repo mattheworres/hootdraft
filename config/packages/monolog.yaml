@@ -1,0 +1,15 @@
+monolog:
+  handlers:
+    main:
+      type: stream
+      path: '%kernel.logs_dir%/%kernel.environment%.log'
+      level: debug
+      channels: ['!event']
+
+when@test:
+  monolog:
+    handlers:
+      # Keeps the records in memory so the functional tests can read them back
+      test:
+        type: test
+        level: debug

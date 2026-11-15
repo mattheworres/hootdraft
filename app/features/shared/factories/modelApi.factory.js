@@ -18,12 +18,16 @@ angular.module('phpdraft.shared').factory('api', ($resource, ENV) =>
     Authentication: $resource(`${ENV.apiEndpoint}authentication`, {}, {
       'login':
         {method: 'POST', url: `${ENV.apiEndpoint}login`},
+      'logout':
+        {method: 'POST', url: `${ENV.apiEndpoint}logout`},
+      'me':
+        {method: 'GET', url: `${ENV.apiEndpoint}me`},
       'register':
         {method: 'POST', url: `${ENV.apiEndpoint}register`},
-      'verify':
-        {method: 'POST', url: `${ENV.apiEndpoint}verify`},
-      'verifyResetToken':
-        {method: 'GET', url: `${ENV.apiEndpoint}verifyToken`},
+      'emailVerification':
+        {method: 'POST', url: `${ENV.apiEndpoint}emailVerification`},
+      'checkResetKey':
+        {method: 'GET', url: `${ENV.apiEndpoint}checkResetKey`},
       'lostPassword':
         {method: 'POST', url: `${ENV.apiEndpoint}lostPassword`},
       'resetPassword':
@@ -42,8 +46,8 @@ angular.module('phpdraft.shared').factory('api', ($resource, ENV) =>
     }),
 
     Admin: $resource(`${ENV.apiEndpoint}admin`, {draft_id: '@draft_id'}, {
-      'getSports':
-        {method: 'GET', url: `${ENV.apiEndpoint}admin/sports`},
+      'getLeagues':
+        {method: 'GET', url: `${ENV.apiEndpoint}admin/leagues`},
       'getAllDrafts':
         {method: 'GET', url: `${ENV.apiEndpoint}admin/drafts`, isArray: true},
       'regenerateDraftStats':

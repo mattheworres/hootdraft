@@ -1,0 +1,102 @@
+{
+    "seed": {
+        "dataset": "1000000",
+        "seconds": 38.956,
+        "version": "12.3.3-MariaDB-ubu2404",
+        "sizes": {
+            "pro_players": {
+                "t": "pro_players",
+                "engine": "MyISAM",
+                "approx_rows": 1000000,
+                "data_bytes": 43119456,
+                "index_bytes": 58966016
+            },
+            "players": {
+                "t": "players",
+                "engine": "InnoDB",
+                "approx_rows": 497507,
+                "data_bytes": 44646400,
+                "index_bytes": 45694976
+            }
+        }
+    },
+    "migrate_convert": {
+        "seconds": 6.563
+    },
+    "schema_varchar": {
+        "alter_seconds": 7.203,
+        "sizes": {
+            "pro_players": {
+                "t": "pro_players",
+                "engine": "InnoDB",
+                "approx_rows": 995578,
+                "data_bytes": 67715072,
+                "index_bytes": 39944192
+            },
+            "players": {
+                "t": "players",
+                "engine": "InnoDB",
+                "approx_rows": 497643,
+                "data_bytes": 44646400,
+                "index_bytes": 45694976
+            }
+        }
+    },
+    "schema_composite": {
+        "alter_seconds": 2.742,
+        "sizes": {
+            "pro_players": {
+                "t": "pro_players",
+                "engine": "InnoDB",
+                "approx_rows": 995578,
+                "data_bytes": 67715072,
+                "index_bytes": 75153408
+            },
+            "players": {
+                "t": "players",
+                "engine": "InnoDB",
+                "approx_rows": 497643,
+                "data_bytes": 44646400,
+                "index_bytes": 45694976
+            }
+        }
+    },
+    "schema_drop_fulltext": {
+        "alter_seconds": 0.023,
+        "sizes": {
+            "pro_players": {
+                "t": "pro_players",
+                "engine": "InnoDB",
+                "approx_rows": 995196,
+                "data_bytes": 67715072,
+                "index_bytes": 75153408
+            },
+            "players": {
+                "t": "players",
+                "engine": "InnoDB",
+                "approx_rows": 497643,
+                "data_bytes": 44646400,
+                "index_bytes": 45694976
+            }
+        }
+    },
+    "schema_general_ci": {
+        "alter_seconds": 2.508,
+        "sizes": {
+            "pro_players": {
+                "t": "pro_players",
+                "engine": "InnoDB",
+                "approx_rows": 996725,
+                "data_bytes": 67715072,
+                "index_bytes": 75153408
+            },
+            "players": {
+                "t": "players",
+                "engine": "InnoDB",
+                "approx_rows": 497643,
+                "data_bytes": 44646400,
+                "index_bytes": 45694976
+            }
+        }
+    }
+}

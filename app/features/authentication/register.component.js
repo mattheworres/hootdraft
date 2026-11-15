@@ -70,12 +70,16 @@ class RegisterController {
       this.form.$setPristine();
       this.showRegistrationForm = false;
 
-      this.messageService.showInfo('Verification email sent');
+      this.messageService.showInfo('We sent you an email to verify your address');
     };
 
     const registerFailureHandler = response => {
       this.registerInProgress = false;
       this.workingModalService.closeModal();
+
+      // The server checks the captcha before anything else, so a failed attempt has used this one up
+      this.form._recaptcha = null;
+      this.vcRecaptchaService.reload();
 
       const registerError = this.errorService.parseValidationErrorsFromResponse(response);
 

@@ -54,7 +54,7 @@ class PickTimersController {
       });
 
       this.pickTimers = data;
-      this.useStaticTime = (this.pickTimers !== null) && (this.pickTimers[0].is_static_time === '1');
+      this.useStaticTime = (this.pickTimers !== null) && (Number(this.pickTimers[0].is_static_time) === 1);
       this.roundTimesEnabled = totalManagerSeconds > 0;
 
       if (this.roundTimesEnabled === false) {

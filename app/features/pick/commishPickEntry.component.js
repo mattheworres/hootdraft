@@ -55,10 +55,6 @@ class CommishPickEntryController {
 
     if (currentPick && currentPick.isFirstChange() === false) {
       const localCurrentPick = currentPick.currentValue;
-      this.isFirstPick =
-        (angular.isDefined(localCurrentPick)
-          ? localCurrentPick.player_pick
-          : 0) === '1';
 
       //If manual entry, we need to make sure to properly update "selected" on the current pick so the display acts accordingly
       if (this.manualEntry) {
@@ -170,7 +166,7 @@ class CommishPickEntryController {
     this.playerSearch = '';
 
     //For edit contexts, if its the same player, just let it go thru.
-    //Potentially fixes #12: https://github.com/mattheworres/phpdraft/issues/12
+    //Potentially fixes #12: https://github.com/mattheworres/hootdraft/issues/12
     //Ensure that the current pick is not in the process of being loaded.
     //Select player may be getting erroneously fired while the current pick is being reloaded.
     if (!this._pickIsTheSame()) {
@@ -243,7 +239,6 @@ angular.module('phpdraft.pick').component('phpdCommishPickEntry', {
   bindings: {
     draft: '<',
     currentPick: '=',
-    isFirstPick: '=',
     pristinePick: '<',
     positions: '<',
     teams: '<',

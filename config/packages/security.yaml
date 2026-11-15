@@ -1,0 +1,44 @@
+# Cookie-session authentication. The json_login firewall checks email + password on POST /login and the
+# session cookie (HttpOnly, SameSite=Lax, see framework.yaml) carries the login from then on: no token is
+# ever readable by JavaScript. Public routes stay public (the firewall is lazy), /commish and /admin need roles.
+security:
+  password_hashers:
+    # Verify-only: the hashes written by the Silex-era app (Symfony 2.8's default digest encoder:
+    # sha512 over "password{salt}", stretched 5000 times, base64). Symfony still ships exactly that hasher.
+    legacy_digest:
+      algorithm: sha512
+      iterations: 5000
+      encode_as_base64: true
+    HootDraft\Security\User:
+      algorithm: auto
+      # Users still on the old hash log in once with it, then get rehashed with the modern algorithm
+      migrate_from:
+        - legacy_digest
+
+  providers:
+    users:
+      id: HootDraft\Security\UserProvider
+
+  firewalls:
+    main:
+      lazy: true
+      provider: users
+      user_checker: HootDraft\Security\UserChecker
+      entry_point: HootDraft\Security\UnauthorizedEntryPoint
+      json_login:
+        check_path: login
+        username_path: _email
+        password_path: _password
+        success_handler: HootDraft\Security\LoginSuccessHandler
+        failure_handler: HootDraft\Security\LoginFailureHandler
+      logout:
+        path: logout
+
+  # The role names are constants on HootDraft\Domain\Entities\LoginUser
+  role_hierarchy:
+    !php/const HootDraft\Domain\Entities\LoginUser::ROLE_ADMIN: [!php/const HootDraft\Domain\Entities\LoginUser::ROLE_COMMISH]
+
+  access_control:
+    - { path: ^/admin, roles: !php/const HootDraft\Domain\Entities\LoginUser::ROLE_ADMIN }
+    - { path: ^/commish, roles: !php/const HootDraft\Domain\Entities\LoginUser::ROLE_COMMISH }
+    - { path: ^/me$, roles: IS_AUTHENTICATED_FULLY }

@@ -31,7 +31,6 @@ class TableStateService {
   */
   tableStateExists(tableStateHandle) {
     const savedState = this.$sessionStorage[tableStateHandle];
-    console.log(`Hey, asked about existing table state for ${tableStateHandle}`);
 
     if (!savedState) {
       return false;

@@ -6,18 +6,17 @@ require dirname(__FILE__).'/deploy/_package_tasks.php';
 require dirname(__FILE__).'/deploy/_setup_tasks.php';
 
 // Configuration
-set('ssh_type', 'native');
 set('ssh_multiplexing', true);
 set('keep_releases', 2);
 set('restart_fpm', false);
 
 // Servers
 host('127.0.0.1')
-  ->stage('local')
-  ->user('your-ssh-user')
+  ->set('labels', ['stage' => 'local'])
+  ->set('remote_user', 'your-ssh-user')
   ->set('deploy_path', '/var/www/your_site_name') //Is abs path to the base directory of the site
-  //->identityFile()    //If empty assumes id_rsa within .ssh
-  //->password(NULL)  //To provide password at terminal prompt, pass NULL here instead
+  ////->set('identity_file', '~/.ssh/id_rsa')  //If empty assumes the default SSH keys
+  //Password logins are not handled by Deployer 7+; use SSH keys (or ssh-agent)
     ;
 
 //See deploy/_deploy_tasks.php for task definition

@@ -6,13 +6,12 @@ class AuthenticationService {
     this.$location = $location;
     this.messageService = messageService;
     this.pathHelperService = pathHelperService;
+    this.pendingSessionCheck = $q.resolve();
   }
 
   cacheSession(userData) {
     this.$sessionStorage.authenticated = true;
-    this.$sessionStorage.authToken = userData.token;
     this.$sessionStorage.userName = userData.name;
-    this.$sessionStorage.authTime = userData.auth_timeout;
     this.$sessionStorage.userAdmin = userData.is_admin;
   }
 
@@ -23,9 +22,8 @@ class AuthenticationService {
 
   uncacheSession() {
     this.$sessionStorage.authenticated = false;
-    delete this.$sessionStorage.authToken;
     delete this.$sessionStorage.userName;
-    delete this.$sessionStorage.authTime;
+    delete this.$sessionStorage.userAdmin;
   }
 
   cacheRoles(roles) {
@@ -38,9 +36,10 @@ class AuthenticationService {
   }
 
   isAuthenticated() {
+    // Only a hint for the UI: the real login is the session cookie, which JavaScript can't see.
+    // verifySession() checks it with the server.
     return this.$sessionStorage.authenticated &&
-      (this.$sessionStorage.userName !== null) &&
-      (this.$sessionStorage.authToken !== null);
+      (this.$sessionStorage.userName !== null);
   }
 
   currentUserName() {
@@ -72,39 +71,62 @@ class AuthenticationService {
   }
 
   logout() {
+    // Ends the session cookie on the server; the local state is cleared right away either way
+    this.api.Authentication.logout(angular.noop, angular.noop);
     return this.uncacheSession();
   }
 
-  isAuthenticationExpired() {
+  // Ask the server whether the cookie still logs us in. sessionStorage is per tab while the cookie is shared by
+  // all of them, so a new tab can be logged in with nothing cached: always ask, and pick the user up if so.
+  verifySession() {
+    const wasAuthenticated = this.isAuthenticated();
+    const checked = this.$q.defer();
+    this.pendingSessionCheck = checked.promise;
+
+    this.api.Authentication.me(data => {
+      this.cacheSession(data);
+      checked.resolve();
+    }, response => {
+      if (response.status === 401 && wasAuthenticated) {
+        this.handleSessionExpired();
+      }
+      checked.resolve();
+    });
+  }
+
+  // Resolves once the server has answered verifySession(), logged in or not. It never rejects, so a route can wait
+  // for it and an anonymous visitor still gets the page.
+  sessionChecked() {
+    return this.pendingSessionCheck;
+  }
+
+  // The server says the session is over although this tab thinks we are logged in
+  handleSessionExpired() {
     if (!this.isAuthenticated()) {
-      return false;
+      return;
     }
 
-    const authTime = new Date(this.$sessionStorage.authTime);
-    const now = new Date();
-
-    if (now > authTime) {
-      this.uncacheSession();
-      return true;
+    this.uncacheSession();
+    this.messageService.showInfo('Your login has expired. You must log back in if you wish to continue.');
+    if (this.$location.path() !== '/login') {
+      this.$location.path('/login');
     }
-
-    return false;
   }
 
   register(model) {
     return this._makeApiCall(model, this.api.Authentication.register);
   }
 
-  verify(model) {
-    return this._makeApiCall(model, this.api.Authentication.verify);
+  emailVerification(model) {
+    return this._makeApiCall(model, this.api.Authentication.emailVerification);
   }
 
   lostPassword(model) {
     return this._makeApiCall(model, this.api.Authentication.lostPassword);
   }
 
-  verifyResetToken(model) {
-    return this._makeApiCall(model, this.api.Authentication.verifyResetToken);
+  checkResetKey(model) {
+    return this._makeApiCall(model, this.api.Authentication.checkResetKey);
   }
 
   resetPassword(model) {

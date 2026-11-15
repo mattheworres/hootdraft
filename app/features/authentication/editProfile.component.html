@@ -43,6 +43,15 @@
                     <i class="fa fa-info-circle" uib-tooltip="You must choose an email that hasn't been used for other commish accounts. If you change the email address your account is associated with, you'll need access to that account in order to verify the address." tooltip-trigger="mouseenter"  tooltip-append-to-body="true"></i>
                   </div>
                 </div>
+                <div class="form-group" ng-show="$ctrl.emailChanged()">
+                  <div class="col-xs-8 col-xs-offset-3">
+                    <div class="alert alert-warning email-change-warning" role="alert">
+                      <strong>Heads up:</strong> if you change to a new email address, you will be logged out.
+                      You must then verify the new email address by clicking the link we email to the new address,
+                      before you can log in again.
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="row">

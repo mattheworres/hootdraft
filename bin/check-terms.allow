@@ -1,0 +1,31 @@
+# Hits that bin/check-terms accepts. Format: rule | path-glob | text that must be on the line ("*": any line)
+# Every entry needs a reason in the comment above it. An entry that matches nothing fails the check: delete it.
+
+# --- Not about Email Verification --------------------------------------------------------------------------------
+# reCAPTCHA verification and password hash verification are different things.
+verification-without-email | src/Domain/Services/RecaptchaVerifier.php | *
+verification-without-email | src/Controller/AuthenticationController.php | RecaptchaVerifier
+verification-without-email | src/Controller/AuthenticationController.php | recaptcha->Verify(
+verification-without-email | src/Domain/Validators/LoginUserValidator.php | ->verify(
+verification-without-email | tests/Unit/Security/LegacyHashMigrationTest.php | *
+verification-without-email | config/packages/security.yaml | Verify-only
+# A Draft's commissioner is checked, not an account's email.
+verification-without-email | src/Domain/Repositories/DraftRepository.php | has been verified as owner
+
+# --- Not a Depth Chart --------------------------------------------------------------------------------------------
+# The display name of a Pro Player league.
+roster-lineup | src/Domain/Repositories/DraftDataRepository.php | Extended Rosters
+
+# --- "token" means the removed login JWT, not an emailed key -------------------------------------------------------
+token | src/Domain/Services/LoginUserService.php | Token minting is gone
+token | src/Controller/AuthenticationController.php | return a token any more
+token | src/Controller/AuthenticationController.php | instead of keeping a token
+token | src/Controller/DraftController.php | similar to the old token
+token | config/packages/security.yaml | no token is
+token | tests/Functional/AuthenticationTest.php | assertArrayNotHasKey('token'
+
+# --- Migrations are history ---------------------------------------------------------------------------------------
+# The old column names verificationKey and verificationKeyCreated must stay spelled out here, in code and in SQL strings.
+verification-noun-in-text | db/* | *
+verification-without-email | db/migrations/20170324024159_fix_users_verification_column.php | *
+verification-without-email | db/migrations/20261022000000_add_users_verification_key_created.php | *
