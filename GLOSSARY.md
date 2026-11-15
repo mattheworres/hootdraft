@@ -117,5 +117,5 @@ _Avoid_: Draft statistics, report, recap
 ### Source control
 
 **Develop branch**:
-The main repository branch that finished work merges into. Today it is named `master`, and the code and docs still say `master`. The team will rename it. Use "develop branch" in new text.
+The main repository branch that finished work merges into. Its name is `develop`. Old docs may still say `master`, which is the old name.
 _Avoid_: Master, main
