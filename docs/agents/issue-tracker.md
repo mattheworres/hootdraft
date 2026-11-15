@@ -7,6 +7,8 @@ Issues and specs for this repo live as markdown files in `.scratch/`.
 - One feature per directory: `.scratch/<feature-slug>/`
 - The spec is `.scratch/<feature-slug>/spec.md`
 - Implementation issues are one file per ticket at `.scratch/<feature-slug>/issues/<NN>-<slug>.md`, numbered from `01`, never a single combined tickets file
+- A sub-ticket of a split ticket has a letter after the number: `02a-<slug>.md`. When a sub-ticket is `completed`, move its file with `git mv` to `.scratch/<feature-slug>/completed-subissues/`. The parent ticket stays in `issues/`
+- A ticket in `completed-subissues/` is complete. A `Blocked by:` line that names it is satisfied
 - Triage state is recorded as a `Status:` line near the top of each issue file (see `triage-labels.md` for the role strings)
 - Comments and conversation history append to the bottom of the file under a `## Comments` heading
 
