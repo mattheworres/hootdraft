@@ -75,12 +75,10 @@ task('phpdraft:upload_files', function() {
   $phpdraft_files = [
     '.env',
     '.env.local',
-    '.htaccess',
     'composer.json',
     'composer.lock',
     'phinx.php',
     'index.html',
-    'web.config',
     'favicon.ico',
   ];
 

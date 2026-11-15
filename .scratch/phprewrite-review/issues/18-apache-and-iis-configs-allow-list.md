@@ -8,7 +8,7 @@ We'll keep nginx up to date because that's what I use.
 
 **Blocked by:** None (can start immediately).
 
-**Status:** ready-for-human
+**Status:** completed
 
-- [ ] `.htaccess` and `web.config` are removed
-- [ ] `EXAMPLE_nginx` matches the Docker nginx allow list
+- [x] `.htaccess` and `web.config` are removed
+- [x] `EXAMPLE_nginx` matches the Docker nginx allow list

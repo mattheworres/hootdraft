@@ -25,12 +25,10 @@ task('import', function() {
   $settings_location = ask("What is the absolute (local) path of where your settings files are located?",
       "~/phpdraft_settings");
 
-  // runLocally("cp $settings_location/.htaccess .htaccess");
   runLocally("cp $settings_location/.env.local .env.local");
   runLocally("cp $settings_location/config.js js/config.js");
   runLocally("cp $settings_location/deploy.php deploy.php");
   //runLocally("cp $settings_location/index.html index.html");
-  runLocally("cp $settings_location/web.config web.config");
 
   writeln("\n\n<info>Success! I imported those settings for you, you should be ready to deploy now.</info>\n");
 });
@@ -58,9 +56,7 @@ task('backup', function() {
     runLocally("cp .env.local $backup_location/.env.local");
     runLocally("cp js/config.js $backup_location/config.js");
     runLocally("cp deploy.php $backup_location/deploy.php");
-    runLocally("cp .htaccess $backup_location/.htaccess");
     //runLocally("cp index.html $backup_location/index.html");
-    runLocally("cp web.config $backup_location/web.config");
   }
 });
 
@@ -112,7 +108,7 @@ task('phpdraft:asksetupquestions', function() {
   $apiBaseUrl = ask("What is the install's API url (no trailing slash)?", "$appBaseUrl/api");
 
   writeln("\n<comment>Deployment/SSH</comment>");
-  $deployLocation = ask("What is the location of the  webserver (Apache/Nginx) where Hoot Draft will be installed? (SSH must be enabled at this location)",
+  $deployLocation = ask("What is the location of the web server (nginx) where Hoot Draft will be installed? (SSH must be enabled at this location)",
     "127.0.0.1");
   $deployUser = ask("What is the name of the user (with SSH access) to $deployLocation?", "your-ssh-user");
   $deployPath = ask("What is the absolute path (on the webserver) where the application will be located?",

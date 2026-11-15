@@ -125,14 +125,12 @@ task('phpdraft:zip_package', function() {
 
   $phpdraft_release_files = [
     '.env',
-    '.htaccess',
     'phinx.php',
     'composer.json',
     'composer.lock',
     'README.MD',
     'package.json',
     'index.html',
-    'web.config',
     'favicon.ico',
   ];
 
