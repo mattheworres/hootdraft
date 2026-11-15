@@ -4,7 +4,7 @@
 
 **Blocked by:** 11
 
-**Status:** complete
+**Status:** completed
 
 - [x] The six classes above use the helper, and no other `beginTransaction` / `rollBack` code is left outside it
 - [x] `DraftStatsRepository` still joins an open transaction and keeps its `FOR UPDATE` lock

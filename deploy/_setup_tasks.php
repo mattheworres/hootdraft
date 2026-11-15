@@ -5,12 +5,12 @@ $backupTitle = 'Hoot Draft: Offer to backup current settings for future upgrade 
 
 desc('Hoot Draft: Use a wizard to set important variables');
 task('setup', [
-    'phpdraft:setupconfirm',
-    'phpdraft:asksetupquestions',
-    'phpdraft:copyfiles',
-    'phpdraft:replacevalues',
+    'hootdraft:setupconfirm',
+    'hootdraft:asksetupquestions',
+    'hootdraft:copyfiles',
+    'hootdraft:replacevalues',
     'backup',
-    'phpdraft:setupsuccess'
+    'hootdraft:setupsuccess'
 ]);
 
 desc($backupTitle);
@@ -23,7 +23,7 @@ task('import', function() {
   writeln("\n<comment>Just a note: this will OVERWRITE anything and everything in .env.local, deploy.php and js/config.js. Hit CTRL+C to exit now if you don't want to do that!</comment>\n");
 
   $settings_location = ask("What is the absolute (local) path of where your settings files are located?",
-      "~/phpdraft_settings");
+      "~/hootdraft_settings");
 
   runLocally("cp $settings_location/.env.local .env.local");
   runLocally("cp $settings_location/config.js js/config.js");
@@ -51,7 +51,7 @@ task('backup', function() {
       ."that only your user has permissions to view the file (if the server you're installing on "
       ."is more important, you should probably ensure your disk is encrypted, too).</info>\n");
     $backup_location = ask("Great! Where should I back your settings up to (ensure the directory exists first)?",
-      "~/phpdraft_settings");
+      "~/hootdraft_settings");
 
     runLocally("cp .env.local $backup_location/.env.local");
     runLocally("cp js/config.js $backup_location/config.js");
@@ -61,7 +61,7 @@ task('backup', function() {
 });
 
 desc('Confirm that the user wants to go through with this; warn of irreversible nature');
-task('phpdraft:setupconfirm', function() {
+task('hootdraft:setupconfirm', function() {
   $message = "Are you sure you wish to begin setup? This will OVERWRITE "
   ."any values stored within .env.local, deploy.php and js/config.js files!!";
 
@@ -73,7 +73,7 @@ task('phpdraft:setupconfirm', function() {
 })->hidden();
 
 desc('Ask the user all questions for the necessary values.');
-task('phpdraft:asksetupquestions', function() {
+task('hootdraft:asksetupquestions', function() {
   runLocally('clear');
 
   writeln("\n\n<info>Hello! I'm the Hoot Draft Setup Wizard (pointy hat not included)</info>");
@@ -84,7 +84,7 @@ task('phpdraft:asksetupquestions', function() {
 
   writeln("<comment>Database</comment>");
   $dbHost = ask("Where is the MySQL server located (IP or DNS name, usually localhost)?", "localhost");
-  $dbName = ask("What is the name of the MySQL database?", "phpdraft");
+  $dbName = ask("What is the name of the MySQL database?", "hootdraft");
   $dbPort = ask("What port is MySQL running on (usually 3306)?", 3306);
   $dbUser = ask("What is the name of the user that has access to the $dbName database?", 'your-database-user');
   $dbPass = askHiddenResponse("What is $dbUser 's password (characters will be hidden from the console for security)?");
@@ -144,11 +144,11 @@ task('phpdraft:asksetupquestions', function() {
     'deployReleasesKept' => $deployReleasesKept
   ];
 
-  set('phpdraft_setup_variables', $vars);
+  set('hootdraft_setup_variables', $vars);
 })->hidden();
 
 desc('Copy files from the deploy directory to their place.');
-task('phpdraft:copyfiles', function() {
+task('hootdraft:copyfiles', function() {
   if(file_exists('js') !== true) {
     runLocally('mkdir js');
   }
@@ -159,7 +159,7 @@ task('phpdraft:copyfiles', function() {
 })->hidden();
 
 desc('Replace placeholder markers with values from user');
-task('phpdraft:replacevalues', function() {
+task('hootdraft:replacevalues', function() {
   $files_to_replace_in = [
     '.env.local',
     'js/config.js',
@@ -170,10 +170,10 @@ task('phpdraft:replacevalues', function() {
   foreach($files_to_replace_in as $file) {
     $contents = file_get_contents($file);
 
-    foreach(get('phpdraft_setup_variables') as $property => $value) {
+    foreach(get('hootdraft_setup_variables') as $property => $value) {
       // .env.local values sit inside double quotes: escape what Symfony's Dotenv treats specially there
       $replacement = $file === '.env.local' ? addcslashes((string) $value, '"\\$') : (string) $value;
-      $contents = str_replace("{phpdraft.$property}", $replacement, $contents);
+      $contents = str_replace("{hootdraft.$property}", $replacement, $contents);
     }
 
     file_put_contents($file, $contents);
@@ -181,7 +181,7 @@ task('phpdraft:replacevalues', function() {
 })->hidden();
 
 desc('Inform user that setup has completed successfully');
-task('phpdraft:setupsuccess', function() {
+task('hootdraft:setupsuccess', function() {
     writeln("\n<info>Alright! Setup has completed for Hoot Draft!</info>\n");
     writeln("\n<info>If you plan on deploying this install, you can say NO to import your settings - "
       ."they're already in place and don't need imported!</info>");

@@ -4,7 +4,7 @@
 
 **Blocked by:** None (can start immediately).
 
-**Status:** complete
+**Status:** completed
 
 - [x] The authentication service exposes the startup `/me` check as something components can wait for (a promise, or a route resolve)
 - [x] The home draft table, the login screen and the navigation reflect the session once `/me` answers, with no reload

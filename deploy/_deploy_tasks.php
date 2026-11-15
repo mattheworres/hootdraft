@@ -3,18 +3,18 @@ namespace Deployer;
 
 desc('Hoot Draft: Deploy to production');
 task('deploy', [
-  'phpdraft:verify_install',
+  'hootdraft:verify_install',
   'deploy:info',
   'deploy:setup',
   'deploy:lock',
   'deploy:release',
-  'phpdraft:upload_files',
+  'hootdraft:upload_files',
   'deploy:shared',
-  'phpdraft:warm_cache',
-  'phpdraft:breakpoint',
-  'phpdraft:migrate',
+  'hootdraft:warm_cache',
+  'hootdraft:breakpoint',
+  'hootdraft:migrate',
   'deploy:symlink',
-  //'phpdraft:restart_fpm',
+  //'hootdraft:restart_fpm',
   'deploy:unlock',
   'deploy:cleanup',
   'deploy:success'
@@ -26,12 +26,12 @@ set('shared_dirs', ['var/log', 'var/sessions']);
 set('shared_files', []);
 // vendor/ ships inside the release package (no composer needed on the host); Phinx is a regular dependency.
 
-before('deploy:release', 'phpdraft:set_rollback');
-fail('deploy', 'phpdraft:rollback');
-fail('deploy', 'phpdraft:failure');
+before('deploy:release', 'hootdraft:set_rollback');
+fail('deploy', 'hootdraft:rollback');
+fail('deploy', 'hootdraft:failure');
 
 desc('Verify Hoot Draft has been prepared for deployment');
-task('phpdraft:verify_install', function() {
+task('hootdraft:verify_install', function() {
   writeln('');
 
   $items_required_for_deploy = [
@@ -55,10 +55,10 @@ task('phpdraft:verify_install', function() {
 })->hidden();
 
 desc('Upload app files');
-task('phpdraft:upload_files', function() {
+task('hootdraft:upload_files', function() {
   // Directories are uploaded as their contents (trailing slash), files one by one.
   // Only what the running app needs: no tests/, docs/, docker/ or node_modules.
-  $phpdraft_dirs = [
+  $hootdraft_dirs = [
     'api',
     'bin',
     'config',
@@ -72,7 +72,7 @@ task('phpdraft:upload_files', function() {
     'js',
   ];
 
-  $phpdraft_files = [
+  $hootdraft_files = [
     '.env',
     '.env.local',
     'composer.json',
@@ -82,31 +82,31 @@ task('phpdraft:upload_files', function() {
     'favicon.ico',
   ];
 
-  foreach ($phpdraft_dirs as $dir) {
+  foreach ($hootdraft_dirs as $dir) {
     upload("$dir/", "{{release_path}}/$dir/");
   }
 
-  foreach ($phpdraft_files as $file) {
+  foreach ($hootdraft_files as $file) {
     upload($file, "{{release_path}}/$file");
   }
 })->hidden();
 
 desc('Install NPM dependencies remotely');
-task('phpdraft:remote_yarn', function() {
+task('hootdraft:remote_yarn', function() {
   cd('{{release_path}}');
 
   run('yarn --production');
 })->hidden();
 
 desc('Build the production Symfony cache');
-task('phpdraft:warm_cache', function() {
+task('hootdraft:warm_cache', function() {
   run('mkdir -p {{release_path}}/var/cache');
   run('cd {{release_path}} && APP_ENV=prod APP_DEBUG=0 {{bin/php}} bin/console cache:warmup');
 })->hidden();
 
 //TODO: SSH user needs elevated via the sudoers file in order to do this in Deployer
 // desc('Restart the PHP FPM service');
-// task('phpdraft:restart_fpm', function() {
+// task('hootdraft:restart_fpm', function() {
 // 	if(get("restart_fpm") == true) {
 // 		writeln("<comment>Restarting the php-fpm service...</comment>");
 // 		run('sudo service php8.4-fpm restart');
@@ -116,33 +116,33 @@ task('phpdraft:warm_cache', function() {
 // })->hidden();
 
 desc('Set Phinx breakpoint');
-task('phpdraft:breakpoint', function() {
+task('hootdraft:breakpoint', function() {
   run('cd {{release_path}} && {{bin/php}} vendor/bin/phinx breakpoint -e production --remove-all');
   run('cd {{release_path}} && {{bin/php}} vendor/bin/phinx breakpoint -e production');
 })->hidden();
 
 desc('Set rollback var to false in case of error');
-task('phpdraft:set_rollback', function() {
-  set('phpdraft_rollback_required', false);
+task('hootdraft:set_rollback', function() {
+  set('hootdraft_rollback_required', false);
 })->hidden();
 
 desc('Run Phinx migrations');
-task('phpdraft:migrate', function() {
-  set('phpdraft_rollback_required', true);
+task('hootdraft:migrate', function() {
+  set('hootdraft_rollback_required', true);
 
   run('cd {{release_path}} && {{bin/php}} vendor/bin/phinx migrate -e production');
 })->hidden();
 
 desc('Rollback migrations on failure');
-task('phpdraft:rollback', function() {
+task('hootdraft:rollback', function() {
   writeln('<comment>Rolling back database migrations...</comment>');
-  if(get("phpdraft_rollback_required") == true) {
+  if(get("hootdraft_rollback_required", false) == true) {
     run('cd {{release_path}} && {{bin/php}} vendor/bin/phinx rollback -e production');
   }
 })->hidden();
 
 desc('Inform user of failed deploy');
-task('phpdraft:failure', function() {
+task('hootdraft:failure', function() {
   writeln("\n<error>Whoops! Looks like an error has occurred and the deploy failed.</error>\n");
   writeln("<error>I attempted to rollback any migrations that were made on the database, but you will
     need to verify the integrity of your install. See {{deploy_path}} releases and create a new

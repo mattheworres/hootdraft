@@ -10,7 +10,7 @@ While you are in this code:
 
 **Blocked by:** 13 (same controller and service)
 
-**Status:** complete
+**Status:** completed
 
 - [x] Changing `using_depth_charts` or the positions on a Draft that isn't Setting Up answers 400 with a clear message and changes nothing. Sending the stored values unchanged still succeeds
 - [x] The Draft edit screen shows the 400 message and leaves the Draft as stored
