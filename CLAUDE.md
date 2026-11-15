@@ -1,6 +1,6 @@
 # Writing style
 
-Write your findings and explanations meant for human review using ASD-STE100 Simplified Technical English. Be succinct and clear in your writing.
+Follow `docs/writing-style.md`, but stick to these rules for agentic conversation as well (in particular, maintain signal integrity but keep sentence complexity and verbosity to a minimum).
 
 ## Commands
 
@@ -9,6 +9,10 @@ Run inside the php container.
 - Tests: `docker compose exec -T php composer test` (one file: add `-- tests/Functional/AuthenticationTest.php`)
 - PHPStan, glossary terms and tests together: `docker compose exec -T php composer check`
 - Commits will be blocked.
+
+## Comments
+
+Comment only non-obvious decisions: workarounds, external constraints, and reasons the code can't express. Code should be self-documenting otherwise.
 
 ## Agent skills
 
