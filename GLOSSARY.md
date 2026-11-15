@@ -11,7 +11,7 @@ The user who creates a Draft and runs it. Also called the **Commish**.
 _Avoid_: Owner, host, admin
 
 **Admin**:
-A user with the site-wide admin role. Admins manage users, pro player data and Draft Stats across all Drafts.
+A user with the site-wide admin role. Admins manage users, Pro Player data, and Draft Stats across all Drafts.
 _Avoid_: Commissioner (a Commissioner is not necessarily an Admin)
 
 **Manager**:
@@ -25,15 +25,15 @@ _Avoid_: Player
 ### Accounts
 
 **Email Verified / Email Unverified**:
-Whether the user followed the emailed link for their current address. A new user and a Commissioner who changed their email are Email Unverified until they follow the link. In code, comments and docs always use the full term: "verified", "unverified" and "verification" alone do not say which check is meant. In text shown to users (messages, screens, emails) plain "verify", "verified" and "unverified" are fine when it is clear that the email address is meant, because the full term reads awkwardly there. The bare noun "verification" is still avoided in that text. The matching token is the **Email Verification Key**.
-_Avoid_: Verified, unverified, verification (without "Email") in code, comments and docs; confirmed, active
+Whether the user followed the emailed link for their current address. A new user, and a Commissioner who changed their email, are Email Unverified until they follow the link, which carries the **Email Verification Key**.
+_Avoid_: Verified, unverified, verification (without "Email") in code, comments, and docs; confirmed, active. Text shown to users can say "verify", "verified", and "unverified" when the email address is clear from context.
 
 **Enabled / Disabled**:
 The Admin's switch. A Disabled user cannot log in. Only an Admin changes it, and it is separate from Email Verified.
 _Avoid_: Blocked, active, inactive
 
 **Reset**:
-Choosing a new password through an emailed link, after a lost password request. It uses its own token, the **Reset Key**, which is separate from the Email Verification Key. A Reset never makes a user Email Verified.
+Choosing a new password through an emailed link, after a lost password request. The link carries the **Reset Key**, which is separate from the Email Verification Key, and a Reset never makes a user Email Verified.
 _Avoid_: Verification, verify
 
 ### The draft
@@ -43,11 +43,11 @@ One event in which Managers take turns choosing Pro Players, run by a Commission
 _Avoid_: League (that word means the pro league), event
 
 **League**:
-The professional league that a Draft and its Pro Players belong to, stored as a key: **NFL**, **NFLE** (NFL Extended: the NFL with defensive players and lesser-used players such as offensive linemen), **MLB**, **NBA**, **NHL** and **S15** (Super Rugby). The Pro Player list holds a separate set of players for each League.
-_Avoid_: Sport (the old code word, still used for `draft_sport` and the Draft API field)
+The professional league that a Draft and its Pro Players belong to: **NFL**, **NFLE** (NFL Extended, which adds defensive and lesser-used players), **MLB**, **NBA**, **NHL**, or **S15** (Super Rugby). The Pro Player list holds a separate set of players for each League.
+_Avoid_: Sport (the old code word)
 
 **Setting Up**:
-The Draft status before it has begun, while Managers, Round Times and other options are still being configured.
+The Draft status before it has begun, while Managers, Round Times, and other options are still being configured.
 _Avoid_: Undrafted, not started
 
 **In Progress**:
@@ -60,27 +60,36 @@ _Avoid_: Finished, ended, done
 
 **Draft Style**:
 Whether Draft Order repeats the same each Round (**Standard**) or reverses on alternate Rounds (**Serpentine**).
+_Avoid_: Draft type, format
 
 **Draft Order**:
 The sequence in which Managers take their turns in a Round.
 _Avoid_: Pick order
 
+**Draft Password**:
+An optional password that the Commissioner sets on a Draft. A viewer must enter it before they can see the Draft.
+_Avoid_: Passcode, PIN, key
+
+**Draft Board**:
+The grid that shows every Pick of a Draft, with one row for each Round.
+_Avoid_: Grid, big board
+
 ### Picks and rounds
 
 **Pick**:
-A turn on the draft board, belonging to a Manager at a particular position in a Round. A Pick is either a Selected Pick or an Unselected Pick.
+A turn on the Draft Board, belonging to a Manager at a particular position in a Round. A Pick is either a Selected Pick or an Unselected Pick.
 _Avoid_: Slot, turn, player (the old code word for a Pick)
 
 **Selected Pick**:
-A Pick for which a player has been chosen. Its name, team and position usually come from a Pro Player suggestion, but the Commissioner can edit them (a nickname, say) or enter a player who isn't in the Pro Player list at all.
+A Pick for which a player has been chosen. Its name, team, and position usually come from a Pro Player suggestion, but the Commissioner can edit them (a nickname, say) or enter a player who isn't in the Pro Player list at all.
 _Avoid_: Selection, drafted player, made pick
 
 **Unselected Pick**:
-A Pick that exists on the draft board but has no Pro Player chosen yet.
+A Pick that exists on the Draft Board but has no Pro Player chosen yet.
 _Avoid_: Empty pick, open slot
 
 **Round**:
-One row of Picks on the draft board. A Round normally gives each Manager one Pick in Draft Order, but Trades can leave it unbalanced, so some Managers take several Picks in a Round and others none.
+One row of Picks on the Draft Board. A Round normally gives each Manager one Pick in Draft Order, but Trades can leave it unbalanced, so some Managers take several Picks in a Round and others none.
 _Avoid_: Turn, pass
 
 **Round Time**:
@@ -103,6 +112,7 @@ _Avoid_: Trade item, traded player
 
 **Traded Pick**:
 A Pick that now belongs to a different Manager than the one it started with.
+_Avoid_: Swapped pick, acquired pick
 
 **Depth Chart**:
 A Manager's Selected Picks arranged into positions with a fixed number of slots each. A Draft opts in to using Depth Charts.
