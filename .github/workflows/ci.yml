@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: composer check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start the developer box
+        run: |
+          cp docker/.env.example docker/.env
+          APP_UID=$(id -u) docker compose up -d --build --wait
+
+      - name: Install the PHP packages and migrate the database
+        run: |
+          docker compose exec -T php composer install --no-interaction --no-progress
+          docker compose exec -T php vendor/bin/phinx migrate -e production
+
+      - name: PHPStan, glossary terms, and tests
+        run: docker compose exec -T php composer check
+
+  e2e:
+    name: E2E (${{ matrix.browser }})
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        # Chromium on each push. All four browsers on a pull request, which is the gate before merge.
+        browser: ${{ github.event_name == 'pull_request' && fromJSON('["chromium", "firefox", "webkit", "edge"]') || fromJSON('["chromium"]') }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      # The E2E stack serves the built client from the repo root, so the build comes before the stack
+      - name: Build the AngularJS client
+        run: |
+          yarn install --frozen-lockfile
+          npx gulp build
+
+      - name: Install the E2E packages
+        working-directory: e2e
+        run: npm ci
+
+      - name: Install the browser
+        working-directory: e2e
+        run: npx playwright install --with-deps ${{ matrix.browser == 'edge' && 'msedge' || matrix.browser }}
+
+      - name: Start the E2E stack
+        working-directory: e2e
+        run: |
+          npm run stack:up
+          docker compose -f stack/docker-compose.yml exec -T php composer install --no-interaction --no-progress
+
+      # The checks of the helpers do not test a client, so they run in the Chromium job only
+      - name: Run the E2E suite
+        working-directory: e2e
+        run: npx playwright test --project=${{ matrix.browser }} ${{ matrix.browser == 'chromium' && '--project=helpers' || '' }}
+
+      - name: Keep the report of a failed run
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.browser }}
+          path: |
+            e2e/playwright-report/
+            e2e/test-results/
+          retention-days: 7

@@ -1,0 +1,20 @@
+{
+  "name": "hootdraft-e2e",
+  "private": true,
+  "description": "Playwright E2E suite for HootDraft. It belongs to neither client.",
+  "scripts": {
+    "stack:up": "docker compose -f stack/docker-compose.yml up -d --build --wait",
+    "stack:down": "docker compose -f stack/docker-compose.yml down",
+    "stack:destroy": "docker compose -f stack/docker-compose.yml down -v",
+    "test": "playwright test",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write \"**/*.ts\""
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "@types/node": "^26.6.6",
+    "mysql2": "^3.24.6",
+    "prettier": "^3.10.1",
+    "typescript": "^7.0.2"
+  }
+}
