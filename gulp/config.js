@@ -54,7 +54,7 @@ module.exports = {
         'node_modules/jquery/dist/jquery.slim.js',
         'node_modules/angular/angular.js',
         'node_modules/slipjs/slip.js',
-        'node_modules/FlipClock/compiled/flipclock.js',
+        'node_modules/flipclock/compiled/flipclock.js',
         'node_modules/angular-smart-table/dist/smart-table.js',
         'node_modules/angular-route/angular-route.js',
         'node_modules/angular-animate/angular-animate.js',

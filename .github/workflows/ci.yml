@@ -13,7 +13,7 @@ jobs:
     name: composer check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Start the developer box
         run: |
@@ -39,9 +39,9 @@ jobs:
         # Chromium on each push. All four browsers on a pull request, which is the gate before merge.
         browser: ${{ github.event_name == 'pull_request' && fromJSON('["chromium", "firefox", "webkit", "edge"]') || fromJSON('["chromium"]') }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
 
@@ -72,7 +72,7 @@ jobs:
 
       - name: Keep the report of a failed run
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: playwright-report-${{ matrix.browser }}
           path: |
