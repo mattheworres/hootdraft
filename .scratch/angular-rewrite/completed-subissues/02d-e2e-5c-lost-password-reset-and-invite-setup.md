@@ -4,7 +4,7 @@
 
 **Blocked by:** 02a
 
-**Status:** awaiting-human-review
+**Status:** completed
 
 - [x] First, apply the approved items to the rows of this group. Change each row to the correct result and fill in "Known defect": W-18 (RESET-04, INVITE-04, LOST-04), W-32 (RESET-03, INVITE-03), W-06 (LOST-05, RESET-06, INVITE-06: each "previous route" row)
 - [x] One test for each of the 17 rows. The test name starts with the row ID
