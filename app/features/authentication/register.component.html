@@ -54,6 +54,7 @@
                   </div>
                   <div class="col-xs-8">
                     <input name="name"
+                      data-testid="register-name"
                       autocomplete="nickname"
                       ng-model="user.name"
                       class="form-control"
@@ -85,6 +86,7 @@
                   </div>
                   <div class="col-xs-6">
                     <input name="password"
+                      data-testid="register-password"
                       ng-model="user.password"
                       autocomplete="new-password"
                       class="form-control"
@@ -100,7 +102,7 @@
                     </div>
                   </div>
                   <div class="col-xs-3 text-right">
-                    <toggle-switch name="showPassword" ng-model="$ctrl.showPassword" knob-label="Show"></toggle-switch>
+                    <toggle-switch name="showPassword" data-testid="register-show-password" ng-model="$ctrl.showPassword" knob-label="Show"></toggle-switch>
                   </div>
                 </div>
               </div>
@@ -115,6 +117,7 @@
                   </div>
                   <div class="col-xs-6">
                     <input name="confirmedPassword"
+                      data-testid="register-confirm-password"
                       autocomplete="new-password"
                       ng-model="user.confirmedPassword"
                       class="form-control"

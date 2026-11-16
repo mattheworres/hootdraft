@@ -32,7 +32,7 @@ The suite runs against its own Docker Compose project, `hootdraft-e2e`. It has i
 The stack differs from the developer box in these ways:
 
 - **reCAPTCHA.** The API and the client use Google's public test keys, so each check passes.
-- **Client settings.** nginx answers `/js/dev.js` with `stack/client-config.js`, not with the generated file. One client build works for both stacks.
+- **Client settings.** nginx answers `/js/dev.js` with `stack/nginx/client-config.js`, not with the generated file. One client build works for both stacks.
 - **API mode.** The API runs as in production (`APP_ENV=prod`, no debug), with its own `var/` directory.
 - **Draft cache.** `CACHE_SECONDS` is `1`. See the timestamp helper.
 
@@ -40,8 +40,11 @@ After you change a template in `app/`, build the client again at the repo root (
 
 ## Run the suite
 
+While you change code, run Chromium only (`--project=chromium`). Run each browser once before you mark the work done.
+
 ```sh
 npm test                               # each browser, plus the checks of the helpers
+npm run test-ui                        # open Playwright's UI mode
 npx playwright test --project=chromium # one browser: chromium, firefox, webkit, or edge
 npx playwright test 5a-login           # one file
 npx playwright test -g LOGIN-02        # one inventory row
@@ -168,13 +171,25 @@ await failApiRequest(page, { path: /^draft\/\d+\/picks$/, status: 404, body: { s
 
 `path` is the path after `/api/`. The request never reaches the API.
 
+For the rows that say "no request is sent", record the matching API requests before the step and check the list after it:
+
+```ts
+const loginRequests = recordApiRequests(page, { path: 'login' });
+// the step
+expect(loginRequests).toEqual([]);
+```
+
+### Draft screen: `helpers/draft-screen.ts`
+
+`openDraftScreen(page, draft)` opens the Draft screen, waits until the Draft has loaded, and returns the route. `openDraftScreenLoggedIn(page, context, setup)` does the same for a new, logged-in Commissioner with an In Progress Draft. It is the starting state of the rows where a logged-in viewer opens an auth route.
+
 ### Toasts: `helpers/toast.ts`
 
 ```ts
 await expectToast(page, { title: 'Logged In', message: 'Welcome back, Ann!' });
 ```
 
-The AngularJS toast has no role and no `data-testid`, so this helper asserts the visible text.
+The AngularJS toast has no role and no `data-testid`, so this helper asserts the visible text. `expectAlreadyLoggedInToast(page, user)` asserts the toast that a logged-in viewer gets on an auth route.
 
 ## CI
 

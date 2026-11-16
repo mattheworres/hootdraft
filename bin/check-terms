@@ -13,9 +13,11 @@
  */
 
 const ROOT = __DIR__ . '/..';
-const SCANNED_DIRS = ['src', 'tests', 'templates', 'config', 'db', 'bin'];
-const SCANNED_EXTENSIONS = ['php', 'html', 'yaml', 'yml', 'sql', 'twig'];
+// app/ (the AngularJS client) is not scanned: it is being replaced, not updated.
+const SCANNED_DIRS = ['src', 'tests', 'templates', 'config', 'db', 'bin', 'e2e'];
+const SCANNED_EXTENSIONS = ['php', 'html', 'yaml', 'yml', 'sql', 'twig', 'ts'];
 const SKIPPED_FILES = ['bin/check-terms', 'config/reference.php'];
+const SKIPPED_DIR_NAMES = ['node_modules', 'playwright-report', 'test-results'];
 const ALLOW_FILE = __DIR__ . '/check-terms.allow';
 
 /**
@@ -64,8 +66,10 @@ function splitLine(string $path, string $line): array
     return ['', $line];
   }
 
+  // Backticks quote text only in TypeScript. In SQL they quote names, which are code.
+  $backtick = str_ends_with($path, '.ts') ? '|`(?:[^`\\\\]|\\\\.)*`' : '';
   $text = '';
-  $code = preg_replace_callback('/\'(?:[^\'\\\\]|\\\\.)*\'|"(?:[^"\\\\]|\\\\.)*"/', function (array $match) use (&$text): string {
+  $code = preg_replace_callback('/\'(?:[^\'\\\\]|\\\\.)*\'|"(?:[^"\\\\]|\\\\.)*"' . $backtick . '/', function (array $match) use (&$text): string {
     $text .= ' ' . $match[0];
 
     return ' ';
@@ -98,7 +102,10 @@ function loadAllowList(): array
 function scannedFiles(): iterable
 {
   foreach (SCANNED_DIRS as $dir) {
-    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(ROOT . '/' . $dir, FilesystemIterator::SKIP_DOTS));
+    $iterator = new RecursiveIteratorIterator(new RecursiveCallbackFilterIterator(
+      new RecursiveDirectoryIterator(ROOT . '/' . $dir, FilesystemIterator::SKIP_DOTS),
+      fn(SplFileInfo $file) => !($file->isDir() && in_array($file->getFilename(), SKIPPED_DIR_NAMES, true)),
+    ));
     foreach ($iterator as $file) {
       $path = $dir . substr($file->getPathname(), strlen(ROOT . '/' . $dir));
       if (in_array($file->getExtension(), SCANNED_EXTENSIONS, true) && !in_array($path, SKIPPED_FILES, true)) {

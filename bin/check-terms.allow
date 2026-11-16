@@ -11,6 +11,8 @@ verification-without-email | tests/Unit/Security/LegacyHashMigrationTest.php | *
 verification-without-email | config/packages/security.yaml | Verify-only
 # A Draft's commissioner is checked, not an account's email.
 verification-without-email | src/Domain/Repositories/DraftRepository.php | has been verified as owner
+# Row IDs of docs/flow-inventory.md (VERIFY-01 to VERIFY-04) are names, not prose.
+verification-without-email | e2e/* | VERIFY-0
 
 # --- Not a Depth Chart --------------------------------------------------------------------------------------------
 # The display name of a Pro Player league.
