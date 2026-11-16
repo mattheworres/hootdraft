@@ -124,29 +124,7 @@ export class ApiSetup {
 
   /** Registers a new user and follows the emailed link, so the user is Enabled, Email Verified, and logged in. */
   async registerCommissioner(overrides: Partial<Credentials> = {}): Promise<LoggedInUser> {
-    const name = overrides.name ?? unique('Commissioner');
-    const credentials: Credentials = {
-      name,
-      email: overrides.email ?? `${name.toLowerCase().replaceAll(' ', '-')}@e2e.example`,
-      password: overrides.password ?? 'commissioner-password',
-    };
-    const api = await this.newSession();
-
-    await send(
-      () =>
-        api.post('register', {
-          data: {
-            _name: credentials.name,
-            _email: credentials.email,
-            _password: credentials.password,
-            _confirmPassword: credentials.password,
-            // Google's test secret accepts each response value
-            _recaptcha: 'e2e',
-          },
-        }),
-      'register a Commissioner',
-    );
-
+    const { credentials, api } = await this.register(overrides);
     const { key } = await readEmailVerificationKey(credentials.email);
 
     await send(
@@ -155,6 +133,13 @@ export class ApiSetup {
     );
 
     return { ...credentials, api };
+  }
+
+  /** Registers a new user and stops there: the user is Email Unverified, and the registration email is in Mailpit. */
+  async registerEmailUnverifiedUser(overrides: Partial<Credentials> = {}): Promise<Credentials> {
+    const { credentials } = await this.register(overrides);
+
+    return credentials;
   }
 
   /** Registers a new user and gives them the Admin role. */
@@ -180,7 +165,29 @@ export class ApiSetup {
       'give the Admin role',
     );
 
-    return commissioner;
+    // The login session of the new user ended with the role change, so the Admin needs a new one
+    return this.logIn(commissioner);
+  }
+
+  /** Enables or disables a user. Needs an Admin. A Disabled user cannot log in, and the login session ends. */
+  async setUserEnabled(admin: LoggedInUser, user: Credentials, enabled: boolean): Promise<void> {
+    const { users } = await send<{ users: { id: number; email: string; roles: string | string[] }[] }>(
+      () => admin.api.get('admin/users'),
+      'list the users',
+    );
+    const stored = users.find((candidate) => candidate.email === user.email.toLowerCase());
+
+    if (!stored) {
+      throw new Error(`API setup could not find the user ${user.email} to ${enabled ? 'enable' : 'disable'}`);
+    }
+
+    await send(
+      () =>
+        admin.api.put(`admin/user/${stored.id}`, {
+          data: { name: user.name, email: user.email, roles: stored.roles, enabled },
+        }),
+      `${enabled ? 'enable' : 'disable'} the user`,
+    );
   }
 
   async logIn(credentials: Credentials): Promise<LoggedInUser> {
@@ -360,6 +367,35 @@ export class ApiSetup {
   async dispose(): Promise<void> {
     await Promise.all(this.sessions.map((session) => session.dispose()));
     this.sessions.length = 0;
+  }
+
+  private async register(
+    overrides: Partial<Credentials>,
+  ): Promise<{ credentials: Credentials; api: APIRequestContext }> {
+    const name = overrides.name ?? unique('Commissioner');
+    const credentials: Credentials = {
+      name,
+      email: overrides.email ?? `${name.toLowerCase().replaceAll(' ', '-')}@e2e.example`,
+      password: overrides.password ?? 'commissioner-password',
+    };
+    const api = await this.newSession();
+
+    await send(
+      () =>
+        api.post('register', {
+          data: {
+            _name: credentials.name,
+            _email: credentials.email,
+            _password: credentials.password,
+            _confirmPassword: credentials.password,
+            // Google's test secret accepts each response value
+            _recaptcha: 'e2e',
+          },
+        }),
+      'register a user',
+    );
+
+    return { credentials, api };
   }
 
   private async newSession(): Promise<APIRequestContext> {

@@ -97,7 +97,9 @@ test('DRAFT-01 ...', async ({ page, context, setup }) => {
 | --- | --- |
 | `registerCommissioner(overrides?)` | A new Enabled, Email Verified user with a login session. Pass `name`, `email`, or `password` to set them |
 | `registerAdmin(overrides?)` | The same, with the Admin role |
+| `registerEmailUnverifiedUser(overrides?)` | A new Email Unverified user. Returns the credentials only. The registration email is in Mailpit |
 | `logIn(credentials)` | A new login session for an existing user |
+| `setUserEnabled(admin, user, enabled)` | Enables or disables a user. A Disabled user cannot log in, and their login session ends |
 | `createDraft(commissioner, options?)` | A Draft. `status` is `'Setting Up'` (default), `'In Progress'`, or `'Complete'`. Other options: `name`, `league`, `style`, `rounds`, `password` (the Draft Password), `managers`, `depthChartPositions` |
 | `setDraftStatus(commissioner, draftId, status)` | Moves a Draft to Setting Up or In Progress |
 | `addManagers(commissioner, draftId, names)` | Adds Managers. Returns each Manager in Draft Order |
@@ -138,7 +140,11 @@ await setResetKeyTime(email, { hours: 2 });             // the key expires after
 - The age is measured on the database clock, not on the clock of your machine.
 - The API caches each Draft row. The two Draft functions wait two seconds, so that the cached row expires.
 
-### Known failure on AngularJS: `helpers/client.ts`
+### Client under test: `helpers/client.ts`
+
+`footerVersionText` is the text of the footer link to the project, which differs by client: "HootDraft v2.4.0" on AngularJS and "HootDraft v3.0.0" on the new client.
+
+#### Known failure on AngularJS
 
 For a row with a "Known defect" value, assert the correct result and mark the test:
 

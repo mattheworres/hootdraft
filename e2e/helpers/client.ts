@@ -33,3 +33,6 @@ export const clientBaseURL: string = CLIENTS[clientUnderTest].baseURL;
 export function knownFailureOnAngularJs(defect: string): void {
   test.fail(clientUnderTest === 'angularjs', `Known defect ${defect} in the AngularJS client (docs/flow-inventory.md)`);
 }
+
+/** The text of the footer link to the project. W-29 of docs/flow-inventory.md: each client shows its own version. */
+export const footerVersionText: string = clientUnderTest === 'angularjs' ? 'HootDraft v2.4.0' : 'HootDraft v3.0.0';

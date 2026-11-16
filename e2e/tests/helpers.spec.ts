@@ -1,7 +1,7 @@
 import { LoggedInUser } from '../helpers/api';
 import { clientUnderTest, knownFailureOnAngularJs } from '../helpers/client';
 import { failApiRequest } from '../helpers/intercept';
-import { readResetKey } from '../helpers/mailpit';
+import { readEmailVerificationKey, readResetKey } from '../helpers/mailpit';
 import { API_URL, STACK_URL } from '../helpers/stack';
 import { expect, test } from '../helpers/test';
 import { setDraftEndTime, setDraftStartTime, setPickTime, setResetKeyTime } from '../helpers/timestamps';
@@ -27,6 +27,37 @@ test.describe('API setup helpers', () => {
     const me = await getJson(await setup.logIn(admin), 'me');
 
     expect(me).toMatchObject({ name: admin.name, is_admin: true });
+  });
+
+  test('registerEmailUnverifiedUser makes a user who cannot log in until the link is followed', async ({
+    setup,
+    request,
+  }) => {
+    const user = await setup.registerEmailUnverifiedUser();
+    const login = () => setup.logIn(user);
+
+    await expect(login()).rejects.toThrow('still unverified');
+
+    const { key } = await readEmailVerificationKey(user.email);
+    await request.post(`${API_URL}emailVerification`, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      data: { _email: user.email, _emailVerificationKey: key },
+    });
+    await expect(login()).resolves.toMatchObject({ email: user.email });
+  });
+
+  test('setUserEnabled disables a user, so the login fails and the login session ends', async ({ setup }) => {
+    const admin = await setup.registerAdmin();
+    const commissioner = await setup.registerCommissioner();
+
+    await setup.setUserEnabled(admin, commissioner, false);
+
+    expect((await commissioner.api.get('me')).status()).toBe(401);
+    await expect(setup.logIn(commissioner)).rejects.toThrow('Invalid credentials');
+
+    await setup.setUserEnabled(admin, commissioner, true);
+
+    await expect(setup.logIn(commissioner)).resolves.toMatchObject({ email: commissioner.email });
   });
 
   for (const [status, apiValue] of [
