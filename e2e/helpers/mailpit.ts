@@ -66,6 +66,16 @@ export function readResetKey(email: string): Promise<EmailedKey> {
   return newestLink(email, ['resetPassword', 'inviteSetup']);
 }
 
+/** The path of an emailed link. A test opens this path, because the host in the email can differ from the client under test. */
+export function linkPath(link: string): string {
+  return new URL(link).pathname;
+}
+
+/** The path with its last segment, the key, replaced by a key that matches no user. */
+export function withWrongKey(path: string): string {
+  return path.replace(/[^/]+$/, 'not-the-key');
+}
+
 export async function deleteAllEmails(): Promise<void> {
   await mailpit('messages', { method: 'DELETE' });
 }

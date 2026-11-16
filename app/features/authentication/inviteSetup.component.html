@@ -36,7 +36,7 @@
                     </label>
                   </div>
                   <div class="col-xs-9">
-                    <strong>{{$ctrl.email}}</strong>
+                    <strong data-testid="invite-email">{{$ctrl.email}}</strong>
                     <input
                       name="email"
                       autocomplete="username"
@@ -56,6 +56,7 @@
                   </div>
                   <div class="col-xs-6">
                     <input name="password"
+                      data-testid="invite-password"
                       autocomplete="new-password"
                       ng-model="user.password"
                       class="form-control"
@@ -71,7 +72,7 @@
                     </div>
                   </div>
                   <div class="col-xs-3 text-right">
-                    <toggle-switch name="showPassword" ng-model="$ctrl.showPassword" knob-label="Show"></toggle-switch>
+                    <toggle-switch name="showPassword" data-testid="invite-show-password" ng-model="$ctrl.showPassword" knob-label="Show"></toggle-switch>
                   </div>
                 </div>
               </div>
@@ -86,6 +87,7 @@
                   </div>
                   <div class="col-xs-6">
                     <input name="confirmedPassword"
+                      data-testid="invite-confirm-password"
                       autocomplete="new-password"
                       ng-model="user.confirmedPassword"
                       class="form-control"
@@ -136,7 +138,7 @@
           Hitler was a bad guy. You don't want Hitler to steal your account, do you? We didn't think so.
         </p>
         <p class="text-justify">
-          Fear not, friend: you can &ndash; <strong><a href="lostPassword">request a password reset</a> to set your password</strong> (just enter <em>{{$ctrl.email}}</em> as your email).
+          Fear not, friend: you can &ndash; <strong><a href="lostPassword">request a password reset</a> to set your password</strong> (just enter <em data-testid="invite-bad-key-email">{{$ctrl.email}}</em> as your email).
         </p>
         <p class="text-justify">
           If you keep hitting these issues, please <a href="mailto:support@hootdraft.com">reach out</a> or reach me on Twitter: <a href="https://twitter.com/mattheworres" class="alert-link">@mattheworres</a>

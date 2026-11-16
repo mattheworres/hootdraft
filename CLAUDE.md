@@ -28,10 +28,6 @@ Default five labels (needs-triage, needs-info, ready-for-agent, ready-for-human,
 
 Single-context: `GLOSSARY.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
 
-### Code Health
+### Code Scene Code Health MCP
 
-In the `mattpocock-skills:implement` skill, run the CodeScene `analyze_change_set` tool before the `code-review` skill. Plan the refactors from its Code Health findings together with the review findings.
-
-## CodeScene
-
-After changing code, run `code_health_review` on the changed files. If Code Health drops, fix the issues, run the review again, and use `code_health_score` to confirm the result. Before finishing, run `pre_commit_code_health_safeguard` and only stop when it passes.
+Prior to declaring code changes "done" or "ready for human review", run `code_health_review`. If Code Health drops, fix the issues, run the review again, and use `code_health_score` to confirm the result. Before finishing, run `pre_commit_code_health_safeguard` and only stop when it passes.

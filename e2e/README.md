@@ -110,6 +110,9 @@ test('DRAFT-01 ...', async ({ page, context, setup }) => {
 | `addPick(commissioner, draftId, entry?)` | Enters the current Pick. Returns its ID, round, number, and Manager |
 | `addTrade(commissioner, draftId, trade)` | Enters a Trade: `manager1Id`, `manager2Id`, `pickIds` |
 | `uploadProPlayers(admin, league, csvPath)` | Replaces the Pro Player list of one League |
+| `requestPasswordReset(user)` | Starts the lost password process. The lost password email with the Reset Key is in Mailpit |
+| `resetPassword(user, resetKey, password)` | Sets the password with a Reset Key, which uses the key up |
+| `inviteUser(inviter, overrides?)` | Invites a new user. The invite email with the Reset Key is in Mailpit. Returns `name` and `email` |
 | `logInBrowser(context, user)` | Gives a browser context the login session of the user |
 
 A user that a helper returns has `name`, `email`, `password`, and `api`. Use `user.api` to send any other API request as that user, for example `await commissioner.api.get('commish/profile')`.
@@ -126,6 +129,16 @@ const { key, link } = await readResetKey(email);             // the newest lost 
 ```
 
 Each function waits up to ten seconds for the email. `link` is the emailed link, so a test can open it with `page.goto(link)`.
+
+`linkPath(link)` is the path of the link. Open that path, not the link: the host in the email can differ from the client under test. `withWrongKey(path)` replaces the key at the end of a path with a key that matches no user.
+
+### Form validation: `helpers/form.ts`
+
+`emailField(page)` finds the Email field. `expectEmailValidationMessages(page)` checks the messages of the Email field. `expectPasswordValidationMessages(page, field)` and `expectConfirmValidationMessages(page, field)` check the messages of a Password and a Confirm field. Fill the Password field before the Confirm check.
+
+### reCAPTCHA: `helpers/recaptcha.ts`
+
+`recaptchaCheckbox(page)` finds the box by its iframe title. `completeRecaptcha(page)` clicks it and waits until it is checked. The E2E stack uses Google's public test keys, so no challenge shows.
 
 ### Server time: `helpers/timestamps.ts`
 

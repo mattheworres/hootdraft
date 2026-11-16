@@ -1,5 +1,6 @@
 import { BrowserContext, Page } from '@playwright/test';
 import { ApiSetup, Credentials, emailFor, unique } from '../helpers/api';
+import { emailField, expectEmailValidationMessages, expectPasswordValidationMessages } from '../helpers/form';
 import { footerVersionText, knownFailureOnAngularJs } from '../helpers/client';
 import { openDraftScreen, openDraftScreenLoggedIn } from '../helpers/draft-screen';
 import { failApiRequest, recordApiRequests } from '../helpers/intercept';
@@ -11,10 +12,6 @@ import { expectAlreadyLoggedInToast, expectToast } from '../helpers/toast';
 // Route group 5A of docs/flow-inventory.md. Each test name starts with the row ID.
 
 const EXPIRED_SESSION_TOAST = 'Your login has expired. You must log back in if you wish to continue.';
-
-function emailField(page: Page) {
-  return page.getByRole('textbox', { name: 'Email' });
-}
 
 function passwordField(page: Page) {
   return page.getByTestId('login-password');
@@ -188,27 +185,13 @@ test('LOGIN-08 an Email Unverified user with an expired Email Verification Key g
 test('LOGIN-09 the Email field shows its validation messages', async ({ page }) => {
   await page.goto('/login');
 
-  await emailField(page).focus();
-  await emailField(page).blur();
-  await expect(page.getByText('Email is missing')).toBeVisible();
-
-  await emailField(page).fill('abc');
-  await emailField(page).blur();
-  await expect(page.getByText('Email is invalid')).toBeVisible();
-  await expect(page.getByText('Email is missing')).toBeHidden();
+  await expectEmailValidationMessages(page);
 });
 
 test('LOGIN-10 the Password field shows its validation messages', async ({ page }) => {
   await page.goto('/login');
 
-  await passwordField(page).focus();
-  await passwordField(page).blur();
-  await expect(page.getByText('Password is missing')).toBeVisible();
-
-  await passwordField(page).fill('1234567');
-  await passwordField(page).blur();
-  await expect(page.getByText('Password is too short - 8 characters minimum')).toBeVisible();
-  await expect(page.getByText('Password is missing')).toBeHidden();
+  await expectPasswordValidationMessages(page, passwordField(page));
 });
 
 test('LOGIN-11 the Show switch turns the password into plain text and back', async ({ page }) => {

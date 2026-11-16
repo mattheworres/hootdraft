@@ -174,6 +174,43 @@ export class ApiSetup {
     return this.logIn(commissioner);
   }
 
+  /** Starts the lost password process for a user, so a lost password email with a Reset Key is in Mailpit. */
+  async requestPasswordReset(user: Pick<Credentials, 'email'>): Promise<void> {
+    const api = await this.newSession();
+
+    await send(
+      // Google's test secret accepts each response value
+      () => api.post('lostPassword', { data: { _email: user.email, _recaptcha: 'e2e' } }),
+      'request a password reset',
+    );
+  }
+
+  /** Sets the password with a Reset Key, as the reset screen does. The Reset Key is then used up. */
+  async resetPassword(user: Pick<Credentials, 'email'>, resetKey: string, password: string): Promise<void> {
+    const api = await this.newSession();
+
+    await send(
+      () =>
+        api.post('resetPassword', {
+          data: { _email: user.email, _password: password, _confirmPassword: password, _resetKey: resetKey },
+        }),
+      'reset the password',
+    );
+  }
+
+  /** Invites a new user as the inviter. The invitation email with the Reset Key is in Mailpit. */
+  async inviteUser(inviter: LoggedInUser, overrides: Partial<Pick<Credentials, 'name' | 'email'>> = {}) {
+    const name = overrides.name ?? unique('Invitee');
+    const email = overrides.email ?? emailFor({ name });
+
+    await send(
+      () => inviter.api.post('commish/user/invite', { data: { name, email, message: 'Welcome to the draft.' } }),
+      'invite a user',
+    );
+
+    return { name, email };
+  }
+
   /** Enables or disables a user. Needs an Admin. A Disabled user cannot log in, and the login session ends. */
   async setUserEnabled(admin: LoggedInUser, user: Credentials, enabled: boolean): Promise<void> {
     const { users } = await send<{ users: { id: number; email: string; roles: string | string[] }[] }>(
