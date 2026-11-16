@@ -1,0 +1,61 @@
+# HootDraft E2E stack: a second Compose project next to the developer box (docker-compose.yml at the repo root).
+# It has its own database volume and its own ports, so the developer database is never touched.
+# Usage: see e2e/README.md
+
+name: hootdraft-e2e
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "127.0.0.1:8100:80"
+    volumes:
+      - ../..:/var/www/html:ro
+      - ../../docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      # The AngularJS build bakes the API URL and the reCAPTCHA site key into js/dev.js. This stack answers that
+      # URL with its own file, so one build works for the developer box and for E2E.
+      - ./client-config.conf:/etc/nginx/hootdraft/client-config.conf:ro
+      - ./client-config.js:/etc/nginx/hootdraft-e2e/client-config.js:ro
+    depends_on:
+      - php
+
+  php:
+    build:
+      context: ../../docker/php
+      args:
+        APP_UID: ${APP_UID:-1000}
+    env_file: ./e2e.env
+    volumes:
+      - ../..:/var/www/html
+    # The repo is shared with the developer box. A private var/ keeps the cache, logs, and sessions apart.
+    tmpfs:
+      - /var/www/html/var:mode=1777
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "127.0.0.1:8125:8025"
+
+  db:
+    image: mariadb:12.3
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "127.0.0.1:3407:3306"
+    env_file: ./e2e.env
+    volumes:
+      - e2e_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  e2e_db_data:

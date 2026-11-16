@@ -34,7 +34,7 @@ Related documents:
 8. **Styles do not change.** Bootstrap 3.4.1 CSS, Font Awesome 4.7 and the Less files stay. A temporary legacy CSS file is permitted where a rule has no home yet. A Bootstrap upgrade is a later refactor.
 9. **Dependency policy.** Permitted: Angular, Angular CDK, NgRx SignalStore, RxJS. Each other package needs the maintainer's approval. Widgets (modals, tooltips, dropdowns, toasts, tables, and drag and drop) are hand-written and output the Bootstrap 3 markup. jQuery, the Bootstrap JavaScript, moment, and lodash are removed.
 10. **Language.** The client uses the `GLOSSARY.md` terms in stores, components, and types. One thin API layer mirrors the API field names exactly (for example `draft_sport`) and maps them. A new term goes into `GLOSSARY.md` when it appears.
-11. **API freeze.** Same URLs, same response shapes, polling stays. Only fixes for defects that the E2E suite finds are permitted. An API field rename is a later refactor. reCAPTCHA stays at its current version.
+11. **API freeze.** Same URLs, same response shapes, polling stays. Only fixes for defects that the E2E suite finds are permitted. Expect such fixes: the plan could not predict each defect that the suite finds. Each fix is its own ticket, and the plan records it under "Known compromises". An API field rename is a later refactor. reCAPTCHA stays at its current version.
 12. **URLs.** All 26 client URLs stay identical.
 
 ### 2.2 Build stack
@@ -49,7 +49,7 @@ All of it comes from the Angular CLI: the TypeScript and Angular compilers, esbu
 4. **Browsers.** Chromium, Firefox, WebKit, and Edge (`msedge` channel). All four are the gate before merge. WebKit is not real Safari, so real Safari is checked by hand before relaunch.
 5. **E2E stack.** A second Docker Compose project with its own database volume and port, Google's public reCAPTCHA test keys, and Mailpit. The API code does not know about tests. The developer database is never touched.
 6. **Test data.** Each test creates its state through the API. The database is reset before each run. The Pro Player list loads once for each run. Email Verification Keys and Reset Keys are read from the Mailpit API. Only the flow under test goes through the UI.
-7. **Time.** The Playwright clock controls client timers. For server time (Round Times, the ten-minute rule for a Complete Draft), one helper writes timestamps directly to the E2E database. No other direct database write is permitted.
+7. **Time.** The Playwright clock controls client timers. For server time (Round Times, the ten-minute rule for a Complete Draft), one helper writes timestamps directly to the E2E database. No other test writes to the database directly. The database reset before each run is not a test: it creates the database, runs the migrations, and gives the first Admin its role.
 8. **Multi-viewer flows.** Two browser sessions at the same time: a Commissioner enters a Pick and a second viewer sees it. This includes the Draft Password prompt.
 9. **Defects in the AngularJS client.** The test asserts the correct behavior, is marked as a known failure on AngularJS, and is recorded in the inventory. Each such row needs the maintainer's approval. The AngularJS code is not fixed.
 10. **Unit tests.** Vitest, for stores and pure logic only (Draft Order, timer calculation, polling state). Written test-first. Components have no unit tests.
@@ -100,3 +100,6 @@ Record each sidestep here during the work, as in `PHP8Rewrite.md`.
 - WebKit in Playwright is not real Safari. A manual check covers the gap.
 - The screenshot report uses one desktop viewport. Phone widths are not compared.
 - The API keeps old terms (`draft_sport`, "player" for a Pick) until a later refactor. The client API layer hides them.
+- The API has no route that makes the first Admin. The E2E database reset gives the role with one SQL statement (Section 2.3, item 7).
+- The E2E stack sets `CACHE_SECONDS=1`, so that a timestamp written by the timestamp helper shows after the cached Draft row expires.
+- The API can refuse a Draft status change with a database deadlock when two Drafts go In Progress at the same time. Ticket 02v fixes the API. Until then, the API setup helpers send the request again.

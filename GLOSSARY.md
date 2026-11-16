@@ -82,7 +82,7 @@ _Avoid_: Slot, turn, player (the old code word for a Pick)
 
 **Selected Pick**:
 A Pick for which a player has been chosen. Its name, team, and position usually come from a Pro Player suggestion, but the Commissioner can edit them (a nickname, say) or enter a player who isn't in the Pro Player list at all.
-_Avoid_: Selection, drafted player, made pick
+_Avoid_: Selection, drafted player, made pick, "the Pick was made" (say the Pick was selected)
 
 **Unselected Pick**:
 A Pick that exists on the Draft Board but has no Pro Player chosen yet.
@@ -95,6 +95,10 @@ _Avoid_: Turn, pass
 **Round Time**:
 The number of seconds a Manager is allowed per Pick, either the same for every Round or set for each Round separately.
 _Avoid_: Time limit, clock
+
+**Pick Timer**:
+The countdown of the current Pick's Round Time, shown on the Draft Board. For the first Pick it counts from the time the Draft went In Progress, and after that from the previous Selected Pick. A Draft without Round Times has no Pick Timer.
+_Avoid_: Clock, round timer
 
 **Pick Duration**:
 The seconds that passed between the previous Selected Pick and this one.

@@ -21,6 +21,8 @@ docker compose down            # stop (add -v to also wipe the database)
 
 First time: `cp docker/.env.example docker/.env`, edit the passwords, `docker compose up -d --build`, then `composer install` and the migrations above. The `MARIADB_*` values are only read when the DB volume is first created (`down -v` to reset).
 
+The E2E suite has its own stack with its own database and ports. See `e2e/README.md`.
+
 ## Upgrading from the old `phpdraft` database name
 The database and app user were named `phpdraft` before. They are now `hootdraft`. A volume made with the old names keeps them, because MariaDB reads `MARIADB_*` only when it creates the volume. Do one of these:
 - **Keep the old names.** In `docker/.env`, set `MARIADB_DATABASE`, `MARIADB_USER`, `DB_NAME` and `DB_USER` to `phpdraft`.

@@ -10,7 +10,7 @@
 
 ## Sub-tickets
 
-Ticket 02a comes first. Tickets 02b to 02u are blocked by 02a only, so they can run in any order. When a sub-ticket is `completed`, move its file to `../completed-subissues/`. This ticket stays in `issues/` until each sub-ticket is there.
+Ticket 02a comes first. Tickets 02b to 02v are blocked by 02a only, so they can run in any order. When a sub-ticket is `completed`, move its file to `../completed-subissues/`. This ticket stays in `issues/` until each sub-ticket is there.
 
 | Ticket | Scope | File |
 | --- | --- | --- |
@@ -35,6 +35,7 @@ Ticket 02a comes first. Tickets 02b to 02u are blocked by 02a only, so they can 
 | 02s | 8B Pro Player upload | `02s-e2e-8b-pro-player-upload.md` |
 | 02t | 8C Regenerate Draft Stats | `02t-e2e-8c-regenerate-draft-stats.md` |
 | 02u | Screenshot report tool | `02u-screenshot-report-tool.md` |
+| 02v | API: retry a transaction after a deadlock | `02v-api-deadlock-retry.md` |
 
 ## Rules for each sub-ticket
 
@@ -42,7 +43,7 @@ Ticket 02a comes first. Tickets 02b to 02u are blocked by 02a only, so they can 
 - Edits to `app/` templates add `data-testid` attributes only. Each attribute name describes the element with `GLOSSARY.md` terms, for example `pick-row`
 - Each test creates its state through the API setup helpers. Only the flow under test goes through the UI
 - Multi-viewer tests use two browser contexts
-- The Playwright clock controls client timers. Only the timestamp helper writes to the E2E database
+- The Playwright clock controls client timers. Only the timestamp helper writes test state to the E2E database. The database reset is not test state
 - The "Decision" column of the list at the end of the inventory is the maintainer's approval. For an approved fix, change the rows to the correct result, fill in "Known defect" with the item number, and mark the test as a known failure on AngularJS. The AngularJS code is not fixed
 - W-04 and W-06 name "each" row with a result, not only the rows in their list. Apply them to each row of your group with that result: a save that the API refuses with an error in an array (W-04), and a "previous route" result (W-06)
 - W-28 is "Keep": a toast has no title unless the row names one
