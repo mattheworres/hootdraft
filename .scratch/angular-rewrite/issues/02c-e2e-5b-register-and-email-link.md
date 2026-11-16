@@ -4,7 +4,7 @@
 
 **Blocked by:** 02a
 
-**Status:** awaiting-human-review
+**Status:** completed
 
 - [x] First, apply the approved items to the rows of this group. Change each row to the correct result and fill in "Known defect". W-18 does not hold for REG-07, so REG-07 has no "Known defect", and W-18 no longer lists it (approved by the maintainer, 2026-11-16). W-06 applies to REG-09 and VERIFY-04
 - [x] One test for each of the 13 rows. The test name starts with the row ID
