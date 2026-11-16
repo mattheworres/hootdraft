@@ -1,11 +1,12 @@
 import { BrowserContext, Page } from '@playwright/test';
-import { ApiSetup, Credentials, unique } from '../helpers/api';
+import { ApiSetup, Credentials, emailFor, unique } from '../helpers/api';
 import { footerVersionText, knownFailureOnAngularJs } from '../helpers/client';
-import { failApiRequest } from '../helpers/intercept';
+import { openDraftScreen, openDraftScreenLoggedIn } from '../helpers/draft-screen';
+import { failApiRequest, recordApiRequests } from '../helpers/intercept';
 import { readEmailVerificationKey, readResetKey } from '../helpers/mailpit';
 import { expect, test } from '../helpers/test';
 import { setEmailVerificationKeyTime } from '../helpers/timestamps';
-import { expectToast } from '../helpers/toast';
+import { expectAlreadyLoggedInToast, expectToast } from '../helpers/toast';
 
 // Route group 5A of docs/flow-inventory.md. Each test name starts with the row ID.
 
@@ -102,12 +103,11 @@ test('LOGIN-03 a login after a Draft screen goes to the last route that is not a
   const commissioner = await setup.registerCommissioner();
   const draft = await setup.createDraft(commissioner, { status: 'In Progress' });
 
-  await page.goto(`/draft/${draft.id}`);
-  await expect(page.getByText(draft.name).first()).toBeVisible();
+  const draftRoute = await openDraftScreen(page, draft);
   await page.getByRole('button', { name: 'Commissioner Login' }).click();
   await submitLoginForm(page, commissioner);
 
-  await expect(page).toHaveURL(`/draft/${draft.id}`);
+  await expect(page).toHaveURL(draftRoute);
 });
 
 test('LOGIN-04 a Commissioner who browsed their Draft without a login returns to it after the login', async ({
@@ -119,13 +119,12 @@ test('LOGIN-04 a Commissioner who browsed their Draft without a login returns to
   const draft = await setup.createDraft(commissioner, { status: 'In Progress' });
 
   await page.goto(`/draft/${draft.id}/board`);
-  await page.goto(`/draft/${draft.id}`);
-  await expect(page.getByText(draft.name).first()).toBeVisible();
+  const draftRoute = await openDraftScreen(page, draft);
   await expect(page.getByRole('link', { name: 'Enter Pick' })).toBeHidden();
   await page.getByRole('button', { name: 'Commissioner Login' }).click();
   await submitLoginForm(page, commissioner);
 
-  await expect(page).toHaveURL(`/draft/${draft.id}`);
+  await expect(page).toHaveURL(draftRoute);
   await expect(page.getByRole('link', { name: 'Enter Pick' })).toBeVisible();
 });
 
@@ -226,12 +225,7 @@ test('LOGIN-11 the Show switch turns the password into plain text and back', asy
 });
 
 test('LOGIN-12 selecting Login with an invalid form sends no request', async ({ page }) => {
-  const loginRequests: string[] = [];
-  page.on('request', (request) => {
-    if (request.url().endsWith('/api/login')) {
-      loginRequests.push(request.url());
-    }
-  });
+  const loginRequests = recordApiRequests(page, { path: 'login' });
 
   await page.goto('/login');
   await loginButton(page).click();
@@ -246,16 +240,12 @@ test('LOGIN-13 a logged-in Commissioner who opens /login gets a toast and goes t
   setup,
 }) => {
   knownFailureOnAngularJs('W-06');
-  const commissioner = await setup.registerCommissioner();
-  const draft = await setup.createDraft(commissioner, { status: 'In Progress' });
-  await setup.logInBrowser(context, commissioner);
+  const { commissioner, draftRoute } = await openDraftScreenLoggedIn(page, context, setup);
 
-  await page.goto(`/draft/${draft.id}`);
-  await expect(page.getByText(draft.name).first()).toBeVisible();
   await page.goto('/login');
 
-  await expectToast(page, { title: 'Logged In', message: `Already logged in as ${commissioner.name}.` });
-  await expect(page).toHaveURL(`/draft/${draft.id}`);
+  await expectAlreadyLoggedInToast(page, commissioner);
+  await expect(page).toHaveURL(draftRoute);
 });
 
 test('LOGIN-14 an API error on the login request gives a toast with the status', async ({ page, setup }) => {
@@ -475,7 +465,7 @@ test('INV-02 inviting a new user shows a toast, closes the dialog, and sends the
 }) => {
   const { commissioner, dialog } = await openInviteDialog(page, context, setup);
   const name = unique('Friend');
-  const invitee = { name, email: `${name.toLowerCase().replaceAll(' ', '-')}@e2e.example` };
+  const invitee = { name, email: emailFor({ name }) };
 
   await dialog.getByRole('textbox', { name: 'Email' }).fill(invitee.email);
   await dialog.getByTestId('invite-name').fill(invitee.name);
@@ -526,12 +516,7 @@ test('INV-04 inviting an existing email shows the API message and keeps the dial
 
 test('INV-05 Cancel closes the invite dialog and sends no request', async ({ page, context, setup }) => {
   const { commissioner, dialog } = await openInviteDialog(page, context, setup);
-  const inviteRequests: string[] = [];
-  page.on('request', (request) => {
-    if (request.method() === 'POST') {
-      inviteRequests.push(request.url());
-    }
-  });
+  const inviteRequests = recordApiRequests(page, { method: 'POST' });
 
   await dialog.getByRole('button', { name: 'Cancel' }).click();
 

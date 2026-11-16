@@ -11,6 +11,8 @@ Issues and specs for this repo live as markdown files in `.scratch/`.
 - A ticket in `completed-subissues/` is complete. A `Blocked by:` line that names it is satisfied
 - Triage state is recorded as a `Status:` line near the top of each issue file (see `triage-labels.md` for the role strings)
 - Comments and conversation history append to the bottom of the file under a `## Comments` heading
+- Tick a box only when the work matches its text. When the work differs, rewrite the box to say what was done, and leave it unticked until the maintainer agrees
+- A box that claims tests pass names the command that ran and its result, for example "`npm test` in `e2e/`: 185 passed"
 
 ## When a skill says "publish to the issue tracker"
 

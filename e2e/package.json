@@ -7,6 +7,7 @@
     "stack:down": "docker compose -f stack/docker-compose.yml down",
     "stack:destroy": "docker compose -f stack/docker-compose.yml down -v",
     "test": "playwright test",
+    "test-ui": "playwright test --ui",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write \"**/*.ts\""
   },

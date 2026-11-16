@@ -11,11 +11,11 @@ services:
       - "127.0.0.1:8100:80"
     volumes:
       - ../..:/var/www/html:ro
-      - ../../docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      # Directories, not single files: a file that git or an editor replaces on disk vanishes from a single-file mount.
+      - ../../docker/nginx:/etc/nginx/conf.d:ro
       # The AngularJS build bakes the API URL and the reCAPTCHA site key into js/dev.js. This stack answers that
       # URL with its own file, so one build works for the developer box and for E2E.
-      - ./client-config.conf:/etc/nginx/hootdraft/client-config.conf:ro
-      - ./client-config.js:/etc/nginx/hootdraft-e2e/client-config.js:ro
+      - ./nginx:/etc/nginx/hootdraft:ro
     depends_on:
       - php
 

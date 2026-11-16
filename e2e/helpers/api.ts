@@ -91,6 +91,11 @@ export function unique(label: string): string {
   return `${label} ${randomUUID().slice(0, 8)}`;
 }
 
+/** The email address that the helpers give a user, made from the name. */
+export function emailFor(user: Pick<Credentials, 'name'>): string {
+  return `${user.name.toLowerCase().replaceAll(' ', '-')}@e2e.example`;
+}
+
 const DEADLOCK_RETRIES = 3;
 
 /**
@@ -375,7 +380,7 @@ export class ApiSetup {
     const name = overrides.name ?? unique('Commissioner');
     const credentials: Credentials = {
       name,
-      email: overrides.email ?? `${name.toLowerCase().replaceAll(' ', '-')}@e2e.example`,
+      email: overrides.email ?? emailFor({ name }),
       password: overrides.password ?? 'commissioner-password',
     };
     const api = await this.newSession();

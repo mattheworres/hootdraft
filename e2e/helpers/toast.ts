@@ -1,4 +1,5 @@
 import { expect, Page } from '@playwright/test';
+import { Credentials } from './api';
 
 /**
  * Asserts that a toast with this message shows, and with this title if the row names one.
@@ -11,4 +12,9 @@ export async function expectToast(page: Page, toast: { message: string; title?: 
   }
 
   await expect(page.getByText(toast.message, { exact: true })).toBeVisible();
+}
+
+/** The toast for a logged-in viewer who opens an auth route: LOGIN-13, REG-09, VERIFY-04. */
+export async function expectAlreadyLoggedInToast(page: Page, user: Pick<Credentials, 'name'>): Promise<void> {
+  await expectToast(page, { title: 'Logged In', message: `Already logged in as ${user.name}.` });
 }
