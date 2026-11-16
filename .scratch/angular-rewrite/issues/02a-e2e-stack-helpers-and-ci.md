@@ -4,7 +4,7 @@
 
 **Blocked by:** 01
 
-**Status:** awaiting-human-review
+**Status:** completed
 
 - [x] A second Docker Compose project for E2E: its own database volume and port, Google's public reCAPTCHA test keys, Mailpit. No change to the API code. The developer database is not touched
 - [x] `e2e/` Playwright project in TypeScript with projects for Chromium, Firefox, WebKit, and Edge (`msedge`), and one setting that selects the client under test
