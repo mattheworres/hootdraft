@@ -45,7 +45,7 @@
                 </div>
                 <div class="form-group" ng-show="$ctrl.emailChanged()">
                   <div class="col-xs-8 col-xs-offset-3">
-                    <div class="alert alert-warning email-change-warning" role="alert">
+                    <div class="alert alert-warning email-change-warning" role="alert" data-testid="email-change-warning">
                       <strong>Heads up:</strong> if you change to a new email address, you will be logged out.
                       You must then verify the new email address by clicking the link we email to the new address,
                       before you can log in again.
@@ -64,6 +64,7 @@
                   </div>
                   <div class="col-xs-8">
                     <input name="name"
+                      data-testid="profile-name"
                       ng-model="$ctrl.userProfile.name"
                       autocomplete="nickname"
                       class="form-control"
@@ -92,6 +93,7 @@
                   </div>
                   <div class="col-xs-6">
                     <input name="password"
+                      data-testid="profile-current-password"
                       ng-model="$ctrl.userProfile.password"
                       autocomplete="current-password"
                       class="form-control"

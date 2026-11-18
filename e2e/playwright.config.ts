@@ -8,7 +8,11 @@ export default defineConfig({
   globalSetup: './global-setup.ts',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : [['list'], ['html', { open: 'never' }]],
+  reporter: [
+    process.env.CI ? ['github'] : ['list'],
+    ['html', { open: 'never' }],
+    ['json', { outputFile: 'test-results/results.json' }],
+  ],
   use: {
     baseURL: clientBaseURL,
     trace: 'retain-on-failure',

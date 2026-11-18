@@ -8,6 +8,7 @@ Run inside the php container.
 
 - Tests: `docker compose exec -T php composer test` (one file: add `-- tests/Functional/AuthenticationTest.php`)
 - PHPStan, glossary terms and tests together: `docker compose exec -T php composer check`
+- E2E tests: `npx playwright test` in `e2e/`. Run the full suite, with no filters, before handing over. See `CODING_STANDARDS.md`.
 - Commits will be blocked.
 
 ## Comments
@@ -28,6 +29,10 @@ Default five labels (needs-triage, needs-info, ready-for-agent, ready-for-human,
 
 Single-context: `GLOSSARY.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
 
-### Code Scene Code Health MCP
+### Code Health
 
-Prior to declaring code changes "done" or "ready for human review", run `code_health_review`. If Code Health drops, fix the issues, run the review again, and use `code_health_score` to confirm the result. Before finishing, run `pre_commit_code_health_safeguard` and only stop when it passes.
+In the `mattpocock-skills:implement` skill, run the CodeScene `code_health_review` tool before the `code-review` skill. Plan the refactors from its Code Health findings together with the review findings.
+
+## CodeScene MCP
+
+After changing code, run `code_health_review` on the changed files. If Code Health drops, fix the issues, run the review again, and use `code_health_score` to confirm the result. Before finishing, run `pre_commit_code_health_safeguard` and only stop when it passes.

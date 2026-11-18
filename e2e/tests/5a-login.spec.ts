@@ -4,6 +4,7 @@ import { emailField, expectEmailValidationMessages, expectPasswordValidationMess
 import { footerVersionText, knownFailureOnAngularJs } from '../helpers/client';
 import { openDraftScreen, openDraftScreenLoggedIn } from '../helpers/draft-screen';
 import { failApiRequest, recordApiRequests } from '../helpers/intercept';
+import { userLink } from '../helpers/navigation';
 import { readEmailVerificationKey, readResetKey } from '../helpers/mailpit';
 import { expect, test } from '../helpers/test';
 import { setEmailVerificationKeyTime } from '../helpers/timestamps';
@@ -88,7 +89,7 @@ test('LOGIN-02 an Enabled, Email Verified user logs in from /login', async ({ pa
 
   await expectToast(page, { title: 'Logged In', message: `Welcome back, ${commissioner.name}!` });
   await expect(page).toHaveURL('/home');
-  await expect(page.getByRole('link', { name: commissioner.name })).toBeVisible();
+  await expect(userLink(page, commissioner.name)).toBeVisible();
   await expect(page.getByRole('button', { name: 'Log Out' })).toBeVisible();
 });
 
@@ -258,7 +259,7 @@ test('NAV-02 a Commissioner sees the Commissioner navigation without Admin Stuff
 
   await expect(page.getByRole('link', { name: 'New League' })).toHaveAttribute('href', /^\/?commish\/draft\/create$/);
   await expect(page.getByRole('link', { name: 'Invite A Friend' })).toBeVisible();
-  await expect(page.getByRole('link', { name: commissioner.name })).toHaveAttribute('href', /^\/?profile$/);
+  await expect(userLink(page, commissioner.name)).toHaveAttribute('href', /^\/?profile$/);
   await expect(page.getByText(`${commissioner.name} logged in`)).toBeVisible();
   await expect(page.getByRole('button', { name: 'Log Out' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Admin Stuff' })).toBeHidden();
@@ -300,7 +301,7 @@ test('NAV-05 a new tab shows the logged-in navigation', async ({ page, context, 
   const newTab = await context.newPage();
   await newTab.goto('/home');
 
-  await expect(newTab.getByRole('link', { name: commissioner.name })).toBeVisible();
+  await expect(userLink(newTab, commissioner.name)).toBeVisible();
   await expect(newTab.getByRole('button', { name: 'Log Out' })).toBeVisible();
 });
 
@@ -335,7 +336,7 @@ test('NAV-06 a Commissioner whom an Admin disabled gets the expired login toast'
     await adminContext.close();
   }
 
-  await page.getByRole('link', { name: commissioner.name }).click();
+  await userLink(page, commissioner.name).click();
 
   await expectToast(page, { message: EXPIRED_SESSION_TOAST });
   await expect(page).toHaveURL('/login');
@@ -398,7 +399,7 @@ test('NAV-09 the menu button opens the menu at phone width and each link closes 
   // Log Out comes last: it ends the login. Each link starts on a route that the link changes.
   const links = [
     { start: '/home', link: page.getByRole('link', { name: 'New League' }), goesTo: '/commish/draft/create' },
-    { start: '/home', link: page.getByRole('link', { name: commissioner.name }), goesTo: '/profile' },
+    { start: '/home', link: userLink(page, commissioner.name), goesTo: '/profile' },
     { start: '/profile', link: page.getByRole('link', { name: 'Hoot Draft' }), goesTo: '/home' },
     { start: '/profile', link: page.getByRole('button', { name: 'Log Out' }), goesTo: '/home' },
   ];

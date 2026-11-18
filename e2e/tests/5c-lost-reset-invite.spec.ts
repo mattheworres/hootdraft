@@ -9,6 +9,7 @@ import {
   expectPasswordValidationMessages,
 } from '../helpers/form';
 import { failApiRequest, recordApiRequests } from '../helpers/intercept';
+import { userLink } from '../helpers/navigation';
 import { linkPath, readResetKey, withWrongKey } from '../helpers/mailpit';
 import { completeRecaptcha, recaptchaCheckbox } from '../helpers/recaptcha';
 import { expect, test } from '../helpers/test';
@@ -84,7 +85,7 @@ async function submitNewPassword(page: Page, screen: PasswordScreen) {
 
 async function expectLoggedInAtHome(page: Page, user: Pick<Credentials, 'name'>) {
   await expect(page).toHaveURL('/home');
-  await expect(page.getByRole('link', { name: user.name })).toBeVisible();
+  await expect(userLink(page, user.name)).toBeVisible();
   await expectToast(page, { message: "Your password has been set and you've been logged in. Welcome!" });
 }
 

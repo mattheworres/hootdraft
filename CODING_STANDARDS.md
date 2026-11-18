@@ -18,4 +18,18 @@ Code that repeats twice in one spec file becomes a helper in that file. Code tha
 
 **Why:** the 5B spec copied locators and setup from 5A and left a note to move them "when 5C adds more copies". Each later spec would have added another copy.
 
-**How to apply:** count the copies of a locator, a setup sequence, or an assertion across the spec files of the diff and the existing specs. Flag a third copy that is not a shared helper, and a shared helper that some copies do not use.
+**How to apply:**
+
+- **Authoring:** before you write a locator, a setup sequence, or an assertion sequence in a spec, read `e2e/README.md` and grep `e2e/helpers/` for it. If a helper exists, use it. If it nearly fits, extend the helper.
+- **Review:** count the copies of a locator, a setup sequence, or an assertion across the spec files of the diff and the existing specs. Flag a third copy that is not a shared helper, and a shared helper that some copies do not use.
+
+### E2E results come from a full run of the diff
+
+Report E2E tests as passing only after a full run: `npx playwright test` in `e2e/`, with no `--project` or `-g` filter.
+
+**Why:** a run of one spec or one browser looks green and skips the rest.
+
+**How to apply:**
+
+- **Authoring:** run the full suite before you hand over.
+- **Review:** read `e2e/test-results/results.json`. Check that the run started after the last change to the staged files, that every project (Chromium, Firefox, WebKit, Edge) ran the new tests, and that the only failures are known failures.
