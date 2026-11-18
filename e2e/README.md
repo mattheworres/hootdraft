@@ -49,6 +49,7 @@ npx playwright test --project=chromium # one browser: chromium, firefox, webkit,
 npx playwright test 5a-login           # one file
 npx playwright test -g LOGIN-02        # one inventory row
 npx playwright show-report             # the report of the last run
+# Each run also writes test-results/results.json: results per test and browser.
 npm run typecheck
 npm run format
 ```
@@ -135,6 +136,10 @@ Each function waits up to ten seconds for the email. `link` is the emailed link,
 ### Form validation: `helpers/form.ts`
 
 `emailField(page)` finds the Email field. `expectEmailValidationMessages(page)` checks the messages of the Email field. `expectPasswordValidationMessages(page, field)` and `expectConfirmValidationMessages(page, field)` check the messages of a Password and a Confirm field. Fill the Password field before the Confirm check.
+
+### Navigation: `helpers/navigation.ts`
+
+`userLink(page, name)` finds the link in the navigation that shows the logged-in user's name.
 
 ### reCAPTCHA: `helpers/recaptcha.ts`
 

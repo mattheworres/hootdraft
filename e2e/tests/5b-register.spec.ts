@@ -9,6 +9,7 @@ import {
   expectPasswordValidationMessages,
 } from '../helpers/form';
 import { failApiRequest, recordApiRequests } from '../helpers/intercept';
+import { userLink } from '../helpers/navigation';
 import { linkPath, readEmailVerificationKey, withWrongKey } from '../helpers/mailpit';
 import { completeRecaptcha, recaptchaCheckbox } from '../helpers/recaptcha';
 import { expect, test } from '../helpers/test';
@@ -192,7 +193,7 @@ test('VERIFY-01 the email link verifies the email and logs the user in', async (
 
   await expect(workingModal(page)).toBeHidden();
   await expect(page).toHaveURL('/home');
-  await expect(page.getByRole('link', { name: user.name })).toBeVisible();
+  await expect(userLink(page, user.name)).toBeVisible();
   await expect(page.getByRole('button', { name: 'Log Out' })).toBeVisible();
   await expectToast(page, { message: 'Your email is now verified, and you are now logged in. Welcome!' });
 });

@@ -18,12 +18,12 @@ export async function expectEmailValidationMessages(page: Page): Promise<void> {
 export async function expectPasswordValidationMessages(page: Page, passwordField: Locator): Promise<void> {
   await passwordField.focus();
   await passwordField.blur();
-  await expect(page.getByText('Password is missing')).toBeVisible();
+  await expect(page.getByText('Password is missing', { exact: true })).toBeVisible();
 
   await passwordField.fill('1234567');
   await passwordField.blur();
-  await expect(page.getByText('Password is too short - 8 characters minimum')).toBeVisible();
-  await expect(page.getByText('Password is missing')).toBeHidden();
+  await expect(page.getByText('Password is too short - 8 characters minimum', { exact: true })).toBeVisible();
+  await expect(page.getByText('Password is missing', { exact: true })).toBeHidden();
 }
 
 /** Fill the Password field first: the mismatch message compares against it. */
