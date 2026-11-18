@@ -2,16 +2,19 @@ import { Page } from '@playwright/test';
 import { Credentials, emailFor, unique } from '../helpers/api';
 import { knownFailureOnAngularJs } from '../helpers/client';
 import { openDraftScreenLoggedIn } from '../helpers/draft-screen';
+import {
+  emailField,
+  expectConfirmValidationMessages,
+  expectEmailValidationMessages,
+  expectPasswordValidationMessages,
+} from '../helpers/form';
 import { failApiRequest, recordApiRequests } from '../helpers/intercept';
-import { readEmailVerificationKey } from '../helpers/mailpit';
+import { linkPath, readEmailVerificationKey, withWrongKey } from '../helpers/mailpit';
+import { completeRecaptcha, recaptchaCheckbox } from '../helpers/recaptcha';
 import { expect, test } from '../helpers/test';
 import { expectAlreadyLoggedInToast, expectToast } from '../helpers/toast';
 
 // Route group 5B of docs/flow-inventory.md. Each test name starts with the row ID.
-
-function emailField(page: Page) {
-  return page.getByRole('textbox', { name: 'Email' });
-}
 
 function nameField(page: Page) {
   return page.getByTestId('register-name');
@@ -34,20 +37,6 @@ function workingModal(page: Page) {
   return page.getByRole('dialog').filter({ has: page.getByRole('progressbar') });
 }
 
-// The reCAPTCHA box is a Google iframe, which takes no data-testid. Its title is its accessible name.
-function recaptchaCheckbox(page: Page) {
-  return page
-    .getByTitle('reCAPTCHA', { exact: true })
-    .contentFrame()
-    .getByRole('checkbox', { name: "I'm not a robot" });
-}
-
-/** The E2E stack uses Google's public test keys, so the checkbox passes without a challenge. */
-async function completeRecaptcha(page: Page) {
-  await recaptchaCheckbox(page).click();
-  await expect(recaptchaCheckbox(page)).toBeChecked();
-}
-
 function newCredentials(): Credentials {
   const name = unique('Registrant');
 
@@ -66,7 +55,7 @@ async function fillRegistrationForm(page: Page, credentials: Credentials) {
 async function openEmailVerificationLink(page: Page, email: string) {
   const { link } = await readEmailVerificationKey(email);
 
-  await page.goto(new URL(link).pathname);
+  await page.goto(linkPath(link));
 }
 
 async function expectEmailVerificationFailure(page: Page) {
@@ -114,20 +103,13 @@ test('REG-02 a complete form registers the user and sends the email link', async
   await expectToast(page, { message: 'We sent you an email to verify your address' });
 
   const { key, link } = await readEmailVerificationKey(credentials.email);
-  expect(decodeURIComponent(new URL(link).pathname)).toBe(`/verify/${credentials.email}/${key}`);
+  expect(decodeURIComponent(linkPath(link))).toBe(`/verify/${credentials.email}/${key}`);
 });
 
 test('REG-03 the Email field shows its validation messages', async ({ page }) => {
   await page.goto('/register');
 
-  await emailField(page).focus();
-  await emailField(page).blur();
-  await expect(page.getByText('Email is missing')).toBeVisible();
-
-  await emailField(page).fill('abc');
-  await emailField(page).blur();
-  await expect(page.getByText('Email is invalid')).toBeVisible();
-  await expect(page.getByText('Email is missing')).toBeHidden();
+  await expectEmailValidationMessages(page);
 });
 
 test('REG-04 the Name field shows its validation message', async ({ page }) => {
@@ -142,28 +124,14 @@ test('REG-04 the Name field shows its validation message', async ({ page }) => {
 test('REG-05 the Password field shows its validation messages', async ({ page }) => {
   await page.goto('/register');
 
-  await passwordField(page).focus();
-  await passwordField(page).blur();
-  await expect(page.getByText('Password is missing')).toBeVisible();
-
-  await passwordField(page).fill('1234567');
-  await passwordField(page).blur();
-  await expect(page.getByText('Password is too short - 8 characters minimum')).toBeVisible();
-  await expect(page.getByText('Password is missing')).toBeHidden();
+  await expectPasswordValidationMessages(page, passwordField(page));
 });
 
 test('REG-06 the Confirm field shows its validation messages', async ({ page }) => {
   await page.goto('/register');
   await passwordField(page).fill('first-password');
 
-  await confirmPasswordField(page).focus();
-  await confirmPasswordField(page).blur();
-  await expect(page.getByText('You must confirm your password')).toBeVisible();
-
-  await confirmPasswordField(page).fill('other-password');
-  await confirmPasswordField(page).blur();
-  await expect(page.getByText('Passwords do not match.')).toBeVisible();
-  await expect(page.getByText('You must confirm your password')).toBeHidden();
+  await expectConfirmValidationMessages(page, confirmPasswordField(page));
 });
 
 test('REG-07 an email or name in use gives the API messages and resets the reCAPTCHA', async ({ page, setup }) => {
@@ -234,7 +202,7 @@ test('VERIFY-02 a wrong or used Email Verification Key shows the error panel', a
     const user = await setup.registerEmailUnverifiedUser();
     const { link } = await readEmailVerificationKey(user.email);
 
-    await page.goto(new URL(link).pathname.replace(/[^/]+$/, 'not-the-key'));
+    await page.goto(withWrongKey(linkPath(link)));
 
     await expectEmailVerificationFailure(page);
     await expect(page).not.toHaveURL('/home');
