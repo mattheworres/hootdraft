@@ -23,13 +23,13 @@ Code that repeats twice in one spec file becomes a helper in that file. Code tha
 - **Authoring:** before you write a locator, a setup sequence, or an assertion sequence in a spec, read `e2e/README.md` and grep `e2e/helpers/` for it. If a helper exists, use it. If it nearly fits, extend the helper.
 - **Review:** count the copies of a locator, a setup sequence, or an assertion across the spec files of the diff and the existing specs. Flag a third copy that is not a shared helper, and a shared helper that some copies do not use.
 
-### E2E results come from a full run of the diff
+### E2E results come from a whole-suite Chromium run
 
-Report E2E tests as passing only after a full run: `npx playwright test` in `e2e/`, with no `--project` or `-g` filter.
+Report E2E tests as passing only after a run of the whole suite in Chromium, with the checks of the helpers: `npx playwright test --project=chromium --project=helpers` in `e2e/`, with no `-g` or file filter. CI runs Firefox, WebKit, and Edge on a pull request.
 
-**Why:** a run of one spec or one browser looks green and skips the rest.
+**Why:** a run of one spec looks green and skips the rest. The suite grows with each route group, so the agent runs one browser and CI runs the others.
 
 **How to apply:**
 
-- **Authoring:** run the full suite before you hand over.
-- **Review:** read `e2e/test-results/results.json`. Check that the run started after the last change to the staged files, that every project (Chromium, Firefox, WebKit, Edge) ran the new tests, and that the only failures are known failures.
+- **Authoring:** run the whole suite in Chromium before you hand over. A failure that only CI shows in another browser is fixed after the CI run.
+- **Review:** read `e2e/test-results/results.json`. Check that the run started after the last change to the staged files, that the Chromium project ran the new tests and the rest of the suite, and that the only failures are known failures.

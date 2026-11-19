@@ -26,6 +26,7 @@ interface TimestampColumn {
 
 const DRAFT_START: TimestampColumn = { table: 'draft', column: 'draft_start_time', keyColumn: 'draft_id' };
 const DRAFT_END: TimestampColumn = { table: 'draft', column: 'draft_end_time', keyColumn: 'draft_id' };
+const DRAFT_CREATE: TimestampColumn = { table: 'draft', column: 'draft_create_time', keyColumn: 'draft_id' };
 const PICK_TIME: TimestampColumn = { table: 'players', column: 'pick_time', keyColumn: 'player_id' };
 const EMAIL_VERIFICATION_KEY_CREATED: TimestampColumn = {
   table: 'users',
@@ -38,6 +39,11 @@ const RESET_KEY_CREATED: TimestampColumn = { table: 'users', column: 'resetKeyCr
 export async function setDraftStartTime(draftId: number, ago: Age): Promise<void> {
   await writeTimestamp(DRAFT_START, draftId, ago);
   await waitForDraftCacheToExpire();
+}
+
+/** Sets when the Draft was created. The Draft list shows the newest Draft first. */
+export async function setDraftCreateTime(draftId: number, ago: Age): Promise<void> {
+  await writeTimestamp(DRAFT_CREATE, draftId, ago);
 }
 
 /** Sets when the Draft became Complete. The API permits Depth Chart changes for ten minutes after this. */

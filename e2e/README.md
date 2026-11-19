@@ -40,12 +40,12 @@ After you change a template in `app/`, build the client again at the repo root (
 
 ## Run the suite
 
-While you change code, run Chromium only (`--project=chromium`). Run each browser once before you mark the work done.
+Run the whole suite in Chromium before you mark the work done: `--project=chromium --project=helpers`, with no file or `-g` filter. CI runs Firefox, WebKit, and Edge on a pull request. Run another browser locally only to fix a failure that CI shows.
 
 ```sh
-npm test                               # each browser, plus the checks of the helpers
+npm test                               # all four browsers and the checks of the helpers (CI runs this)
 npm run test-ui                        # open Playwright's UI mode
-npx playwright test --project=chromium # one browser: chromium, firefox, webkit, or edge
+npx playwright test --project=chromium # one browser (add --project=helpers for the whole suite): chromium, firefox, webkit, or edge
 npx playwright test 5a-login           # one file
 npx playwright test -g LOGIN-02        # one inventory row
 npx playwright show-report             # the report of the last run
@@ -152,6 +152,7 @@ The Playwright clock (`page.clock`) controls client timers. For server time, mov
 ```ts
 await setDraftStartTime(draft.id, { minutes: 4 });      // the Pick Timer of the first Pick counts from here
 await setPickTime(pick.id, { seconds: 50 });            // the Pick Timer of the next Pick counts from here
+await setDraftCreateTime(draft.id, { hours: 48 });     // the Draft list orders by this time
 await setDraftEndTime(draft.id, { minutes: 11 });       // past the ten-minute rule for a Complete Draft
 await setEmailVerificationKeyTime(email, { hours: 49 }); // the key expires after 48 hours
 await setResetKeyTime(email, { hours: 2 });             // the key expires after one hour

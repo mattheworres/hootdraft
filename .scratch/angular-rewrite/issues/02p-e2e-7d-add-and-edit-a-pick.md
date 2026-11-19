@@ -12,4 +12,4 @@
 - [ ] A row with a "Known defect" value asserts the correct result and is marked as a known failure on AngularJS
 - [ ] Add `data-testid` attributes to the `app/` templates of this group only where role and label are weak
 - [ ] Fill in "Test file" and "Passes on AngularJS" for each row of the group
-- [ ] The tests of this group pass in Chromium, Firefox, WebKit, and Edge on the AngularJS client, with only the known failures of this group
+- [ ] The tests of this group pass in Chromium on the AngularJS client, with only the known failures of this group. CI runs the other three browsers

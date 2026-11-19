@@ -21,7 +21,10 @@ angular.module('phpdraft.shared').filter('customSmartTableFilter', ['$filter', $
       if (angular.isObject(expected)) {
         //exact match
         if (expected.distinct) {
-          if (!actual || actual.toLowerCase() !== expected.distinct.toLowerCase()) {
+          // W-37: the Commissioner filter compares numeric IDs, and numbers have no toLowerCase(), so compare
+          // as strings. This is a quick fix for AngularJS only. The new client must use typed IDs and compare
+          // them with `===`, with no string conversion.
+          if (!actual || `${actual}`.toLowerCase() !== `${expected.distinct}`.toLowerCase()) {
             return false;
           }
 
