@@ -49,9 +49,9 @@
     </tr>
   </thead>
   <tbody>
-    <tr ng-repeat="draft in $ctrl.displayedDrafts">
+    <tr ng-repeat="draft in $ctrl.displayedDrafts" data-testid="draft-row">
       <td>
-        <i ng-hide="::draft.draft_visible" class="fa fa-lock" alt="Locked"
+        <i ng-hide="::draft.draft_visible" class="fa fa-lock" alt="Locked" data-testid="draft-lock-icon"
           title="This draft is password protected!"></i>&nbsp;
         <strong><a href="draft/{{::draft.draft_id}}">{{::draft.draft_name}}</a></strong>
       </td>
@@ -79,7 +79,7 @@
   <tfoot ng-show="$ctrl.showPaging">
     <tr>
       <td colspan="6" class="text-center">
-        <div st-pagination="" st-items-by-page="$ctrl.itemsByPage" st-displayed-pages="7"></div>
+        <div data-testid="draft-pager" st-pagination="" st-items-by-page="$ctrl.itemsByPage" st-displayed-pages="7"></div>
       </td>
     </tr>
   </tfoot>

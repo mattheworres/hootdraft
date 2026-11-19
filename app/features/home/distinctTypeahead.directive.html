@@ -12,7 +12,7 @@
     typeahead-wait-ms="250" />
   <div class="selected-commish-display" ng-show="commishSelected">
     Commish:
-    <span class="label label-primary label-commish" ng-click="wipeCommissioner()">
+    <span class="label label-primary label-commish" data-testid="commissioner-filter-label" ng-click="wipeCommissioner()">
       {{commishName}}&nbsp;<i class="fa fa-times"></i>
     </span>
   </div>

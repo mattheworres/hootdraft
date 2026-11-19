@@ -4,7 +4,13 @@ import { failApiRequest } from '../helpers/intercept';
 import { readEmailVerificationKey, readResetKey } from '../helpers/mailpit';
 import { API_URL, STACK_URL } from '../helpers/stack';
 import { expect, test } from '../helpers/test';
-import { setDraftEndTime, setDraftStartTime, setPickTime, setResetKeyTime } from '../helpers/timestamps';
+import {
+  setDraftCreateTime,
+  setDraftEndTime,
+  setDraftStartTime,
+  setPickTime,
+  setResetKeyTime,
+} from '../helpers/timestamps';
 
 // These tests check the helpers against the real API. They are not inventory rows.
 
@@ -156,6 +162,23 @@ test.describe('Round Times and the timestamp helper', () => {
     const movedBySeconds = (before - (await endTime())) / 1000;
     expect(movedBySeconds).toBeGreaterThan(650);
     expect(movedBySeconds).toBeLessThanOrEqual(660);
+  });
+
+  test('setDraftCreateTime moves the time a Draft was created', async ({ setup }) => {
+    const commissioner = await setup.registerCommissioner();
+    const draft = await setup.createDraft(commissioner, { rounds: 1 });
+
+    const createTime = async () => {
+      const drafts: { draft_id: number; draft_create_time: string }[] = await getJson(commissioner, 'drafts');
+      return Date.parse(drafts.find((listed) => listed.draft_id === draft.id)!.draft_create_time);
+    };
+    const before = await createTime();
+
+    await setDraftCreateTime(draft.id, { hours: 2 });
+
+    const movedBySeconds = (before - (await createTime())) / 1000;
+    expect(movedBySeconds).toBeGreaterThan(7190);
+    expect(movedBySeconds).toBeLessThanOrEqual(7200);
   });
 
   test('a timestamp for a row that does not exist is an error', async () => {

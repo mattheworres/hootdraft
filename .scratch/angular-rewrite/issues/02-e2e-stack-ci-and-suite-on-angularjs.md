@@ -44,11 +44,15 @@ Ticket 02a comes first. Tickets 02b to 02v are blocked by 02a only, so they can 
 - Each test creates its state through the API setup helpers. Only the flow under test goes through the UI
 - Multi-viewer tests use two browser contexts
 - The Playwright clock controls client timers. Only the timestamp helper writes test state to the E2E database. The database reset is not test state
-- The "Decision" column of the list at the end of the inventory is the maintainer's approval. For an approved fix, change the rows to the correct result, fill in "Known defect" with the item number, and mark the test as a known failure on AngularJS. The AngularJS code is not fixed
+- The "Decision" column of the list at the end of the inventory is the maintainer's approval. For an approved fix, change the rows to the correct result, fill in "Known defect" with the item number, and mark the test as a known failure on AngularJS. The AngularJS code is not fixed, except for the fixes in the exceptions below
 - W-04 and W-06 name "each" row with a result, not only the rows in their list. Apply them to each row of your group with that result: a save that the API refuses with an error in an array (W-04), and a "previous route" result (W-06)
 - W-28 is "Keep": a toast has no title unless the row names one
 - If a test shows a defect that the list does not hold, add an item to the list with a proposal and stop work on that row. Only the maintainer fills in "Decision"
 - If the running client differs from a row and the difference is not a defect, correct the row. An ID never changes
+
+## Accepted exceptions
+
+The maintainer accepted these fixes in the AngularJS code, with changes beyond `data-testid` attributes. They are W-37 (`customSmartTable.filter.js`) and W-38 (`persistTableState.directive.js`) in the inventory, found by the tests of HOME-05 and HOME-12. Other sub-tickets still do not fix the AngularJS code without the maintainer's approval.
 
 ## Done when
 

@@ -8,7 +8,7 @@ Run inside the php container.
 
 - Tests: `docker compose exec -T php composer test` (one file: add `-- tests/Functional/AuthenticationTest.php`)
 - PHPStan, glossary terms and tests together: `docker compose exec -T php composer check`
-- E2E tests: `npx playwright test` in `e2e/`. Run the full suite, with no filters, before handing over. See `CODING_STANDARDS.md`.
+- E2E tests: `npx playwright test --project=chromium --project=helpers` in `e2e/`. Run the whole suite in Chromium, with no `-g` or file filter, before handing over. CI runs the other three browsers. See `CODING_STANDARDS.md`.
 - Commits will be blocked.
 
 ## Comments
