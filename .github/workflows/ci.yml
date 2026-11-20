@@ -72,6 +72,7 @@ jobs:
         run: npx playwright test --project=${{ matrix.browser }} ${{ matrix.browser == 'chromium' && '--project=helpers' || '' }}
 
       - name: Keep the report of a failed run
+        id: report
         if: failure()
         uses: actions/upload-artifact@v6
         with:
@@ -80,3 +81,7 @@ jobs:
             e2e/playwright-report/
             e2e/test-results/
           retention-days: 7
+
+      - name: Link the report in the run summary
+        if: failure() && steps.report.outputs.artifact-url
+        run: echo "[Playwright report of ${{ matrix.browser }}](${{ steps.report.outputs.artifact-url }})" >> "$GITHUB_STEP_SUMMARY"
