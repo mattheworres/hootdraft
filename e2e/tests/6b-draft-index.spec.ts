@@ -39,10 +39,14 @@ const commishActionEntries = (page: Page) =>
 const pickNumber = (number: number) => new RegExp(`Pick #\\s*${number}\\b`);
 
 /** Each [label, value] pair of the "League Details" panel, as the viewer reads it. */
-async function expectLeagueDetails(page: Page, details: [string, string | RegExp][]) {
+async function expectLeagueDetails(
+  page: Page,
+  details: [string, string | RegExp][],
+  panel: Locator = leagueDetails(page),
+) {
   for (const [label, value] of details) {
     const text = typeof value === 'string' ? `${label}: ${value}` : new RegExp(`${label}:\\s*${value.source}`);
-    await expect(leagueDetails(page)).toContainText(text, VISIBLE_TEXT);
+    await expect(panel).toContainText(text, VISIBLE_TEXT);
   }
 }
 
@@ -107,11 +111,17 @@ async function expectRoundPicks(page: Page, picks: SelectedPick[], round: number
 /** The view of INDEX-06: the donation message, the end times, and the Round Picks with their pager. */
 async function expectCompleteView(page: Page, picks: SelectedPick[]) {
   await expect(donationMessage(page)).toBeVisible();
-  await expectLeagueDetails(page, [
-    ['Draft Status', 'Completed'],
-    ['Started', DATE_TIME],
-    ['Ended', DATE_TIME],
-  ]);
+  // The In Progress view is still visible for a moment after the status changes, so the panel is scoped to its view
+  await expectLeagueDetails(
+    page,
+    [
+      ['Draft Status', 'Completed'],
+      ['Started', DATE_TIME],
+      ['Ended', DATE_TIME],
+    ],
+    page.locator('phpd-draft-completed').getByTestId('league-details-panel').filter({ visible: true }),
+  );
+  await expect(leagueDetails(page)).toHaveCount(1);
   await expectRoundPicks(page, picks, 1);
 
   await roundPicks(page).getByRole('link', { name: /Next/ }).click();
