@@ -34,6 +34,8 @@ jobs:
     needs: check
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      REPORT_RETENTION_DAYS: 7
     strategy:
       fail-fast: false
       matrix:
@@ -80,8 +82,10 @@ jobs:
           path: |
             e2e/playwright-report/
             e2e/test-results/
-          retention-days: 7
+          retention-days: ${{ env.REPORT_RETENTION_DAYS }}
 
       - name: Link the report in the run summary
         if: failure() && steps.report.outputs.artifact-url
-        run: echo "[Playwright report of ${{ matrix.browser }}](${{ steps.report.outputs.artifact-url }})" >> "$GITHUB_STEP_SUMMARY"
+        run: |
+          expiry=$(date -u -d "+$REPORT_RETENTION_DAYS days" '+%b %-d %Y')
+          echo "[Playwright report of ${{ matrix.browser }}](${{ steps.report.outputs.artifact-url }}) (expires $expiry)" >> "$GITHUB_STEP_SUMMARY"
