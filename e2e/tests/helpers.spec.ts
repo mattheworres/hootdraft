@@ -99,7 +99,7 @@ test.describe('API setup helpers', () => {
     const commissioner = await setup.registerCommissioner();
     const draft = await setup.createDraft(commissioner, { managers: ['First'] });
 
-    const managers = await setup.addManagers(commissioner, draft.id, ['Second', 'Third']);
+    const managers = await setup.addManagers(commissioner, draft, ['Second', 'Third']);
 
     expect(managers.map((manager) => manager.name)).toEqual(['First', 'Second', 'Third']);
   });
@@ -109,8 +109,8 @@ test.describe('API setup helpers', () => {
     const draft = await setup.createDraft(commissioner, { status: 'In Progress' });
     const [first, second] = draft.managers;
 
-    const pick = await setup.addPick(commissioner, draft.id, { firstName: 'Davante', lastName: 'Adams' });
-    await setup.addTrade(commissioner, draft.id, { manager1Id: first.id, manager2Id: second.id, pickIds: [pick.id] });
+    const pick = await setup.addPick(commissioner, draft, { firstName: 'Davante', lastName: 'Adams' });
+    await setup.addTrade(commissioner, draft, { manager1Id: first.id, manager2Id: second.id, pickIds: [pick.id] });
 
     expect(pick).toMatchObject({ round: 1, number: 1, managerId: first.id });
     const picks = await getJson(commissioner, `draft/${draft.id}/manager/${second.id}/picks/selected`);
@@ -133,14 +133,14 @@ test.describe('Round Times and the timestamp helper', () => {
   test('the Pick Timer counts from the Draft start time, then from the last Pick', async ({ setup }) => {
     const commissioner = await setup.registerCommissioner();
     const draft = await setup.createDraft(commissioner, { status: 'In Progress' });
-    await setup.setRoundTimes(commissioner, draft.id, [{ seconds: 600 }]);
+    await setup.setRoundTimes(commissioner, draft, [{ seconds: 600 }]);
     const secondsRemaining = async () =>
       (await getJson(commissioner, `draft/${draft.id}/timer/remaining`)).seconds_remaining;
 
     await setDraftStartTime(draft.id, { minutes: 4 });
     const afterStart = await secondsRemaining();
 
-    const pick = await setup.addPick(commissioner, draft.id);
+    const pick = await setup.addPick(commissioner, draft);
     await setPickTime(pick.id, { minutes: 9 });
     const afterPick = await secondsRemaining();
 

@@ -45,7 +45,8 @@ Run the whole suite in Chromium before you mark the work done: `--project=chromi
 ```sh
 npm test                               # all four browsers and the checks of the helpers (CI runs this)
 npm run test-ui                        # open Playwright's UI mode
-npx playwright test --project=chromium # one browser (add --project=helpers for the whole suite): chromium, firefox, webkit, or edge
+npx playwright test --project=chromium # one browser: chromium, firefox, webkit, or edge
+npx playwright test --project=chromium --project=helpers # whole suite
 npx playwright test 5a-login           # one file
 npx playwright test -g LOGIN-02        # one inventory row
 npx playwright show-report             # the report of the last run
@@ -90,7 +91,7 @@ import { expect, test } from '../helpers/test';
 test('DRAFT-01 ...', async ({ page, context, setup }) => {
   const commissioner = await setup.registerCommissioner();
   const draft = await setup.createDraft(commissioner, { status: 'In Progress', managers: ['Ann', 'Bob'] });
-  const pick = await setup.addPick(commissioner, draft.id, { firstName: 'Davante', lastName: 'Adams' });
+  const pick = await setup.addPick(commissioner, draft, { firstName: 'Davante', lastName: 'Adams' });
 
   await setup.logInBrowser(context, commissioner); // skip the login screen
   await page.goto(`/draft/${draft.id}`);
@@ -105,11 +106,13 @@ test('DRAFT-01 ...', async ({ page, context, setup }) => {
 | `logIn(credentials)` | A new login session for an existing user |
 | `setUserEnabled(admin, user, enabled)` | Enables or disables a user. A Disabled user cannot log in, and their login session ends |
 | `createDraft(commissioner, options?)` | A Draft. `status` is `'Setting Up'` (default), `'In Progress'`, or `'Complete'`. Other options: `name`, `league`, `style`, `rounds`, `password` (the Draft Password), `managers`, `depthChartPositions` |
-| `setDraftStatus(commissioner, draftId, status)` | Moves a Draft to Setting Up or In Progress |
-| `addManagers(commissioner, draftId, names)` | Adds Managers. Returns each Manager in Draft Order |
-| `setRoundTimes(commissioner, draftId, roundTimes)` | Replaces the Round Times. `[{ seconds: 60 }]` is one time for each round. `[{ round: 1, seconds: 60 }, ...]` is a time for each round |
-| `addPick(commissioner, draftId, entry?)` | Enters the current Pick. Returns its ID, round, number, and Manager |
-| `addTrade(commissioner, draftId, trade)` | Enters a Trade: `manager1Id`, `manager2Id`, `pickIds` |
+| `setDraftStatus(commissioner, draft, status)` | Moves a Draft to Setting Up or In Progress |
+| `addManagers(commissioner, draft, names)` | Adds Managers. Returns each Manager in Draft Order |
+| `setRoundTimes(commissioner, draft, roundTimes)` | Replaces the Round Times. `[{ seconds: 60 }]` is one time for each round. `[{ round: 1, seconds: 60 }, ...]` is a time for each round |
+| `addPick(commissioner, draft, entry?)` | Enters the current Pick. Returns its ID, round, number, and Manager |
+| `currentPick(commissioner, draft)` | The Pick that is on the clock: its ID, round, number, and Manager |
+| `editPick(commissioner, draft, pick)` | Saves the name, team, and position of a Selected Pick. Pass a copy of the Pick that `addPick` returned, with the new values |
+| `addTrade(commissioner, draft, trade)` | Enters a Trade: `manager1Id`, `manager2Id`, `pickIds` |
 | `uploadProPlayers(admin, league, csvPath)` | Replaces the Pro Player list of one League |
 | `requestPasswordReset(user)` | Starts the lost password process. The lost password email with the Reset Key is in Mailpit |
 | `resetPassword(user, resetKey, password)` | Sets the password with a Reset Key, which uses the key up |
@@ -210,7 +213,7 @@ await failedPoll;
 
 ### Draft screen: `helpers/draft-screen.ts`
 
-`openDraftScreen(page, draft)` opens the Draft screen, waits until the Draft has loaded, and returns the route. `openDraftScreenLoggedIn(page, context, setup)` does the same for a new, logged-in Commissioner with an In Progress Draft. It is the starting state of the rows where a logged-in viewer opens an auth route.
+`openDraftScreen(page, draft)` opens the Draft screen, waits until the Draft has loaded, and returns the route. `openDraftScreenWithClock(page, draft)` installs the Playwright clock first. `openDraftScreenLoggedIn(page, context, setup)` does the same as `openDraftScreen` for a new, logged-in Commissioner with an In Progress Draft, and returns the Commissioner, the Draft, and the route. It is the starting state of the rows where a logged-in viewer opens an auth route. `DRAFT_POLL_MS` is the interval at which the client polls an In Progress Draft. Move the Playwright clock by it to run the next poll. `expectNoDraftPolls(page, draft, intervals?)` runs the clock over three intervals, or `intervals`, and checks that no request for the Draft is sent. Install the clock first.
 
 ### Toasts: `helpers/toast.ts`
 

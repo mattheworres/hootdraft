@@ -62,13 +62,16 @@ export interface PickEntry {
   position: string;
 }
 
-export interface SelectedPick extends PickEntry {
+/** A Pick as a turn on the Draft Board, whether or not a player is chosen. */
+export interface BoardPick {
   id: number;
   round: number;
   /** The Pick number in the whole Draft, from 1. */
   number: number;
   managerId: number;
 }
+
+export interface SelectedPick extends PickEntry, BoardPick {}
 
 export interface TradeEntry {
   manager1Id: number;
@@ -271,18 +274,18 @@ export class ApiSetup {
     const draft: Draft = { id: Number(created.draft_id), name, password, managers: [] };
 
     if (managerNames.length > 0) {
-      draft.managers = await this.addManagers(commissioner, draft.id, managerNames);
+      draft.managers = await this.addManagers(commissioner, draft, managerNames);
     }
 
     if (status !== 'Setting Up') {
-      await this.setDraftStatus(commissioner, draft.id, 'In Progress');
+      await this.setDraftStatus(commissioner, draft, 'In Progress');
     }
 
     if (status === 'Complete') {
       const picks = (options.rounds ?? 2) * draft.managers.length;
 
       for (let pick = 1; pick <= picks; pick++) {
-        await this.addPick(commissioner, draft.id);
+        await this.addPick(commissioner, draft);
       }
     }
 
@@ -292,27 +295,27 @@ export class ApiSetup {
   /** Moves a Draft to Setting Up or In Progress. A Draft becomes Complete only with its last Pick. */
   async setDraftStatus(
     commissioner: LoggedInUser,
-    draftId: number,
+    draft: Pick<Draft, 'id'>,
     status: Exclude<DraftStatus, 'Complete'>,
   ): Promise<void> {
     await send(
-      () => commissioner.api.put(`commish/draft/${draftId}/status`, { data: { status: STATUS_VALUES[status] } }),
+      () => commissioner.api.put(`commish/draft/${draft.id}/status`, { data: { status: STATUS_VALUES[status] } }),
       `move the Draft to ${status}`,
     );
   }
 
   /** Adds Managers after the existing ones. Returns each Manager of the Draft in Draft Order. */
-  async addManagers(commissioner: LoggedInUser, draftId: number, names: string[]): Promise<Manager[]> {
+  async addManagers(commissioner: LoggedInUser, draft: Pick<Draft, 'id'>, names: string[]): Promise<Manager[]> {
     await send(
       () =>
-        commissioner.api.post(`commish/draft/${draftId}/managers`, {
+        commissioner.api.post(`commish/draft/${draft.id}/managers`, {
           data: { managers: names.map((name) => ({ manager_name: name })) },
         }),
       'add Managers',
     );
 
     const managers = await send<{ manager_id: number; manager_name: string }[]>(
-      () => commissioner.api.get(`commish/draft/${draftId}/managers`),
+      () => commissioner.api.get(`commish/draft/${draft.id}/managers`),
       'list the Managers',
     );
 
@@ -320,10 +323,10 @@ export class ApiSetup {
   }
 
   /** Replaces the Round Times of a Draft. An empty list turns the Pick Timer off. */
-  async setRoundTimes(commissioner: LoggedInUser, draftId: number, roundTimes: RoundTime[]): Promise<void> {
+  async setRoundTimes(commissioner: LoggedInUser, draft: Pick<Draft, 'id'>, roundTimes: RoundTime[]): Promise<void> {
     await send(
       () =>
-        commissioner.api.post(`commish/draft/${draftId}/timers`, {
+        commissioner.api.post(`commish/draft/${draft.id}/timers`, {
           data: {
             isRoundTimesEnabled: roundTimes.length > 0,
             roundTimes: roundTimes.map((roundTime) => ({
@@ -339,11 +342,12 @@ export class ApiSetup {
   }
 
   /** Enters the current Pick of an In Progress Draft. Without `entry`, the Pick gets a name that no other Pick has. */
-  async addPick(commissioner: LoggedInUser, draftId: number, entry: Partial<PickEntry> = {}): Promise<SelectedPick> {
-    const { pick: current } = await send<{
-      pick: { player_id: number; player_round: number; player_pick: number; manager_id: number };
-    }>(() => commissioner.api.get(`commish/draft/${draftId}/pick/current`), 'load the current Pick');
-
+  async addPick(
+    commissioner: LoggedInUser,
+    draft: Pick<Draft, 'id'>,
+    entry: Partial<PickEntry> = {},
+  ): Promise<SelectedPick> {
+    const current = await this.currentPick(commissioner, draft);
     const filled: PickEntry = {
       firstName: entry.firstName ?? 'Pick',
       lastName: entry.lastName ?? unique('Entry'),
@@ -353,7 +357,7 @@ export class ApiSetup {
 
     await send(
       () =>
-        commissioner.api.post(`commish/draft/${draftId}/pick/${current.player_id}`, {
+        commissioner.api.post(`commish/draft/${draft.id}/pick/${current.id}`, {
           data: {
             first_name: filled.firstName,
             last_name: filled.lastName,
@@ -364,20 +368,44 @@ export class ApiSetup {
       'add a Pick',
     );
 
+    return { ...filled, ...current };
+  }
+
+  /** The Pick that is on the clock in an In Progress Draft. */
+  async currentPick(commissioner: LoggedInUser, draft: Pick<Draft, 'id'>): Promise<BoardPick> {
+    const { pick } = await send<{
+      pick: { player_id: number; player_round: number; player_pick: number; manager_id: number };
+    }>(() => commissioner.api.get(`commish/draft/${draft.id}/pick/current`), 'load the current Pick');
+
     return {
-      ...filled,
-      id: Number(current.player_id),
-      round: Number(current.player_round),
-      number: Number(current.player_pick),
-      managerId: Number(current.manager_id),
+      id: Number(pick.player_id),
+      round: Number(pick.player_round),
+      number: Number(pick.player_pick),
+      managerId: Number(pick.manager_id),
     };
   }
 
-  /** Enters a Trade between two Managers of an In Progress Draft. */
-  async addTrade(commissioner: LoggedInUser, draftId: number, trade: TradeEntry): Promise<void> {
+  /** Saves the name, team, and position of a Selected Pick, as the edit Pick screen does. */
+  async editPick(commissioner: LoggedInUser, draft: Pick<Draft, 'id'>, pick: SelectedPick): Promise<void> {
     await send(
       () =>
-        commissioner.api.post(`commish/draft/${draftId}/trade`, {
+        commissioner.api.put(`commish/draft/${draft.id}/pick/${pick.id}`, {
+          data: {
+            first_name: pick.firstName,
+            last_name: pick.lastName,
+            team: pick.team,
+            position: pick.position,
+          },
+        }),
+      'edit a Pick',
+    );
+  }
+
+  /** Enters a Trade between two Managers of an In Progress Draft. */
+  async addTrade(commissioner: LoggedInUser, draft: Pick<Draft, 'id'>, trade: TradeEntry): Promise<void> {
+    await send(
+      () =>
+        commissioner.api.post(`commish/draft/${draft.id}/trade`, {
           data: { manager1_id: trade.manager1Id, manager2_id: trade.manager2Id, trade_assets: trade.pickIds },
         }),
       'add a Trade',
