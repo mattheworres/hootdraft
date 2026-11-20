@@ -31,3 +31,7 @@ token | tests/Functional/AuthenticationTest.php | assertArrayNotHasKey('token'
 verification-noun-in-text | db/* | *
 verification-without-email | db/migrations/20170324024159_fix_users_verification_column.php | *
 verification-without-email | db/migrations/20261022000000_add_users_verification_key_created.php | *
+
+# --- Text of the AngularJS client, which the E2E tests assert ----------------------------------------------------
+# The client (app/) is not scanned and is being replaced. The test pins its current wording until the rewrite.
+active | e2e/tests/6b-draft-index.spec.ts | Can't edit active draft

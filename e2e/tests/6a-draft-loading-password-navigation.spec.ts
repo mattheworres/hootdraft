@@ -1,7 +1,7 @@
 import { Browser, Page } from '@playwright/test';
 import { ApiSetup, Draft, DraftOptions } from '../helpers/api';
 import { knownFailureOnAngularJs } from '../helpers/client';
-import { openDraftScreen } from '../helpers/draft-screen';
+import { DRAFT_POLL_MS, expectNoDraftPolls, openDraftScreen, openDraftScreenWithClock } from '../helpers/draft-screen';
 import { expectMenuLinksOpenRoutes, logoLink } from '../helpers/navigation';
 import { failApiRequest, recordApiRequests, waitForApiResponse } from '../helpers/intercept';
 import { expect, test } from '../helpers/test';
@@ -9,7 +9,6 @@ import { expectToast } from '../helpers/toast';
 
 // Route group 6A of docs/flow-inventory.md. Each test name starts with the row ID.
 
-const POLL_MS = 2_750;
 const FAILED_POLLS_BEFORE_PANEL = 5;
 const LOAD_WARNING = 'We seem to be having trouble loading this draft, possibly due to network connectivity issues';
 const PASSWORD = 'draft-secret';
@@ -341,8 +340,7 @@ test('DRAFT-12 failed polls show the warning toast, and five failures show the p
 }) => {
   const commissioner = await setup.registerCommissioner();
   const draft = await setup.createDraft(commissioner, { status: 'In Progress' });
-  await page.clock.install();
-  await openDraftScreen(page, draft);
+  await openDraftScreenWithClock(page, draft);
   await expect(lastFivePicksHeading(page)).toBeVisible();
   // Until now the clock ran in real time, and a real poll would count as a failure
   await page.clock.pauseAt(new Date(Date.now() + 1_000));
@@ -361,7 +359,7 @@ test('DRAFT-12 failed polls show the warning toast, and five failures show the p
   await expect(connectionIssuesHeading(page)).toBeVisible();
   await expect(lastFivePicksHeading(page)).toBeHidden();
   const failedPolls = requests.length;
-  await page.clock.runFor(POLL_MS * 3);
+  await page.clock.runFor(DRAFT_POLL_MS * 3);
   expect(requests).toHaveLength(failedPolls);
 });
 
@@ -377,10 +375,7 @@ test('DRAFT-13 the client polls the In Progress Draft only, and stops after the 
 
   for (const draft of [settingUp, complete]) {
     await openDraftScreen(page, draft);
-    const requests = recordApiRequests(page, { path: `draft/${draft.id}` });
-
-    await page.clock.runFor(POLL_MS * 3);
-    expect(requests).toEqual([]);
+    await expectNoDraftPolls(page, draft);
   }
 
   await openDraftScreen(page, inProgress);
@@ -389,7 +384,7 @@ test('DRAFT-13 the client polls the In Progress Draft only, and stops after the 
   // One poll at a time: WebKit sends one request for identical GET requests that are in flight together
   for (let poll = 1; poll <= 3; poll++) {
     const answered = waitForApiResponse(page, { path: `draft/${inProgress.id}` });
-    await page.clock.runFor(POLL_MS);
+    await page.clock.runFor(DRAFT_POLL_MS);
     await answered;
   }
   expect(polls.length).toBeGreaterThanOrEqual(3);
@@ -398,7 +393,7 @@ test('DRAFT-13 the client polls the In Progress Draft only, and stops after the 
   await expect(page).toHaveURL(/\/home$/);
   const pollsAfterLeaving = polls.length;
 
-  await page.clock.runFor(POLL_MS * 3);
+  await page.clock.runFor(DRAFT_POLL_MS * 3);
   expect(polls).toHaveLength(pollsAfterLeaving);
 });
 
@@ -533,8 +528,8 @@ test('PW-11 a second viewer sees a new Pick on the Draft Board after the next po
   await submitPassword(viewer.page, PASSWORD);
   await expect(boardLoading(viewer.page)).toBeHidden();
 
-  const pick = await setup.addPick(commissioner, draft.id, { firstName: 'Davante', lastName: 'Adams' });
-  await viewer.page.clock.runFor(POLL_MS * 2);
+  const pick = await setup.addPick(commissioner, draft, { firstName: 'Davante', lastName: 'Adams' });
+  await viewer.page.clock.runFor(DRAFT_POLL_MS * 2);
 
   await expect(viewer.page.getByText(`${pick.firstName} ${pick.lastName}`).first()).toBeVisible();
   await viewer.context.close();
@@ -545,9 +540,6 @@ test('PW-12 the client does not poll while the panel shows', async ({ page, setu
   await page.clock.install();
   await page.goto(`/draft/${draft.id}`);
   await expectLockedScreen(page);
-  const requests = recordApiRequests(page, { path: `draft/${draft.id}` });
 
-  await page.clock.runFor(POLL_MS * 4);
-
-  expect(requests).toEqual([]);
+  await expectNoDraftPolls(page, draft, 4);
 });

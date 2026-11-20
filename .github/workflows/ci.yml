@@ -21,6 +21,10 @@ jobs:
           cp docker/.env.example docker/.env
           APP_UID=$(id -u) docker compose up -d --build --wait
 
+      # The mounted repo is owned by the runner's uid, which git in the container does not trust
+      - name: Trust the mounted repository
+        run: docker compose exec -T php git config --global --add safe.directory /var/www/html
+
       - name: Install the PHP packages and migrate the database
         run: |
           docker compose exec -T php composer install --no-interaction --no-progress
@@ -30,10 +34,13 @@ jobs:
         run: docker compose exec -T php composer check
 
   e2e:
-    name: E2E (${{ matrix.browser }})
+    # A static name: GitHub appends the matrix value itself, and shows an unexpanded expression when the job is skipped
+    name: E2E
     needs: check
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      REPORT_RETENTION_DAYS: 7
     strategy:
       fail-fast: false
       matrix:
@@ -72,6 +79,7 @@ jobs:
         run: npx playwright test --project=${{ matrix.browser }} ${{ matrix.browser == 'chromium' && '--project=helpers' || '' }}
 
       - name: Keep the report of a failed run
+        id: report
         if: failure()
         uses: actions/upload-artifact@v6
         with:
@@ -79,4 +87,10 @@ jobs:
           path: |
             e2e/playwright-report/
             e2e/test-results/
-          retention-days: 7
+          retention-days: ${{ env.REPORT_RETENTION_DAYS }}
+
+      - name: Link the report in the run summary
+        if: failure() && steps.report.outputs.artifact-url
+        run: |
+          expiry=$(date -u -d "+$REPORT_RETENTION_DAYS days" '+%b %-d %Y')
+          echo "[Playwright report of ${{ matrix.browser }}](${{ steps.report.outputs.artifact-url }}) (expires $expiry)" >> "$GITHUB_STEP_SUMMARY"
