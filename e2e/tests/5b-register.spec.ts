@@ -8,7 +8,7 @@ import {
   expectEmailValidationMessages,
   expectPasswordValidationMessages,
 } from '../helpers/form';
-import { failApiRequest, recordApiRequests } from '../helpers/intercept';
+import { failApiRequest, holdApiResponses, recordApiRequests } from '../helpers/intercept';
 import { userLink } from '../helpers/navigation';
 import { linkPath, readEmailVerificationKey, withWrongKey } from '../helpers/mailpit';
 import { completeRecaptcha, recaptchaCheckbox } from '../helpers/recaptcha';
@@ -80,14 +80,7 @@ test('REG-01 the register screen shows its heading, fields, and a disabled Regis
 
 test('REG-02 a complete form registers the user and sends the email link', async ({ page }) => {
   const credentials = newCredentials();
-  // Hold the register answer, so the working modal stays open long enough to see
-  let answerRegister = () => {};
-  const registerAnswered = new Promise<void>((resolve) => (answerRegister = resolve));
-  await page.route('**/api/register', async (route) => {
-    const response = await route.fetch();
-    await registerAnswered;
-    await route.fulfill({ response });
-  });
+  const answerRegister = await holdApiResponses(page, { path: 'register' });
 
   await page.goto('/register');
   await fillRegistrationForm(page, credentials);

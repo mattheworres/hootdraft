@@ -8,7 +8,7 @@ import {
   expectEmailValidationMessages,
   expectPasswordValidationMessages,
 } from '../helpers/form';
-import { failApiRequest, recordApiRequests } from '../helpers/intercept';
+import { failApiRequest, holdApiResponses, recordApiRequests } from '../helpers/intercept';
 import { userLink } from '../helpers/navigation';
 import { linkPath, readResetKey, withWrongKey } from '../helpers/mailpit';
 import { completeRecaptcha, recaptchaCheckbox } from '../helpers/recaptcha';
@@ -195,14 +195,7 @@ test('LOST-05 a logged-in Commissioner who opens /lostPassword gets a toast and 
 
 test('RESET-01 the Reset Key is checked, then the reset form shows', async ({ page, setup }) => {
   const user = await userWithResetKey(setup);
-  // Hold the check answer, so the loading text stays long enough to see
-  let answerCheck = () => {};
-  const checkAnswered = new Promise<void>((resolve) => (answerCheck = resolve));
-  await page.route('**/api/checkResetKey*', async (route) => {
-    const response = await route.fetch();
-    await checkAnswered;
-    await route.fulfill({ response });
-  });
+  const answerCheck = await holdApiResponses(page, { path: 'checkResetKey' });
 
   await openEmailedLink(page, user.email);
 

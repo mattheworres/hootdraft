@@ -211,9 +211,21 @@ const failedPoll = waitForApiResponse(page, { path: `draft/${draft.id}` });
 await failedPoll;
 ```
 
+To keep a loading indicator on screen, hold the answer to a request until the step is done. The request still reaches the API:
+
+```ts
+const release = await holdApiResponses(page, { path: 'register' });
+// the step, then the checks of the loading indicator
+release();
+```
+
 ### Draft screen: `helpers/draft-screen.ts`
 
-`openDraftScreen(page, draft)` opens the Draft screen, waits until the Draft has loaded, and returns the route. `openDraftScreenWithClock(page, draft)` installs the Playwright clock first. `openDraftScreenLoggedIn(page, context, setup)` does the same as `openDraftScreen` for a new, logged-in Commissioner with an In Progress Draft, and returns the Commissioner, the Draft, and the route. It is the starting state of the rows where a logged-in viewer opens an auth route. `DRAFT_POLL_MS` is the interval at which the client polls an In Progress Draft. Move the Playwright clock by it to run the next poll. `expectNoDraftPolls(page, draft, intervals?)` runs the clock over three intervals, or `intervals`, and checks that no request for the Draft is sent. Install the clock first.
+`openDraftScreen(page, draft)` opens the Draft screen, waits until the Draft has loaded, and returns the route. `openDraftScreenWithClock(page, draft)` installs the Playwright clock first. `openDraftScreenLoggedIn(page, context, setup)` does the same as `openDraftScreen` for a new, logged-in Commissioner with an In Progress Draft, and returns the Commissioner, the Draft, and the route. It is the starting state of the rows where a logged-in viewer opens an auth route. `DRAFT_POLL_MS` is the interval at which the client polls an In Progress Draft. Move the Playwright clock by it to run the next poll. `newViewerPage(browser)` opens a second viewer in a new browser context and returns the context and the page. `expectNoDraftPolls(page, draft, intervals?)` runs the clock over three intervals, or `intervals`, and checks that no request for the Draft is sent. Install the clock first.
+
+### Visible text: `helpers/text.ts`
+
+`VISIBLE_TEXT` is the option for `toHaveText` and `toContainText` that skips hidden text, such as error panels and phone-width variants of a view.
 
 ### Toasts: `helpers/toast.ts`
 

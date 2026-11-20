@@ -1,10 +1,17 @@
-import { Browser, Page } from '@playwright/test';
+import { Page } from '@playwright/test';
 import { ApiSetup, Draft, DraftOptions } from '../helpers/api';
 import { knownFailureOnAngularJs } from '../helpers/client';
-import { DRAFT_POLL_MS, expectNoDraftPolls, openDraftScreen, openDraftScreenWithClock } from '../helpers/draft-screen';
+import {
+  DRAFT_POLL_MS,
+  expectNoDraftPolls,
+  newViewerPage,
+  openDraftScreen,
+  openDraftScreenWithClock,
+} from '../helpers/draft-screen';
 import { expectMenuLinksOpenRoutes, logoLink } from '../helpers/navigation';
 import { failApiRequest, recordApiRequests, waitForApiResponse } from '../helpers/intercept';
 import { expect, test } from '../helpers/test';
+import { VISIBLE_TEXT } from '../helpers/text';
 import { expectToast } from '../helpers/toast';
 
 // Route group 6A of docs/flow-inventory.md. Each test name starts with the row ID.
@@ -66,12 +73,6 @@ async function expectToolbox(page: Page, entries: string[]) {
   await expect(toolboxLinks(page)).toHaveText(entries);
 }
 
-async function newViewerPage(browser: Browser) {
-  const context = await browser.newContext();
-
-  return { context, page: await context.newPage() };
-}
-
 async function expectDraftShows(page: Page) {
   await expect(lastFivePicksHeading(page)).toBeVisible();
 }
@@ -95,7 +96,7 @@ async function expectLockedScreen(page: Page) {
 
 // The open dialog hides the page from the accessibility tree, so this asserts the visible text
 async function expectNoDraftContent(page: Page, draft: Draft) {
-  await expect(draftNav(page)).toHaveText(draft.name, { useInnerText: true });
+  await expect(draftNav(page)).toHaveText(draft.name, VISIBLE_TEXT);
   await expect(page.getByText('Last 5 Picks', { exact: true })).toBeHidden();
   await expect(boardLoading(page)).toBeHidden();
 }
@@ -278,7 +279,7 @@ test('DRAFT-09 another Commissioner gets the screen of an anonymous viewer', asy
     await expect(viewer.getByText('On the clock').filter({ visible: true })).toHaveCount(1);
     await expect(toolboxButton(viewer)).toHaveCount(0);
   }
-  await expect(pageBody(page)).toHaveText(await pageBody(anonymous.page).innerText(), { useInnerText: true });
+  await expect(pageBody(page)).toHaveText(await pageBody(anonymous.page).innerText(), VISIBLE_TEXT);
   await anonymous.context.close();
 });
 

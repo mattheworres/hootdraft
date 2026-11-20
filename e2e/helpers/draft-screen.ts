@@ -1,4 +1,4 @@
-import { BrowserContext, expect, Page } from '@playwright/test';
+import { Browser, BrowserContext, expect, Page } from '@playwright/test';
 import { ApiSetup, Draft, LoggedInUser } from './api';
 import { recordApiRequests } from './intercept';
 
@@ -29,6 +29,13 @@ export async function openDraftScreenWithClock(page: Page, draft: Draft): Promis
   await page.clock.install();
 
   return openDraftScreen(page, draft);
+}
+
+/** A second viewer: a new browser context with its own cookies and clock. Close the context at the end of the test. */
+export async function newViewerPage(browser: Browser): Promise<{ context: BrowserContext; page: Page }> {
+  const context = await browser.newContext();
+
+  return { context, page: await context.newPage() };
 }
 
 /**

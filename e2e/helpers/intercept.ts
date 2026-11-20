@@ -89,3 +89,28 @@ export async function failApiRequest(page: Page, failure: ApiFailure): Promise<v
     },
   );
 }
+
+/**
+ * Holds the answer to each matching API request until the returned function is called, so a loading indicator stays
+ * long enough to see. The request still reaches the API, so its state change happens at once. Call it before the
+ * step that sends the request.
+ */
+export async function holdApiResponses(page: Page, match: ApiRequestMatch): Promise<() => void> {
+  let release = () => {};
+  const released = new Promise<void>((resolve) => (release = resolve));
+
+  await page.route(
+    (url) => apiPathOf(url) !== null,
+    async (route) => {
+      if (!requestMatches(route.request(), match)) {
+        return route.fallback();
+      }
+
+      const response = await route.fetch();
+      await released;
+      await route.fulfill({ response });
+    },
+  );
+
+  return release;
+}

@@ -11,13 +11,12 @@ import {
 import { failApiRequest } from '../helpers/intercept';
 import { expectMenuLinksOpenRoutes } from '../helpers/navigation';
 import { expect, test } from '../helpers/test';
+import { VISIBLE_TEXT } from '../helpers/text';
 import { expectToast } from '../helpers/toast';
 
 // Route group 6B of docs/flow-inventory.md. Each test name starts with the row ID.
 
 const DONATION_HIDE_DAYS = 14;
-// The views hold hidden text, such as the error text of each panel and "On the clock" of each upcoming Pick
-const VISIBLE_TEXT = { useInnerText: true };
 const DATE_TIME = /\w+day, \w+ \d+\w\w \d{4}, \d+:\d\d [ap]m/;
 
 // Each Draft status has its own view with its own panels, and the views of the other statuses are hidden
