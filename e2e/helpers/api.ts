@@ -385,6 +385,16 @@ export class ApiSetup {
     };
   }
 
+  /** The IDs of the next Unselected Picks of an In Progress Draft, in Pick order. */
+  async upcomingPickIds(commissioner: LoggedInUser, draft: Pick<Draft, 'id'>, amount: number): Promise<number[]> {
+    const picks = await send<{ player_id: number }[]>(
+      () => commissioner.api.get(`draft/${draft.id}/picks/next?amount=${amount}`),
+      'load the upcoming Picks',
+    );
+
+    return picks.map((pick) => Number(pick.player_id));
+  }
+
   /** Saves the name, team, and position of a Selected Pick, as the edit Pick screen does. */
   async editPick(commissioner: LoggedInUser, draft: Pick<Draft, 'id'>, pick: SelectedPick): Promise<void> {
     await send(

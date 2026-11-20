@@ -35,3 +35,7 @@ verification-without-email | db/migrations/20261022000000_add_users_verification
 # --- Text of the AngularJS client, which the E2E tests assert ----------------------------------------------------
 # The client (app/) is not scanned and is being replaced. The test pins its current wording until the rewrite.
 active | e2e/tests/6b-draft-index.spec.ts | Can't edit active draft
+
+# --- Third-party markup ------------------------------------------------------------------------------------------
+# The flip clock library names the digit that shows with the class flip-clock-active.
+active | e2e/tests/6c-draft-board.spec.ts | flip-clock-active

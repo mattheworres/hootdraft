@@ -28,7 +28,7 @@ These rules add to the Google guide or replace part of it.
 ### Glossary terms
 
 - Define each domain term in [GLOSSARY.md](../GLOSSARY.md).
-- Write a glossary term with the exact capitalization from the glossary: Selected Pick, Draft Order, Round Time. The capital letters mark it as a defined term. Don't add bold or other formatting.
+- Write a glossary term with the exact capitalization from the glossary: Selected Pick, Draft Order, Round Time. The capital letters mark it as a defined term, but a lowercase term is fine where the meaning is clear: "pick timer" in a test name. Don't add bold or other formatting.
 - Don't use a word that the glossary lists under _Avoid_.
 - If you need a new domain term, add it to the glossary first.
 
