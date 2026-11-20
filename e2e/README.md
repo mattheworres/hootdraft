@@ -139,7 +139,9 @@ Each function waits up to ten seconds for the email. `link` is the emailed link,
 
 ### Navigation: `helpers/navigation.ts`
 
-`userLink(page, name)` finds the link in the navigation that shows the logged-in user's name.
+`userLink(page, name)` finds the link in the navigation that shows the logged-in user's name. `logoLink(page)` finds the logo link, which opens /home.
+
+`expectMenuLinksOpenRoutes(page, { linkByName, reopen }, routes)` selects each link of an open menu and checks its route. `routes` is a list of `{ link, url }`. `reopen` opens the menu again after each link.
 
 ### reCAPTCHA: `helpers/recaptcha.ts`
 
@@ -196,6 +198,14 @@ For the rows that say "no request is sent", record the matching API requests bef
 const loginRequests = recordApiRequests(page, { path: 'login' });
 // the step
 expect(loginRequests).toEqual([]);
+```
+
+`recordApiRequests` sees a request when it is sent. When the step needs the answer to have arrived, wait for it:
+
+```ts
+const failedPoll = waitForApiResponse(page, { path: `draft/${draft.id}` });
+// the step
+await failedPoll;
 ```
 
 ### Draft screen: `helpers/draft-screen.ts`

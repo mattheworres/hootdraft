@@ -4,7 +4,7 @@ import { emailField, expectEmailValidationMessages, expectPasswordValidationMess
 import { footerVersionText, knownFailureOnAngularJs } from '../helpers/client';
 import { openDraftScreen, openDraftScreenLoggedIn } from '../helpers/draft-screen';
 import { failApiRequest, recordApiRequests } from '../helpers/intercept';
-import { userLink } from '../helpers/navigation';
+import { logoLink, userLink } from '../helpers/navigation';
 import { readEmailVerificationKey, readResetKey } from '../helpers/mailpit';
 import { expect, test } from '../helpers/test';
 import { setEmailVerificationKeyTime } from '../helpers/timestamps';
@@ -35,7 +35,7 @@ async function submitLoginForm(page: Page, credentials: Pick<Credentials, 'email
 
 /** Asserts the navigation of an anonymous viewer: NAV-01. */
 async function expectAnonymousNavigation(page: Page) {
-  await expect(page.getByRole('link', { name: 'Hoot Draft' })).toHaveAttribute('href', /^\/?home$/);
+  await expect(logoLink(page)).toHaveAttribute('href', /^\/?home$/);
   await expect(page.getByRole('button', { name: 'Commissioner Login' })).toHaveAttribute('href', /^\/?login$/);
   await expect(page.getByRole('link', { name: 'New League' })).toBeHidden();
   await expect(page.getByRole('link', { name: 'Invite A Friend' })).toBeHidden();
@@ -400,7 +400,7 @@ test('NAV-09 the menu button opens the menu at phone width and each link closes 
   const links = [
     { start: '/home', link: page.getByRole('link', { name: 'New League' }), goesTo: '/commish/draft/create' },
     { start: '/home', link: userLink(page, commissioner.name), goesTo: '/profile' },
-    { start: '/profile', link: page.getByRole('link', { name: 'Hoot Draft' }), goesTo: '/home' },
+    { start: '/profile', link: logoLink(page), goesTo: '/home' },
     { start: '/profile', link: page.getByRole('button', { name: 'Log Out' }), goesTo: '/home' },
   ];
   const menuLinks = page.getByRole('button', { name: /^(Log Out|Commissioner Login)/ });
