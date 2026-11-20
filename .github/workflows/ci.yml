@@ -21,6 +21,10 @@ jobs:
           cp docker/.env.example docker/.env
           APP_UID=$(id -u) docker compose up -d --build --wait
 
+      # The mounted repo is owned by the runner's uid, which git in the container does not trust
+      - name: Trust the mounted repository
+        run: docker compose exec -T php git config --global --add safe.directory /var/www/html
+
       - name: Install the PHP packages and migrate the database
         run: |
           docker compose exec -T php composer install --no-interaction --no-progress
@@ -30,7 +34,8 @@ jobs:
         run: docker compose exec -T php composer check
 
   e2e:
-    name: E2E (${{ matrix.browser }})
+    # A static name: GitHub appends the matrix value itself, and shows an unexpanded expression when the job is skipped
+    name: E2E
     needs: check
     runs-on: ubuntu-latest
     timeout-minutes: 30
