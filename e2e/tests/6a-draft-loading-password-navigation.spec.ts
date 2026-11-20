@@ -386,8 +386,13 @@ test('DRAFT-13 the client polls the In Progress Draft only, and stops after the 
   await openDraftScreen(page, inProgress);
   const polls = recordApiRequests(page, { path: `draft/${inProgress.id}` });
 
-  await page.clock.runFor(POLL_MS * 3);
-  await expect.poll(() => polls.length).toBeGreaterThanOrEqual(3);
+  // One poll at a time: WebKit sends one request for identical GET requests that are in flight together
+  for (let poll = 1; poll <= 3; poll++) {
+    const answered = waitForApiResponse(page, { path: `draft/${inProgress.id}` });
+    await page.clock.runFor(POLL_MS);
+    await answered;
+  }
+  expect(polls.length).toBeGreaterThanOrEqual(3);
 
   await logoLink(page).click();
   await expect(page).toHaveURL(/\/home$/);
