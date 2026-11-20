@@ -1,4 +1,4 @@
-import { Page, Request } from '@playwright/test';
+import { Page, Request, Response } from '@playwright/test';
 import { API_URL } from './stack';
 
 export interface ApiRequestMatch {
@@ -55,6 +55,14 @@ export function recordApiRequests(page: Page, match: ApiRequestMatch = {}): stri
   });
 
   return requests;
+}
+
+/**
+ * Waits for the answer to the next matching API request. The `request` event fires when the request is sent, so
+ * use this when the step needs the answer to have arrived. Call it before the step, and await it after the step.
+ */
+export function waitForApiResponse(page: Page, match: ApiRequestMatch = {}): Promise<Response> {
+  return page.waitForResponse((response) => requestMatches(response.request(), match));
 }
 
 /**

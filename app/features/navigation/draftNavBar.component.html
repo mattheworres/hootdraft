@@ -1,4 +1,4 @@
-<nav class="navbar navbar-inverse navbar-draft navbar-default" ng-show="$ctrl.showDraftMenu" role="navigation">
+<nav data-testid="draft-navigation" class="navbar navbar-inverse navbar-draft navbar-default" ng-show="$ctrl.showDraftMenu" role="navigation">
   <div class="container-fluid">
     <div class="row" ng-show="$ctrl.status.valid">
       <div class="col-xs-12 col-sm-2 col-md-2 navbar-header-middle">
@@ -66,7 +66,7 @@
               <i class="fa fa-cogs"></i>&nbsp;&nbsp; Commissioner Toolbox
               <span class="caret"></span>
             </a>
-            <ul class="dropdown-menu" aria-labelledby="commishDropdown">
+            <ul class="dropdown-menu" aria-labelledby="commishDropdown" data-testid="commissioner-toolbox-menu">
               <li ng-show="$ctrl.draft.setting_up">
                 <a href="#" ng-click="$ctrl.showStartDraftModal()" ng-click="draftNavCollapsed = !draftNavCollapsed">
                   <i class="fa fa-play"></i>
