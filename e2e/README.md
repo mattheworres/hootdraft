@@ -79,7 +79,7 @@ E2E_CLIENT=angular npm test
 
 ## Helpers
 
-Import `test` and `expect` from `helpers/test.ts`, not from `@playwright/test`. This `test` adds the `setup` fixture.
+Import `test` and `expect` from `helpers/test.ts`, not from `@playwright/test`. This `test` adds the `setup` fixture and the `newViewerPage` fixture. `await newViewerPage()` opens a second viewer: a page in a new browser context with its own cookies and clock. The test closes the context when it ends.
 
 ### API setup: `setup` fixture (`helpers/api.ts`)
 
@@ -110,6 +110,7 @@ test('DRAFT-01 ...', async ({ page, context, setup }) => {
 | `addManagers(commissioner, draft, names)` | Adds Managers. Returns each Manager in Draft Order |
 | `setRoundTimes(commissioner, draft, roundTimes)` | Replaces the Round Times. `[{ seconds: 60 }]` is one time for each round. `[{ round: 1, seconds: 60 }, ...]` is a time for each round |
 | `addPick(commissioner, draft, entry?)` | Enters the current Pick. Returns its ID, round, number, and Manager |
+| `addPicks(commissioner, draft, count)` | Enters the next `count` Picks. Returns the Selected Picks in Pick order |
 | `currentPick(commissioner, draft)` | The Pick that is on the clock: its ID, round, number, and Manager |
 | `editPick(commissioner, draft, pick)` | Saves the name, team, and position of a Selected Pick. Pass a copy of the Pick that `addPick` returned, with the new values |
 | `addTrade(commissioner, draft, trade)` | Enters a Trade: `manager1Id`, `manager2Id`, `pickIds` |
@@ -221,7 +222,7 @@ release();
 
 ### Draft screen: `helpers/draft-screen.ts`
 
-`openDraftScreen(page, draft)` opens the Draft screen, waits until the Draft has loaded, and returns the route. `openDraftScreenWithClock(page, draft)` installs the Playwright clock first. `openDraftScreenLoggedIn(page, context, setup)` does the same as `openDraftScreen` for a new, logged-in Commissioner with an In Progress Draft, and returns the Commissioner, the Draft, and the route. It is the starting state of the rows where a logged-in viewer opens an auth route. `DRAFT_POLL_MS` is the interval at which the client polls an In Progress Draft. Move the Playwright clock by it to run the next poll. `newViewerPage(browser)` opens a second viewer in a new browser context and returns the context and the page. `expectNoDraftPolls(page, draft, intervals?)` runs the clock over three intervals, or `intervals`, and checks that no request for the Draft is sent. Install the clock first.
+`openDraftScreen(page, draft)` opens the Draft screen, waits until the Draft has loaded, and returns the route. `openDraftScreenWithClock(page, draft)` installs the Playwright clock first. `openRoute(page, route, loaded)` opens any route and waits until the `loaded` locator is visible, and `openWithClock` installs the clock first. `visiblePanel(scope, testId)` finds the visible panel with that test ID: the Draft index keeps the panels of other views in the page. `openDraftScreenLoggedIn(page, context, setup)` does the same as `openDraftScreen` for a new, logged-in Commissioner with an In Progress Draft, and returns the Commissioner, the Draft, and the route. It is the starting state of the rows where a logged-in viewer opens an auth route. `DRAFT_POLL_MS` is the interval at which the client polls an In Progress Draft. Move the Playwright clock by it to run the next poll.  `expectNoDraftPolls(page, draft, intervals?)` runs the clock over three intervals, or `intervals`, and checks that no request for the Draft is sent. Install the clock first.
 
 ### Visible text: `helpers/text.ts`
 
@@ -234,6 +235,8 @@ await expectToast(page, { title: 'Logged In', message: 'Welcome back, Ann!' });
 ```
 
 The AngularJS toast has no role and no `data-testid`, so this helper asserts the visible text. `expectAlreadyLoggedInToast(page, user)` asserts the toast that a logged-in viewer gets on an auth route.
+
+`expectToast` passes when the first toast shows, so it cannot see a duplicate that arrives a moment later. `expectSingleToast(page, message)` waits for the network to go quiet, then asserts exactly one toast with that message.
 
 ## CI
 

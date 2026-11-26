@@ -2,6 +2,7 @@
   <div class="col-xs-12">
     <div class="form-group manager-form-group">
       <select class="form-control"
+        data-testid="manager-select"
         ng-options="manager as manager.manager_name for manager in managers"
         ng-model="selectedManager"
       ></select>

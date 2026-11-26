@@ -1,0 +1,44 @@
+#!/usr/bin/env node
+// Fails when uncommitted E2E or client changes have no whole-suite Chromium run after them.
+// Used as a Stop hook (see .claude/settings.json); also runnable by hand.
+import { execFileSync } from 'node:child_process';
+import { existsSync, readFileSync, statSync } from 'node:fs';
+import { join } from 'node:path';
+
+const root = execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' }).trim();
+const resultsPath = join(root, 'e2e/test-results/results.json');
+const watched = /^(e2e|app|app-new|templates|js|css|api|src|config)\//;
+const ignored = /(^e2e\/(test-results|playwright-report|node_modules)\/)|\.md$/;
+
+const dirty = execFileSync('git', ['status', '--porcelain', '-z', '--untracked-files=all'], { cwd: root, encoding: 'utf8' })
+  .split('\0')
+  .filter(Boolean)
+  .map((entry) => entry.slice(3))
+  .filter((file) => watched.test(file) && !ignored.test(file) && existsSync(join(root, file)));
+
+if (dirty.length === 0) process.exit(0);
+
+const fail = (reason) => {
+  console.error(
+    `E2E suite not verified: ${reason}\n` +
+      'Run `npx playwright test --project=chromium --project=helpers` in e2e/ (no -g or file filter) after your last change, then finish.',
+  );
+  process.exit(2);
+};
+
+if (!existsSync(resultsPath)) fail('e2e/test-results/results.json is missing.');
+
+const results = JSON.parse(readFileSync(resultsPath, 'utf8'));
+const argv = results.config.argv.slice(2);
+const projects = argv.filter((arg) => arg.startsWith('--project=')).sort();
+const filters = argv.filter((arg) => !arg.startsWith('--project=') && arg !== 'test');
+
+if (projects.join() !== '--project=chromium,--project=helpers') fail(`the last run used ${argv.join(' ')}.`);
+if (filters.length > 0) fail(`the last run was filtered (${filters.join(' ')}).`);
+if (results.stats.unexpected > 0 || results.stats.flaky > 0) {
+  fail(`the last run had ${results.stats.unexpected} unexpected and ${results.stats.flaky} flaky tests.`);
+}
+
+const runStart = Date.parse(results.stats.startTime);
+const newest = dirty.map((file) => ({ file, mtime: statSync(join(root, file)).mtimeMs })).sort((a, b) => b.mtime - a.mtime)[0];
+if (newest.mtime > runStart) fail(`${newest.file} changed after the last whole-suite run started.`);

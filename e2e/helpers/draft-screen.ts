@@ -1,4 +1,4 @@
-import { Browser, BrowserContext, expect, Page } from '@playwright/test';
+import { BrowserContext, expect, Locator, Page } from '@playwright/test';
 import { ApiSetup, Draft, LoggedInUser } from './api';
 import { recordApiRequests } from './intercept';
 
@@ -14,12 +14,23 @@ export async function expectNoDraftPolls(page: Page, draft: Pick<Draft, 'id'>, i
   expect(polls).toEqual([]);
 }
 
+/** Opens a route and waits until the `loaded` locator is visible. */
+export async function openRoute(page: Page, route: string, loaded: Locator): Promise<void> {
+  await page.goto(route);
+  await expect(loaded).toBeVisible();
+}
+
+/** Installs the Playwright clock, then opens a route. Move the clock by `DRAFT_POLL_MS` to run the next poll. */
+export async function openWithClock(page: Page, route: string, loaded: Locator): Promise<void> {
+  await page.clock.install();
+  await openRoute(page, route, loaded);
+}
+
 /** Opens the Draft screen and waits until the Draft has loaded. Returns the route. */
 export async function openDraftScreen(page: Page, draft: Draft): Promise<string> {
   const route = `/draft/${draft.id}`;
 
-  await page.goto(route);
-  await expect(page.getByText(draft.name).first()).toBeVisible();
+  await openRoute(page, route, page.getByText(draft.name).first());
 
   return route;
 }
@@ -31,11 +42,9 @@ export async function openDraftScreenWithClock(page: Page, draft: Draft): Promis
   return openDraftScreen(page, draft);
 }
 
-/** A second viewer: a new browser context with its own cookies and clock. Close the context at the end of the test. */
-export async function newViewerPage(browser: Browser): Promise<{ context: BrowserContext; page: Page }> {
-  const context = await browser.newContext();
-
-  return { context, page: await context.newPage() };
+/** A panel of the Draft screens by its test ID. The Draft index keeps the panels of other views in the page, so only the visible one counts. */
+export function visiblePanel(scope: Page | Locator, testId: string): Locator {
+  return scope.getByTestId(testId).filter({ visible: true });
 }
 
 /**

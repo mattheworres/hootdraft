@@ -8,7 +8,9 @@ Run inside the php container.
 
 - Tests: `docker compose exec -T php composer test` (one file: add `-- tests/Functional/AuthenticationTest.php`)
 - PHPStan, glossary terms and tests together: `docker compose exec -T php composer check`
-- E2E tests: `npx playwright test --project=chromium --project=helpers` in `e2e/`. Run the whole suite in Chromium, with no `-g` or file filter, before handing over. CI runs the other three browsers. See `CODING_STANDARDS.md`.
+- E2E tests: `npx playwright test --project=chromium --project=helpers` in `e2e/`. CI runs the other three browsers.
+- Hand-off: the whole E2E suite (above, no `-g` or file filter) runs after your last change to `e2e/` or client code, including fixes from code review and CodeScene. Any later edit means another run. `bin/check-e2e-fresh` verifies this; a Stop hook runs it.
+- Edit files with the Edit tool, not scripted replaces.
 - Commits will be blocked.
 
 ## Comments
