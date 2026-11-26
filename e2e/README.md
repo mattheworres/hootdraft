@@ -236,6 +236,8 @@ await expectToast(page, { title: 'Logged In', message: 'Welcome back, Ann!' });
 
 The AngularJS toast has no role and no `data-testid`, so this helper asserts the visible text. `expectAlreadyLoggedInToast(page, user)` asserts the toast that a logged-in viewer gets on an auth route.
 
+`expectToast` passes when the first toast shows, so it cannot see a duplicate that arrives a moment later. `expectSingleToast(page, message)` waits for the network to go quiet, then asserts exactly one toast with that message.
+
 ## CI
 
 `.github/workflows/ci.yml` runs `composer check` in the developer box, then this suite. A push runs Chromium. A pull request runs Chromium, Firefox, WebKit, and Edge. A failed run keeps its report as an artifact.

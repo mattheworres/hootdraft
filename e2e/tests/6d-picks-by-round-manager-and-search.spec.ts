@@ -2,10 +2,10 @@ import { Locator, Page } from '@playwright/test';
 import { ApiSetup, Draft, LoggedInUser, SelectedPick, unique } from '../helpers/api';
 import { knownFailureOnAngularJs } from '../helpers/client';
 import { DRAFT_POLL_MS, openDraftScreen, openRoute, openWithClock, visiblePanel } from '../helpers/draft-screen';
-import { failApiRequest } from '../helpers/intercept';
+import { failApiRequest, holdApiResponses } from '../helpers/intercept';
 import { expect, test } from '../helpers/test';
 import { VISIBLE_TEXT } from '../helpers/text';
-import { expectToast } from '../helpers/toast';
+import { expectSingleToast, expectToast } from '../helpers/toast';
 
 // Route group 6D of docs/flow-inventory.md. Each test name starts with the row ID.
 
@@ -172,7 +172,7 @@ test('ROUND-05 an API error gives a toast and the error text in the panel', asyn
 
   await page.goto(roundRoute(draft));
 
-  await expectToast(page, { message: 'Unable to load picks' });
+  await expectSingleToast(page, 'Unable to load picks');
   await expect(roundPanel(page)).toContainText('Unable to load round 1 picks', VISIBLE_TEXT);
 });
 
@@ -260,14 +260,20 @@ test('MANAGER-05 an API error gives a toast', async ({ context, page, setup }) =
 
   await page.goto(managerRoute(draft));
 
-  await expectToast(page, { message: 'Unable to grab managers' });
+  await expectSingleToast(page, 'Unable to grab managers');
 
   const picksPage = await context.newPage();
   await failApiRequest(picksPage, { path: /^draft\/\d+\/manager\/\d+\/picks\/all$/ });
+  // The AngularJS client sends the second Picks request only if the Draft loads before the Managers (W-43). Without
+  // the hold, the order varies from run to run.
+  const releaseManagers = await holdApiResponses(picksPage, { path: /^draft\/\d+\/managers$/ });
+  const draftLoaded = picksPage.waitForRequest((request) => request.url().includes('/picks/next'));
 
   await picksPage.goto(managerRoute(draft));
+  await draftLoaded;
+  releaseManagers();
 
-  await expectToast(picksPage, { message: 'Unable to load picks' });
+  await expectSingleToast(picksPage, 'Unable to load picks');
 });
 
 test('MANAGER-06 a second viewer sees the Pick of the Manager after the next poll', async ({
