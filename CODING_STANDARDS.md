@@ -25,11 +25,6 @@ Code that repeats twice in one spec file becomes a helper in that file. Code tha
 
 ### E2E results come from a whole-suite Chromium run
 
-Report E2E tests as passing only after a run of the whole suite in Chromium, with the checks of the helpers: `npx playwright test --project=chromium --project=helpers` in `e2e/`, with no `-g` or file filter. CI runs Firefox, WebKit, and Edge on a pull request.
+**Why:** a run of one spec looks green and skips the rest.
 
-**Why:** a run of one spec looks green and skips the rest. The suite grows with each route group, so the agent runs one browser and CI runs the others.
-
-**How to apply:**
-
-- **Authoring:** run the whole suite in Chromium before you hand over. A failure that only CI shows in another browser is fixed after the CI run.
-- **Review:** read `e2e/test-results/results.json`. Check that the run started after the last change to the staged files, that the Chromium project ran the new tests and the rest of the suite, and that the only failures are known failures.
+**How to apply:** `bin/check-e2e-fresh` checks that `e2e/test-results/results.json` is an unfiltered Chromium and helpers run, newer than the changed files, with no unexpected failures. In review, check that the new tests ran in it and that every failure is a known failure.

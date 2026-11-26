@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "input=$(cat); case \"$input\" in *'\"stop_hook_active\":true'*) exit 0;; esac; cd \"$CLAUDE_PROJECT_DIR\" && bin/check-e2e-fresh"
+          }
+        ]
+      }
+    ]
+  }
+}
