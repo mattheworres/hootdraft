@@ -1,13 +1,7 @@
 import { Page } from '@playwright/test';
 import { ApiSetup, Draft, DraftOptions } from '../helpers/api';
 import { knownFailureOnAngularJs } from '../helpers/client';
-import {
-  DRAFT_POLL_MS,
-  expectNoDraftPolls,
-  newViewerPage,
-  openDraftScreen,
-  openDraftScreenWithClock,
-} from '../helpers/draft-screen';
+import { DRAFT_POLL_MS, expectNoDraftPolls, openDraftScreen, openDraftScreenWithClock } from '../helpers/draft-screen';
 import { expectMenuLinksOpenRoutes, logoLink } from '../helpers/navigation';
 import { failApiRequest, recordApiRequests, waitForApiResponse } from '../helpers/intercept';
 import { expect, test } from '../helpers/test';
@@ -262,7 +256,7 @@ test('DRAFT-08 an Admin sees the toolbox of the Draft of a different user', asyn
 test('DRAFT-09 another Commissioner gets the screen of an anonymous viewer', async ({
   page,
   context,
-  browser,
+  newViewerPage,
   setup,
 }) => {
   const owner = await setup.registerCommissioner();
@@ -271,16 +265,15 @@ test('DRAFT-09 another Commissioner gets the screen of an anonymous viewer', asy
   await setup.logInBrowser(context, other);
 
   await openDraftScreen(page, draft);
-  const anonymous = await newViewerPage(browser);
-  await openDraftScreen(anonymous.page, draft);
+  const anonymous = await newViewerPage();
+  await openDraftScreen(anonymous, draft);
 
   // The name shows before the list of upcoming Picks, so wait for the list before the text is read
-  for (const viewer of [page, anonymous.page]) {
+  for (const viewer of [page, anonymous]) {
     await expect(viewer.getByText('On the clock').filter({ visible: true })).toHaveCount(1);
     await expect(toolboxButton(viewer)).toHaveCount(0);
   }
-  await expect(pageBody(page)).toHaveText(await pageBody(anonymous.page).innerText(), VISIBLE_TEXT);
-  await anonymous.context.close();
+  await expect(pageBody(page)).toHaveText(await pageBody(anonymous).innerText(), VISIBLE_TEXT);
 });
 
 test('DRAFT-10 the logo hides the Draft navigation bar on /home', async ({ page, setup }) => {
@@ -521,19 +514,21 @@ test('PW-10 the close button of the dialog closes it like Cancel', async ({ page
   await expect(lockedHeading(page)).toBeVisible();
 });
 
-test('PW-11 a second viewer sees a new Pick on the Draft Board after the next poll', async ({ browser, setup }) => {
+test('PW-11 a second viewer sees a new Pick on the Draft Board after the next poll', async ({
+  newViewerPage,
+  setup,
+}) => {
   const { commissioner, draft } = await lockedDraft(setup);
-  const viewer = await newViewerPage(browser);
-  await viewer.page.clock.install();
-  await viewer.page.goto(`/draft/${draft.id}/board`);
-  await submitPassword(viewer.page, PASSWORD);
-  await expect(boardLoading(viewer.page)).toBeHidden();
+  const viewer = await newViewerPage();
+  await viewer.clock.install();
+  await viewer.goto(`/draft/${draft.id}/board`);
+  await submitPassword(viewer, PASSWORD);
+  await expect(boardLoading(viewer)).toBeHidden();
 
   const pick = await setup.addPick(commissioner, draft, { firstName: 'Davante', lastName: 'Adams' });
-  await viewer.page.clock.runFor(DRAFT_POLL_MS * 2);
+  await viewer.clock.runFor(DRAFT_POLL_MS * 2);
 
-  await expect(viewer.page.getByText(`${pick.firstName} ${pick.lastName}`).first()).toBeVisible();
-  await viewer.context.close();
+  await expect(viewer.getByText(`${pick.firstName} ${pick.lastName}`).first()).toBeVisible();
 });
 
 test('PW-12 the client does not poll while the panel shows', async ({ page, setup }) => {

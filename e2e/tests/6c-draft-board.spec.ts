@@ -4,9 +4,10 @@ import { footerVersionText, knownFailureOnAngularJs } from '../helpers/client';
 import {
   DRAFT_POLL_MS,
   expectNoDraftPolls,
-  newViewerPage,
   openDraftScreen,
   openDraftScreenWithClock,
+  openRoute,
+  openWithClock,
 } from '../helpers/draft-screen';
 import { failApiRequest, holdApiResponses } from '../helpers/intercept';
 import { API_URL } from '../helpers/stack';
@@ -28,15 +29,9 @@ const pickTimer = (page: Page) => page.getByTestId('pick-timer');
 const pickTimerUp = (page: Page) => page.getByTestId('pick-timer-up');
 const pickTimerDisabled = (page: Page) => page.getByTestId('pick-timer-disabled');
 
-async function openBoard(page: Page, draft: Draft): Promise<void> {
-  await page.goto(boardRoute(draft));
-  await expect(boardPicks(page).first()).toBeVisible();
-}
-
-async function openBoardWithClock(page: Page, draft: Draft): Promise<void> {
-  await page.clock.install();
-  await openBoard(page, draft);
-}
+const openBoard = (page: Page, draft: Draft) => openRoute(page, boardRoute(draft), boardPicks(page).first());
+const openBoardWithClock = (page: Page, draft: Draft) =>
+  openWithClock(page, boardRoute(draft), boardPicks(page).first());
 
 async function expectText(locator: Locator, parts: (string | number)[]): Promise<void> {
   for (const part of parts) {
@@ -279,10 +274,7 @@ test('BOARD-09 a Pick whose time is over shows "Time\'s up!" at once', async ({ 
 test('BOARD-10 a Complete Draft shows each Selected Pick, no header, and no polling', async ({ page, setup }) => {
   const commissioner = await setup.registerCommissioner();
   const draft = await setup.createDraft(commissioner, { status: 'In Progress', rounds: 2 });
-  const picks: SelectedPick[] = [];
-  for (let pick = 0; pick < 4; pick++) {
-    picks.push(await setup.addPick(commissioner, draft));
-  }
+  const picks = await setup.addPicks(commissioner, draft, 4);
   await openBoardWithClock(page, draft);
 
   await expect(boardPicks(page)).toHaveCount(4);
@@ -328,10 +320,10 @@ test('BOARD-12 API errors on the current and last Pick, updated Picks, and remai
   await expectToast(page, { message: 'Unable to get up to date draft picks' });
 });
 
-test('BOARD-13 a second viewer sees a new Pick after the next poll', async ({ browser, setup }) => {
+test('BOARD-13 a second viewer sees a new Pick after the next poll', async ({ newViewerPage, setup }) => {
   const commissioner = await setup.registerCommissioner();
   const draft = await setup.createDraft(commissioner, { status: 'In Progress' });
-  const { page: viewer } = await newViewerPage(browser);
+  const viewer = await newViewerPage();
   await openBoardWithClock(viewer, draft);
   await expect(currentPick(viewer)).toContainText('Pick # 1', VISIBLE_TEXT);
 
@@ -344,11 +336,11 @@ test('BOARD-13 a second viewer sees a new Pick after the next poll', async ({ br
   await expectText(lastPick(viewer), [`${pick.firstName} ${pick.lastName}`, 'Pick # 1']);
 });
 
-test('BOARD-14 a second viewer sees an edited Pick after the next poll', async ({ browser, setup }) => {
+test('BOARD-14 a second viewer sees an edited Pick after the next poll', async ({ newViewerPage, setup }) => {
   const commissioner = await setup.registerCommissioner();
   const draft = await setup.createDraft(commissioner, { status: 'In Progress' });
   const pick = await setup.addPick(commissioner, draft);
-  const { page: viewer } = await newViewerPage(browser);
+  const viewer = await newViewerPage();
   await openBoardWithClock(viewer, draft);
   await expect(boardPicks(viewer).first()).toContainText(pick.lastName, VISIBLE_TEXT);
 
@@ -359,13 +351,16 @@ test('BOARD-14 a second viewer sees an edited Pick after the next poll', async (
   await expectText(boardPicks(viewer).first(), [edited.firstName, edited.lastName, 'Runningback', 'CHI']);
 });
 
-test('BOARD-15 a second viewer sees the new Managers of a Trade after the next poll', async ({ browser, setup }) => {
+test('BOARD-15 a second viewer sees the new Managers of a Trade after the next poll', async ({
+  newViewerPage,
+  setup,
+}) => {
   knownFailureOnAngularJs('W-40');
   const commissioner = await setup.registerCommissioner();
   const draft = await setup.createDraft(commissioner, { status: 'In Progress' });
   const [first, second] = draft.managers;
   const pickIds = await setup.upcomingPickIds(commissioner, draft, 2);
-  const { page: viewer } = await newViewerPage(browser);
+  const viewer = await newViewerPage();
   await openBoardWithClock(viewer, draft);
   await expect(boardPicks(viewer).first()).toContainText(first.name, VISIBLE_TEXT);
 
@@ -377,7 +372,7 @@ test('BOARD-15 a second viewer sees the new Managers of a Trade after the next p
 });
 
 test('BOARD-16 two flip clocks show the same time, and each starts again after a Pick', async ({
-  browser,
+  newViewerPage,
   page,
   setup,
 }) => {
@@ -389,7 +384,7 @@ test('BOARD-16 two flip clocks show the same time, and each starts again after a
   ]);
   const firstPick = await setup.addPick(commissioner, draft);
   await setPickTime(firstPick.id, { seconds: 120 });
-  const { page: viewer } = await newViewerPage(browser);
+  const viewer = await newViewerPage();
   await openBoardWithClock(page, draft);
   await openBoardWithClock(viewer, draft);
   await expect(pickTimer(page)).toBeVisible();
@@ -410,13 +405,13 @@ test('BOARD-16 two flip clocks show the same time, and each starts again after a
 });
 
 test('BOARD-17 after the last Pick a second viewer sees the Selected Pick, no header, and no polling', async ({
-  browser,
+  newViewerPage,
   setup,
 }) => {
   const commissioner = await setup.registerCommissioner();
   const draft = await setup.createDraft(commissioner, { status: 'In Progress', rounds: 1 });
   await setup.addPick(commissioner, draft);
-  const { page: viewer } = await newViewerPage(browser);
+  const viewer = await newViewerPage();
   await openBoardWithClock(viewer, draft);
   await expect(header(viewer)).toBeVisible();
 
@@ -428,12 +423,12 @@ test('BOARD-17 after the last Pick a second viewer sees the Selected Pick, no he
   await expectNoDraftPolls(viewer, draft);
 });
 
-test('BOARD-18 after a reset a second viewer gets the result of BOARD-01', async ({ browser, setup }) => {
+test('BOARD-18 after a reset a second viewer gets the result of BOARD-01', async ({ newViewerPage, setup }) => {
   knownFailureOnAngularJs('W-39');
   const commissioner = await setup.registerCommissioner();
   const draft = await setup.createDraft(commissioner, { status: 'In Progress' });
   const other = await setup.createDraft(commissioner, { status: 'In Progress' });
-  const { page: viewer } = await newViewerPage(browser);
+  const viewer = await newViewerPage();
   const previousRoute = await openDraftScreenWithClock(viewer, other);
   await openBoard(viewer, draft);
 

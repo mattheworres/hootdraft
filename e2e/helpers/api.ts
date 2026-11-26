@@ -371,6 +371,17 @@ export class ApiSetup {
     return { ...filled, ...current };
   }
 
+  /** Enters the next `count` Picks of an In Progress Draft. Returns the Selected Picks in Pick order. */
+  async addPicks(commissioner: LoggedInUser, draft: Pick<Draft, 'id'>, count: number): Promise<SelectedPick[]> {
+    const picks: SelectedPick[] = [];
+
+    for (let entered = 0; entered < count; entered++) {
+      picks.push(await this.addPick(commissioner, draft));
+    }
+
+    return picks;
+  }
+
   /** The Pick that is on the clock in an In Progress Draft. */
   async currentPick(commissioner: LoggedInUser, draft: Pick<Draft, 'id'>): Promise<BoardPick> {
     const { pick } = await send<{

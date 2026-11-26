@@ -7,6 +7,7 @@ import {
   openDraftScreen,
   openDraftScreenLoggedIn,
   openDraftScreenWithClock,
+  visiblePanel,
 } from '../helpers/draft-screen';
 import { failApiRequest } from '../helpers/intercept';
 import { expectMenuLinksOpenRoutes } from '../helpers/navigation';
@@ -20,7 +21,6 @@ const DONATION_HIDE_DAYS = 14;
 const DATE_TIME = /\w+day, \w+ \d+\w\w \d{4}, \d+:\d\d [ap]m/;
 
 // Each Draft status has its own view with its own panels, and the views of the other statuses are hidden
-const visiblePanel = (page: Page, testId: string) => page.getByTestId(testId).filter({ visible: true });
 const leagueDetails = (page: Page) => visiblePanel(page, 'league-details-panel');
 const commishActions = (page: Page) => visiblePanel(page, 'commish-actions-panel');
 const draftOrder = (page: Page) => visiblePanel(page, 'draft-order-panel');
@@ -79,20 +79,10 @@ async function expectOnTheClockFirst(page: Page) {
   await expect(nextPick(page)).toContainText('On the clock', VISIBLE_TEXT);
 }
 
-/** Enters the next `count` Picks of an In Progress Draft. Returns the Selected Picks in Pick order. */
-async function addPicks(setup: ApiSetup, commissioner: LoggedInUser, draft: Draft, count: number) {
-  const picks: SelectedPick[] = [];
-  for (let pick = 1; pick <= count; pick++) {
-    picks.push(await setup.addPick(commissioner, draft));
-  }
-
-  return picks;
-}
-
 /** A Complete Draft of two Rounds and two Managers. Returns its Selected Picks in Pick order. */
 async function completeDraft(setup: ApiSetup, commissioner: LoggedInUser) {
   const draft = await setup.createDraft(commissioner, { status: 'In Progress', rounds: 2 });
-  const picks = await addPicks(setup, commissioner, draft, 4);
+  const picks = await setup.addPicks(commissioner, draft, 4);
 
   return { draft, picks };
 }
@@ -118,7 +108,7 @@ async function expectCompleteView(page: Page, picks: SelectedPick[]) {
       ['Started', DATE_TIME],
       ['Ended', DATE_TIME],
     ],
-    page.locator('phpd-draft-completed').getByTestId('league-details-panel').filter({ visible: true }),
+    visiblePanel(page.locator('phpd-draft-completed'), 'league-details-panel'),
   );
   await expect(leagueDetails(page)).toHaveCount(1);
   await expectRoundPicks(page, picks, 1);
@@ -180,7 +170,7 @@ test('INDEX-04 an In Progress Draft with no Selected Pick shows the next five Pi
 test('INDEX-05 Last 5 Picks shows the five newest Selected Picks', async ({ page, setup }) => {
   const commissioner = await setup.registerCommissioner();
   const draft = await setup.createDraft(commissioner, { status: 'In Progress', rounds: 4 });
-  const picks = await addPicks(setup, commissioner, draft, 6);
+  const picks = await setup.addPicks(commissioner, draft, 6);
 
   await openDraftScreen(page, draft);
 
@@ -370,7 +360,7 @@ test('INDEX-15 a second viewer sees the Complete view after the last Pick, and p
 }) => {
   const commissioner = await setup.registerCommissioner();
   const draft = await setup.createDraft(commissioner, { status: 'In Progress', rounds: 2 });
-  const picks = await addPicks(setup, commissioner, draft, 3);
+  const picks = await setup.addPicks(commissioner, draft, 3);
   await openDraftScreenWithClock(page, draft);
   await expect(pickRows(upcomingPicks(page))).toHaveCount(1);
 
