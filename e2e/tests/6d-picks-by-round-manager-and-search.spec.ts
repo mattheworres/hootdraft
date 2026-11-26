@@ -1,7 +1,15 @@
 import { Locator, Page } from '@playwright/test';
 import { ApiSetup, Draft, LoggedInUser, SelectedPick, unique } from '../helpers/api';
 import { knownFailureOnAngularJs } from '../helpers/client';
-import { DRAFT_POLL_MS, openDraftScreen, openRoute, openWithClock, visiblePanel } from '../helpers/draft-screen';
+import {
+  DRAFT_POLL_MS,
+  DraftRoute,
+  expectDraftStatusRedirect,
+  openRoute,
+  openWithClock,
+  SETTING_UP_TOAST,
+  visiblePanel,
+} from '../helpers/draft-screen';
 import { failApiRequest, holdApiResponses } from '../helpers/intercept';
 import { expect, test } from '../helpers/test';
 import { VISIBLE_TEXT } from '../helpers/text';
@@ -9,15 +17,14 @@ import { expectSingleToast, expectToast } from '../helpers/toast';
 
 // Route group 6D of docs/flow-inventory.md. Each test name starts with the row ID.
 
-const SETTING_UP_TOAST = 'Draft is still setting up';
 const SEARCH_HINT =
   'Enter a few player name keywords, select a team or a position to search for picks in the search box to find picks.';
 const NO_MATCHES = 'No picks were found matching that criteria.';
 const SEARCH_DEBOUNCE_MS = 500;
 
-const roundRoute = (draft: Pick<Draft, 'id'>) => `/draft/${draft.id}/picks/round`;
-const managerRoute = (draft: Pick<Draft, 'id'>) => `/draft/${draft.id}/picks/manager`;
-const searchRoute = (draft: Pick<Draft, 'id'>) => `/draft/${draft.id}/search`;
+const roundRoute: DraftRoute = (draft) => `/draft/${draft.id}/picks/round`;
+const managerRoute: DraftRoute = (draft) => `/draft/${draft.id}/picks/manager`;
+const searchRoute: DraftRoute = (draft) => `/draft/${draft.id}/search`;
 
 const pickRows = (panel: Locator) => panel.getByTestId('pick-row');
 const roundPanel = (page: Page) => page.getByTestId('round-picks-panel');
@@ -61,18 +68,6 @@ async function completeDraft(setup: ApiSetup, commissioner: LoggedInUser) {
   return { draft, picks };
 }
 
-async function expectSettingUpRedirect(page: Page, route: (draft: Pick<Draft, 'id'>) => string, setup: ApiSetup) {
-  const commissioner = await setup.registerCommissioner();
-  const settingUp = await setup.createDraft(commissioner);
-  const other = await setup.createDraft(commissioner, { status: 'In Progress' });
-
-  const previousRoute = await openDraftScreen(page, other);
-  await page.goto(route(settingUp));
-
-  await expectToast(page, { message: SETTING_UP_TOAST });
-  await expect(page).toHaveURL(previousRoute);
-}
-
 async function expectUpcomingPicksPanel(page: Page) {
   await expect(upcomingPanel(page).getByRole('heading', { name: 'Upcoming Picks' })).toBeVisible();
 }
@@ -93,7 +88,7 @@ async function expectManagerList(page: Page, draft: Pick<Draft, 'managers'>, cho
 test('ROUND-01 a Setting Up Draft gives a warning toast and goes to the previous route', async ({ page, setup }) => {
   knownFailureOnAngularJs('W-06');
 
-  await expectSettingUpRedirect(page, roundRoute, setup);
+  await expectDraftStatusRedirect(page, setup, { route: roundRoute, status: 'Setting Up', message: SETTING_UP_TOAST });
 });
 
 test('ROUND-02 the current Round lists each Pick, Selected and Unselected, next to Upcoming Picks', async ({
@@ -196,7 +191,11 @@ test('ROUND-06 a second viewer sees a new Pick after the next poll', async ({ ne
 test('MANAGER-01 a Setting Up Draft gives a warning toast and goes to the previous route', async ({ page, setup }) => {
   knownFailureOnAngularJs('W-06');
 
-  await expectSettingUpRedirect(page, managerRoute, setup);
+  await expectDraftStatusRedirect(page, setup, {
+    route: managerRoute,
+    status: 'Setting Up',
+    message: SETTING_UP_TOAST,
+  });
 });
 
 test('MANAGER-02 the first Manager is chosen and lists each of their Picks next to Upcoming Picks', async ({
@@ -332,7 +331,7 @@ async function expectEmptyFieldsAndHint(page: Page) {
 test('SEARCH-01 a Setting Up Draft gives a warning toast and goes to the previous route', async ({ page, setup }) => {
   knownFailureOnAngularJs('W-06');
 
-  await expectSettingUpRedirect(page, searchRoute, setup);
+  await expectDraftStatusRedirect(page, setup, { route: searchRoute, status: 'Setting Up', message: SETTING_UP_TOAST });
 });
 
 test('SEARCH-02 the search form shows its fields and the hint, for an In Progress and a Complete Draft', async ({

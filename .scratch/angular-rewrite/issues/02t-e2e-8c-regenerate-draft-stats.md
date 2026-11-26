@@ -13,3 +13,4 @@
 - [ ] Add `data-testid` attributes to the `app/` templates of this group only where role and label are weak
 - [ ] Fill in "Test file" and "Passes on AngularJS" for each row of the group
 - [ ] The tests of this group pass in Chromium on the AngularJS client, with only the known failures of this group. CI runs the other three browsers
+- [ ] ADMSTATS-02 and ADMSTATS-03 must test Draft Stats generation without a stub: no `fulfillApiRequest` on the stats requests. Generate the stats through the real API and check the real values on the Draft Stats screen (STATS-03). This is the only place in the suite that tests the generation this way, because STATS-03 and STATS-04 in ticket 02k stub the stats response

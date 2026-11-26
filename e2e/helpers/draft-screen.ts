@@ -1,6 +1,7 @@
 import { BrowserContext, expect, Locator, Page } from '@playwright/test';
 import { ApiSetup, Draft, LoggedInUser } from './api';
 import { recordApiRequests } from './intercept';
+import { expectToast } from './toast';
 
 /** The client asks the API for an In Progress Draft at this interval. */
 export const DRAFT_POLL_MS = 2_750;
@@ -40,6 +41,37 @@ export async function openDraftScreenWithClock(page: Page, draft: Draft): Promis
   await page.clock.install();
 
   return openDraftScreen(page, draft);
+}
+
+/** Builds the route of one Draft screen. */
+export type DraftRoute = (draft: Pick<Draft, 'id'>) => string;
+
+/** The warning toast of a Draft screen that needs a Draft past Setting Up. */
+export const SETTING_UP_TOAST = 'Draft is still setting up';
+
+/** The warning toast and the return to the route that the viewer opened before. */
+export async function expectRedirectToPreviousRoute(page: Page, message: string, previousRoute: string): Promise<void> {
+  await expectToast(page, { message });
+  await expect(page).toHaveURL(previousRoute);
+}
+
+/**
+ * The viewer opens a Draft screen of an In Progress Draft, then opens `route` of a Draft in `status`. Checks the
+ * warning toast `message` and the return to the first screen. Covers the "redirects for a Draft status" rows.
+ */
+export async function expectDraftStatusRedirect(
+  page: Page,
+  setup: ApiSetup,
+  redirect: { route: DraftRoute; status: 'Setting Up' | 'In Progress'; message: string },
+): Promise<void> {
+  const commissioner = await setup.registerCommissioner();
+  const target = await setup.createDraft(commissioner, { status: redirect.status });
+  const other = await setup.createDraft(commissioner, { status: 'In Progress' });
+
+  const previousRoute = await openDraftScreen(page, other);
+  await page.goto(redirect.route(target));
+
+  await expectRedirectToPreviousRoute(page, redirect.message, previousRoute);
 }
 
 /** A panel of the Draft screens by its test ID. The Draft index keeps the panels of other views in the page, so only the visible one counts. */
