@@ -454,8 +454,7 @@ test('PW-05 the login link of the dialog closes it and opens /login', async ({ p
 
 test('PW-06 another Commissioner gets the dialog with no login link', async ({ page, context, setup }) => {
   const { draft } = await lockedDraft(setup);
-  const other = await setup.registerCommissioner();
-  await setup.logInBrowser(context, other);
+  const other = await setup.logInNewCommissioner(context);
 
   await page.goto(`/draft/${draft.id}`);
 
@@ -481,8 +480,7 @@ test('PW-08 an Admin sees the locked Draft of a different user with no panel and
   setup,
 }) => {
   const { draft } = await lockedDraft(setup);
-  const admin = await setup.registerAdmin();
-  await setup.logInBrowser(context, admin);
+  const admin = await setup.logInNewAdmin(context);
 
   await openDraftScreen(page, draft);
 

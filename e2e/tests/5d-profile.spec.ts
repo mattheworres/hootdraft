@@ -43,8 +43,7 @@ async function openProfile(page: Page, user: LoggedInUser) {
 }
 
 async function openProfileLoggedIn(page: Page, context: BrowserContext, setup: ApiSetup) {
-  const user = await setup.registerCommissioner();
-  await setup.logInBrowser(context, user);
+  const user = await setup.logInNewCommissioner(context);
   await openProfile(page, user);
 
   return user;
@@ -215,8 +214,7 @@ test('PROFILE-08 an API error on the profile request gives a toast and an empty 
   context,
   setup,
 }) => {
-  const user = await setup.registerCommissioner();
-  await setup.logInBrowser(context, user);
+  const user = await setup.logInNewCommissioner(context);
   await failApiRequest(page, { method: 'GET', path: 'commish/profile' });
 
   await page.goto('/profile');
@@ -234,8 +232,7 @@ test('PROFILE-09 an anonymous viewer is redirected to the login screen', async (
 });
 
 test('PROFILE-10 an Admin sees the same form as a Commissioner', async ({ page, context, setup }) => {
-  const admin = await setup.registerAdmin();
-  await setup.logInBrowser(context, admin);
+  const admin = await setup.logInNewAdmin(context);
 
   await openProfile(page, admin);
   await expectProfileForm(page, admin);

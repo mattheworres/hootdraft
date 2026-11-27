@@ -493,6 +493,22 @@ export class ApiSetup {
     await context.addCookies(cookies);
   }
 
+  /** Registers a Commissioner and gives the browser context their login session. */
+  async logInNewCommissioner(context: BrowserContext, overrides: Partial<Credentials> = {}): Promise<LoggedInUser> {
+    const commissioner = await this.registerCommissioner(overrides);
+    await this.logInBrowser(context, commissioner);
+
+    return commissioner;
+  }
+
+  /** Registers an Admin and gives the browser context their login session. */
+  async logInNewAdmin(context: BrowserContext, overrides: Partial<Credentials> = {}): Promise<LoggedInUser> {
+    const admin = await this.registerAdmin(overrides);
+    await this.logInBrowser(context, admin);
+
+    return admin;
+  }
+
   async dispose(): Promise<void> {
     await Promise.all(this.sessions.map((session) => session.dispose()));
     this.sessions.length = 0;
