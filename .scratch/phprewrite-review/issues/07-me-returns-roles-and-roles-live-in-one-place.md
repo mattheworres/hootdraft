@@ -7,7 +7,7 @@
 
 **Blocked by:** 01, 05 (both edit `LoginUserService` and `LoginUserValidator`)
 
-**Status:** awaiting-human-review
+**Status:** completed
 
 - [x] `GET /me` returns `roles` as an array alongside `name` and `is_admin`, and still returns 401 without a session
 - [x] Splitting the `roles` column and deciding Admin each have one implementation that the other call sites use

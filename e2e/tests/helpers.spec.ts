@@ -1,3 +1,4 @@
+import type { TestCase } from '@playwright/test/reporter';
 import { LoggedInUser } from '../helpers/api';
 import { clientUnderTest, knownFailureOnAngularJs } from '../helpers/client';
 import { failApiRequest } from '../helpers/intercept';
@@ -11,6 +12,7 @@ import {
   setPickTime,
   setResetKeyTime,
 } from '../helpers/timestamps';
+import { ProgressCount } from '../reporters/github-progress';
 
 // These tests check the helpers against the real API. They are not inventory rows.
 
@@ -225,5 +227,38 @@ test.describe('Known failure mark', () => {
     knownFailureOnAngularJs('W-00');
 
     expect('the AngularJS result').toBe('the correct result');
+  });
+});
+
+test.describe('progress reporter', () => {
+  type Outcome = ReturnType<TestCase['outcome']>;
+  const attempt = (outcome: Outcome, retry: number, retries = 1) => ({
+    test: { outcome: () => outcome, retries },
+    result: { retry },
+  });
+
+  test('counts a test once, after its last attempt, and counts a failure only when it is unexpected', () => {
+    const count = new ProgressCount(4);
+
+    for (const { test: testCase, result } of [
+      attempt('expected', 0),
+      attempt('unexpected', 0),
+      attempt('flaky', 1),
+      attempt('unexpected', 0),
+      attempt('unexpected', 1),
+    ]) {
+      count.record(testCase, result);
+    }
+
+    expect(count).toMatchObject({ done: 3, failed: 1 });
+    expect(count.title).toBe('3/4 · 1 failed');
+  });
+
+  test('leaves the failures out of the title when there are none', () => {
+    const count = new ProgressCount(2);
+
+    count.record(attempt('skipped', 0).test, attempt('skipped', 0).result);
+
+    expect(count.title).toBe('1/2');
   });
 });

@@ -12,6 +12,7 @@ export default defineConfig({
     process.env.CI ? ['github'] : ['list'],
     ['html', { open: 'never' }],
     ['json', { outputFile: 'test-results/results.json' }],
+    ['./reporters/github-progress.ts'],
   ],
   use: {
     baseURL: clientBaseURL,

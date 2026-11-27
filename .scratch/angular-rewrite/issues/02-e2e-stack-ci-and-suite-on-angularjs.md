@@ -10,7 +10,7 @@
 
 ## Sub-tickets
 
-Ticket 02a comes first. Tickets 02b to 02v are blocked by 02a only, so they can run in any order. When a sub-ticket is `completed`, move its file to `../completed-subissues/`. This ticket stays in `issues/` until each sub-ticket is there.
+Ticket 02a comes first. Tickets 02b to 02w are blocked by 02a only, so they can run in any order. When a sub-ticket is `completed`, move its file to `../completed-subissues/`. This ticket stays in `issues/` until each sub-ticket is there.
 
 | Ticket | Scope | File |
 | --- | --- | --- |
@@ -36,6 +36,7 @@ Ticket 02a comes first. Tickets 02b to 02v are blocked by 02a only, so they can 
 | 02t | 8C Regenerate Draft Stats | `02t-e2e-8c-regenerate-draft-stats.md` |
 | 02u | Screenshot report tool | `02u-screenshot-report-tool.md` |
 | 02v | API: retry a transaction after a deadlock | `02v-api-deadlock-retry.md` |
+| 02w | CI speed and runner minutes | `02w-ci-speed-and-runner-minutes.md` |
 
 ## Rules for each sub-ticket
 

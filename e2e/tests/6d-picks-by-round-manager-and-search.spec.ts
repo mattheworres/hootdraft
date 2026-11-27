@@ -12,7 +12,7 @@ import {
 } from '../helpers/draft-screen';
 import { failApiRequest, holdApiResponses } from '../helpers/intercept';
 import { expect, test } from '../helpers/test';
-import { VISIBLE_TEXT } from '../helpers/text';
+import { fullName, VISIBLE_TEXT } from '../helpers/text';
 import { expectSingleToast, expectToast } from '../helpers/toast';
 
 // Route group 6D of docs/flow-inventory.md. Each test name starts with the row ID.
@@ -43,7 +43,6 @@ const managerHeading = (page: Page, name: string) => page.getByRole('heading', {
 const pager = (page: Page, direction: 'Previous' | 'Next') =>
   roundPanel(page).getByRole('link', { name: new RegExp(direction) });
 
-const fullName = (pick: Pick<SelectedPick, 'firstName' | 'lastName'>) => `${pick.firstName} ${pick.lastName}`;
 const managerName = (draft: Pick<Draft, 'managers'>, pick: Pick<SelectedPick, 'managerId'>) =>
   draft.managers.find(({ id }) => id === pick.managerId)!.name;
 

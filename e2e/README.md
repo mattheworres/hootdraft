@@ -115,6 +115,7 @@ test('DRAFT-01 ...', async ({ page, context, setup }) => {
 | `currentPick(commissioner, draft)` | The Pick that is on the clock: its ID, round, number, and Manager |
 | `editPick(commissioner, draft, pick)` | Saves the name, team, and position of a Selected Pick. Pass a copy of the Pick that `addPick` returned, with the new values |
 | `addTrade(commissioner, draft, trade)` | Enters a Trade: `manager1Id`, `manager2Id`, `pickIds` |
+| `assignPickToPosition(user, draft, pick, position)` | Puts a Selected Pick in the Depth Chart position of its Manager with that name |
 | `uploadProPlayers(admin, league, csvPath)` | Replaces the Pro Player list of one League |
 | `requestPasswordReset(user)` | Starts the lost password process. The lost password email with the Reset Key is in Mailpit |
 | `resetPassword(user, resetKey, password)` | Sets the password with a Reset Key, which uses the key up |
@@ -144,7 +145,7 @@ Each function waits up to ten seconds for the email. `link` is the emailed link,
 
 ### Navigation: `helpers/navigation.ts`
 
-`userLink(page, name)` finds the link in the navigation that shows the logged-in user's name. `logoLink(page)` finds the logo link, which opens /home.
+`userLink(page, name)` finds the link in the navigation that shows the logged-in user's name. `logoLink(page)` finds the logo link, which opens /home. `expectFooterHidden(page)` checks that the footer is hidden. Call it once the screen has loaded.
 
 `expectMenuLinksOpenRoutes(page, { linkByName, reopen }, routes)` selects each link of an open menu and checks its route. `routes` is a list of `{ link, url }`. `reopen` opens the menu again after each link.
 
@@ -233,7 +234,7 @@ release();
 
 ### Visible text: `helpers/text.ts`
 
-`VISIBLE_TEXT` is the option for `toHaveText` and `toContainText` that skips hidden text, such as error panels and phone-width variants of a view.
+`VISIBLE_TEXT` is the option for `toHaveText` and `toContainText` that skips hidden text, such as error panels and phone-width variants of a view. `fullName(pick)` is the name of a Pick's player as the screens show it.
 
 ### Toasts: `helpers/toast.ts`
 
@@ -248,6 +249,10 @@ The AngularJS toast has no role and no `data-testid`, so this helper asserts the
 ## CI
 
 `.github/workflows/ci.yml` runs `composer check` in the developer box, then this suite. A push runs Chromium. A pull request runs Chromium, Firefox, WebKit, and Edge. A failed run keeps its report as an artifact.
+
+One job builds the AngularJS client, and each browser job downloads that build. `vendor/` is cached by the hash of `composer.lock`, and the yarn and npm downloads are cached by their lock files.
+
+While a browser runs, its check "E2E progress (browser)" shows the tests done, the total, and the failures, for example "120/205 · 2 failed". `reporters/github-progress.ts` adds this check and updates it every 15 seconds. It needs the job permission `checks: write`. Without the `E2E_PROGRESS_CHECK` and `E2E_PROGRESS_SHA` variables, for example on a local run, it does nothing. A pull request from a fork gets a read-only token, so its runs show no progress check.
 
 ## Known limits
 

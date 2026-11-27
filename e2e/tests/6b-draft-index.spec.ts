@@ -12,7 +12,7 @@ import {
 import { failApiRequest } from '../helpers/intercept';
 import { expectMenuLinksOpenRoutes } from '../helpers/navigation';
 import { expect, test } from '../helpers/test';
-import { VISIBLE_TEXT } from '../helpers/text';
+import { fullName, VISIBLE_TEXT } from '../helpers/text';
 import { expectToast } from '../helpers/toast';
 
 // Route group 6B of docs/flow-inventory.md. Each test name starts with the row ID.
@@ -72,7 +72,7 @@ function ordinal(position: number): string {
 
 /** "Last 5 Picks" holds this one Pick and no other. */
 async function expectOnlyLastPick(page: Page, pick: Pick<PickEntry, 'firstName' | 'lastName'>) {
-  await expect(pickRows(lastPicks(page))).toHaveText([new RegExp(`${pick.firstName} ${pick.lastName}`)], VISIBLE_TEXT);
+  await expect(pickRows(lastPicks(page))).toHaveText([new RegExp(fullName(pick))], VISIBLE_TEXT);
 }
 
 async function expectOnTheClockFirst(page: Page) {
@@ -92,7 +92,7 @@ async function expectRoundPicks(page: Page, picks: SelectedPick[], round: number
   await expect(pickRows(roundPicks(page))).toHaveText(
     picks
       .filter((pick) => pick.round === round)
-      .map((pick) => new RegExp(`Round\\s*${round}\\s[\\s\\S]*${pick.firstName} ${pick.lastName}`)),
+      .map((pick) => new RegExp(`Round\\s*${round}\\s[\\s\\S]*${fullName(pick)}`)),
     VISIBLE_TEXT,
   );
 }
@@ -181,7 +181,7 @@ test('INDEX-05 Last 5 Picks shows the five newest Selected Picks', async ({ page
     const row = pickRows(lastPicks(page)).nth(index);
     await expect(row).toContainText(pickNumber(pick.number), VISIBLE_TEXT);
     await expect(row).toContainText(`Round ${pick.round}`, VISIBLE_TEXT);
-    await expect(row).toContainText(`${pick.firstName} ${pick.lastName}`, VISIBLE_TEXT);
+    await expect(row).toContainText(fullName(pick), VISIBLE_TEXT);
     await expect(row).toContainText('Wide Receiver – Green Bay Packers', VISIBLE_TEXT);
     await expect(row).toContainText(manager.name, VISIBLE_TEXT);
   }

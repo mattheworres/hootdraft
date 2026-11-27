@@ -4,7 +4,7 @@ import { emailField, expectEmailValidationMessages, expectPasswordValidationMess
 import { footerVersionText, knownFailureOnAngularJs } from '../helpers/client';
 import { openDraftScreen, openDraftScreenLoggedIn } from '../helpers/draft-screen';
 import { failApiRequest, recordApiRequests } from '../helpers/intercept';
-import { logoLink, userLink } from '../helpers/navigation';
+import { expectFooterHidden, logoLink, userLink } from '../helpers/navigation';
 import { readEmailVerificationKey, readResetKey } from '../helpers/mailpit';
 import { expect, test } from '../helpers/test';
 import { setEmailVerificationKeyTime } from '../helpers/timestamps';
@@ -380,11 +380,11 @@ test('NAV-08 the footer shows the version, the license, and the copyright, and h
   // The Draft navigation shows once the Draft has loaded, so the footer check does not pass before the screen renders
   await page.goto(`/draft/${draft.id}/board`);
   await expect(page.getByRole('link', { name: draft.name })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'GNU GPL3 License' })).toBeHidden();
+  await expectFooterHidden(page);
 
   await page.goto(`/draft/${draft.id}/depth_chart`);
   await expect(page.getByRole('link', { name: draft.name })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'GNU GPL3 License' })).toBeHidden();
+  await expectFooterHidden(page);
 });
 
 test('NAV-09 the menu button opens the menu at phone width and each link closes it', async ({
