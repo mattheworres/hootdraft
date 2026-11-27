@@ -70,22 +70,32 @@ export function waitForApiResponse(page: Page, match: ApiRequestMatch = {}): Pro
  * the API, so no state changes. Call it before the step that sends the request.
  */
 export async function failApiRequest(page: Page, failure: ApiFailure): Promise<void> {
-  await page.route(
-    (url) => {
-      const path = apiPathOf(url);
+  await fulfillApiRequest(
+    page,
+    failure,
+    failure.body ?? { error: 'An unexpected error occurred.' },
+    failure.status ?? 500,
+  );
+}
 
-      return path !== null && pathMatches(path, failure.path);
-    },
+/**
+ * Answers each matching API request with this JSON body and status. The request never reaches the API. Use it
+ * for a result that the API cannot give on demand, such as the exact durations of Draft Stats.
+ */
+export async function fulfillApiRequest(
+  page: Page,
+  match: ApiRequestMatch,
+  body: unknown,
+  status = 200,
+): Promise<void> {
+  await page.route(
+    (url) => apiPathOf(url) !== null,
     async (route) => {
-      if (failure.method && route.request().method() !== failure.method) {
+      if (!requestMatches(route.request(), match)) {
         return route.fallback();
       }
 
-      await route.fulfill({
-        status: failure.status ?? 500,
-        contentType: 'application/json',
-        body: JSON.stringify(failure.body ?? { error: 'An unexpected error occurred.' }),
-      });
+      await route.fulfill({ status, contentType: 'application/json', body: JSON.stringify(body) });
     },
   );
 }

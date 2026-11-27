@@ -3,11 +3,14 @@ import { ApiSetup, Draft, LoggedInUser, SelectedPick, unique } from '../helpers/
 import { footerVersionText, knownFailureOnAngularJs } from '../helpers/client';
 import {
   DRAFT_POLL_MS,
+  DraftRoute,
   expectNoDraftPolls,
+  expectRedirectToPreviousRoute,
   openDraftScreen,
   openDraftScreenWithClock,
   openRoute,
   openWithClock,
+  SETTING_UP_TOAST,
 } from '../helpers/draft-screen';
 import { failApiRequest, holdApiResponses } from '../helpers/intercept';
 import { API_URL } from '../helpers/stack';
@@ -19,7 +22,7 @@ import { expectToast } from '../helpers/toast';
 const PHONE = { width: 375, height: 700 };
 const POSITION_NAMES: Record<string, string> = { QB: 'Quarterback', RB: 'Runningback', WR: 'Wide Receiver' };
 
-const boardRoute = (draft: Pick<Draft, 'id'>) => `/draft/${draft.id}/board`;
+const boardRoute: DraftRoute = (draft) => `/draft/${draft.id}/board`;
 const boardRounds = (page: Page) => page.getByTestId('board-round');
 const boardPicks = (page: Page) => page.getByTestId('board-pick');
 const header = (page: Page) => page.getByTestId('board-header');
@@ -96,11 +99,6 @@ async function timedDraft(setup: ApiSetup, commissioner: LoggedInUser, seconds: 
   return draft;
 }
 
-async function expectSettingUpRedirect(page: Page, previousRoute: string): Promise<void> {
-  await expectToast(page, { message: 'Draft is still setting up' });
-  await expect(page).toHaveURL(previousRoute);
-}
-
 test('BOARD-01 a Setting Up Draft gives a warning toast and goes to the previous route', async ({ page, setup }) => {
   knownFailureOnAngularJs('W-06');
   const commissioner = await setup.registerCommissioner();
@@ -110,7 +108,7 @@ test('BOARD-01 a Setting Up Draft gives a warning toast and goes to the previous
   const previousRoute = await openDraftScreen(page, other);
   await page.goto(boardRoute(settingUp));
 
-  await expectSettingUpRedirect(page, previousRoute);
+  await expectRedirectToPreviousRoute(page, SETTING_UP_TOAST, previousRoute);
 });
 
 test('BOARD-02 an In Progress Draft shows a row for each Round and a cell for each Pick', async ({ page, setup }) => {
@@ -435,5 +433,5 @@ test('BOARD-18 after a reset a second viewer gets the result of BOARD-01', async
   await setup.setDraftStatus(commissioner, draft, 'Setting Up');
   await viewer.clock.runFor(DRAFT_POLL_MS);
 
-  await expectSettingUpRedirect(viewer, previousRoute);
+  await expectRedirectToPreviousRoute(viewer, SETTING_UP_TOAST, previousRoute);
 });

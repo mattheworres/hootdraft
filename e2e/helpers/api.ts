@@ -86,6 +86,12 @@ const STATUS_VALUES: Record<Exclude<DraftStatus, 'Complete'>, string> = {
   'In Progress': 'in_progress',
 };
 
+const STATUS_NAMES: Record<string, DraftStatus> = {
+  undrafted: 'Setting Up',
+  in_progress: 'In Progress',
+  complete: 'Complete',
+};
+
 // A team and position that are valid in each League would not exist, so the default entry is for the NFL
 const DEFAULT_PICK = { team: 'GNB', position: 'WR' };
 
@@ -302,6 +308,16 @@ export class ApiSetup {
       () => commissioner.api.put(`commish/draft/${draft.id}/status`, { data: { status: STATUS_VALUES[status] } }),
       `move the Draft to ${status}`,
     );
+  }
+
+  /** The status of a Draft, as the API stores it now. */
+  async draftStatus(commissioner: LoggedInUser, draft: Pick<Draft, 'id'>): Promise<DraftStatus> {
+    const { draft_status } = await send<{ draft_status: string }>(
+      () => commissioner.api.get(`draft/${draft.id}`),
+      'load the Draft',
+    );
+
+    return STATUS_NAMES[draft_status];
   }
 
   /** Adds Managers after the existing ones. Returns each Manager of the Draft in Draft Order. */

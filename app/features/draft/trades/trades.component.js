@@ -70,7 +70,8 @@ class TradesController {
       this.trades = data;
 
       this.trades.forEach(trade => {
-        trade.trade_time = new Date(trade.trade_time);
+        // WebKit cannot parse the server's "YYYY-MM-DD HH:mm:ss UTC" format, so convert it to ISO 8601 first.
+        trade.trade_time = new Date(trade.trade_time.replace(' UTC', 'Z').replace(' ', 'T'));
       });
     };
 

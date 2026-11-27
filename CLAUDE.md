@@ -35,6 +35,8 @@ Single-context: `GLOSSARY.md` + `docs/adr/` at the repo root. See `docs/agents/d
 
 In the `mattpocock-skills:implement` skill, run the CodeScene `code_health_review` tool before the `code-review` skill. Plan the refactors from its Code Health findings together with the review findings.
 
+In the `mattpocock-skills:code-review` skill, number every actionable finding with one scheme, 1–N, across both axes. Keep the Standards and Spec sections separate. Use bullets only for notes that need no action.
+
 ## CodeScene MCP
 
 After changing code, run `code_health_review` on the changed files. If Code Health drops, fix the issues, run the review again, and use `code_health_score` to confirm the result. Before finishing, run `pre_commit_code_health_safeguard` and only stop when it passes.
