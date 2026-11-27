@@ -412,6 +412,26 @@ export class ApiSetup {
     };
   }
 
+  /** The IDs of the last five Selected Picks of an In Progress Draft, the newest first. */
+  async lastSelectedPickIds(commissioner: LoggedInUser, draft: Pick<Draft, 'id'>): Promise<number[]> {
+    const { last_5_picks } = await send<{ last_5_picks: { player_id: number }[] }>(
+      () => commissioner.api.get(`commish/draft/${draft.id}/picks/lastFive`),
+      'load the last Selected Picks',
+    );
+
+    return last_5_picks.map((pick) => Number(pick.player_id));
+  }
+
+  /** The IDs of the Trades of a Draft. */
+  async tradeIds(commissioner: LoggedInUser, draft: Pick<Draft, 'id'>): Promise<number[]> {
+    const trades = await send<{ trade_id: number }[]>(
+      () => commissioner.api.get(`draft/${draft.id}/trades`),
+      'list the Trades',
+    );
+
+    return trades.map((trade) => Number(trade.trade_id));
+  }
+
   /** The IDs of the next Unselected Picks of an In Progress Draft, in Pick order. */
   async upcomingPickIds(commissioner: LoggedInUser, draft: Pick<Draft, 'id'>, amount: number): Promise<number[]> {
     const picks = await send<{ player_id: number }[]>(

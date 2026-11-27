@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
 import { ApiSetup, Draft, DraftOptions, LoggedInUser, unique } from '../helpers/api';
 import { knownFailureOnAngularJs } from '../helpers/client';
-import { failApiRequest } from '../helpers/intercept';
+import { expectLoadingUntilReleased, failApiRequest, holdApiResponses } from '../helpers/intercept';
 import { expect, test } from '../helpers/test';
 import { setDraftCreateTime } from '../helpers/timestamps';
 import { expectToast } from '../helpers/toast';
@@ -390,19 +390,9 @@ test('HOME-15 an API error on the Commissioner search gives a toast', async ({ p
 
 test('HOME-16 a slow Draft list request shows a loading indicator', async ({ page }) => {
   knownFailureOnAngularJs('W-24');
-  let release!: () => void;
-  const gate = new Promise<void>((resolve) => (release = resolve));
-  await page.route('**/api/drafts', async (route) => {
-    await gate;
-    await route.continue();
-  });
+  const release = await holdApiResponses(page, { method: 'GET', path: 'drafts' });
 
   await page.goto('/home');
 
-  try {
-    await expect(page.getByText('Loading...')).toBeVisible();
-  } finally {
-    release();
-  }
-  await expect(page.getByText('Loading...')).toBeHidden();
+  await expectLoadingUntilReleased(page, release);
 });

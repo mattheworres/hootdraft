@@ -113,8 +113,10 @@ test('DRAFT-01 ...', async ({ page, context, setup }) => {
 | `addPick(commissioner, draft, entry?)` | Enters the current Pick. Returns its ID, round, number, and Manager |
 | `addPicks(commissioner, draft, count)` | Enters the next `count` Picks. Returns the Selected Picks in Pick order |
 | `currentPick(commissioner, draft)` | The Pick that is on the clock: its ID, round, number, and Manager |
+| `lastSelectedPickIds(commissioner, draft)` | The IDs of the last five Selected Picks, the newest first |
 | `editPick(commissioner, draft, pick)` | Saves the name, team, and position of a Selected Pick. Pass a copy of the Pick that `addPick` returned, with the new values |
 | `addTrade(commissioner, draft, trade)` | Enters a Trade: `manager1Id`, `manager2Id`, `pickIds` |
+| `tradeIds(commissioner, draft)` | The IDs of the Trades of a Draft |
 | `assignPickToPosition(user, draft, pick, position)` | Puts a Selected Pick in the Depth Chart position of its Manager with that name |
 | `uploadProPlayers(admin, league, csvPath)` | Replaces the Pro Player list of one League |
 | `requestPasswordReset(user)` | Starts the lost password process. The lost password email with the Reset Key is in Mailpit |
@@ -230,9 +232,17 @@ const release = await holdApiResponses(page, { path: 'register' });
 release();
 ```
 
+`expectLoadingUntilReleased(scope, release, { text?, whileLoading? })` is that step for the rows of a slow request. It checks that the indicator shows in `scope` (a page or a panel), runs the optional `whileLoading` checks, calls `release`, and checks that the indicator goes. `text` is the text of the indicator, "Loading..." by default:
+
+```ts
+const release = await holdApiResponses(page, { method: 'GET', path: 'drafts' });
+await page.goto('/home');
+await expectLoadingUntilReleased(page, release);
+```
+
 ### Draft screen: `helpers/draft-screen.ts`
 
-`openDraftScreen(page, draft)` opens the Draft screen, waits until the Draft has loaded, and returns the route. `openDraftScreenWithClock(page, draft)` installs the Playwright clock first. `openRoute(page, route, loaded)` opens any route and waits until the `loaded` locator is visible, and `openWithClock` installs the clock first. `visiblePanel(scope, testId)` finds the visible panel with that test ID: the Draft index keeps the panels of other views in the page. `openDraftScreenLoggedIn(page, context, setup)` does the same as `openDraftScreen` for a new, logged-in Commissioner with an In Progress Draft, and returns the Commissioner, the Draft, and the route. It is the starting state of the rows where a logged-in viewer opens an auth route. `DRAFT_POLL_MS` is the interval at which the client polls an In Progress Draft. Move the Playwright clock by it to run the next poll.  `expectDraftStatusRedirect(page, setup, { route, status, message })` covers the "redirects for a Draft status" rows: the viewer opens a Draft screen, then the route of a Draft in `status`, and the test checks the warning toast and the return to the first screen. `expectRedirectToPreviousRoute(page, message, previousRoute)` is its second half, for a test that sets up the first screen itself. `SETTING_UP_TOAST` is the warning toast for a Setting Up Draft. A `DraftRoute` builds the route of one Draft screen from the Draft. `expectNoDraftPolls(page, draft, intervals?)` runs the clock over three intervals, or `intervals`, and checks that no request for the Draft is sent. Install the clock first.
+`openDraftScreen(page, draft)` opens the Draft screen, waits until the Draft has loaded, and returns the route. `openDraftScreenWithClock(page, draft)` installs the Playwright clock first. `openRoute(page, route, loaded)` opens any route and waits until the `loaded` locator is visible, and `openWithClock` installs the clock first. `visiblePanel(scope, testId)` finds the visible panel with that test ID: the Draft index keeps the panels of other views in the page. `openDraftScreenLoggedIn(page, context, setup)` does the same as `openDraftScreen` for a new, logged-in Commissioner with an In Progress Draft, and returns the Commissioner, the Draft, and the route. It is the starting state of the rows where a logged-in viewer opens an auth route. `DRAFT_POLL_MS` is the interval at which the client polls an In Progress Draft. Move the Playwright clock by it to run the next poll.  `expectDraftStatusRedirect(page, setup, { route, status, message })` covers the "redirects for a Draft status" rows: the viewer opens a Draft screen, then the route of a Draft in `status`, and the test checks the warning toast and the return to the first screen. `expectRedirectToPreviousRoute(page, message, previousRoute)` is its second half, for a test that sets up the first screen itself. `SETTING_UP_TOAST` is the warning toast for a Setting Up Draft. A `DraftRoute` builds the route of one Draft screen from the Draft. `expectNoDraftPolls(page, draft, intervals?)` runs the clock over three intervals, or `intervals`, and checks that no request for the Draft is sent. Install the clock first. `expectInProgressCommishView(page)` checks the Draft index of INDEX-09: the Commish Actions and League Details of an In Progress Draft for its Commissioner.
 
 ### Visible text: `helpers/text.ts`
 

@@ -1,4 +1,4 @@
-import { Page, Request, Response } from '@playwright/test';
+import { expect, Locator, Page, Request, Response } from '@playwright/test';
 import { API_URL } from './stack';
 
 export interface ApiRequestMatch {
@@ -123,4 +123,31 @@ export async function holdApiResponses(page: Page, match: ApiRequestMatch): Prom
   );
 
   return release;
+}
+
+export interface LoadingCheck {
+  /** The text of the indicator. Default: "Loading...". */
+  text?: string;
+  /** Checks that the step makes while the indicator shows. */
+  whileLoading?: () => Promise<void>;
+}
+
+/**
+ * For the rows of a slow request: checks that the indicator shows in `scope` while the held answer is pending, then
+ * releases it and checks that the indicator goes.
+ */
+export async function expectLoadingUntilReleased(
+  scope: Page | Locator,
+  release: () => void,
+  { text = 'Loading...', whileLoading = async () => {} }: LoadingCheck = {},
+): Promise<void> {
+  const indicator = scope.getByText(text);
+
+  try {
+    await expect(indicator).toBeVisible();
+    await whileLoading();
+  } finally {
+    release();
+  }
+  await expect(indicator).toBeHidden();
 }
