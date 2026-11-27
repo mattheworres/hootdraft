@@ -1,6 +1,6 @@
 import type { FullConfig, FullResult, Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
 
-// The job token allows 1,000 API requests an hour per repository, shared by every job of every run
+// The job credential allows 1,000 API requests an hour per repository, shared by every job of every run
 const UPDATE_INTERVAL_MS = 15_000;
 
 const CONCLUSIONS: Record<FullResult['status'], string> = {
@@ -38,7 +38,7 @@ export class ProgressCount {
 }
 
 interface CheckSettings {
-  token: string;
+  credential: string;
   /** The URL of the check-runs endpoint of the repository. */
   checkRunsUrl: string;
   name: string;
@@ -54,10 +54,10 @@ function settingsFromEnv(): CheckSettings | null {
     return null;
   }
 
-  const [token, repository, name, sha] = values;
+  const [credential, repository, name, sha] = values;
   const api = process.env.GITHUB_API_URL ?? 'https://api.github.com';
 
-  return { token, checkRunsUrl: `${api}/repos/${repository}/check-runs`, name, sha };
+  return { credential, checkRunsUrl: `${api}/repos/${repository}/check-runs`, name, sha };
 }
 
 /**
@@ -114,7 +114,7 @@ export default class GitHubProgressReporter implements Reporter {
 
       return checkRun.url;
     } catch (error) {
-      // A pull request from a fork gets a read-only token, which cannot add a check
+      // A pull request from a fork gets a read-only credential, which cannot add a check
       console.warn(`The progress check is off: ${error}`);
 
       return null;
@@ -145,7 +145,7 @@ export default class GitHubProgressReporter implements Reporter {
     const response = await fetch(url, {
       method,
       headers: {
-        Authorization: `Bearer ${this.settings!.token}`,
+        Authorization: `Bearer ${this.settings!.credential}`,
         Accept: 'application/vnd.github+json',
         'X-GitHub-Api-Version': '2022-11-28',
       },
