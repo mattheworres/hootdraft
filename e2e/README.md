@@ -250,6 +250,10 @@ The AngularJS toast has no role and no `data-testid`, so this helper asserts the
 
 `.github/workflows/ci.yml` runs `composer check` in the developer box, then this suite. A push runs Chromium. A pull request runs Chromium, Firefox, WebKit, and Edge. A failed run keeps its report as an artifact.
 
+One job builds the AngularJS client, and each browser job downloads that build. `vendor/` is cached by the hash of `composer.lock`, and the yarn and npm downloads are cached by their lock files.
+
+While a browser runs, its check "E2E progress (browser)" shows the tests done, the total, and the failures, for example "120/205 · 2 failed". `reporters/github-progress.ts` adds this check and updates it every 15 seconds. It needs the job permission `checks: write`. Without the `E2E_PROGRESS_CHECK` and `E2E_PROGRESS_SHA` variables, for example on a local run, it does nothing. A pull request from a fork gets a read-only token, so its runs show no progress check.
+
 ## Known limits
 
 - **The first Admin.** The API has no route that makes the first Admin. The global setup gives the role with one SQL statement, as part of the database reset.

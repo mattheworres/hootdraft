@@ -25,6 +25,13 @@ jobs:
       - name: Trust the mounted repository
         run: docker compose exec -T php git config --global --add safe.directory /var/www/html
 
+      - name: Restore the PHP packages
+        uses: actions/cache@v5
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
       - name: Install the PHP packages and migrate the database
         run: |
           docker compose exec -T php composer install --no-interaction --no-progress
@@ -33,12 +40,45 @@ jobs:
       - name: PHPStan, glossary terms, and tests
         run: docker compose exec -T php composer check
 
+  # One build for every browser job. The E2E stack serves the built client from the repo root.
+  client:
+    name: Build the client
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      - name: Build the AngularJS client
+        run: |
+          yarn install --frozen-lockfile
+          npx gulp build
+
+      - name: Keep the built client
+        uses: actions/upload-artifact@v6
+        with:
+          name: client
+          path: |
+            index.html
+            js/
+            css/
+            fonts/
+            img/
+          if-no-files-found: error
+          retention-days: 1
+
   e2e:
     # A static name: GitHub appends the matrix value itself, and shows an unexpanded expression when the job is skipped
     name: E2E
-    needs: check
+    needs: [check, client]
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: read
+      checks: write
     env:
       REPORT_RETENTION_DAYS: 7
     strategy:
@@ -52,12 +92,20 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: e2e/package-lock.json
 
-      # The E2E stack serves the built client from the repo root, so the build comes before the stack
-      - name: Build the AngularJS client
-        run: |
-          yarn install --frozen-lockfile
-          npx gulp build
+      - name: Get the built client
+        uses: actions/download-artifact@v6
+        with:
+          name: client
+
+      - name: Restore the PHP packages
+        uses: actions/cache@v5
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
 
       - name: Install the E2E packages
         working-directory: e2e
@@ -76,6 +124,11 @@ jobs:
       # The checks of the helpers do not test a client, so they run in the Chromium job only
       - name: Run the E2E suite
         working-directory: e2e
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          E2E_PROGRESS_CHECK: E2E progress (${{ matrix.browser }})
+          # On a pull request, github.sha is the merge commit, which the checks box of the pull request does not show
+          E2E_PROGRESS_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: npx playwright test --project=${{ matrix.browser }} ${{ matrix.browser == 'chromium' && '--project=helpers' || '' }}
 
       - name: Keep the report of a failed run
