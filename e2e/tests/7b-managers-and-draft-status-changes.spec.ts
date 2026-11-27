@@ -1,7 +1,13 @@
 import { BrowserContext, Page } from '@playwright/test';
 import { ApiSetup, Draft, DraftOptions, LoggedInUser, unique } from '../helpers/api';
 import { knownFailureOnAngularJs } from '../helpers/client';
-import { expectInProgressCommishView, openDraftScreen, openRoute, visiblePanel } from '../helpers/draft-screen';
+import {
+  commishActions,
+  expectInProgressCommishView,
+  openDraftScreen,
+  openRoute,
+  visiblePanel,
+} from '../helpers/draft-screen';
 import {
   expectLoadingUntilReleased,
   failApiRequest,
@@ -48,7 +54,6 @@ const deleteIcon = (page: Page, index: number) => managerRow(page, index).getByT
 const saveIcon = (page: Page, index: number) => managerRow(page, index).getByTestId('save-manager');
 const cancelIcon = (page: Page, index: number) => managerRow(page, index).getByTestId('cancel-manager-edit');
 
-const commishActions = (page: Page) => visiblePanel(page, 'commish-actions-panel');
 const startButton = (page: Page) => commishActions(page).getByRole('button', { name: 'Start!' });
 const resetButton = (page: Page) => commishActions(page).getByRole('button', { name: 'Reset' });
 const deleteButton = (page: Page) => commishActions(page).getByRole('button', { name: 'Delete' });

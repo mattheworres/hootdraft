@@ -23,7 +23,7 @@
                 Use Pick Timers
               </label>
               <div class="col-xs-12 col-sm-4">
-                <toggle-switch name="roundTimesEnabled" id="roundTimesEnabled" ng-model="$ctrl.roundTimesEnabled" ng-change="$ctrl.onTimerChanged()"></toggle-switch>
+                <toggle-switch name="roundTimesEnabled" id="roundTimesEnabled" data-testid="round-times-switch" ng-model="$ctrl.roundTimesEnabled" ng-change="$ctrl.onTimerChanged()"></toggle-switch>
               </div>
               <div class="hidden-xs col-sm-1 col-sm-offset-3 text-center text-info">
                 <i class="fa fa-info-circle" uib-tooltip="Enabling this feature will put a countdown timer on the draft board for all to see. Tell us how long each pick should take below." tooltip-trigger="mouseenter"  tooltip-append-to-body="true"></i>
@@ -34,7 +34,7 @@
                 One Timer for All Rounds
               </label>
               <div class="col-xs-12 col-sm-4">
-                <toggle-switch name="useStaticTime" id="useStaticTime" ng-model="$ctrl.useStaticTime" ng-change="$ctrl.onTimerChanged()"></toggle-switch>
+                <toggle-switch name="useStaticTime" id="useStaticTime" data-testid="same-round-time-switch" ng-model="$ctrl.useStaticTime" ng-change="$ctrl.onTimerChanged()"></toggle-switch>
               </div>
               <div class="hidden-xs col-sm-1 col-sm-offset-3 text-center text-info">
                 <i class="fa fa-info-circle" uib-tooltip="One time to rule them all? Use this to define one time that gets used for every round." tooltip-trigger="mouseenter"  tooltip-append-to-body="true"></i>
@@ -45,7 +45,7 @@
                 Max Draft Length (estimated):
               </label>
               <div class="col-xs-12 col-sm-4">
-                <strong>{{ $ctrl.totalDraftingTime | preciseHumanizedSeconds }}</strong>
+                <strong data-testid="max-draft-length">{{ $ctrl.totalDraftingTime | preciseHumanizedSeconds }}</strong>
               </div>
               <div class="hidden-xs col-sm-1 col-sm-offset-3 text-center text-info">
                 <i class="fa fa-info-circle" uib-tooltip="How much time is that? This is if each and every pick took the full pick time allotment - usage obviously varies." tooltip-trigger="mouseenter" tooltip-append-to-body="true"></i>
@@ -58,12 +58,12 @@
                   <th>Timer</th>
                 </thead>
                 <tbody>
-                  <tr ng-repeat="timer in $ctrl.pickTimers" ng-hide="!$first && $ctrl.useStaticTime">
+                  <tr data-testid="round-time-row" ng-repeat="timer in $ctrl.pickTimers" ng-hide="!$first && $ctrl.useStaticTime">
                     <td ng-show="$first && $ctrl.useStaticTime"><h3>(all)</h3></td><td ng-hide="($first && $ctrl.useStaticTime)"><h3>{{timer.draft_round}}</h3></td>
                     <td>
                       picks will be
-                      <input ng-model="$ctrl.pickTimers[$index].minutes" ng-change="$ctrl.onTimerChanged()" class="timer-minutes" type="number" min="0" max="15" maxlength="2" />&nbsp; minutes and
-                      <input ng-model="$ctrl.pickTimers[$index].seconds" ng-change="$ctrl.onTimerChanged()" class="timer-seconds" type="number" min="0" max="59" maxlength="2" step="15" />&nbsp; seconds long
+                      <input data-testid="round-time-minutes" ng-model="$ctrl.pickTimers[$index].minutes" ng-change="$ctrl.onTimerChanged()" class="timer-minutes" type="number" min="0" max="15" maxlength="2" />&nbsp; minutes and
+                      <input data-testid="round-time-seconds" ng-model="$ctrl.pickTimers[$index].seconds" ng-change="$ctrl.onTimerChanged()" class="timer-seconds" type="number" min="0" max="59" maxlength="2" step="15" />&nbsp; seconds long
                     </td>
                   </tr>
                 </tbody>

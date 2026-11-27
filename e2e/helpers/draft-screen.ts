@@ -80,12 +80,15 @@ export function visiblePanel(scope: Page | Locator, testId: string): Locator {
   return scope.getByTestId(testId).filter({ visible: true });
 }
 
+/** The Commish Actions panel of the Draft index. */
+export const commishActions = (page: Page) => visiblePanel(page, 'commish-actions-panel');
+
 /**
  * The Draft index of INDEX-09: the Commish Actions and League Details that the Commissioner of an In Progress Draft
  * gets.
  */
 export async function expectInProgressCommishView(page: Page): Promise<void> {
-  const actions = visiblePanel(page, 'commish-actions-panel');
+  const actions = commishActions(page);
 
   await expect(actions.getByRole('link').or(actions.getByRole('button'))).toHaveText(
     ['Enter Pick', 'Change Pick', 'Enter Trade', 'Reset', 'Timers', 'Delete'],

@@ -2,8 +2,14 @@ import { Locator, Page } from '@playwright/test';
 import { ApiSetup, Draft, LoggedInUser, SelectedPick, unique } from '../helpers/api';
 import { knownFailureOnAngularJs } from '../helpers/client';
 import {
+  boardRoute,
+  expectFlipClockBetween,
+  flipClockSeconds,
+  pickTimer,
+  pickTimerDisabled,
+} from '../helpers/draft-board';
+import {
   DRAFT_POLL_MS,
-  DraftRoute,
   expectNoDraftPolls,
   expectRedirectToPreviousRoute,
   openDraftScreen,
@@ -23,15 +29,12 @@ import { expectToast } from '../helpers/toast';
 const PHONE = { width: 375, height: 700 };
 const POSITION_NAMES: Record<string, string> = { QB: 'Quarterback', RB: 'Runningback', WR: 'Wide Receiver' };
 
-const boardRoute: DraftRoute = (draft) => `/draft/${draft.id}/board`;
 const boardRounds = (page: Page) => page.getByTestId('board-round');
 const boardPicks = (page: Page) => page.getByTestId('board-pick');
 const header = (page: Page) => page.getByTestId('board-header');
 const currentPick = (page: Page) => header(page).getByTestId('current-pick');
 const lastPick = (page: Page) => header(page).getByTestId('last-pick');
-const pickTimer = (page: Page) => page.getByTestId('pick-timer');
 const pickTimerUp = (page: Page) => page.getByTestId('pick-timer-up');
-const pickTimerDisabled = (page: Page) => page.getByTestId('pick-timer-disabled');
 
 const openBoard = (page: Page, draft: Draft) => openRoute(page, boardRoute(draft), boardPicks(page).first());
 const openBoardWithClock = (page: Page, draft: Draft) =>
@@ -41,15 +44,6 @@ async function expectText(locator: Locator, parts: (string | number)[]): Promise
   for (const part of parts) {
     await expect(locator).toContainText(String(part), VISIBLE_TEXT);
   }
-}
-
-/** The seconds on the flip clock. The library renders each digit as a list item, and one item of each digit shows. */
-async function flipClockSeconds(page: Page): Promise<number> {
-  const digits = await pickTimer(page).locator('.flip-clock-active').allInnerTexts();
-  // Each digit shows twice, once for each half of the flipping card
-  const [m1, m2, s1, s2] = digits.map((digit) => Number(digit.trim()[0]));
-
-  return (m1 * 10 + m2) * 60 + s1 * 10 + s2;
 }
 
 async function expectSelectedPickCell(cell: Locator, pick: SelectedPick, managerName: string): Promise<void> {
@@ -84,12 +78,6 @@ function pickCellPattern(pickNumber: number, managerName: string): RegExp {
 async function expectTimeUp(page: Page, managerName: string): Promise<void> {
   await expect(pickTimerUp(page)).toContainText("Time's up!", VISIBLE_TEXT);
   await expect(pickTimerUp(page)).toContainText(`Everyone boo ${managerName}!`, VISIBLE_TEXT);
-}
-
-async function expectFlipClockBetween(page: Page, min: number, max: number): Promise<void> {
-  await expect
-    .poll(async () => (await flipClockSeconds(page)) >= min && (await flipClockSeconds(page)) <= max)
-    .toBe(true);
 }
 
 /** An In Progress Draft with a Round Time of one length for each Round. */

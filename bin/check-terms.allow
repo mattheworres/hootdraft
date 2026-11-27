@@ -42,4 +42,4 @@ roster-lineup | e2e/tests/7a-create-and-edit-a-draft.spec.ts | Football - Extend
 
 # --- Third-party markup ------------------------------------------------------------------------------------------
 # The flip clock library names the digit that shows with the class flip-clock-active.
-active | e2e/tests/6c-draft-board.spec.ts | flip-clock-active
+active | e2e/helpers/draft-board.ts | flip-clock-active
