@@ -2,6 +2,7 @@ import { Locator, Page } from '@playwright/test';
 import { ApiSetup, Draft, LoggedInUser, PickEntry, SelectedPick, unique } from '../helpers/api';
 import { knownFailureOnAngularJs } from '../helpers/client';
 import {
+  commishActions,
   DRAFT_POLL_MS,
   expectInProgressCommishView,
   expectNoDraftPolls,
@@ -23,7 +24,6 @@ const DATE_TIME = /\w+day, \w+ \d+\w\w \d{4}, \d+:\d\d [ap]m/;
 
 // Each Draft status has its own view with its own panels, and the views of the other statuses are hidden
 const leagueDetails = (page: Page) => visiblePanel(page, 'draft-details-panel');
-const commishActions = (page: Page) => visiblePanel(page, 'commish-actions-panel');
 const draftOrder = (page: Page) => visiblePanel(page, 'draft-order-panel');
 const upcomingPicks = (page: Page) => visiblePanel(page, 'upcoming-picks-panel');
 const lastPicks = (page: Page) => visiblePanel(page, 'last-picks-panel');
