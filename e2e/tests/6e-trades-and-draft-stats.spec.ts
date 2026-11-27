@@ -233,7 +233,7 @@ test('STATS-03 the Draft Stats show each value, with each duration in words, nex
   await openRoute(page, statsRoute(draft), statsHeading(page));
 
   // Before the stat text, which fails on AngularJS for W-34, so that the layout is checked on both clients.
-  const leagueDetails = visiblePanel(page, 'league-details-panel');
+  const leagueDetails = visiblePanel(page, 'draft-details-panel');
   await expect(leagueDetails.getByRole('heading', { name: `League Details: ${draft.name}` })).toBeVisible();
   await expectSideBySide(statsPanel(page), leagueDetails);
   await expect(statRows(page)).toHaveText(

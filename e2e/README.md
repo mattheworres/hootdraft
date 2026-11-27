@@ -121,6 +121,8 @@ test('DRAFT-01 ...', async ({ page, context, setup }) => {
 | `resetPassword(user, resetKey, password)` | Sets the password with a Reset Key, which uses the key up |
 | `inviteUser(inviter, overrides?)` | Invites a new user. The invite email with the Reset Key is in Mailpit. Returns `name` and `email` |
 | `logInBrowser(context, user)` | Gives a browser context the login session of the user |
+| `logInNewCommissioner(context, overrides?)` | `registerCommissioner`, then `logInBrowser`. Returns the user |
+| `logInNewAdmin(context, overrides?)` | `registerAdmin`, then `logInBrowser`. Returns the user |
 
 A user that a helper returns has `name`, `email`, `password`, and `api`. Use `user.api` to send any other API request as that user, for example `await commissioner.api.get('commish/profile')`.
 

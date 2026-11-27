@@ -310,8 +310,7 @@ test('HOME-09 an anonymous viewer sees the empty table without a link to create 
 });
 
 test('HOME-10 a Commissioner sees the link to create a Draft in the empty table', async ({ page, context, setup }) => {
-  const commissioner = await setup.registerCommissioner();
-  await setup.logInBrowser(context, commissioner);
+  const commissioner = await setup.logInNewCommissioner(context);
 
   await openHomeWithoutMatch(page, 'Home10');
 

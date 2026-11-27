@@ -11,7 +11,7 @@ Run inside the php container.
 - E2E tests: `npx playwright test --project=chromium --project=helpers` in `e2e/`. CI runs the other three browsers.
 - Hand-off: the whole E2E suite (above, no `-g` or file filter) runs after your last change to `e2e/` or client code, including fixes from code review and CodeScene. Any later edit means another run. `bin/check-e2e-fresh` verifies this; a Stop hook runs it.
 - Edit files with the Edit tool by default, but you may use scripted replaces IF it replaces 3 or more Edit tool calls (but ensure the change isn't mangled). You do _not_ need to report this to the human reviewer.
-- When working through a markdown ticket, tick the boxes for work completed as it is completed. Prior to handing work over, change the status to `awaiting-human-review`
+- When working through a markdown ticket, tick the boxes for work completed as it is completed. Prior to handing work over, change the status to `awaiting-human-review`. The human reviewer will change it to completed. Never set completed yourself (agent). If a ticket already says completed, the reviewer set it: leave the status and the file location as they are. Subissues moved to `completed-subissues/` can be assumed to also be the work of a human reviewer, not to be undone by the agent.
 - Commits will be blocked.
 
 ## Comments

@@ -82,7 +82,7 @@
                 </label>
                 <div class="col-xs-12 col-sm-3">
                   <input name="rounds" ng-model="$ctrl.draft.draft_rounds" id="rounds" class="form-control" type="number" min="1" max="30" ng-required="true" ng-hide="$ctrl.draft.using_depth_charts" />
-                  <p class="form-control-static" ng-show="$ctrl.draft.using_depth_charts">{{$ctrl.draft.draft_rounds}}</p>
+                  <p class="form-control-static" data-testid="depth-chart-rounds-total" ng-show="$ctrl.draft.using_depth_charts">{{$ctrl.draft.draft_rounds}}</p>
                 </div>
                 <div class="hidden-xs col-sm-1 col-sm-offset-5 text-center">
                   <i class="fa fa-info-circle text-info" uib-tooltip="How many rounds will your draft be? This number needs to be how many starters plus bench spots each team needs to start the season. IR/DL spots generally don't count." tooltip-trigger="mouseenter" tooltip-append-to-body="true"></i>

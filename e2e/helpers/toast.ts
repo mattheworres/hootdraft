@@ -6,7 +6,7 @@ import { Credentials } from './api';
  * The AngularJS toast comes from a library template with no role and no `data-testid`, so the visible text is
  * the only handle that both clients share.
  */
-export async function expectToast(page: Page, toast: { message: string; title?: string }): Promise<void> {
+export async function expectToast(page: Page, toast: { message: string | RegExp; title?: string }): Promise<void> {
   if (toast.title !== undefined) {
     await expect(page.getByText(toast.title, { exact: true })).toBeVisible();
   }

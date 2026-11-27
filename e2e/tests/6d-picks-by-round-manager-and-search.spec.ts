@@ -31,7 +31,7 @@ const roundPanel = (page: Page) => page.getByTestId('round-picks-panel');
 const managerPanel = (page: Page) => page.getByTestId('manager-picks-panel');
 const managerSelect = (page: Page) => page.getByTestId('manager-select');
 const upcomingPanel = (page: Page) => page.getByTestId('upcoming-picks-panel');
-const leagueDetailsPanel = (page: Page) => visiblePanel(page, 'league-details-panel');
+const leagueDetailsPanel = (page: Page) => visiblePanel(page, 'draft-details-panel');
 const resultsPanel = (page: Page) => page.getByTestId('search-results-panel');
 const keywords = (page: Page) => page.getByTestId('search-keywords');
 const positionSelect = (page: Page) => page.getByTestId('search-position');

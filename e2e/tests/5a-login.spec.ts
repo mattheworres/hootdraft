@@ -43,8 +43,7 @@ async function expectAnonymousNavigation(page: Page) {
 }
 
 async function openInviteDialog(page: Page, context: BrowserContext, setup: ApiSetup) {
-  const commissioner = await setup.registerCommissioner();
-  await setup.logInBrowser(context, commissioner);
+  const commissioner = await setup.logInNewCommissioner(context);
   await page.goto('/home');
   await page.getByRole('link', { name: 'Invite A Friend' }).click();
 
@@ -252,8 +251,7 @@ test('NAV-01 an anonymous viewer sees the logo and the login button', async ({ p
 });
 
 test('NAV-02 a Commissioner sees the Commissioner navigation without Admin Stuff', async ({ page, context, setup }) => {
-  const commissioner = await setup.registerCommissioner();
-  await setup.logInBrowser(context, commissioner);
+  const commissioner = await setup.logInNewCommissioner(context);
 
   await page.goto('/home');
 
@@ -266,8 +264,7 @@ test('NAV-02 a Commissioner sees the Commissioner navigation without Admin Stuff
 });
 
 test('NAV-03 the Admin Stuff menu links to the Admin screens', async ({ page, context, setup }) => {
-  const admin = await setup.registerAdmin();
-  await setup.logInBrowser(context, admin);
+  const admin = await setup.logInNewAdmin(context);
 
   await page.goto('/home');
   await page.getByRole('button', { name: 'Admin Stuff' }).click();
@@ -278,8 +275,7 @@ test('NAV-03 the Admin Stuff menu links to the Admin screens', async ({ page, co
 });
 
 test('NAV-04 Log Out ends the login and goes to /home', async ({ page, context, setup }) => {
-  const commissioner = await setup.registerCommissioner();
-  await setup.logInBrowser(context, commissioner);
+  const commissioner = await setup.logInNewCommissioner(context);
   await page.goto('/home');
 
   await page.getByRole('button', { name: 'Log Out' }).click();
@@ -293,8 +289,7 @@ test('NAV-04 Log Out ends the login and goes to /home', async ({ page, context, 
 });
 
 test('NAV-05 a new tab shows the logged-in navigation', async ({ page, context, setup }) => {
-  const commissioner = await setup.registerCommissioner();
-  await setup.logInBrowser(context, commissioner);
+  const commissioner = await setup.logInNewCommissioner(context);
   await page.goto('/home');
   await expect(page.getByRole('button', { name: 'Log Out' })).toBeVisible();
 
@@ -313,8 +308,7 @@ test('NAV-06 a Commissioner whom an Admin disabled gets the expired login toast'
   setup,
 }) => {
   const admin = await setup.registerAdmin();
-  const commissioner = await setup.registerCommissioner();
-  await setup.logInBrowser(context, commissioner);
+  const commissioner = await setup.logInNewCommissioner(context);
   await page.goto('/home');
   await expect(page.getByRole('button', { name: 'Log Out' })).toBeVisible();
 
@@ -348,8 +342,7 @@ test('NAV-07 a Commissioner whose session ended on the server gets the expired l
   context,
   setup,
 }) => {
-  const commissioner = await setup.registerCommissioner();
-  await setup.logInBrowser(context, commissioner);
+  const commissioner = await setup.logInNewCommissioner(context);
   await page.goto('/home');
   await expect(page.getByRole('button', { name: 'Log Out' })).toBeVisible();
 
@@ -393,8 +386,7 @@ test('NAV-09 the menu button opens the menu at phone width and each link closes 
   setup,
 }) => {
   knownFailureOnAngularJs('W-36');
-  const commissioner = await setup.registerCommissioner();
-  await setup.logInBrowser(context, commissioner);
+  const commissioner = await setup.logInNewCommissioner(context);
   await page.setViewportSize({ width: 400, height: 800 });
   // Log Out comes last: it ends the login. Each link starts on a route that the link changes.
   const links = [
@@ -428,8 +420,7 @@ test('NAV-10 an unknown URL goes to /home', async ({ page }) => {
 });
 
 test('INV-01 Invite A Friend opens the dialog with a disabled Invite button', async ({ page, context, setup }) => {
-  const commissioner = await setup.registerCommissioner();
-  await setup.logInBrowser(context, commissioner);
+  const commissioner = await setup.logInNewCommissioner(context);
   await page.goto('/home');
 
   await page.getByRole('link', { name: 'Invite A Friend' }).click();

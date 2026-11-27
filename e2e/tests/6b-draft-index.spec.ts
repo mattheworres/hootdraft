@@ -21,7 +21,7 @@ const DONATION_HIDE_DAYS = 14;
 const DATE_TIME = /\w+day, \w+ \d+\w\w \d{4}, \d+:\d\d [ap]m/;
 
 // Each Draft status has its own view with its own panels, and the views of the other statuses are hidden
-const leagueDetails = (page: Page) => visiblePanel(page, 'league-details-panel');
+const leagueDetails = (page: Page) => visiblePanel(page, 'draft-details-panel');
 const commishActions = (page: Page) => visiblePanel(page, 'commish-actions-panel');
 const draftOrder = (page: Page) => visiblePanel(page, 'draft-order-panel');
 const upcomingPicks = (page: Page) => visiblePanel(page, 'upcoming-picks-panel');
@@ -108,7 +108,7 @@ async function expectCompleteView(page: Page, picks: SelectedPick[]) {
       ['Started', DATE_TIME],
       ['Ended', DATE_TIME],
     ],
-    visiblePanel(page.locator('phpd-draft-completed'), 'league-details-panel'),
+    visiblePanel(page.locator('phpd-draft-completed'), 'draft-details-panel'),
   );
   await expect(leagueDetails(page)).toHaveCount(1);
   await expectRoundPicks(page, picks, 1);
