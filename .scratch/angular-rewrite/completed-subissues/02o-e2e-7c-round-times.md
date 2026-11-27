@@ -4,7 +4,7 @@
 
 **Blocked by:** 02a
 
-**Status:** awaiting-human-review
+**Status:** completed
 
 - [x] First, apply the approved items to the rows of this group. Change each row to the correct result and fill in "Known defect": W-01 (TIMES-11), W-02 (TIMES-12), W-06 (TIMES-03, TIMES-06, TIMES-07), W-14 (TIMES-06), W-18 (TIMES-09), W-20 (TIMES-08), W-24 (TIMES-13), W-34 (TIMES-08)
 - [x] One test for each of the 13 rows. The test name starts with the row ID
