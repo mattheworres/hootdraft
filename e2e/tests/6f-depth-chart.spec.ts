@@ -9,7 +9,13 @@ import {
   openWithClock,
   SETTING_UP_TOAST,
 } from '../helpers/draft-screen';
-import { failApiRequest, holdApiResponses, recordApiRequests, waitForApiResponse } from '../helpers/intercept';
+import {
+  expectLoadingUntilReleased,
+  failApiRequest,
+  holdApiResponses,
+  recordApiRequests,
+  waitForApiResponse,
+} from '../helpers/intercept';
 import { expectFooterHidden } from '../helpers/navigation';
 import { expect, test } from '../helpers/test';
 import { setDraftEndTime } from '../helpers/timestamps';
@@ -280,12 +286,6 @@ test('DEPTH-11 a slow Managers request shows a loading indicator and no list of 
 
   await page.goto(depthChartRoute(draft));
 
-  try {
-    await expect(page.getByText('Loading...')).toBeVisible();
-    await expect(managerMenu(page)).toBeHidden();
-  } finally {
-    release();
-  }
+  await expectLoadingUntilReleased(page, release, { whileLoading: () => expect(managerMenu(page)).toBeHidden() });
   await expect(managerMenu(page)).toBeVisible();
-  await expect(page.getByText('Loading...')).toBeHidden();
 });

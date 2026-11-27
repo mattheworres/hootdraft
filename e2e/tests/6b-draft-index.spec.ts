@@ -3,6 +3,7 @@ import { ApiSetup, Draft, LoggedInUser, PickEntry, SelectedPick, unique } from '
 import { knownFailureOnAngularJs } from '../helpers/client';
 import {
   DRAFT_POLL_MS,
+  expectInProgressCommishView,
   expectNoDraftPolls,
   openDraftScreen,
   openDraftScreenLoggedIn,
@@ -245,14 +246,7 @@ test('INDEX-09 the Commissioner of an In Progress Draft gets six Commish Actions
 }) => {
   const { draft, draftRoute } = await openDraftScreenLoggedIn(page, context, setup);
 
-  await expect(commishActionEntries(page)).toHaveText(
-    ['Enter Pick', 'Change Pick', 'Enter Trade', 'Reset', 'Timers', 'Delete'],
-    VISIBLE_TEXT,
-  );
-  await expect(leagueDetails(page)).toContainText(
-    "Can't edit active draft – Reset draft if you need to change something",
-    VISIBLE_TEXT,
-  );
+  await expectInProgressCommishView(page);
 
   await expectMenuLinksOpenRoutes(
     page,

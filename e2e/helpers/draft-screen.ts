@@ -1,6 +1,7 @@
 import { BrowserContext, expect, Locator, Page } from '@playwright/test';
 import { ApiSetup, Draft, LoggedInUser } from './api';
 import { recordApiRequests } from './intercept';
+import { VISIBLE_TEXT } from './text';
 import { expectToast } from './toast';
 
 /** The client asks the API for an In Progress Draft at this interval. */
@@ -77,6 +78,23 @@ export async function expectDraftStatusRedirect(
 /** A panel of the Draft screens by its test ID. The Draft index keeps the panels of other views in the page, so only the visible one counts. */
 export function visiblePanel(scope: Page | Locator, testId: string): Locator {
   return scope.getByTestId(testId).filter({ visible: true });
+}
+
+/**
+ * The Draft index of INDEX-09: the Commish Actions and League Details that the Commissioner of an In Progress Draft
+ * gets.
+ */
+export async function expectInProgressCommishView(page: Page): Promise<void> {
+  const actions = visiblePanel(page, 'commish-actions-panel');
+
+  await expect(actions.getByRole('link').or(actions.getByRole('button'))).toHaveText(
+    ['Enter Pick', 'Change Pick', 'Enter Trade', 'Reset', 'Timers', 'Delete'],
+    VISIBLE_TEXT,
+  );
+  await expect(visiblePanel(page, 'draft-details-panel')).toContainText(
+    "Can't edit active draft – Reset draft if you need to change something",
+    VISIBLE_TEXT,
+  );
 }
 
 /**
