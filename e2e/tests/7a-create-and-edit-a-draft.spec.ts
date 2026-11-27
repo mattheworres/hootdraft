@@ -2,6 +2,7 @@ import { Locator, Page } from '@playwright/test';
 import { Draft, LoggedInUser, unique } from '../helpers/api';
 import { knownFailureOnAngularJs } from '../helpers/client';
 import { visiblePanel } from '../helpers/draft-screen';
+import { cancelButton, workingModal } from '../helpers/form';
 import { failApiRequest, holdApiResponses } from '../helpers/intercept';
 import { expect, test } from '../helpers/test';
 import { VISIBLE_TEXT } from '../helpers/text';
@@ -21,7 +22,6 @@ const passwordField = (page: Page) => page.getByLabel('Password');
 const depthChartsSwitch = (page: Page) => page.getByTestId('depth-charts-switch');
 const createButton = (page: Page) => page.getByRole('button', { name: /Create League/ });
 const saveButton = (page: Page) => page.getByRole('button', { name: /Save League/ });
-const cancelButton = (page: Page) => page.getByRole('button', { name: 'Cancel' });
 const addRosterSpotButton = (page: Page) => page.getByRole('button', { name: /Add Roster Spot/ });
 const positionRows = (page: Page) => page.getByTestId('depth-chart-position-row');
 const slotsField = (page: Page, row: number) => positionRows(page).nth(row).getByTestId('depth-chart-slots');
@@ -34,7 +34,6 @@ const excludedNote = (page: Page) => page.getByTestId('excluded-positions-note')
 const duplicateWarning = (page: Page) =>
   page.getByText('One or more of the depth chart positions has a duplicate position.');
 const createHeading = (page: Page) => page.getByRole('heading', { name: 'Create a New League' });
-const workingModal = (page: Page) => page.getByRole('dialog').filter({ has: page.getByRole('progressbar') });
 const draftDetails = (page: Page) => visiblePanel(page, 'draft-details-panel');
 
 const STYLE_LABELS = { serpentine: 'Serpentine Draft', standard: 'Standard Draft' };

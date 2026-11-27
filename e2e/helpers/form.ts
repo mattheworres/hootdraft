@@ -4,6 +4,11 @@ export function emailField(page: Page) {
   return page.getByRole('textbox', { name: 'Email' });
 }
 
+export const cancelButton = (page: Page) => page.getByRole('button', { name: 'Cancel' });
+
+/** The modal that blocks the screen while a save runs. */
+export const workingModal = (page: Page) => page.getByRole('dialog').filter({ has: page.getByRole('progressbar') });
+
 export async function expectEmailValidationMessages(page: Page): Promise<void> {
   await emailField(page).focus();
   await emailField(page).blur();

@@ -9,10 +9,11 @@ import {
   openDraftScreen,
   openWithClock,
 } from '../helpers/draft-screen';
+import { cancelButton } from '../helpers/form';
 import { failApiRequest, recordApiRequests, waitForApiResponse } from '../helpers/intercept';
 import { expect, test } from '../helpers/test';
 import { VISIBLE_TEXT } from '../helpers/text';
-import { expectToast } from '../helpers/toast';
+import { expectToast, SERVER_ERROR_TOAST } from '../helpers/toast';
 
 // Route group 7C of docs/flow-inventory.md. Each test name starts with the row ID.
 
@@ -28,7 +29,6 @@ const roundTimeRows = (page: Page) => page.getByTestId('round-time-row').filter(
 const minutesField = (page: Page, row: number) => roundTimeRows(page).nth(row).getByTestId('round-time-minutes');
 const secondsField = (page: Page, row: number) => roundTimeRows(page).nth(row).getByTestId('round-time-seconds');
 const saveButton = (page: Page) => page.getByRole('button', { name: /Save Timers/ });
-const cancelButton = (page: Page) => page.getByRole('button', { name: 'Cancel' });
 const loadingText = (page: Page) => page.getByText('Loading your timers...');
 
 const SAVED_TOAST = 'Round timers saved!';
@@ -298,7 +298,7 @@ test('TIMES-10 an API error for the save shows a toast, keeps the screen, and Ca
 
   await expectToast(page, {
     title: 'Unable to save timers',
-    message: "Whoops! We hit a snag - looks like it's on our end (500)",
+    message: SERVER_ERROR_TOAST,
   });
   await expect(page).toHaveURL(timersRoute(draft));
   await expect(heading(page)).toBeVisible();

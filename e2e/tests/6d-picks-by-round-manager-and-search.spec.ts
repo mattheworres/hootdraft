@@ -7,6 +7,7 @@ import {
   expectDraftStatusRedirect,
   openRoute,
   openWithClock,
+  pickRows,
   SETTING_UP_TOAST,
   visiblePanel,
 } from '../helpers/draft-screen';
@@ -26,7 +27,6 @@ const roundRoute: DraftRoute = (draft) => `/draft/${draft.id}/picks/round`;
 const managerRoute: DraftRoute = (draft) => `/draft/${draft.id}/picks/manager`;
 const searchRoute: DraftRoute = (draft) => `/draft/${draft.id}/search`;
 
-const pickRows = (panel: Locator) => panel.getByTestId('pick-row');
 const roundPanel = (page: Page) => page.getByTestId('round-picks-panel');
 const managerPanel = (page: Page) => page.getByTestId('manager-picks-panel');
 const managerSelect = (page: Page) => page.getByTestId('manager-select');

@@ -80,6 +80,8 @@ export function visiblePanel(scope: Page | Locator, testId: string): Locator {
   return scope.getByTestId(testId).filter({ visible: true });
 }
 
+export const pickRows = (scope: Locator) => scope.getByTestId('pick-row').filter({ visible: true });
+
 /** The Commish Actions panel of the Draft index. */
 export const commishActions = (page: Page) => visiblePanel(page, 'commish-actions-panel');
 

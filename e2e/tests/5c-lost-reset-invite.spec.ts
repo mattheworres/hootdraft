@@ -13,7 +13,7 @@ import { userLink } from '../helpers/navigation';
 import { linkPath, readResetKey, withWrongKey } from '../helpers/mailpit';
 import { completeRecaptcha, recaptchaCheckbox } from '../helpers/recaptcha';
 import { expect, test } from '../helpers/test';
-import { expectAlreadyLoggedInToast, expectToast } from '../helpers/toast';
+import { expectAlreadyLoggedInToast, expectToast, SERVER_ERROR_TOAST } from '../helpers/toast';
 
 // Route group 5C of docs/flow-inventory.md. Each test name starts with the row ID.
 
@@ -124,7 +124,7 @@ async function expectSubmitApiError(page: Page, screen: PasswordScreen, title: s
 
   await submitNewPassword(page, screen);
 
-  await expectToast(page, { title, message: "Whoops! We hit a snag - looks like it's on our end (500)" });
+  await expectToast(page, { title, message: SERVER_ERROR_TOAST });
   await expect(passwordField(page, screen)).toBeVisible();
 }
 

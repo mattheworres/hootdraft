@@ -29,12 +29,12 @@
                 </div>
               </div>
             </div>
-            <div class="row" ng-repeat="pick in $ctrl.roundPicks" ng-show="$ctrl.roundHasPicks">
+            <div class="row" data-testid="selected-pick-row" ng-repeat="pick in $ctrl.roundPicks" ng-show="$ctrl.roundHasPicks">
               <div class="col-xs-10 pick-list-display">
                 <phpd-pick-display draft="$ctrl.draft" pick="pick"></phpd-pick-display>
               </div>
               <div class="col-xs-2">
-                <div class="btn btn-block btn-primary v-offset-3" ng-click="$ctrl.selectEditPick(pick)">
+                <div class="btn btn-block btn-primary v-offset-3" data-testid="edit-pick-button" ng-click="$ctrl.selectEditPick(pick)">
                   <i class="fa fa-pencil fa-2x"></i>
                 </div>
               </div>
