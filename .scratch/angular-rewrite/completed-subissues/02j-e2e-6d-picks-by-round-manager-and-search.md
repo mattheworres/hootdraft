@@ -4,7 +4,7 @@
 
 **Blocked by:** 02a
 
-**Status:** awaiting-human-review
+**Status:** completed
 
 - [x] First, apply the approved items to the rows of this group. Change each row to the correct result and fill in "Known defect": W-12 (ROUND-06, MANAGER-06, SEARCH-10), W-21 (SEARCH-08), W-24 (ROUND-05)
 - [x] One test for each of the 22 rows. The test name starts with the row ID

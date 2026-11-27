@@ -1,6 +1,6 @@
 import { Locator, Page } from '@playwright/test';
 import { ApiSetup, Draft, LoggedInUser, SelectedPick, unique } from '../helpers/api';
-import { footerVersionText, knownFailureOnAngularJs } from '../helpers/client';
+import { knownFailureOnAngularJs } from '../helpers/client';
 import {
   DRAFT_POLL_MS,
   DraftRoute,
@@ -13,9 +13,10 @@ import {
   SETTING_UP_TOAST,
 } from '../helpers/draft-screen';
 import { failApiRequest, holdApiResponses } from '../helpers/intercept';
+import { expectFooterHidden } from '../helpers/navigation';
 import { API_URL } from '../helpers/stack';
 import { expect, test } from '../helpers/test';
-import { VISIBLE_TEXT } from '../helpers/text';
+import { fullName, VISIBLE_TEXT } from '../helpers/text';
 import { setDraftStartTime, setPickTime } from '../helpers/timestamps';
 import { expectToast } from '../helpers/toast';
 
@@ -135,7 +136,7 @@ test('BOARD-02 an In Progress Draft shows a row for each Round and a cell for ea
   await expectText(thirdCell, ['4th', first.name]);
   await expect(thirdCell).not.toContainText('On the clock', VISIBLE_TEXT);
   await expectText(fourthCell, ['3rd', second.name, 'On the clock']);
-  await expect(page.getByRole('link', { name: footerVersionText })).toBeHidden();
+  await expectFooterHidden(page);
   await expectPositionColor(page, firstCell, selected.position);
   await expectPositionColor(page, secondCell, selectedOther.position);
 });
@@ -209,7 +210,7 @@ test('BOARD-05 the header shows the current and last Pick, and hides on a phone-
   await openBoard(page, draft);
 
   await expect(header(page)).toContainText('Last Pick', VISIBLE_TEXT);
-  await expectText(lastPick(page), [`${pick.firstName} ${pick.lastName}`, 'Pick # 1']);
+  await expectText(lastPick(page), [fullName(pick), 'Pick # 1']);
   await expect(currentPick(page)).toContainText('Pick # 2', VISIBLE_TEXT);
 
   await page.setViewportSize(PHONE);
@@ -328,10 +329,10 @@ test('BOARD-13 a second viewer sees a new Pick after the next poll', async ({ ne
   const pick = await setup.addPick(commissioner, draft);
   await viewer.clock.runFor(DRAFT_POLL_MS);
 
-  await expect(boardPicks(viewer).first()).toContainText(`${pick.firstName} ${pick.lastName}`, VISIBLE_TEXT);
+  await expect(boardPicks(viewer).first()).toContainText(fullName(pick), VISIBLE_TEXT);
   await expect(boardPicks(viewer).nth(1)).toContainText('On the clock', VISIBLE_TEXT);
   await expect(currentPick(viewer)).toContainText('Pick # 2', VISIBLE_TEXT);
-  await expectText(lastPick(viewer), [`${pick.firstName} ${pick.lastName}`, 'Pick # 1']);
+  await expectText(lastPick(viewer), [fullName(pick), 'Pick # 1']);
 });
 
 test('BOARD-14 a second viewer sees an edited Pick after the next poll', async ({ newViewerPage, setup }) => {
@@ -416,7 +417,7 @@ test('BOARD-17 after the last Pick a second viewer sees the Selected Pick, no he
   const last = await setup.addPick(commissioner, draft);
   await viewer.clock.runFor(DRAFT_POLL_MS);
 
-  await expect(boardPicks(viewer).last()).toContainText(`${last.firstName} ${last.lastName}`, VISIBLE_TEXT);
+  await expect(boardPicks(viewer).last()).toContainText(fullName(last), VISIBLE_TEXT);
   await expect(header(viewer)).toBeHidden();
   await expectNoDraftPolls(viewer, draft);
 });

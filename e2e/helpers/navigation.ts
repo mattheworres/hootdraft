@@ -11,6 +11,11 @@ export function logoLink(page: Page) {
   return page.getByRole('link', { name: 'Hoot Draft' });
 }
 
+/** Checks that the footer is hidden. Call it once the screen has loaded, or the check passes on an empty page. */
+export async function expectFooterHidden(page: Page): Promise<void> {
+  await expect(page.getByRole('link', { name: 'GNU GPL3 License' })).toBeHidden();
+}
+
 export interface MenuRoute {
   /** The name of the link in the menu. */
   link: string;

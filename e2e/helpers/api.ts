@@ -449,6 +449,28 @@ export class ApiSetup {
     );
   }
 
+  /** Puts a Selected Pick in the Depth Chart position of its Manager that has this name, as a drag on the Depth Chart does. */
+  async assignPickToPosition(
+    user: LoggedInUser,
+    draft: Pick<Draft, 'id'>,
+    pick: Pick<BoardPick, 'id' | 'managerId'>,
+    position: string,
+  ): Promise<void> {
+    const { depthChartPositions } = await send<{
+      depthChartPositions: { position: string; depth_chart_position_id: number }[];
+    }>(() => user.api.get(`draft/${draft.id}/manager/${pick.managerId}/depth_chart`), 'load the Depth Chart');
+    const target = depthChartPositions.find((candidate) => candidate.position === position);
+
+    if (target === undefined) {
+      throw new Error(`The Depth Chart has no position ${position}`);
+    }
+
+    await send(
+      () => user.api.put(`draft/${draft.id}/pick/${pick.id}/depth_chart/${target.depth_chart_position_id}`),
+      'move a Pick in the Depth Chart',
+    );
+  }
+
   /** Replaces the Pro Player list of one League with a CSV file. Needs an Admin. */
   async uploadProPlayers(admin: LoggedInUser, league: League, csvPath: string): Promise<void> {
     await send(

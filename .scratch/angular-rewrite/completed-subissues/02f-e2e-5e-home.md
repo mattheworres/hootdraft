@@ -4,7 +4,7 @@
 
 **Blocked by:** 02a
 
-**Status:** awaiting-human-review
+**Status:** completed
 
 - [x] First, apply the approved items to the rows of this group. Change each row to the correct result and fill in "Known defect": W-24 (HOME-16), W-25 (HOME-02, HOME-07, HOME-11)
 - [x] One test for each of the 16 rows. The test name starts with the row ID

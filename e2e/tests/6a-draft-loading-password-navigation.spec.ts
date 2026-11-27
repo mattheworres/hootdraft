@@ -5,7 +5,7 @@ import { DRAFT_POLL_MS, expectNoDraftPolls, openDraftScreen, openDraftScreenWith
 import { expectMenuLinksOpenRoutes, logoLink } from '../helpers/navigation';
 import { failApiRequest, recordApiRequests, waitForApiResponse } from '../helpers/intercept';
 import { expect, test } from '../helpers/test';
-import { VISIBLE_TEXT } from '../helpers/text';
+import { fullName, VISIBLE_TEXT } from '../helpers/text';
 import { expectToast } from '../helpers/toast';
 
 // Route group 6A of docs/flow-inventory.md. Each test name starts with the row ID.
@@ -528,7 +528,7 @@ test('PW-11 a second viewer sees a new Pick on the Draft Board after the next po
   const pick = await setup.addPick(commissioner, draft, { firstName: 'Davante', lastName: 'Adams' });
   await viewer.clock.runFor(DRAFT_POLL_MS * 2);
 
-  await expect(viewer.getByText(`${pick.firstName} ${pick.lastName}`).first()).toBeVisible();
+  await expect(viewer.getByText(fullName(pick)).first()).toBeVisible();
 });
 
 test('PW-12 the client does not poll while the panel shows', async ({ page, setup }) => {

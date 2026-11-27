@@ -10,7 +10,8 @@ Run inside the php container.
 - PHPStan, glossary terms and tests together: `docker compose exec -T php composer check`
 - E2E tests: `npx playwright test --project=chromium --project=helpers` in `e2e/`. CI runs the other three browsers.
 - Hand-off: the whole E2E suite (above, no `-g` or file filter) runs after your last change to `e2e/` or client code, including fixes from code review and CodeScene. Any later edit means another run. `bin/check-e2e-fresh` verifies this; a Stop hook runs it.
-- Edit files with the Edit tool, not scripted replaces.
+- Edit files with the Edit tool by default, but you may use scripted replaces IF it replaces 3 or more Edit tool calls (but ensure the change isn't mangled). You do _not_ need to report this to the human reviewer.
+- When working through a markdown ticket, tick the boxes for work completed as it is completed. Prior to handing work over, change the status to `awaiting-human-review`
 - Commits will be blocked.
 
 ## Comments
