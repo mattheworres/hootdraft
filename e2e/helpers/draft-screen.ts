@@ -1,5 +1,5 @@
 import { BrowserContext, expect, Locator, Page } from '@playwright/test';
-import { ApiSetup, Draft, LoggedInUser } from './api';
+import { ApiSetup, Draft, DraftStatus, LoggedInUser } from './api';
 import { recordApiRequests } from './intercept';
 import { VISIBLE_TEXT } from './text';
 import { expectToast } from './toast';
@@ -30,7 +30,7 @@ export async function openWithClock(page: Page, route: string, loaded: Locator):
 
 /** Opens the Draft screen and waits until the Draft has loaded. Returns the route. */
 export async function openDraftScreen(page: Page, draft: Draft): Promise<string> {
-  const route = `/draft/${draft.id}`;
+  const route = draftIndexRoute(draft);
 
   await openRoute(page, route, page.getByText(draft.name).first());
 
@@ -47,6 +47,16 @@ export async function openDraftScreenWithClock(page: Page, draft: Draft): Promis
 /** Builds the route of one Draft screen. */
 export type DraftRoute = (draft: Pick<Draft, 'id'>) => string;
 
+export const draftIndexRoute: DraftRoute = (draft) => `/draft/${draft.id}`;
+export const tradesRoute: DraftRoute = (draft) => `${draftIndexRoute(draft)}/trades`;
+
+/** The Trade cards of the Trades screen, and the Trade Assets of a card. */
+export const tradeCards = (page: Page) => page.getByTestId('trade').filter({ visible: true });
+export const tradeAssets = (trade: Locator) => trade.getByTestId('trade-asset');
+
+/** The API path of the Managers of a Draft. */
+export const managersApiPath = (draft: Pick<Draft, 'id'>) => `draft/${draft.id}/managers`;
+
 /** The warning toast of a Draft screen that needs a Draft past Setting Up. */
 export const SETTING_UP_TOAST = 'Draft is still setting up';
 
@@ -59,13 +69,22 @@ export async function expectRedirectToPreviousRoute(page: Page, message: string,
 /**
  * The viewer opens a Draft screen of an In Progress Draft, then opens `route` of a Draft in `status`. Checks the
  * warning toast `message` and the return to the first screen. Covers the "redirects for a Draft status" rows.
+ * With `loggedInContext`, the viewer is the Commissioner of both Drafts, logged in to that context: the case of a
+ * Commissioner route. Without it, the viewer is anonymous.
  */
 export async function expectDraftStatusRedirect(
   page: Page,
   setup: ApiSetup,
-  redirect: { route: DraftRoute; status: 'Setting Up' | 'In Progress'; message: string },
+  redirect: {
+    route: DraftRoute;
+    status: DraftStatus;
+    message: string;
+    loggedInContext?: BrowserContext;
+  },
 ): Promise<void> {
-  const commissioner = await setup.registerCommissioner();
+  const commissioner = redirect.loggedInContext
+    ? await setup.logInNewCommissioner(redirect.loggedInContext)
+    : await setup.registerCommissioner();
   const target = await setup.createDraft(commissioner, { status: redirect.status });
   const other = await setup.createDraft(commissioner, { status: 'In Progress' });
 

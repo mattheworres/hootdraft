@@ -1,26 +1,27 @@
 import { BrowserContext, Page } from '@playwright/test';
 import { ApiSetup, Draft, LoggedInUser, PickEntry, unique } from '../helpers/api';
 import { knownFailureOnAngularJs } from '../helpers/client';
-import { boardRoute } from '../helpers/draft-board';
+import { boardPicks, boardRoute } from '../helpers/draft-board';
 import {
   commishActions,
+  draftIndexRoute,
   DraftRoute,
-  expectRedirectToPreviousRoute,
+  expectDraftStatusRedirect,
   openDraftScreen,
   pickRows,
   visiblePanel,
 } from '../helpers/draft-screen';
 import { cancelButton, workingModal } from '../helpers/form';
 import { failApiRequest, holdApiResponses, recordApiRequests, waitForApiResponse } from '../helpers/intercept';
+import { expectLoginRoute } from '../helpers/navigation';
 import { expect, test } from '../helpers/test';
 import { fullName, VISIBLE_TEXT } from '../helpers/text';
-import { expectSingleToast, expectToast, SERVER_ERROR_TOAST } from '../helpers/toast';
+import { expectExpiredSessionLogout, expectSingleToast, expectToast, SERVER_ERROR_TOAST } from '../helpers/toast';
 
 // Route group 7D of docs/flow-inventory.md. Each test name starts with the row ID.
 
 const addRoute: DraftRoute = (draft) => `/commish/draft/${draft.id}/picks/add`;
 const editRoute: DraftRoute = (draft) => `/commish/draft/${draft.id}/picks/edit`;
-const indexRoute: DraftRoute = (draft) => `/draft/${draft.id}`;
 
 const currentPickPath = (draft: Pick<Draft, 'id'>) => `commish/draft/${draft.id}/pick/current`;
 const duplicateCheckPath = (draft: Pick<Draft, 'id'>) => `commish/draft/${draft.id}/picks/alreadyDrafted`;
@@ -28,7 +29,6 @@ const roundPicksPath = (draft: Pick<Draft, 'id'>, round: number) => `draft/${dra
 const SAVE_PICK_PATH = /^commish\/draft\/\d+\/pick\/\d+$/;
 const PRO_PLAYER_SEARCH_PATH = 'commish/proplayers/search';
 
-const EXPIRED_SESSION_TOAST = 'Your login has expired. You must log back in if you wish to continue.';
 const RESET_TOAST = 'Pick was reset - go ahead and enter another player.';
 
 // A Pro Player of the seeded NFL list, and the labels that the Pick form shows for its team and position
@@ -423,14 +423,9 @@ for (const { row, status, message } of [
     setup,
   }) => {
     knownFailureOnAngularJs('W-06, W-16');
-    const commissioner = await setup.logInNewCommissioner(context);
-    const draft = await setup.createDraft(commissioner, { status });
-    const other = await setup.createDraft(commissioner, { status: 'In Progress' });
-    const previousRoute = await openDraftScreen(page, other);
 
-    await page.goto(addRoute(draft));
+    await expectDraftStatusRedirect(page, setup, { route: addRoute, status, message, loggedInContext: context });
 
-    await expectRedirectToPreviousRoute(page, message, previousRoute);
     await expectSingleToast(page, message);
     await expect(page.getByText('Unable to get current pick')).toBeHidden();
   });
@@ -456,7 +451,7 @@ test('ADDPICK-11 entering the last Pick shows the working modal, then the Comple
 
   await page.clock.runFor(1_500);
 
-  await expect(page).toHaveURL(indexRoute(draft));
+  await expect(page).toHaveURL(draftIndexRoute(draft));
   await expect(workingModal(page)).toBeHidden();
   await expect(visiblePanel(page.locator('phpd-draft-completed'), 'draft-details-panel')).toContainText(
     'Completed',
@@ -573,10 +568,10 @@ test('EDITPICK-03 choosing another Pro Player and selecting Update pick saves it
   await updateButton(page).click();
 
   await expectToast(page, { message: `${PRO_PLAYER_NAME} updated` });
-  await expect(page).toHaveURL(indexRoute(draft));
+  await expect(page).toHaveURL(draftIndexRoute(draft));
 
   await page.goto(boardRoute(draft));
-  await expect(page.getByTestId('board-pick').filter({ hasText: PRO_PLAYER_NAME })).toBeVisible();
+  await expect(boardPicks(page).filter({ hasText: PRO_PLAYER_NAME })).toBeVisible();
 });
 
 test('EDITPICK-04 Manual Entry holds the values of the Pick, and a changed name is checked, then saved', async ({
@@ -605,7 +600,7 @@ test('EDITPICK-04 Manual Entry holds the values of the Pick, and a changed name 
   await expectToast(page, { message: `${nickname} ${pick.lastName} updated` });
   expect(checks).toHaveLength(1);
   await expect(duplicateDialog(page)).toBeHidden();
-  await expect(page).toHaveURL(indexRoute(draft));
+  await expect(page).toHaveURL(draftIndexRoute(draft));
 });
 
 test('EDITPICK-05 a Setting Up or Complete Draft shows a warning toast and goes to the Draft index', async ({
@@ -621,13 +616,13 @@ test('EDITPICK-05 a Setting Up or Complete Draft shows a warning toast and goes 
   await page.goto(editRoute(settingUp));
 
   await expectToast(page, { message: 'Unable to edit picks for draft: draft has not been started yet.' });
-  await expect(page).toHaveURL(indexRoute(settingUp));
+  await expect(page).toHaveURL(draftIndexRoute(settingUp));
 
   const completePage = await context.newPage();
   await completePage.goto(editRoute(complete));
 
   await expectToast(completePage, { message: 'Unable to edit picks for draft: draft is already completed' });
-  await expect(completePage).toHaveURL(indexRoute(complete));
+  await expect(completePage).toHaveURL(draftIndexRoute(complete));
 });
 
 test('EDITPICK-06 Undo shows the saved values again, and Cancel returns to the list of Picks', async ({
@@ -667,10 +662,7 @@ test('EDITPICK-07 an expired session logs the viewer out with the one shared toa
 
   await updateButton(page).click();
 
-  await expect(page).toHaveURL(/\/login$/);
-  await expectToast(page, { message: EXPIRED_SESSION_TOAST });
-  await expectSingleToast(page, EXPIRED_SESSION_TOAST);
-  await expect(page.getByText('Unauthorized: please log in.')).toBeHidden();
+  await expectExpiredSessionLogout(page);
 });
 
 test('EDITPICK-08 an API error shows a toast for the Round Picks and for the save', async ({
@@ -708,7 +700,7 @@ for (const { anonymousRow, otherCommissionerRow, route } of [
 
     await page.goto(route(draft));
 
-    await expect(page).toHaveURL(/\/login$/);
+    await expectLoginRoute(page);
   });
 
   test(`${otherCommissionerRow} another Commissioner goes to the Draft index`, async ({ page, context, setup }) => {
@@ -720,6 +712,6 @@ for (const { anonymousRow, otherCommissionerRow, route } of [
 
     await page.goto(route(draft));
 
-    await expect(page).toHaveURL(indexRoute(draft));
+    await expect(page).toHaveURL(draftIndexRoute(draft));
   });
 }

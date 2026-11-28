@@ -7,17 +7,16 @@ import {
   workingModal,
 } from '../helpers/form';
 import { footerVersionText, knownFailureOnAngularJs } from '../helpers/client';
+import { boardRoute } from '../helpers/draft-board';
 import { openDraftScreen, openDraftScreenLoggedIn } from '../helpers/draft-screen';
 import { failApiRequest, recordApiRequests } from '../helpers/intercept';
-import { expectFooterHidden, logoLink, userLink } from '../helpers/navigation';
+import { expectFooterHidden, expectLoginRoute, logoLink, userLink } from '../helpers/navigation';
 import { readEmailVerificationKey, readResetKey } from '../helpers/mailpit';
 import { expect, test } from '../helpers/test';
 import { setEmailVerificationKeyTime } from '../helpers/timestamps';
-import { expectAlreadyLoggedInToast, expectToast, SERVER_ERROR_TOAST } from '../helpers/toast';
+import { expectAlreadyLoggedInToast, expectToast, EXPIRED_SESSION_TOAST, SERVER_ERROR_TOAST } from '../helpers/toast';
 
 // Route group 5A of docs/flow-inventory.md. Each test name starts with the row ID.
-
-const EXPIRED_SESSION_TOAST = 'Your login has expired. You must log back in if you wish to continue.';
 
 function passwordField(page: Page) {
   return page.getByTestId('login-password');
@@ -116,7 +115,7 @@ test('LOGIN-04 a Commissioner who browsed their Draft without a login returns to
   const commissioner = await setup.registerCommissioner();
   const draft = await setup.createDraft(commissioner, { status: 'In Progress' });
 
-  await page.goto(`/draft/${draft.id}/board`);
+  await page.goto(boardRoute(draft));
   const draftRoute = await openDraftScreen(page, draft);
   await expect(page.getByRole('link', { name: 'Enter Pick' })).toBeHidden();
   await page.getByRole('button', { name: 'Commissioner Login' }).click();
@@ -133,7 +132,7 @@ test('LOGIN-05 a wrong password gives the invalid credentials toast', async ({ p
   await submitLoginForm(page, { email: commissioner.email, password: 'not-the-password' });
 
   await expectToast(page, { title: 'Unable to Login', message: 'Invalid credentials.' });
-  await expect(page).toHaveURL('/login');
+  await expectLoginRoute(page);
 });
 
 test('LOGIN-06 a Disabled user gets the invalid credentials toast', async ({ page, setup }) => {
@@ -145,7 +144,7 @@ test('LOGIN-06 a Disabled user gets the invalid credentials toast', async ({ pag
   await submitLoginForm(page, commissioner);
 
   await expectToast(page, { title: 'Unable to Login', message: 'Invalid credentials.' });
-  await expect(page).toHaveURL('/login');
+  await expectLoginRoute(page);
 });
 
 test('LOGIN-07 an Email Unverified user with a valid Email Verification Key is told to use the link', async ({
@@ -161,7 +160,7 @@ test('LOGIN-07 an Email Unverified user with a valid Email Verification Key is t
     title: 'Unable to Login',
     message: 'Your account email is still unverified. Please click the link in your email to continue.',
   });
-  await expect(page).toHaveURL('/login');
+  await expectLoginRoute(page);
 });
 
 test('LOGIN-08 an Email Unverified user with an expired Email Verification Key gets a new email', async ({
@@ -334,7 +333,7 @@ test('NAV-06 a Commissioner whom an Admin disabled gets the expired login toast'
   await userLink(page, commissioner.name).click();
 
   await expectToast(page, { message: EXPIRED_SESSION_TOAST });
-  await expect(page).toHaveURL('/login');
+  await expectLoginRoute(page);
   await expectAnonymousNavigation(page);
 });
 
@@ -351,7 +350,7 @@ test('NAV-07 a Commissioner whose session ended on the server gets the expired l
   await page.reload();
 
   await expectToast(page, { message: EXPIRED_SESSION_TOAST });
-  await expect(page).toHaveURL('/login');
+  await expectLoginRoute(page);
   await expectAnonymousNavigation(page);
 });
 
@@ -372,7 +371,7 @@ test('NAV-08 the footer shows the version, the license, and the copyright, and h
   await expect(page.getByText(`2010 – ${new Date().getFullYear()} by Matthew Orres`)).toBeVisible();
 
   // The Draft navigation shows once the Draft has loaded, so the footer check does not pass before the screen renders
-  await page.goto(`/draft/${draft.id}/board`);
+  await page.goto(boardRoute(draft));
   await expect(page.getByRole('link', { name: draft.name })).toBeVisible();
   await expectFooterHidden(page);
 

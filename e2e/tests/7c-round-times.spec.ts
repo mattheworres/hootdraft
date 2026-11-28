@@ -4,13 +4,16 @@ import { knownFailureOnAngularJs } from '../helpers/client';
 import { boardRoute, expectFlipClockBetween, pickTimer, pickTimerDisabled } from '../helpers/draft-board';
 import {
   commishActions,
+  draftIndexRoute,
   DraftRoute,
-  expectRedirectToPreviousRoute,
+  expectDraftStatusRedirect,
+  managersApiPath,
   openDraftScreen,
   openWithClock,
 } from '../helpers/draft-screen';
 import { cancelButton } from '../helpers/form';
 import { failApiRequest, recordApiRequests, waitForApiResponse } from '../helpers/intercept';
+import { expectLoginRoute } from '../helpers/navigation';
 import { expect, test } from '../helpers/test';
 import { VISIBLE_TEXT } from '../helpers/text';
 import { expectToast, SERVER_ERROR_TOAST } from '../helpers/toast';
@@ -19,7 +22,6 @@ import { expectToast, SERVER_ERROR_TOAST } from '../helpers/toast';
 
 const timersPath = (draft: Pick<Draft, 'id'>) => `commish/draft/${draft.id}/timers`;
 const timersRoute: DraftRoute = (draft) => `/${timersPath(draft)}`;
-const indexRoute: DraftRoute = (draft) => `/draft/${draft.id}`;
 
 const heading = (page: Page) => page.getByRole('heading', { name: 'Pick Timers' });
 const timersSwitch = (page: Page) => page.getByTestId('round-times-switch');
@@ -49,7 +51,7 @@ async function expectSwitch(toggle: Locator, state: 'on' | 'off') {
  */
 async function openTimers(page: Page, draft: Pick<Draft, 'id'>) {
   const timers = waitForApiResponse(page, { method: 'GET', path: timersPath(draft) });
-  const managers = waitForApiResponse(page, { method: 'GET', path: `draft/${draft.id}/managers` });
+  const managers = waitForApiResponse(page, { method: 'GET', path: managersApiPath(draft) });
 
   await page.goto(timersRoute(draft));
   await Promise.all([timers, managers]);
@@ -156,7 +158,7 @@ test('TIMES-03 saving the values of two Rounds shows a toast, goes to the previo
 
   await saveTimers(page);
 
-  await expect(page).toHaveURL(indexRoute(draft));
+  await expect(page).toHaveURL(draftIndexRoute(draft));
 
   await openTimers(page, draft);
   await expectSwitch(timersSwitch(page), 'on');
@@ -214,14 +216,13 @@ test('TIMES-06 a Complete Draft shows a warning toast and goes to the previous r
   setup,
 }) => {
   knownFailureOnAngularJs('W-06, W-14');
-  const commissioner = await setup.logInNewCommissioner(context);
-  const complete = await setup.createDraft(commissioner, { status: 'Complete' });
-  const other = await setup.createDraft(commissioner, { status: 'In Progress' });
-  const previousRoute = await openDraftScreen(page, other);
 
-  await page.goto(timersRoute(complete));
-
-  await expectRedirectToPreviousRoute(page, 'Draft is already completed', previousRoute);
+  await expectDraftStatusRedirect(page, setup, {
+    route: timersRoute,
+    status: 'Complete',
+    message: 'Draft is already completed',
+    loggedInContext: context,
+  });
 });
 
 test('TIMES-07 an In Progress Draft saves a changed value as in TIMES-03', async ({ page, context, setup }) => {
@@ -236,7 +237,7 @@ test('TIMES-07 an In Progress Draft saves a changed value as in TIMES-03', async
   await setTime(page, 0, { minutes: 1, seconds: 45 });
   await saveTimers(page);
 
-  await expect(page).toHaveURL(indexRoute(draft));
+  await expect(page).toHaveURL(draftIndexRoute(draft));
 
   await openTimers(page, draft);
   await expectTime(page, 0, { minutes: 1, seconds: 45 });
@@ -305,7 +306,7 @@ test('TIMES-10 an API error for the save shows a toast, keeps the screen, and Ca
 
   await cancelButton(page).click();
 
-  await expect(page).toHaveURL(indexRoute(draft));
+  await expect(page).toHaveURL(draftIndexRoute(draft));
 });
 
 test('TIMES-11 an anonymous viewer goes to the login screen', async ({ page, setup }) => {
@@ -315,7 +316,7 @@ test('TIMES-11 an anonymous viewer goes to the login screen', async ({ page, set
 
   await page.goto(timersRoute(draft));
 
-  await expect(page).toHaveURL(/\/login$/);
+  await expectLoginRoute(page);
 });
 
 test('TIMES-12 another Commissioner goes to the Draft index', async ({ page, context, setup }) => {
@@ -326,7 +327,7 @@ test('TIMES-12 another Commissioner goes to the Draft index', async ({ page, con
 
   await page.goto(timersRoute(draft));
 
-  await expect(page).toHaveURL(indexRoute(draft));
+  await expect(page).toHaveURL(draftIndexRoute(draft));
 });
 
 test('TIMES-13 an API error for the Round Times shows an error text and no form', async ({ page, context, setup }) => {

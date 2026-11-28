@@ -3,8 +3,10 @@ import { ApiSetup, Draft, LoggedInUser } from '../helpers/api';
 import { knownFailureOnAngularJs } from '../helpers/client';
 import {
   DRAFT_POLL_MS,
+  draftIndexRoute,
   DraftRoute,
   expectDraftStatusRedirect,
+  managersApiPath,
   openRoute,
   openWithClock,
   SETTING_UP_TOAST,
@@ -131,7 +133,7 @@ test('DEPTH-03 the chosen Manager stays chosen after a visit to the Draft index'
   await expect(positionBox(page, 'Unassigned')).toBeHidden();
 
   await page.getByRole('link', { name: draft.name }).click();
-  await expect(page).toHaveURL(`/draft/${draft.id}`);
+  await expect(page).toHaveURL(draftIndexRoute(draft));
   await page.getByRole('link', { name: 'Depth Charts' }).click();
 
   await expect(managerMenu(page).getByRole('option', { selected: true })).toHaveText(second.name);
@@ -228,7 +230,7 @@ test('DEPTH-08 an API error shows a toast for the Managers, the Depth Chart, and
   const [pick] = await setup.addPicks(commissioner, draft, 1);
   const [first] = draft.managers;
 
-  await failApiRequest(page, { method: 'GET', path: `draft/${draft.id}/managers` });
+  await failApiRequest(page, { method: 'GET', path: managersApiPath(draft) });
   await page.goto(depthChartRoute(draft));
   await expectToast(page, { message: 'Unable to load managers' });
 
@@ -255,7 +257,7 @@ test('DEPTH-09 a Draft without Depth Charts has no link, and the direct URL goes
 
   await page.goto(depthChartRoute(draft));
 
-  await expect(page).toHaveURL(`/draft/${draft.id}`);
+  await expect(page).toHaveURL(draftIndexRoute(draft));
   // The Draft navigation shows once the Draft has loaded, so the link check does not pass before the screen renders
   await expect(page.getByRole('link', { name: draft.name })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Depth Charts' })).toBeHidden();
@@ -282,7 +284,7 @@ test('DEPTH-11 a slow Managers request shows a loading indicator and no list of 
   knownFailureOnAngularJs('W-24');
   const commissioner = await setup.registerCommissioner();
   const draft = await depthChartDraft(setup, commissioner);
-  const release = await holdApiResponses(page, { method: 'GET', path: `draft/${draft.id}/managers` });
+  const release = await holdApiResponses(page, { method: 'GET', path: managersApiPath(draft) });
 
   await page.goto(depthChartRoute(draft));
 
