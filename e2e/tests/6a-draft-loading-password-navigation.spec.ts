@@ -1,8 +1,16 @@
 import { Page } from '@playwright/test';
 import { ApiSetup, Draft, DraftOptions } from '../helpers/api';
 import { knownFailureOnAngularJs } from '../helpers/client';
-import { DRAFT_POLL_MS, expectNoDraftPolls, openDraftScreen, openDraftScreenWithClock } from '../helpers/draft-screen';
-import { expectMenuLinksOpenRoutes, logoLink } from '../helpers/navigation';
+import { boardRoute } from '../helpers/draft-board';
+import {
+  DRAFT_POLL_MS,
+  draftIndexRoute,
+  expectNoDraftPolls,
+  openDraftScreen,
+  openDraftScreenWithClock,
+  tradesRoute,
+} from '../helpers/draft-screen';
+import { expectLoginRoute, expectMenuLinksOpenRoutes, logoLink } from '../helpers/navigation';
 import { failApiRequest, recordApiRequests, waitForApiResponse } from '../helpers/intercept';
 import { expect, test } from '../helpers/test';
 import { fullName, VISIBLE_TEXT } from '../helpers/text';
@@ -413,7 +421,7 @@ test('PW-02 the right Draft Password opens the Draft and the other routes with n
 
   await navLink(page, 'Draft Board').click();
   await expect(page).toHaveURL(draftRoute(draft, 'board'));
-  await page.goto(`/draft/${draft.id}/trades`);
+  await page.goto(tradesRoute(draft));
   await expect(navLink(page, draft.name)).toBeVisible();
   await expectUnlocked(page);
 });
@@ -448,7 +456,7 @@ test('PW-05 the login link of the dialog closes it and opens /login', async ({ p
 
   await modalDialog(page).getByRole('link', { name: 'login to HootDraft' }).click();
 
-  await expect(page).toHaveURL(/\/login$/);
+  await expectLoginRoute(page);
   await expect(modalDialog(page)).toHaveCount(0);
 });
 
@@ -456,7 +464,7 @@ test('PW-06 another Commissioner gets the dialog with no login link', async ({ p
   const { draft } = await lockedDraft(setup);
   const other = await setup.logInNewCommissioner(context);
 
-  await page.goto(`/draft/${draft.id}`);
+  await page.goto(draftIndexRoute(draft));
 
   await expectLockedScreen(page);
   await expect(passwordField(page)).toBeVisible();
@@ -519,7 +527,7 @@ test('PW-11 a second viewer sees a new Pick on the Draft Board after the next po
   const { commissioner, draft } = await lockedDraft(setup);
   const viewer = await newViewerPage();
   await viewer.clock.install();
-  await viewer.goto(`/draft/${draft.id}/board`);
+  await viewer.goto(boardRoute(draft));
   await submitPassword(viewer, PASSWORD);
   await expect(boardLoading(viewer)).toBeHidden();
 
@@ -532,7 +540,7 @@ test('PW-11 a second viewer sees a new Pick on the Draft Board after the next po
 test('PW-12 the client does not poll while the panel shows', async ({ page, setup }) => {
   const { draft } = await lockedDraft(setup);
   await page.clock.install();
-  await page.goto(`/draft/${draft.id}`);
+  await page.goto(draftIndexRoute(draft));
   await expectLockedScreen(page);
 
   await expectNoDraftPolls(page, draft, 4);

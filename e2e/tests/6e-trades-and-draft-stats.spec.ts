@@ -3,11 +3,15 @@ import { ApiSetup, Draft, LoggedInUser } from '../helpers/api';
 import { knownFailureOnAngularJs } from '../helpers/client';
 import {
   DRAFT_POLL_MS,
+  draftIndexRoute,
   DraftRoute,
   expectDraftStatusRedirect,
   openRoute,
   openWithClock,
   SETTING_UP_TOAST,
+  tradeAssets,
+  tradeCards,
+  tradesRoute,
   visiblePanel,
 } from '../helpers/draft-screen';
 import { fulfillApiRequest } from '../helpers/intercept';
@@ -20,13 +24,10 @@ const NOT_COMPLETE_TOAST = 'Draft is not complete yet';
 const NO_TRADES = 'No trades have been made.';
 const NO_STATS = 'Statistics have not been generated for this draft.';
 
-const tradesRoute: DraftRoute = (draft) => `/draft/${draft.id}/trades`;
-const statsRoute: DraftRoute = (draft) => `/draft/${draft.id}/stats`;
+const statsRoute: DraftRoute = (draft) => `${draftIndexRoute(draft)}/stats`;
 
 const tradesPanel = (page: Page) => page.getByTestId('trades-panel');
 const tradesHeading = (page: Page) => tradesPanel(page).getByRole('heading', { name: /Trades$/ });
-const tradeCards = (page: Page) => page.getByTestId('trade').filter({ visible: true });
-const tradeAssets = (trade: Locator) => trade.getByTestId('trade-asset');
 const statsPanel = (page: Page) => page.getByTestId('draft-stats-panel');
 const statsHeading = (page: Page) => statsPanel(page).getByRole('heading', { name: /Draft Statistics$/ });
 const statRows = (page: Page) => page.getByTestId('draft-stat');

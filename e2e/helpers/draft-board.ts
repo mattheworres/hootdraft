@@ -1,7 +1,10 @@
 import { expect, Page } from '@playwright/test';
-import { DraftRoute } from './draft-screen';
+import { draftIndexRoute, DraftRoute } from './draft-screen';
 
-export const boardRoute: DraftRoute = (draft) => `/draft/${draft.id}/board`;
+export const boardRoute: DraftRoute = (draft) => `${draftIndexRoute(draft)}/board`;
+
+/** The Pick cells of the Draft Board, in Board order. */
+export const boardPicks = (page: Page) => page.getByTestId('board-pick');
 
 export const pickTimer = (page: Page) => page.getByTestId('pick-timer');
 export const pickTimerDisabled = (page: Page) => page.getByTestId('pick-timer-disabled');

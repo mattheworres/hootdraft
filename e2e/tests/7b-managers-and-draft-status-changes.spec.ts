@@ -3,6 +3,7 @@ import { ApiSetup, Draft, DraftOptions, LoggedInUser, unique } from '../helpers/
 import { knownFailureOnAngularJs } from '../helpers/client';
 import {
   commishActions,
+  draftIndexRoute,
   expectInProgressCommishView,
   openDraftScreen,
   openRoute,
@@ -72,7 +73,6 @@ const RESET_PROMPT: Prompt = { title: 'Reset draft?', confirm: 'Yes, reset my dr
 const DELETE_PROMPT: Prompt = { title: 'Delete the draft?', confirm: 'Yes, Delete the draft' };
 const RANDOMIZE_PROMPT: Prompt = { title: 'Randomize the draft order?', confirm: 'Yes, Randomize this draft!' };
 
-const draftIndexRoute = (draft: Draft) => `/draft/${draft.id}`;
 const commishRoute = (path: string) => (draft: Draft) => `/commish/draft/${draft.id}/${path}`;
 const publicRoute = (path: string) => (draft: Draft) => `${draftIndexRoute(draft)}/${path}`;
 
@@ -558,7 +558,7 @@ test('MGR-16 a slow Managers request shows a loading indicator in "Draft Order"'
   const draft = await settingUpDraft(setup, commissioner, threeManagers());
   const release = await holdApiResponses(page, { method: 'GET', path: managersPath(draft) });
 
-  await page.goto(`/draft/${draft.id}`);
+  await page.goto(draftIndexRoute(draft));
 
   await expectLoadingUntilReleased(orderPanel(page), release);
   await expect(managerRows(page)).toHaveCount(3);
@@ -653,7 +653,7 @@ for (const { name, route } of IN_PROGRESS_ROUTES) {
     await confirmPrompt(page, RESET_PROMPT);
 
     await expectToast(page, { message: 'Draft reset' });
-    await expect(page).toHaveURL(`/draft/${draft.id}`);
+    await expect(page).toHaveURL(draftIndexRoute(draft));
   });
 }
 
@@ -723,7 +723,7 @@ test('STATUS-09 an API error on the status request or the delete request shows a
   await deleteButton(page).click();
   await confirmPrompt(page, DELETE_PROMPT);
   await expectToast(page, { message: 'Unable to delete draft' });
-  await expect(page).toHaveURL(`/draft/${draft.id}`);
+  await expect(page).toHaveURL(draftIndexRoute(draft));
 });
 
 test('STATUS-10 an Admin starts the Draft of a different user', async ({ page, context, setup }) => {

@@ -2,6 +2,7 @@ import { Locator, Page } from '@playwright/test';
 import { ApiSetup, Draft, LoggedInUser, SelectedPick, unique } from '../helpers/api';
 import { knownFailureOnAngularJs } from '../helpers/client';
 import {
+  boardPicks,
   boardRoute,
   expectFlipClockBetween,
   flipClockSeconds,
@@ -30,7 +31,6 @@ const PHONE = { width: 375, height: 700 };
 const POSITION_NAMES: Record<string, string> = { QB: 'Quarterback', RB: 'Runningback', WR: 'Wide Receiver' };
 
 const boardRounds = (page: Page) => page.getByTestId('board-round');
-const boardPicks = (page: Page) => page.getByTestId('board-pick');
 const header = (page: Page) => page.getByTestId('board-header');
 const currentPick = (page: Page) => header(page).getByTestId('current-pick');
 const lastPick = (page: Page) => header(page).getByTestId('last-pick');

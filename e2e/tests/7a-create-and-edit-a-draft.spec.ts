@@ -1,9 +1,10 @@
 import { Locator, Page } from '@playwright/test';
 import { Draft, LoggedInUser, unique } from '../helpers/api';
 import { knownFailureOnAngularJs } from '../helpers/client';
-import { visiblePanel } from '../helpers/draft-screen';
+import { draftIndexRoute, visiblePanel } from '../helpers/draft-screen';
 import { cancelButton, workingModal } from '../helpers/form';
 import { failApiRequest, holdApiResponses } from '../helpers/intercept';
+import { expectLoginRoute } from '../helpers/navigation';
 import { expect, test } from '../helpers/test';
 import { VISIBLE_TEXT } from '../helpers/text';
 import { expectToast } from '../helpers/toast';
@@ -52,7 +53,7 @@ async function openCreateFormFromHome(page: Page) {
 }
 
 async function openEditFormFromIndex(page: Page, draft: Draft) {
-  await page.goto(`/draft/${draft.id}`);
+  await page.goto(draftIndexRoute(draft));
   await visiblePanel(page, 'edit-draft-link').click();
   await expect(page).toHaveURL(editRoute(draft));
 }
@@ -117,7 +118,7 @@ async function defaultPositions(user: LoggedInUser, league: string): Promise<str
 }
 
 async function expectIndexOf(page: Page, draft: Pick<Draft, 'id'>, details: RegExp[]) {
-  await expect(page).toHaveURL(`/draft/${draft.id}`);
+  await expect(page).toHaveURL(draftIndexRoute(draft));
 
   for (const detail of details) {
     await expect(draftDetails(page)).toContainText(detail, VISIBLE_TEXT);
@@ -379,7 +380,7 @@ test('CREATE-12 an anonymous viewer goes to the login screen', async ({ page }) 
 
   await page.goto(CREATE_ROUTE);
 
-  await expect(page).toHaveURL(/\/login$/);
+  await expectLoginRoute(page);
 });
 
 test('CREATE-13 Cancel goes back one step in the browser history', async ({ page, context, setup }) => {
@@ -535,7 +536,7 @@ test('EDIT-06 Cancel goes back one step in the browser history', async ({ page, 
   await openEditFormFromIndex(page, draft);
   await cancelButton(page).click();
 
-  await expect(page).toHaveURL(`/draft/${draft.id}`);
+  await expect(page).toHaveURL(draftIndexRoute(draft));
 });
 
 test('EDIT-07 the edit route of an In Progress or Complete Draft warns and goes to the Draft index', async ({
@@ -552,7 +553,7 @@ test('EDIT-07 the edit route of an In Progress or Complete Draft warns and goes 
     await page.goto(editRoute(draft));
 
     await expectToast(page, { message: /^Unable to edit draft/ });
-    await expect(page).toHaveURL(`/draft/${draft.id}`);
+    await expect(page).toHaveURL(draftIndexRoute(draft));
   }
 });
 
@@ -579,7 +580,7 @@ test('EDIT-09 an anonymous viewer goes to the login screen', async ({ page, setu
 
   await page.goto(editRoute(draft));
 
-  await expect(page).toHaveURL(/\/login$/);
+  await expectLoginRoute(page);
 });
 
 test('EDIT-10 another Commissioner goes to the Draft index', async ({ page, context, setup }) => {
@@ -590,5 +591,5 @@ test('EDIT-10 another Commissioner goes to the Draft index', async ({ page, cont
 
   await page.goto(editRoute(draft));
 
-  await expect(page).toHaveURL(`/draft/${draft.id}`);
+  await expect(page).toHaveURL(draftIndexRoute(draft));
 });

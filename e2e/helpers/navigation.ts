@@ -6,6 +6,11 @@ export function userLink(page: Page, name: string) {
   return page.getByRole('link', { name });
 }
 
+/** Checks that the client went to the login screen. */
+export async function expectLoginRoute(page: Page): Promise<void> {
+  await expect(page).toHaveURL('/login');
+}
+
 /** The logo link of the top navigation bar. It opens /home. */
 export function logoLink(page: Page) {
   return page.getByRole('link', { name: 'Hoot Draft' });

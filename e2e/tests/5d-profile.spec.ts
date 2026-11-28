@@ -4,7 +4,7 @@ import { knownFailureOnAngularJs } from '../helpers/client';
 import { openDraftScreenLoggedIn } from '../helpers/draft-screen';
 import { emailField, expectEmailValidationMessages, expectPasswordValidationMessages } from '../helpers/form';
 import { failApiRequest } from '../helpers/intercept';
-import { userLink } from '../helpers/navigation';
+import { expectLoginRoute, userLink } from '../helpers/navigation';
 import { linkPath, readEmailVerificationKey } from '../helpers/mailpit';
 import { expect, test } from '../helpers/test';
 import { expectToast } from '../helpers/toast';
@@ -110,7 +110,7 @@ test('PROFILE-03 a new password logs the viewer out and works at the next login'
     message:
       'Since you changed your password, we had to log you out and log you back in again. But no biggie - just enter your new password now to login again.',
   });
-  await expect(page).toHaveURL('/login');
+  await expectLoginRoute(page);
   await expect(userLink(page, user.name)).toBeHidden();
   await setup.logIn({ ...user, password: NEW_PASSWORD });
 });
@@ -228,7 +228,7 @@ test('PROFILE-09 an anonymous viewer is redirected to the login screen', async (
 
   await page.goto('/profile');
 
-  await expect(page).toHaveURL('/login');
+  await expectLoginRoute(page);
 });
 
 test('PROFILE-10 an Admin sees the same form as a Commissioner', async ({ page, context, setup }) => {

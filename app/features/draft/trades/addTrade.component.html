@@ -26,7 +26,7 @@
                     <div class="row">
                       <div class="col-xs-12 col-sm-6">
                         <div uib-dropdown class="btn-group manager-selection">
-                          <button type="button" class="form-control" uib-dropdown-toggle>
+                          <button type="button" class="form-control" data-testid="first-manager-menu" uib-dropdown-toggle>
                             <span ng-if="$ctrl.manager1.id === null">
                               Choose one manager <span class="caret"></span>
                             </span>
@@ -37,6 +37,7 @@
                           <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
                             <li role="menuitem" ng-repeat="manager in $ctrl.managers">
                               <a href
+                                data-testid="first-manager-option"
                                 ng-click="$ctrl.selectFirstManager($index, manager.id, manager.name)"
                                 ng-disabled="$ctrl.manager2.index == $index"
                                 ng-class="{disabled: $ctrl.manager2.index == $index, selected: $ctrl.manager1.index == $index}">
@@ -48,7 +49,7 @@
                       </div>
                       <div class="col-xs-12 col-sm-6">
                         <div uib-dropdown class="btn-group manager-selection">
-                          <button type="button" class="form-control block" uib-dropdown-toggle>
+                          <button type="button" class="form-control block" data-testid="second-manager-menu" uib-dropdown-toggle>
                             <span ng-if="$ctrl.manager2.id === null">
                               Choose another manager <span class="caret"></span>
                             </span>
@@ -59,6 +60,7 @@
                           <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
                             <li role="menuitem" ng-repeat="manager in $ctrl.managers">
                               <a href
+                                data-testid="second-manager-option"
                                 ng-click="$ctrl.selectSecondManager($index, manager.id, manager.name)"
                                 ng-disabled="$ctrl.manager1.index == $index"
                                 ng-class="{disabled: $ctrl.manager1.index == $index, selected: $ctrl.manager2.index == $index}">
@@ -70,24 +72,24 @@
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-xs-12 col-sm-6">
+                      <div class="col-xs-12 col-sm-6" data-testid="first-manager-assets">
                         <div class="row pick-list-display no-padding" ng-repeat="pick in $ctrl.firstManagerAssets">
                           <div class="col-xs-10">
                             <phpd-pick-display draft="$ctrl.draft" pick="pick"></phpd-pick-display>
                           </div>
                           <div class="col-xs-2">
-                            <div class="btn btn-block btn-lg" ng-class="{{pick.chosenAsset && 'btn-primary' || 'btn-default'}}" ng-click="$ctrl.toggleAsset(pick)">
-                              <i class="fa fa-check-circle fa-2x has-success" ng-show="pick.chosenAsset"></i>
+                            <div class="btn btn-block btn-lg" data-testid="trade-asset-toggle" ng-class="{{pick.chosenAsset && 'btn-primary' || 'btn-default'}}" ng-click="$ctrl.toggleAsset(pick)">
+                              <i class="fa fa-check-circle fa-2x has-success" data-testid="trade-asset-chosen" ng-show="pick.chosenAsset"></i>
                               <i class="fa fa-circle-thin fa-2x" ng-hide="pick.chosenAsset"></i>
                             </div>
                           </div>
                         </div>
                       </div>
-                      <div class="col-xs-12 col-sm-6">
+                      <div class="col-xs-12 col-sm-6" data-testid="second-manager-assets">
                         <div class="row pick-list-display no-padding" ng-repeat="pick in $ctrl.secondManagerAssets">
                           <div class="col-xs-2">
-                            <div class="btn btn-block btn-lg" ng-class="{{pick.chosenAsset && 'btn-primary' || 'btn-default'}}" ng-click="$ctrl.toggleAsset(pick)">
-                              <i class="fa fa-check-circle fa-2x has-success" ng-show="pick.chosenAsset"></i>
+                            <div class="btn btn-block btn-lg" data-testid="trade-asset-toggle" ng-class="{{pick.chosenAsset && 'btn-primary' || 'btn-default'}}" ng-click="$ctrl.toggleAsset(pick)">
+                              <i class="fa fa-check-circle fa-2x has-success" data-testid="trade-asset-chosen" ng-show="pick.chosenAsset"></i>
                               <i class="fa fa-circle-thin fa-2x" ng-hide="pick.chosenAsset"></i>
                             </div>
                           </div>
