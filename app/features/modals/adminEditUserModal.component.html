@@ -12,7 +12,7 @@
             </label>
           </div>
           <div class="col-xs-9">
-            <input name="email" ng-model="$ctrl.user.email" type="email" class="form-control" maxlength="255" ng-required="true" placeholder="Email" autofocus />
+            <input name="email" data-testid="edit-user-email" ng-model="$ctrl.user.email" type="email" class="form-control" maxlength="255" ng-required="true" placeholder="Email" autofocus />
             <div ng-show="$ctrl.form.$submitted || $ctrl.user.email.$touched">
               <span ng-show="$ctrl.user.email.$error.required" class="help-block">Email is missing</span>
               <span ng-show="$ctrl.user.email.$error.email" class="help-block">Email is invalid</span>
@@ -31,7 +31,7 @@
             </label>
           </div>
           <div class="col-xs-9">
-            <input name="name" ng-model="$ctrl.user.name" class="form-control" maxlength="255" ng-required="true" placeholder="Your name (for display)" />
+            <input name="name" data-testid="edit-user-name" ng-model="$ctrl.user.name" class="form-control" maxlength="255" ng-required="true" placeholder="Your name (for display)" />
             <div ng-show="$ctrl.form.$submitted || $ctrl.user.name.$touched">
               <span ng-show="$ctrl.user.name.$error.required" class="help-block">Name is missing</span>
               <span ng-show="$ctrl.user.name.$error.minlength" class="help-block">Name is too short</span>
@@ -45,7 +45,7 @@
       <div class="col-xs-12 v-offset-2">
         <div class="form-group" show-errors>
           <div class="col-xs-offset-3 col-xs-9">
-            <toggle-switch name="enabled" ng-model="$ctrl.user.enabled" knob-label="Enable"></toggle-switch>
+            <toggle-switch name="enabled" data-testid="edit-user-enabled-switch" ng-model="$ctrl.user.enabled" knob-label="Enable"></toggle-switch>
           </div>
         </div>
       </div>
