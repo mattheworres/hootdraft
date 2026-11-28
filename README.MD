@@ -51,7 +51,7 @@ I was thinking you'd say that...
 <br />
 
 ## Minimum Server Requirements
-- PHP 8.4+ installed (with the `pdo_mysql`, `ctype` and `iconv` extensions). **Note:** the API is mid-rewrite to Symfony; see PHP8Rewrite.md
+- PHP 8.5.12+ installed (with the `pdo_mysql`, `ctype` and `iconv` extensions). **Note:** the API is mid-rewrite to Symfony; see PHP8Rewrite.md
 - MariaDB 12.3 (what the developer box runs), or MySQL 8.4 or 9. See docs/adr/0002-supported-databases.md
 - nginx 1.25.1+ (see `EXAMPLE_nginx`). Apache and IIS are not supported.
 - SMTP mail account (for user registration/password resets)

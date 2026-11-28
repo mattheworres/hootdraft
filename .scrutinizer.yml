@@ -7,7 +7,7 @@ build:
                 override:
                     - php-scrutinizer-run --enable-security-analysis
     environment:
-        node: v8.9.4
+        php: 8.5.12
 
 checks:
     php: true

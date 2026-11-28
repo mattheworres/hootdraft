@@ -1,6 +1,9 @@
 import { expect, Page } from '@playwright/test';
 import { Credentials } from './api';
 
+/** The message of the toast for an API answer with status 500. */
+export const SERVER_ERROR_TOAST = "Whoops! We hit a snag - looks like it's on our end (500)";
+
 /**
  * Asserts that a toast with this message shows, and with this title if the row names one.
  * The AngularJS toast comes from a library template with no role and no `data-testid`, so the visible text is

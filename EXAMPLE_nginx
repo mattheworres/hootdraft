@@ -1,6 +1,6 @@
 # Example NGINX Configuration
 # This is an example of what is required in order to get HootDraft to run on NGINX.
-# PHP-FPM 8.4+ is required (the socket path below may vary).
+# PHP-FPM 8.5.12+ is required (the socket path below may vary).
 # Mileage may vary.
 #
 # nginx 1.25.1+ is required (for "http2 on").
@@ -80,7 +80,7 @@ server {
                 include fastcgi_params;
                 fastcgi_param SCRIPT_FILENAME $document_root/api/index.php;
                 fastcgi_param SCRIPT_NAME /api/index.php;
-                fastcgi_pass unix:/var/run/php/php8.4-fpm.sock;
+                fastcgi_pass unix:/var/run/php/php8.5-fpm.sock;
         }
 
         location ~ ^/(css|js|fonts|images)/ {

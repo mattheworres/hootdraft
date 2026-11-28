@@ -143,9 +143,9 @@ Each function waits up to ten seconds for the email. `link` is the emailed link,
 
 `linkPath(link)` is the path of the link. Open that path, not the link: the host in the email can differ from the client under test. `withWrongKey(path)` replaces the key at the end of a path with a key that matches no user.
 
-### Form validation: `helpers/form.ts`
+### Forms: `helpers/form.ts`
 
-`emailField(page)` finds the Email field. `expectEmailValidationMessages(page)` checks the messages of the Email field. `expectPasswordValidationMessages(page, field)` and `expectConfirmValidationMessages(page, field)` check the messages of a Password and a Confirm field. Fill the Password field before the Confirm check.
+`cancelButton(page)` finds the **Cancel** button. `workingModal(page)` finds the "Working . . ." dialog that blocks the screen while a save runs. `emailField(page)` finds the Email field. `expectEmailValidationMessages(page)` checks the messages of the Email field. `expectPasswordValidationMessages(page, field)` and `expectConfirmValidationMessages(page, field)` check the messages of a Password and a Confirm field. Fill the Password field before the Confirm check.
 
 ### Navigation: `helpers/navigation.ts`
 
@@ -242,7 +242,7 @@ await expectLoadingUntilReleased(page, release);
 
 ### Draft screen: `helpers/draft-screen.ts`
 
-`openDraftScreen(page, draft)` opens the Draft screen, waits until the Draft has loaded, and returns the route. `openDraftScreenWithClock(page, draft)` installs the Playwright clock first. `openRoute(page, route, loaded)` opens any route and waits until the `loaded` locator is visible, and `openWithClock` installs the clock first. `visiblePanel(scope, testId)` finds the visible panel with that test ID: the Draft index keeps the panels of other views in the page. `commishActions(page)` is the visible Commish Actions panel of the Draft index. `openDraftScreenLoggedIn(page, context, setup)` does the same as `openDraftScreen` for a new, logged-in Commissioner with an In Progress Draft, and returns the Commissioner, the Draft, and the route. It is the starting state of the rows where a logged-in viewer opens an auth route. `DRAFT_POLL_MS` is the interval at which the client polls an In Progress Draft. Move the Playwright clock by it to run the next poll.  `expectDraftStatusRedirect(page, setup, { route, status, message })` covers the "redirects for a Draft status" rows: the viewer opens a Draft screen, then the route of a Draft in `status`, and the test checks the warning toast and the return to the first screen. `expectRedirectToPreviousRoute(page, message, previousRoute)` is its second half, for a test that sets up the first screen itself. `SETTING_UP_TOAST` is the warning toast for a Setting Up Draft. A `DraftRoute` builds the route of one Draft screen from the Draft. `expectNoDraftPolls(page, draft, intervals?)` runs the clock over three intervals, or `intervals`, and checks that no request for the Draft is sent. Install the clock first. `expectInProgressCommishView(page)` checks the Draft index of INDEX-09: the Commish Actions and League Details of an In Progress Draft for its Commissioner.
+`openDraftScreen(page, draft)` opens the Draft screen, waits until the Draft has loaded, and returns the route. `openDraftScreenWithClock(page, draft)` installs the Playwright clock first. `openRoute(page, route, loaded)` opens any route and waits until the `loaded` locator is visible, and `openWithClock` installs the clock first. `visiblePanel(scope, testId)` finds the visible panel with that test ID: the Draft index keeps the panels of other views in the page. `commishActions(page)` is the visible Commish Actions panel of the Draft index. `pickRows(scope)` finds the visible Pick rows in a panel or a dialog. `openDraftScreenLoggedIn(page, context, setup)` does the same as `openDraftScreen` for a new, logged-in Commissioner with an In Progress Draft, and returns the Commissioner, the Draft, and the route. It is the starting state of the rows where a logged-in viewer opens an auth route. `DRAFT_POLL_MS` is the interval at which the client polls an In Progress Draft. Move the Playwright clock by it to run the next poll.  `expectDraftStatusRedirect(page, setup, { route, status, message })` covers the "redirects for a Draft status" rows: the viewer opens a Draft screen, then the route of a Draft in `status`, and the test checks the warning toast and the return to the first screen. `expectRedirectToPreviousRoute(page, message, previousRoute)` is its second half, for a test that sets up the first screen itself. `SETTING_UP_TOAST` is the warning toast for a Setting Up Draft. A `DraftRoute` builds the route of one Draft screen from the Draft. `expectNoDraftPolls(page, draft, intervals?)` runs the clock over three intervals, or `intervals`, and checks that no request for the Draft is sent. Install the clock first. `expectInProgressCommishView(page)` checks the Draft index of INDEX-09: the Commish Actions and League Details of an In Progress Draft for its Commissioner.
 
 ### Draft Board: `helpers/draft-board.ts`
 
@@ -258,7 +258,7 @@ await expectLoadingUntilReleased(page, release);
 await expectToast(page, { title: 'Logged In', message: 'Welcome back, Ann!' });
 ```
 
-The AngularJS toast has no role and no `data-testid`, so this helper asserts the visible text. `expectAlreadyLoggedInToast(page, user)` asserts the toast that a logged-in viewer gets on an auth route.
+The AngularJS toast has no role and no `data-testid`, so this helper asserts the visible text. `expectAlreadyLoggedInToast(page, user)` asserts the toast that a logged-in viewer gets on an auth route. `SERVER_ERROR_TOAST` is the message of the toast for an API answer with status 500.
 
 `expectToast` passes when the first toast shows, so it cannot see a duplicate that arrives a moment later. `expectSingleToast(page, message)` waits for the network to go quiet, then asserts exactly one toast with that message.
 

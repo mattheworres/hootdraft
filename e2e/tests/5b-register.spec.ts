@@ -7,13 +7,14 @@ import {
   expectConfirmValidationMessages,
   expectEmailValidationMessages,
   expectPasswordValidationMessages,
+  workingModal,
 } from '../helpers/form';
 import { failApiRequest, holdApiResponses, recordApiRequests } from '../helpers/intercept';
 import { userLink } from '../helpers/navigation';
 import { linkPath, readEmailVerificationKey, withWrongKey } from '../helpers/mailpit';
 import { completeRecaptcha, recaptchaCheckbox } from '../helpers/recaptcha';
 import { expect, test } from '../helpers/test';
-import { expectAlreadyLoggedInToast, expectToast } from '../helpers/toast';
+import { expectAlreadyLoggedInToast, expectToast, SERVER_ERROR_TOAST } from '../helpers/toast';
 
 // Route group 5B of docs/flow-inventory.md. Each test name starts with the row ID.
 
@@ -32,10 +33,6 @@ function confirmPasswordField(page: Page) {
 // The name ends with a non-breaking space
 function registerButton(page: Page) {
   return page.getByRole('button', { name: /^Register/ });
-}
-
-function workingModal(page: Page) {
-  return page.getByRole('dialog').filter({ has: page.getByRole('progressbar') });
 }
 
 function newCredentials(): Credentials {
@@ -151,7 +148,7 @@ test('REG-08 an API error on the register request gives a toast with the status'
 
   await expectToast(page, {
     title: 'Unable to register',
-    message: "Whoops! We hit a snag - looks like it's on our end (500)",
+    message: SERVER_ERROR_TOAST,
   });
 });
 

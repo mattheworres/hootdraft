@@ -9,6 +9,7 @@ import {
   openDraftScreen,
   openDraftScreenLoggedIn,
   openDraftScreenWithClock,
+  pickRows,
   visiblePanel,
 } from '../helpers/draft-screen';
 import { failApiRequest } from '../helpers/intercept';
@@ -31,7 +32,6 @@ const roundPicks = (page: Page) => visiblePanel(page, 'round-picks-panel');
 const leagueDetailsHeading = (page: Page, draft: Draft) =>
   leagueDetails(page).getByRole('heading', { name: `League Details: ${draft.name}` });
 const roundPicksHeading = (page: Page, round: number) => page.getByRole('heading', { name: `Round ${round} Picks` });
-const pickRows = (panel: Locator) => panel.getByTestId('pick-row');
 const nextPick = (page: Page) => pickRows(upcomingPicks(page)).first();
 const donationMessage = (page: Page) => page.getByTestId('donation-message');
 const commishActionEntries = (page: Page) =>

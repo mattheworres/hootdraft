@@ -109,7 +109,7 @@ task('hootdraft:warm_cache', function() {
 // task('hootdraft:restart_fpm', function() {
 // 	if(get("restart_fpm") == true) {
 // 		writeln("<comment>Restarting the php-fpm service...</comment>");
-// 		run('sudo service php8.4-fpm restart');
+// 		run('sudo service php8.5-fpm restart');
 // 	} else {
 // 		writeln("<comment>Skipping restart of php-fpm service.</comment>");
 // 	}

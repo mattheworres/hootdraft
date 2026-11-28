@@ -35,7 +35,7 @@
         Manual Entry
       </label>
       <div class="col-xs-12 col-sm-4">
-        <toggle-switch name="manualEntry" id="manualEntry" ng-model="$ctrl.manualEntry" ng-change="$ctrl.manualEntryChange()"></toggle-switch>
+        <toggle-switch name="manualEntry" id="manualEntry" data-testid="manual-entry-switch" ng-model="$ctrl.manualEntry" ng-change="$ctrl.manualEntryChange()"></toggle-switch>
       </div>
       <div class="hidden-xs col-sm-1 col-sm-offset-4 text-center text-info">
         <i class="fa fa-info-circle"
@@ -102,7 +102,7 @@
         </select>
       </div>
     </div>
-    <div class="form-group pick-list-display">
+    <div class="form-group pick-list-display" data-testid="pick-entry-display">
       <phpd-pick-display draft="$ctrl.draft" pick="$ctrl.currentPick"></phpd-pick-display>
     </div>
     <div class="row">
@@ -131,7 +131,7 @@
 </form>
 
 <script type="text/ng-template" id="autocompletePickTemplate.html">
-  <a tabindex="-1" class="pick-list-display">
+  <a tabindex="-1" class="pick-list-display" data-testid="pro-player-suggestion">
     <div class="pick pick{{match.model.position}} col-xs-12">
       <div class="player-data col-xs-12">
         <div class="player-name-sm" ng-bind-html="match.model.first_name + ' ' + match.model.last_name | uibTypeaheadHighlight:query"></div>

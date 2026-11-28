@@ -1,6 +1,11 @@
 import { BrowserContext, Page } from '@playwright/test';
 import { ApiSetup, Credentials, emailFor, unique } from '../helpers/api';
-import { emailField, expectEmailValidationMessages, expectPasswordValidationMessages } from '../helpers/form';
+import {
+  emailField,
+  expectEmailValidationMessages,
+  expectPasswordValidationMessages,
+  workingModal,
+} from '../helpers/form';
 import { footerVersionText, knownFailureOnAngularJs } from '../helpers/client';
 import { openDraftScreen, openDraftScreenLoggedIn } from '../helpers/draft-screen';
 import { failApiRequest, recordApiRequests } from '../helpers/intercept';
@@ -8,7 +13,7 @@ import { expectFooterHidden, logoLink, userLink } from '../helpers/navigation';
 import { readEmailVerificationKey, readResetKey } from '../helpers/mailpit';
 import { expect, test } from '../helpers/test';
 import { setEmailVerificationKeyTime } from '../helpers/timestamps';
-import { expectAlreadyLoggedInToast, expectToast } from '../helpers/toast';
+import { expectAlreadyLoggedInToast, expectToast, SERVER_ERROR_TOAST } from '../helpers/toast';
 
 // Route group 5A of docs/flow-inventory.md. Each test name starts with the row ID.
 
@@ -21,10 +26,6 @@ function passwordField(page: Page) {
 // The name ends with a non-breaking space, and the navigation has a "Commissioner Login" button
 function loginButton(page: Page) {
   return page.getByRole('button', { name: /^Login/ });
-}
-
-function workingModal(page: Page) {
-  return page.getByRole('dialog').filter({ has: page.getByRole('progressbar') });
 }
 
 async function submitLoginForm(page: Page, credentials: Pick<Credentials, 'email' | 'password'>) {
@@ -240,7 +241,7 @@ test('LOGIN-14 an API error on the login request gives a toast with the status',
 
   await expectToast(page, {
     title: 'Unable to Login',
-    message: "Whoops! We hit a snag - looks like it's on our end (500)",
+    message: SERVER_ERROR_TOAST,
   });
 });
 
